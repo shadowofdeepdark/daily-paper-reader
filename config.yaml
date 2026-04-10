@@ -25,3 +25,79 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: 心理语言
+      description: >-
+        我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。
+      enabled: true
+      paper_sources:
+        - arxiv
+        - biorxiv
+      keywords:
+        - keyword: psycholinguistics
+          keyword_cn: 心理语言学
+          query: study of cognitive and linguistic processes underlying language comprehension and production
+        - keyword: sarcasm
+          keyword_cn: 讽刺
+          query: processing and comprehension of sarcastic language as non-literal meaning
+        - keyword: irony
+          keyword_cn: 反语
+          query: understanding of ironic expressions and pragmatic inference
+        - keyword: multimodal cues
+          keyword_cn: 多模态线索
+          query: effects of visual, auditory, and typographic cues on language understanding
+        - keyword: eye-tracking
+          keyword_cn: 眼动追踪
+          query: use of eye movement data to measure reading and comprehension processes
+        - keyword: experimental pragmatics
+          keyword_cn: 实验语用学
+          query: investigation of pragmatic language phenomena through controlled experiments
+      intent_queries:
+        - query: explore cognitive and neural mechanisms of non literal language comprehension
+          query_cn: 探究非字面语言理解的认知与神经机制
+          enabled: true
+          source: manual
+          note: ''
+        - query: investigate multimodal and prosodic cues influencing pragmatic interpretation in communication
+          query_cn: 研究多模态与语调线索对语用理解的影响
+          enabled: true
+          source: manual
+          note: ''
+        - query: compare reading and listening comprehension using behavioral and physiological methods
+          query_cn: 比较阅读与听力理解的行为及生理机制
+          enabled: true
+          source: manual
+          note: ''
+        - query: examine predictive processes and inner speech in bilingual language understanding
+          query_cn: 研究双语理解中的预测加工与内在言语作用
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-04-10T02:12:48.324Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
+  biorxiv:
+    papers_table: biorxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_biorxiv_papers_exact
+    vector_rpc_exact: match_biorxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_biorxiv_papers_bm25
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
