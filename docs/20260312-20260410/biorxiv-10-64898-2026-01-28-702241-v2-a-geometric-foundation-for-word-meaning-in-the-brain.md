@@ -1,0 +1,26 @@
+---
+title: A geometric foundation for word meaning in the brain
+title_zh: 大脑中词义的几何基础
+authors: "Zhu, H., Franch, M., Mickiewicz, E., Belanger, J., Cowan, R. L., Katlowitz, K., Chavez, A. G. L., Chericoni, A., Paulo, D., Yan, X., Bartoli, E., Hennig, J., Provenza, N., Smith, E. H., Piantadosi, S., Sheth, S., Hayden, B. Y."
+date: 2026-04-03
+pdf: "https://www.biorxiv.org/content/10.64898/2026.01.28.702241v2.full.pdf"
+tags: ["query:q7"]
+score: 7.5
+evidence: 词义与语义特征的神经流形
+tldr: 本研究探讨词义在大脑中的几何表征，通过测量人脑在听播客时的神经元反应，发现性别、复数、否定等语义维度在神经空间中形成与语言模型相似的平行向量结构，为理解语义编码的几何基础提供证据。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-001.webp\", \"caption\": \"\", \"page\": 7, \"index\": 1, \"width\": 1746, \"height\": 2184}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-002.webp\", \"caption\": \"\", \"page\": 10, \"index\": 2, \"width\": 1771, \"height\": 2048}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-003.webp\", \"caption\": \"\", \"page\": 14, \"index\": 3, \"width\": 1976, \"height\": 2176}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-004.webp\", \"caption\": \"\", \"page\": 16, \"index\": 4, \"width\": 1771, \"height\": 2048}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-005.webp\", \"caption\": \"\", \"page\": 20, \"index\": 5, \"width\": 1836, \"height\": 2184}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-006.webp\", \"caption\": \"\", \"page\": 23, \"index\": 6, \"width\": 2048, \"height\": 1183}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-007.webp\", \"caption\": \"\", \"page\": 26, \"index\": 7, \"width\": 1590, \"height\": 2048}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-008.webp\", \"caption\": \"\", \"page\": 53, \"index\": 8, \"width\": 1288, \"height\": 964}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-009.webp\", \"caption\": \"\", \"page\": 54, \"index\": 9, \"width\": 2048, \"height\": 1607}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-010.webp\", \"caption\": \"\", \"page\": 55, \"index\": 10, \"width\": 1473, \"height\": 2048}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-011.webp\", \"caption\": \"\", \"page\": 57, \"index\": 11, \"width\": 2048, \"height\": 1264}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-012.webp\", \"caption\": \"\", \"page\": 59, \"index\": 12, \"width\": 1670, \"height\": 2190}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-013.webp\", \"caption\": \"\", \"page\": 61, \"index\": 13, \"width\": 2120, \"height\": 1786}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-014.webp\", \"caption\": \"\", \"page\": 62, \"index\": 14, \"width\": 1576, \"height\": 2048}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-01-28-702241-v2/fig-015.webp\", \"caption\": \"\", \"page\": 64, \"index\": 15, \"width\": 1561, \"height\": 2048}]"
+motivation: 研究词义在大脑中是否像语言模型中的词向量一样遵循几何结构，以揭示语义编码的基础。
+method: 通过记录人类在听播客时的单神经元活动，分析词义差异在神经反应中的几何结构。
+result: 发现多组词义差异对应的神经反应在神经空间中形成平行四边形结构，与语言模型中的向量方向保持一致。
+conclusion: 结果表明，大脑中的词义表示具备向量化和几何结构特征，为语言理解的神经机制提供新的理论框架。
+---
+
+## 摘要
+在语言模型的词义表示中，嵌入空间中的方向通常对应可跨不同词汇复用的语义特征。例如，表示性别的单一方向可以区分“boy/girl”、“uncle/aunt”和“king/queen”等词对。本文表明，同样的原理也支配人类大脑中由语义驱动的神经反应。我们在播客聆听过程中记录了单个神经元群的活动，并识别出具有一致语义差异的词汇集合。在十五个词汇组（包括性别、复数和否定）中，我们观察到了一致的向量方向，从而在神经流形中形成了平行四边形结构。在大型语言模型（LLMs）中偏离平行性的现象能够预测大脑中相应的平行性偏差。在代词中，与格、数和人称对应的向量分别呈现出平行四边形结构，并整体遵循交换律原理，形成棱柱状结构。最后，不同的语义变量与离散神经元群体存在偏好性关联，这与能量效率理论一致。综上结果确立了词义神经编码的几何基础。
+
+## Abstract
+ABSTRACTIn language models of word meaning, directions in the embedding space often correspond to semantic features that can be reused across different words. For example, a single direction corresponding to gender may differentiate word pairs like "boy/girl", "uncle/aunt" and "king/queen". Here we show that the same principle governs semantically driven neural responses in the human brain. We recorded populations of single neurons during podcast listening and identified word sets with consistent meaning differences. Across fifteen sets, including gender, plural, and negation, we observed consistent vectorial directions, resulting in parallelogram structures within the neural manifold. Deviation from parallelism in large language models (LLMs) predicted corresponding deviations in brain-derived parallelism. Among pronouns, vectors corresponding to case, number and person exhibited parallelogram structures individually and, collectively, obeyed the principle of commutativity, resulting in a prismatic structure.
+
+Finally, different semantic variables were preferentially associated with discrete groups of neurons, consistent with energy-efficiency theories. Together, these results establish a geometric foundation for the neural encoding of word meaning.

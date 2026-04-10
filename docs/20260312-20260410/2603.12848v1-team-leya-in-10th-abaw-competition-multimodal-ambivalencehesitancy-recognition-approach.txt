@@ -1,0 +1,366 @@
+Title: Team LEYA in 10th ABAW Competition: Multimodal Ambivalence/Hesitancy Recognition Approach
+
+URL Source: https://arxiv.org/pdf/2603.12848v1
+
+Published Time: Mon, 16 Mar 2026 00:47:59 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Team LEYA in 10th ABAW Competition: Multimodal Ambivalence/Hesitancy Recognition Approach 
+
+Elena Ryumina St. Petersburg Federal Research Center of the Russian Academy of Sciences St. Petersburg, Russia 
+
+> ryumina.e@iias.spb.su
+
+Alexandr Axyonov St. Petersburg Federal Research Center of the Russian Academy of Sciences St. Petersburg, Russia 
+
+> axyonov.a@iias.spb.su
+
+Dmitry Sysoev HSE University St. Petersburg, Russia 
+
+> dsysoev@hse.ru
+
+Timur Abdulkadirov HSE University St. Petersburg, Russia 
+
+> tnabdulkadirov@edu.hse.ru
+
+Kirill Almetov HSE University St. Petersburg, Russia 
+
+> koalmetov@edu.hse.ru
+
+Yulia Morozova HSE University St. Petersburg, Russia 
+
+> yuvmorozova 1@edu.hse.ru
+
+Dmitry Ryumin HSE University St. Petersburg Federal Research Center of the Russian Academy of Sciences St. Petersburg, Russia 
+
+> daryumin@hse.ru
+
+Abstract 
+
+Ambivalence/hesitancy recognition in unconstrained videos is a challenging problem due to the subtle, mul-timodal, and context-dependent nature of this behavioral state. In this paper, a multimodal approach for video-level ambivalence/hesitancy recognition is presented for the 10th ABAW Competition. The proposed approach integrates four complementary modalities: scene, face, audio, and text. Scene dynamics are captured with a VideoMAE-based model, facial information is encoded through emotional frame-level embeddings aggregated by statistical pool-ing, acoustic representations are extracted with Emotion-Wav2Vec2.0 and processed by a Mamba-based temporal encoder, and linguistic cues are modeled using fine-tuned transformer-based text models. The resulting unimodal embeddings are further combined using multimodal fusion models, including prototype-augmented variants. Experi-ments on the BAH corpus demonstrate clear gains of mul-timodal fusion over all unimodal baselines. The best uni-modal configuration achieved an average MF1 of 70.02%, whereas the best multimodal fusion model reached 83.25%. The highest final test performance, 71.43%, was obtained by an ensemble of five prototype-augmented fusion models. The obtained results highlight the importance of comple-mentary multimodal cues and robust fusion strategies for ambivalence/hesitancy recognition. The source code is pub-licly available 1.
+
+1. Introduction 
+
+Affective computing aims to endow intelligent systems with the ability to perceive, model, and interpret human affect from signals such as facial behavior [27], speech [11], lan-guage [5], and body motion [19]. This capability is im-portant for human-computer interaction, digital health, ed-ucation, and assistive technologies, where decisions of-ten depend on subtle and context-dependent behavioral cues [23]. Within this area, the Ambivalence/Hesitancy (A/H) Video Recognition Challenge of the 10th Workshop and Competition on Affective & Behavior Analysis in-the-Wild (ABAW) focuses on a particularly difficult binary task: given a video, the goal is to predict whether it con-tains A/H or not at the video level [12]. A/H recognition is important because these states are strongly linked to decision uncertainty, resistance, and fluc-tuating motivation during behavior change. In digital be-havioral health interventions, such signals can help identify 
+
+> 1https://github.com/LEYA-HSE/ABAW10-BAH
+
+1
+
+> arXiv:2603.12848v1 [cs.CV] 13 Mar 2026
+
+whether a person is ready to change, struggling with con-flicting intentions, or at risk of disengagement [3]. Unlike basic emotions (such as happiness, surprise), A/H is subtle and often manifests through inconsistencies across modali-ties, for example, between what a person says, how they say it, and how they look while speaking. This makes the task inherently multimodal and particularly challenging [12, 23]. Gonz´ alez-Gonz´ alez et al. [12] established baselines us-ing visual facial information, audio, and speech transcripts, and showed that text was the best unimodal cue, while mul-timodal fusion could yield additional gains but required specialized designs to capture cross-modal inconsistencies characteristic of A/H. Similarly, Savchenko and Savchenko [29] explored face, audio, and text modalities, with the best validation result achieved by combining textual and facial features, whereas Hallmen et al. [14] used text, vi-sion, and audio, and their best final Behavioural Ambiva-lence/Hesitancy (BAH) submission was based on trimodal fusion. Therefore, multimodal modeling remains a promis-ing direction for A/H recognition, especially when modal-ity interactions are explicitly taken into account and fusion preserves modality-specific cues uunder uncertainty or par-tially inconsistent multimodal evidence [9, 35]. This work proposes a multimodal approach that inte-grates audio, text, face, and scene information for video-level A/H recognition. First, a dedicated unimodal model is trained for each modality to learn compact modality-specific representations. The resulting modality embed-dings are then projected into a shared latent space and fused by a Transformer-based multimodal module operat-ing on modality tokens and augmented with a prototype-based classification objective. In this way, inter-modality dependencies are modeled directly at the video level, while the strengths of the specialized unimodal encoders are pre-served for the final A/H prediction. 
+
+2. Related Work 
+
+Gonz´ alez-Gonz´ alez et al. [12] presented a broad bench-mark suite including supervised unimodal, bimodal, and trimodal models based on facial video, audio, and speech transcripts, as well as zero-shot and personalization exper-iments. To study multimodal learning, they compared sev-eral fusion strategies, including concatenation-based fusion, co-attention, transformer-based fusion, and cross-attention fusion. Their results showed that text is the strongest uni-modal cue, while effective A/H recognition requires spe-cialized multimodal and temporal modeling to capture sub-tle inconsistencies across modalities. Among the approaches proposed for the first public A/H challenge, Hallmen et al. [14] used a trimodal architecture combining text, vision, and audio. Their framework extracts visual features with a Vision Transformer (ViT) [4], audio representations with Wav2Vec 2.0 [2], and transcript em-beddings with the Bidirectional Encoder Representations from Transformers (BERT) [7] text encoder, applies tem-poral modeling to the visual and audio streams with Long Short-Term Memorys (LSTMs) [16], and fuses the resulting modality-specific representations with an Multilayer Per-ceptron (MLP) [26]. Their analysis showed that text is the most informative modality. The best final BAH submis-sion was obtained using trimodal fusion, which is consistent with recent studies [9, 20] indicating that preserving com-plementary modality-specific information during fusion im-proves multimodal prediction. In contrast, Savchenko and Savchenko [29] used a lighter pipeline based on facial, acoustic, and textual features extracted with EmotiEffLib [30], Wav2Vec 2.0 [2], and RoBERTa-based [21] text representations. Audio and text features were aligned to the visual timeline by interpola-tion, and fusion was implemented either through early con-catenation followed by a feed-forward classifier or through blending of unimodal predictions. In addition, a video-level logistic regression model over pooled text features was used as a filtering step. Their experiments again showed that text is the strongest unimodal modality, while the best validation result was achieved by combining text and facial informa-tion. In summary, prior work shows that text is the strongest unimodal cue for A/H, while multimodal fusion remains beneficial, especially when it preserves complementary in-formation across modalities and accounts for uncertainty in multimodal evidence. Unlike previous approaches, which mainly rely on face, audio, and text with relatively sim-ple fusion schemes, our approach additionally incorpo-rates scene information and uses a Transformer-based fu-sion module over modality-specific representations learned by dedicated unimodal models, further regularized by a prototype-based classification objective. 
+
+3. Proposed Approach 
+
+The overall pipeline of the proposed approach is shown in Figure 1. Our approach addresses multimodal A/H recogni-tion by extracting complementary information from several synchronized modalities. The obtained representations are then aggregated and fused to produce the final prediction. The following subsections describe the main components of the proposed approach. 
+
+3.1. Scene-based Visual Model 
+
+To analyze behavioral dynamics and detect uncertainty, we employ the Video Masked Autoencoder (VideoMAE) archi-tecture [32] based on the ViT [8] framework and pre-trained on the Kinetics-400 corpus [17]. For each video, Tv = 16 
+
+frames are uniformly sampled, resized to 224 × 224 , and normalized using ImageNet [6] statistics. The input video clip is processed using tubelet embedding, where it is parti-2Well, I used to not be a breakfast        
+
+> person, but lately I really enjoy getting
+> up and getting my food. So I'm a big
+> fan of asimple breakfast. Ilike to
+> have cereal or toast. Sometimes I like
+> to have things that require more effort
+> to make. But generally speaking, I'm a
+> huge fan of toast, specifically peanut
+> butter. and I think that breakfast adds
+> a lot of importance to my day and it
+> gives me a lot of energy as well.
+> Video Audio Text
+> ...
+
+Input Data 
+
+Facial Features 
+
+N frames 
+
+Emotional 
+
+Features 
+
+Statistical 
+
+Pooling  MLP 
+
+Face-based Visual Model 
+
+Facial Feature 
+
+Extractor 
+
+Scene Features 
+
+... 
+
+N frames 
+
+Scene 
+
+Features 
+
+Statistical 
+
+Pooling  Linear Layer 
+
+Scene-based Visual Model 
+
+Scene Feature 
+
+Extractor 
+
+Audio Features 
+
+Acoustic Model 
+
+Linear Layer 
+
+Mean 
+
+Pooling 
+
+Mamba 
+
+Encoder Emotional 
+
+Features 
+
+Acoustic Emotion 
+
+Extractor 
+
+Text Features 
+
+Linguistic Model 
+
+MLP 
+
+Emotional 
+
+Features 
+
+Text Feature 
+
+Extractor 
+
+Multimodal Fusion Model 
+
+The Probability of the Class 
+
+Absence of A/H 
+
+Presence of A/H 
+
+Scene Feature Extractor 
+
+VideoMAE 
+
+Facial Feature Extractor 
+
+EmotionEfficientNetB0 
+
+Acoustic Emotion Extractor 
+
+EmotionWav2Vec2.0 
+
+Text Feature Extractor 
+
+EmotionDistilRoBERTa Figure 1. Pipeline of the proposed multimodal approach. 
+
+tioned into non-overlapping spatio-temporal patches of size 
+
+2 × 16 × 16 . These tubelets are projected into a D = 768 
+
+latent space and combined with learnable positional embed-dings. The resulting tokens are processed by a Transformer en-coder with spatio-temporal self-attention to model spatio-temporal dependencies. A compact scene embedding hs is obtained by applying global average pooling to the output tokens: 
+
+hs = 1
+
+N
+
+NX
+
+i=1 
+
+zi, (1) where N is the number of output tokens and zi denotes the representation of the i-th token. 
+
+3.2. Face-based Visual Model 
+
+For each video, frames are uniformly sampled, and a YOLO-based face detector 2 is applied to each sampled frame. When multiple faces are detected, the largest bound-ing box is selected. If no face is detected, the full frame is used as a fallback crop. The cropped face is resized to 224 × 224 and normal-ized with ImageNet [6] statistics, then passed to an Effi-cientNetB0 [31] extractor fine-tuned on the AffectNet+ cor-pus [10], hereafter referred to as EmotionEfficientNetB0. The extractor produces one emotional embedding vector per 
+
+2https://github.com/lindevs/yolov8-face Visual  Statistical Features 
+
+> Linear layer
+> (u = HS)
+> Layer Normalization
+> (u = HS)
+> ReLU
+> Dropout (p)
+> Layer Normalization
+> (u = OF)
+> ReLU
+> Dropout  (p)
+> Linear layer
+> (u = OF)
+> Linear layer
+> (u = 2)
+> Predictions
+> u: The Number of Neurons
+> HS: The Number of Hidden States
+> OF: The Number of Outputs Features
+> p: Probability of Dropout
+
+Figure 2. Visual MLP architecture. 
+
+sampled frame. No extra embedding normalization is ap-plied. For each video, frame-level embeddings {ef }Ff =1 are ag-gregated using statistical pooling: 
+
+μ = 1
+
+F
+
+FX
+
+f =1 
+
+ef , σ =
+
+vuut 1
+
+F
+
+FX
+
+f =1 
+
+(ef − μ)2. (2) The final face representation is formed by the concate-nation [μ; σ]. The resulting statistical representation is then used as input to an MLP, as shown in Figure 2. 
+
+3.3. Acoustic Model 
+
+For the audio modality, the audio track is extracted from each video and resampled to 16 kHz. A pre-trained 3Wav2Vec2.0 model [34] 3, fine-tuned on the MSP-Podcast corpus [22], is used to extract acoustic emotion features. For simplicity, this encoder is referred to as Emotion-Wav2Vec2.0. As a result, each audio segment is represented as a se-quence of embeddings of size Ta × 1024 , where Ta denotes the number of temporal steps and 1024 is the feature dimen-sion. The value of Ta depends on the duration of the input video. The extracted acoustic representations are then pro-cessed by a sequential encoder to model temporal depen-dencies in the speech signal. In the main configuration, the extracted acoustic representations are processed by a Mamba encoder [13], followed by mean pooling over the temporal dimension to obtain a compact acoustic embed-ding: 
+
+a = 1
+
+TaTaX
+
+> t=1
+
+st, (3) where st denotes the representation at the t-th temporal step and a is the pooled acoustic embedding. The resulting em-bedding is then passed through a linear layer to produce the final prediction. In addition to the Mamba-based [13] vari-ant, a Transformer-based [33] encoder was also evaluated as an alternative sequential architecture. 
+
+3.4. Linguistic Model 
+
+For the linguistic modality, all audio recordings are tran-scribed into text. These transcriptions were automatically extracted by the corpus authors [12]. Several text-based modeling strategies are considered. A classical Term Frequency-Inverse Document Frequency (TF-IDF) [28] representation is first used to encode the rel-ative importance of words and phrases in each transcription. The resulting features are combined with conventional clas-sifiers, including logistic regression and Gradient Boosting Machines (GBM) models such as LightGBM [18] and Cat-Boost [24]. Pre-trained transformer-based language models are also used to obtain contextualized text representations. Emo-tionDistilRoBERTa 4, allMiniLM 5, EmotionTextClassifier 6,and DeBERTa [15] are used to encode the transcriptions into dense embeddings. Both the [CLS] token representa-tion and mean pooling over token embeddings are explored, followed by a GBM-based classifier. 
+
+> 3https : / / huggingface . co / audeering / wav2vec2 -large-robust-12-ft-emotion-msp-dim
+> 4https : / / huggingface . co / j - hartmann / emotion -english-distilroberta-base/
+> 5https://huggingface.co/sentence- transformers/ all-MiniLM-L6-v2
+> 6https : / / huggingface . co / michelleli99 / emotion _ text_classifier
+
+In the main configuration, EmotionDistilRoBERTa is di-rectly fine-tuned for A/H recognition. Its output representa-tion is passed through an MLP-based classification head to produce the final prediction. Other fine-tuned transformer variants, including EmotionTextClassifier, are also evalu-ated. 
+
+3.5. Modality Fusion Model 
+
+A two-stage strategy is adopted. First, unimodal models for scene, face, audio, and text are trained independently on the target corpus. Then, for each video, one fixed-dimensional embedding per modality is extracted from the correspond-ing unimodal branch and used as input to the fusion model. Let M be the number of modalities, m ∈ { 1, . . . , M }
+
+the modality index, and xm ∈ Rdm the input embedding of modality m, where dm denotes its original dimensionality. Each modality is projected into a shared latent space Rd:
+
+um = ϕm(xm), um ∈ Rd, (4) where ϕm is a modality-specific projector composed of a linear layer, layer normalization, Gaussian Error Linear Unit (GELU), and dropout. The resulting modality tokens are stacked into a matrix: 
+
+U = [ u1; . . . ; uM ] ∈ RM ×d. (5) If one or more modality embeddings are unavailable for a given sample, a binary modality mask is provided to the fusion encoder so that the corresponding tokens are masked out during self-attention. A learnable modality embedding matrix Emod ∈ RM ×d is added to the token sequence: 
+
+Z(0) = U + Emod , (6) where Z(0) is the input token sequence to the Transformer encoder. The token sequence is processed by a stack of Trans-former encoder layers: 
+
+Z(l+1) = T (l)(Z(l)), l = 0 , . . . , L − 1, (7) where T (l)(·) denotes the l-th Transformer encoder block and L is the number of layers. The final fused representa-tion is obtained by masked mean pooling over the output modality tokens: 
+
+zfused =
+
+PMm=1 μmz(L)
+
+> m
+
+PMm=1 μm
+
+, (8) where z(L) 
+
+> m
+
+denotes the output representation of modality m
+
+at the last encoder layer and μm ∈ { 0, 1} indicates whether modality m is available for the given sample. For the prototype-augmented variant, the fused represen-tation is compared with a set of learnable class-specific pro-totypes. Let Pc = {pc,k }Kk=1 be the prototype set for class 4c, where K is the number of prototypes per class. The sim-ilarity score for class c is computed as: 
+
+ˆyproto  
+
+> c
+
+= log 
+
+> K
+
+X
+
+> k=1
+
+exp 
+
+ ˜z⊤ 
+
+> fused
+
+˜pc,k 
+
+τ
+
+
+
+, (9) where ˜zfused and ˜pc,k denote the ℓ2-normalized fused repre-sentation and class prototypes, respectively, and τ is a tem-perature parameter. In the implemented model, the proto-type head does not directly produce the final multimodal prediction; instead, it contributes an auxiliary loss term dur-ing training, while the final output logits are produced by the main linear classifier. Accordingly, the overall training objective is defined as: 
+
+L = Lcls + λproto Lproto + λdiv Ldiv , (10) where Lcls is the main classification loss computed from the output logits of the linear classifier, Lproto is the auxiliary classification loss computed from the prototype-based log-its, and Ldiv is the prototype diversity regularization term. 
+
+4. Experiments 
+
+4.1. Research Corpus 
+
+The BAH corpus is the core research corpus for the 10th ABAW A/H challenge. It was collected to support multi-modal recognition of ambivalence and hesitancy in videos recorded in a realistic digital behavior change scenario [12]. Participants answered a predefined set of questions de-signed to elicit neutral, positive, negative, willing, resistant, ambivalent, and hesitant responses. The data were collected through an online platform with an avatar-guided interac-tion setup in order to mimic real-world personalized behav-ioral interventions [12]. The full corpus contains 1,427 videos from 300 par-ticipants, totaling 10 .60 hours of recordings. It includes video-level and frame-level expert annotations, timestamps of A/H segments, cropped and aligned faces, speech tran-scripts with timestamps, and participant metadata [12]. Since ambivalence and hesitancy are difficult to separate re-liably in practice, the task is formulated as a binary clas-sification problem indicating the presence or absence of A/H [12]. For the 10th ABAW A/H challenge, the corpus is partitioned participant-wise into training, validation, public test, and private test subsets. Video-level prediction is eval-uated using Macro F1-score (MF1) as the main metric. 
+
+4.2. Experimental Setup 
+
+During the development of the unimodal models, several alternative configurations were evaluated. Scene model-ing was performed using 16 -frame sequences resized to 
+
+224 × 224 , trained for 15 epochs with AdamW, a Learn-ing Rate (LR) of 2e-5, weight decay of 1e-2, batch size 4,cosine annealing, and Label Smoothing (LS) of 0.1. For the face-based visual modality, both statistical features with an MLP and raw embeddings extracted by ViT [8] and Con-trastive Language-Image Pretraining (CLIP) [25] in com-bination with Transformer [33] and Mamba [13] encoders were considered. The best configuration was based on sta-tistical features with an MLP. A grid search over the number of frames, hidden states, output features, LR, and optimizer selected a setup with 30 frames, 16 hidden states, 256 out-put features, a LR of 1e-3, and AdamW. For the acoustic modality, embeddings from differ-ent EmotionWav2Vec2.0 layers and different temporal en-coders, including Mamba and Transformer, were evaluated. The best result was obtained with layer 10 and Mamba. In all primary runs, AdamW was used. The selected acous-tic setup employed hidden size 256 , feed-forward size 512 ,dropout 0.1, mean pooling, Mamba state size 8, convolu-tion kernel size 4, and expansion factor 2. In the linguistic modality, TF-IDF features were evaluated with vocabulary sizes from 100 to 10 ,000 and n-grams from unigrams to tri-grams, with hyperparameter tuning for Logistic Regression and GBM models. Transformer-based text models were also fine-tuned using partially frozen backbones and jointly trained MLP heads. The number of hidden layers varied from 1 to 3, the hidden size from 64 to 128 , and dropout from 0 to 0.3. AdamW and Stochastic Gradient Descent (SGD) were explored, the LR was searched in the range from 1e-5 to 0.1, the batch size was set to 16 , and training lasted from 3 to 20 epochs with early stopping. Multimodal fusion was performed using embeddings extracted from the selected scene, face, audio, and text models. Both non-prototype and prototype-augmented variants were evaluated, and the final system was based on the prototype-augmented fusion model operating on embedding-level inputs. To reduce sensitivity to random initialization, model selection relied on a stability-oriented hyperparameter search with Optuna [1] using five fixed ran-dom seeds: 42 , 2025 , 7777 , 12345 , and 31415 . Each candi-date configuration was trained and evaluated five times, and the final score was computed as the average MF1 across these runs. The selected fusion model used a shared la-tent dimensionality of 128 , 6 Transformer encoder layers, 
+
+4 attention heads, a feed-forward expansion factor of 6, no 
+
+[CLS] token, and dropout of 0.45 . The prototype head used 16 learnable prototypes per class with temperature 
+
+τ = 0 .3. Training was performed with RMSprop, a LR of 
+
+9.44 e-5, weight decay of 5.55 e-4, LS of 0.02 , gradient clip-ping of 0.5, and a cosine learning-rate scheduler. The proto-type loss weight was set to λproto = 0 .2, while the diversity regularization term was disabled, i.e., λdiv = 0 . Final pre-dictions were obtained by averaging the class probabilities of the 5 seed-specific models. 5ID Model Configuration BAH sub-corpus Modality Features Classifier Devel. / Valid. (MF1, %) Test (MF1, %) Average (MF1, %) Final test (MF1, %) 1 Face EmotionEfficientNetB0 + Statistical Features MLP 65.29 60.05 62.67 –2 Scene VideoMAE Linear Layer 61.71 62.21 61.96 –3 Audio EmotionWav2Vec2.0 + Mamba Linear Layer 67.20 70.87 69.03 –4 Text TF-IDF Logistic Regression 68.30 67.75 68.03 –5 Text TF-IDF CatBoost 65.56 72.02 68.79 –6 Text Fine-tuned EmotionTextClassifier MLP 69.28 70.72 70.00 –7 Text Fine-tuned EmotionDistilRoBERTa MLP 68.54 71.49 70.02 –8 Models IDs 1, 2, 3 and 4 Multimodal Fusion Model Linear Layer 80.79 77.03 78.91 –9 Models IDs 1, 2, 3 and 5 Multimodal Fusion Model Linear Layer 77.91 78.54 78.22 –10 Models IDs 1, 2, 3 and 6 Multimodal Fusion Model Linear Layer 78.35 77.03 77.69 –11 Models IDs 1, 2, 3 and 7 Multimodal Fusion Model Linear Layer 85.38 79.94 82.66 68.32 12 Models IDs 1, 2, 3 and 7 Multimodal Fusion Model with Prototype Head Linear Layer 83.79 82.72 83.25 65.21 13 Models IDs 1, 2, 3 and 7 Ensemble of Five Multimodal Fusion Models Linear Layer 81.94 80.64 81.29 70.17 14 Models IDs 1, 2, 3 and 7 Ensemble of Five Multimodal Fusion Models with Prototype Head Linear Layer 83.00 80.77 81.89 71.43 Ablation Study 15 Models IDs 1 and 3 Multimodal Fusion Model Linear Layer 63.36 71.44 67.40 –16 Models IDs 1 and 7 Multimodal Fusion Model Linear Layer 65.29 61.19 63.24 –17 Models IDs 1 and 2 Multimodal Fusion Model Linear Layer 78.07 77.09 77.58 –18 Models IDs 3 and 7 Multimodal Fusion Model Linear Layer 67.05 70.99 69.02 –19 Models IDs 2 and 3 Multimodal Fusion Model Linear Layer 77.37 77.66 77.51 –20 Models IDs 2 and 7 Multimodal Fusion Model Linear Layer 81.77 79.00 80.39 –21 Models IDs 2, 3 and 7 Multimodal Fusion Model Linear Layer 79.89 77.63 78.76 –22 Models IDs 1, 2 and 7 Multimodal Fusion Model Linear Layer 79.89 77.65 78.77 –23 Models IDs 1, 2 and 3 Multimodal Fusion Model Linear Layer 76.10 79.15 77.62 –24 Models IDs 1, 3 and 7 Multimodal Fusion Model Linear Layer 68.08 70.41 69.25 –
+
+Table 1. Experimental results on the BAH corpus for video-level A/H recognition. 
+
+4.3. Experimental Results 
+
+The experimental results are presented in Table 1. Among the unimodal models, the best average MF1 was obtained by the fine-tuned EmotionDistilRoBERTa model (70.02%), followed closely by the fine-tuned EmotionTextClassi-fier (70.00%) and the acoustic model based on Emotion-Wav2Vec2.0 and Mamba (69.03%). The TF-IDF-based text models also showed competitive results, reaching 68.03% with Logistic Regression and 68.79% with CatBoost. In contrast, the face- and scene-based models achieved lower average scores of 62.67% and 61.96%, respectively. All multimodal fusion models outperformed the uni-modal baselines. Among the single fusion models, the best average result was achieved by the prototype-augmented fu-sion model based on the selected scene, face, audio, and text modalities (ID 12), with 83.25%, while the corresponding fusion model without the prototype head (ID 11) reached 82.66%. These results indicate that both multimodal inte-gration and prototype-based classification are beneficial un-der the development and public test settings. The final test results show a different trend. Among the submitted four-modality systems, the best performance was obtained by the ensemble of five prototype-augmented fu-sion models (ID 14), which achieved 71.43%. The ensem-ble of five fusion models without the prototype head (ID 13) reached 70.17%, while the single fusion models achieved 68.32% (ID 11) and 65.21% (ID 12). Thus, although the prototype-augmented single model achieved the highest av-erage result, ensembling was essential for the strongest fi-nal test performance and improved robustness on the private evaluation split. The ablation study further confirms the benefit of com-bining modalities. The strongest two-modality result was obtained by combining scene and text features (ID 20), with an average MF1 of 80.39%. Among the three-modality settings, the best performance was achieved by combining face, scene, and text features (ID 22), with 78.77%. Overall, the best results were obtained with four-modality fusion. 
+
+5. Conclusions 
+
+This paper presented a multimodal approach for video-level A/H recognition on the BAH corpus. The proposed ap-proach combined scene, face, audio, and text modalities and consistently outperformed unimodal baselines. Among the unimodal models, the best average MF1 of 70.02% was achieved by the fine-tuned EmotionDistilRoBERTa model, confirming the strong contribution of the linguistic modal-ity. At the multimodal level, the best average result of 83.25% was obtained by the prototype-augmented fusion model, while the best final test performance of 71.43% was achieved by the ensemble of five prototype-augmented fu-sion models. The ablation study showed that scene and text provide the strongest complementary signal among modality pairs, and that extending the fusion scheme to all four modali-ties yields the most effective overall solution. The com-parison between single fusion models and their ensembles further indicates that robust model aggregation is important for generalization on the private test split. Overall, these re-sults demonstrate that prototype-augmented multimodal fu-sion is an effective and robust strategy for A/H recognition in unconstrained videos. 6References 
+
+[1] Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama. Optuna: A next-generation hy-perparameter optimization framework. In KDD , pages 2623– 2631, 2019. 5 [2] Alexei Baevski, Yuhao Zhou, Abdelrahman Mohamed, and Michael Auli. Wav2vec 2.0: A framework for self-supervised learning of speech representations. In NeurIPS ,pages 12449–12460, 2020. 2 [3] Laura E Bijkerk, Mark Spigt, Anke Oenema, and Nicole Geschwind. Engagement with mental health and health be-havior change interventions: an integrative review of key concepts. J. Context. Behav. Sci. , 32:1–14, 2024. 2 [4] Mathilde Caron, Hugo Touvron, Ishan Misra, Herv´ e J´ egou, Julien Mairal, Piotr Bojanowski, and Armand Joulin. Emerg-ing properties in self-supervised vision transformers. In 
+
+ICCV , pages 9650–9660, 2021. 2 [5] Jiawen Deng and Fuji Ren. A survey of textual emotion recognition and its challenges. IEEE Trans. Affect. Comput. ,14(1):49–67, 2021. 1 [6] Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. Imagenet: A large-scale hierarchical image database. In CVPR , pages 248–255, 2009. 2, 3 [7] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional trans-formers for language understanding. In NAACL , pages 4171– 4186, 2019. 2 [8] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Syl-vain Gelly, et al. An image is worth 16x16 words: Trans-formers for image recognition at scale. In ICLR , pages 1–22, 2021. 2, 5 [9] Yiyang Fang, Wenke Huang, Guancheng Wan, Kehua Su, and Mang Ye. Emoe: Modality-specific enhanced dynamic emotion experts. In CVPR , pages 14314–14324, 2025. 2 [10] Ali Pourramezan Fard, Mohammad Mehdi Hosseini, Tim-othy D Sweeny, and Mohammad H Mahoor. Affectnet+: A database for enhancing facial expression recognition with soft-labels. IEEE Trans. Affect. Comput. , 17:784–800, 2026. 3[11] Swapna Mol George and P Muhamed Ilyas. A review on speech emotion recognition: A survey, recent advances, challenges, and the influence of noise. Neurocomputing , 568: 1–23, 2024. 1 [12] Manuela Gonz´ alez-Gonz´ alez, Soufiane Belharbi, Muham-mad Osama Zeeshan, Masoumeh Sharafi, Muham-mad Haseeb Aslam, Marco Pedersoli, Alessandro Lameiras Koerich, Simon L Bacon, and Eric Granger. Bah dataset for ambivalence/hesitancy recognition in videos for digital behavioural change. In ICLR , pages 1–17, 2026. 1, 2, 4, 5 [13] Albert Gu and Tri Dao. Mamba: Linear-time sequence mod-eling with selective state spaces. In CoLM , pages 1–16, 2024. 4, 5 [14] Tobias Hallmen, Robin-Nico Kampa, Fabian Deuser, Nor-bert Oswald, and Elisabeth Andr´ e. Semantic matters: Mul-timodal features for affective analysis. In CVPRW , pages 5761–5770, 2025. 2 [15] Pengcheng He, Xiaodong Liu, Jianfeng Gao, and Weizhu Chen. Deberta: Decoding-enhanced bert with disentangled attention. In ICLR , pages 1–21, 2021. 4 [16] Sepp Hochreiter and J¨ urgen Schmidhuber. Long short-term memory. Neural Comput. , 9(8):1735–1780, 1997. 2 [17] Will Kay, Joao Carreira, Karen Simonyan, Brian Zhang, Chloe Hillier, Sudheendra Vijayanarasimhan, Fabio Viola, Tim Green, Trevor Back, Paul Natsev, Mustafa Suleyman, and Andrew Zisserman. The kinetics human action video dataset. arXiv preprint arXiv:1705.06950 , pages 1–22, 2017. 2[18] Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, and Tie-Yan Liu. Light-gbm: A highly efficient gradient boosting decision tree. In 
+
+NeurIPS , pages 1–9, 2017. 4 [19] Sze Chit Leong, Yuk Ming Tang, Chung Hin Lai, and Car-man Ka Man Lee. Facial expression and body gesture emo-tion recognition: A systematic review on the use of visual data in affective computing. Comput. Sci. Rev. , 48:1–13, 2023. 1 [20] Chenxin Li, Yifan Liu, Panwang Pan, Hengyu Liu, Xinyu Liu, Wuyang Li, Cheng Wang, Weihao Yu, Yiyang Lin, and Yixuan Yuan. Infobridge: Balanced multimodal integration through conditional dependency modeling. In ICCV , pages 393–404, 2025. 2 [21] Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettle-moyer, and Veselin Stoyanov. Roberta: A robustly optimized bert pretraining approach. arXiv preprint arXiv:1907.11692 ,2019. 2 [22] Reza Lotfian and Carlos Busso. Building naturalistic emo-tionally balanced speech corpus by retrieving emotional speech from existing podcast recordings. IEEE Trans. Af-fect. Comput. , 10(4):471–483, 2017. 4 [23] Soujanya Poria, Erik Cambria, Rajiv Bajpai, and Amir Hus-sain. A review of affective computing: From unimodal anal-ysis to multimodal fusion. Inf. Fusion , 37:98–125, 2017. 1, 2[24] Liudmila Prokhorenkova, Gleb Gusev, Aleksandr Vorobev, Anna Veronika Dorogush, and Andrey Gulin. Catboost: un-biased boosting with categorical features. In NeurIPS , pages 1–11, 2018. 4 [25] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever. Learning transferable visual models from natural language supervision. In ICML , pages 8748–8763, 2021. 5 [26] David E Rumelhart, Geoffrey E Hinton, and Ronald J Williams. Learning representations by back-propagating er-rors. Nature , 323(6088):533–536, 1986. 2 [27] Muhammad Sajjad, Fath U Min Ullah, Mohib Ullah, Geor-gia Christodoulou, Faouzi Alaya Cheikh, Mohammad Hi-jji, Khan Muhammad, and Joel JPC Rodrigues. A compre-hensive survey on deep facial expression recognition: chal-
+
+7lenges, applications, and future guidelines. Alex. Eng. J. , 68: 817–840, 2023. 1 [28] G. Salton, A. Wong, and C. S. Yang. A vector space model for automatic indexing. Commun. ACM , 18(11):613–620, 1975. 4 [29] Andrey Savchenko and Lyudmila Savchenko. Leveraging lightweight facial models and textual modality in audio-visual emotional understanding in-the-wild. In CVPRW ,pages 5824–5834, 2025. 2 [30] Andrey V Savchenko and Anna P Sidorova. Emotieffnet and temporal convolutional networks in video-based facial ex-pression recognition and action unit detection. In CVPRW ,pages 4849–4859, 2024. 2 [31] Mingxing Tan and Quoc Le. Efficientnet: Rethinking model scaling for convolutional neural networks. In ICML , pages 6105–6114, 2019. 3 [32] Zhan Tong, Yibing Song, Jue Wang, and Limin Wang. Videomae: Masked autoencoders are data-efficient learners for self-supervised video pre-training. In NeurIPS , pages 1– 15, 2022. 2 [33] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszko-reit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. In NeurIPS , pages 1–11, 2017. 4, 5 [34] Johannes Wagner, Andreas Triantafyllopoulos, Hagen Wier-storf, Maximilian Schmitt, Felix Burkhardt, Florian Eyben, and Bj¨ orn W. Schuller. Dawn of the transformer era in speech emotion recognition: Closing the valence gap. IEEE Trans. Pattern Anal. Mach. Intell. , pages 10745–10759, 2023. 4 [35] Qu Yang, Qinghongya Shi, Tongxin Wang, and Mang Ye. Uncertain multimodal intention and emotion understanding in the wild. In CVPR , pages 24700–24709, 2025. 2 
+
+8

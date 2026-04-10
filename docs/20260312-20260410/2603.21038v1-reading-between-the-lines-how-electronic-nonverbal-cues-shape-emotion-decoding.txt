@@ -1,0 +1,3828 @@
+Title: 2603.21038v1.pdf
+
+URL Source: https://arxiv.org/pdf/2603.21038v1
+
+Published Time: Tue, 24 Mar 2026 01:03:40 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+Reading Between the Lines: How Electronic Nonverbal Cues shape 
+
+# Emotion Decoding 
+
+## Taara Kumar 1
+
+## Kokil Jaidka 1,2 
+
+> 1
+
+Department of Communications and New Media, 
+
+> 2
+
+Centre for Trusted Internet and Community, 
+
+National University of Singapore, Singapore 
+
+Abstract 
+
+As text -based computer -mediated communication 
+
+(CMC) increasingly structures everyday interaction, a 
+
+central question re -emerges with new urgency: How do 
+
+users reconstruct nonverbal expression in environments 
+
+where embodied cues are absent? This paper provides a
+
+systematic, theory -driven account of electronic nonver -
+
+bal cues (eNVCs) —textual analogues of kinesics, vocal -
+
+ics, and paralinguistics —in public microblog commu -
+
+nication. Across three complementary studies, we ad -
+
+vance conceptual, empirical, and methodological con -
+
+tributions. Study 1 develops a unified taxonomy of eN -
+
+VCs grounded in foundational nonverbal communica -
+
+tion theory and introduces a scalable Python toolkit for 
+
+their automated detection. Study 2, a within -subject 
+
+survey experiment, offers controlled causal evidence 
+
+that eNVCs substantially improve emotional decod -
+
+ing accuracy and lower perceived ambiguity, while also 
+
+identifying boundary conditions, such as sarcasm, un -
+
+der which these benefits weaken or disappear. Study 
+
+3, through focus group discussions, reveals the inter -
+
+pretive strategies users employ when reasoning about 
+
+digital prosody, including drawing meaning from the 
+
+absence of expected cues and defaulting toward nega -
+
+tive interpretations in ambiguous contexts. Together, 
+
+these studies establish eNVCs as a coherent and mea -
+
+surable class of digital behaviors, refine theoretical ac -
+
+counts of cue richness and interpretive effort, and pro -
+
+vide practical tools for affective computing, user mod -
+
+eling, and emotion -aware interface design. The eNVC 
+
+detection toolkit is available as a Python and R pack -
+
+age at  https://github.com/kokiljaidka/envc. 
+
+## Introduction 
+
+As reliance on computer -mediated communication 
+
+(CMC) grows —through text messaging, emails, and so -
+
+cial media, the question of how people understand one 
+
+another without access to embodied cues has renewed 
+
+significance. Facial expressions, gestures, and vocal tone 
+
+convey affective nuance in face -to -face settings (Bur -
+
+goon, Manusov, and Guerrero 2022). In their absence, 
+
+readers reconstruct emotional meaning from whatever 
+
+surface features remain, often in length -constrained mi -
+
+Accepted to AAAI ICWSM 2026 
+
+croblog posts, on platforms such as X (formerly Twit -
+
+ter). These reconstructions draw not only on added cues 
+
+but also on the absence of expected cues. For instance, 
+
+flat punctuation, minimal emphasis, or stylistic unifor -
+
+mity may themselves be interpreted affectively. From 
+
+the outset, digital emotion understanding involves a 
+
+tension between what is present and what is missing, 
+
+and subjective clarity does not always align with au -
+
+thor intent. 
+
+A primary resource enabling reconstruction is dig -
+
+ital prosody: orthographic and stylistic devices that 
+
+approximate vocal tone in written form. Elongation, 
+
+expressive punctuation, repeated letters, spacing con -
+
+ventions, and laughter or vocalization markers allow 
+
+writers to gesture toward intensity, stance, or rhythm. 
+
+Prior work demonstrates that these cues meaningfully 
+
+shape affective interpretation (Rodríguez -Hidalgo, Tan, 
+
+and Verlegh 2017; Hancock 2004; Walther and Tidwell 
+
+1995). Yet in practice, their effects are far from uni -
+
+form. This inconsistency foregrounds a deeper theoret -
+
+ical puzzle that has remained largely unaddressed. In 
+
+speech, prosodic cues reliably enhance affective clarity. 
+
+Online, however, the same surface marker can either 
+
+clarify emotional intent or complicate it. An elongated 
+
+vowel may amplify genuine enthusiasm or mark ironic 
+
+exaggeration; a smiling emoji may convey warmth or 
+
+function as a sarcasm cue; ellipses can soften tone or 
+
+signal irritation. Thus, the functional load carried by 
+
+eNVCs depends heavily on message characteristics and 
+
+genre norms, not simply on the presence of a cue. 
+
+This variability creates a empirical gap, where me -
+
+dia richness perspectives (Daft and Lengel 1986) sug -
+
+gest that adding expressive resources increases clar -
+
+ity, whereas Electronic Propinquity Theory (Korzenny 
+
+1978; Korzenny and Bauer 1981) highlights that addi -
+
+tional signals can increase interpretive effort, especially 
+
+when cues misalign with textual content. Both perspec -
+
+tives, however, imply that the effects of cues are con -
+
+ditional rather than universal. The central theoretical 
+
+problem is therefore not whether eNVCs facilitate or 
+
+block reader interpretation, but rather when and why 
+
+their interpretive value changes. 
+
+Sarcasm exemplifies this boundary condition, as 
+
+many of the same eNVCs used to intensify literal emo -tion are used to mark its inversion (Thompson and 
+
+Filik 2016; Hancock 2004; Danesi 2016). However, de -
+
+spite extensive research on sarcasm in dyadic messag -
+
+ing, no prior controlled study has jointly manipulated 
+
+sarcasm and eNVC presence in naturalistic microblog 
+
+content using a within -subject design. Identifying these 
+
+boundary conditions is essential for refining theories of 
+
+cue richness and for grounding EPT’s claims about in -
+
+terpretive effort in contemporary communication prac -
+
+tices. 
+
+Motivated by these gaps, we examine three research 
+
+questions: 
+
+• RQ1: How do nonverbal cues present them -
+
+selves in microblog posts? 
+
+• RQ2a: Do eNVCs help readers accurately in -
+
+fer author -intended emotions in microblog 
+
+posts? 
+
+• RQ2b: Does sarcasm moderate the effective -
+
+ness of eNVCs in supporting emotional inter -
+
+pretation? 
+
+• RQ3: How do people interpret emotions 
+
+through eNVCs in microblog posts? 
+
+We note at the outset that our taxonomy focuses on 
+
+orthographic and symbolic cues: the kinesics and par -
+
+alinguistics rendered in text. Other modalities prevalent 
+
+on social media, such as GIFs, memes, video, and hash -
+
+tag pragmatics, also carry nonverbal meaning but fall 
+
+outside the scope of text -only analysis. We return to 
+
+this boundary in the Discussion. 
+
+To answer RQ1, we develop a taxonomy aligned with 
+
+foundational nonverbal communication theory, focus -
+
+ing on kinesic equivalents (textualized facial or bod -
+
+ily expressions) and paralinguistic equivalents (prosodic 
+
+approximations of loudness, rhythm, and vocaliza -
+
+tion) (Birdwhistell 1952; Burgoon, Manusov, and Guer -
+
+rero 2021; Hall, Horgan, and Murphy 2019). We apply 
+
+this taxonomy to a large Vent corpus using a transpar -
+
+ent regex -based toolkit. To answer RQ2, we introduce a
+
+within -subject experiment that systematically manipu -
+
+lates eNVC presence and sarcasm. By balancing stim -
+
+uli across a 2×2 design, Study 2 allows us to identify 
+
+when eNVCs facilitate interpretation and when they are 
+
+neutralized by cue –text misalignment. To answer RQ3, 
+
+focus -group discussions reveal the interpretive strate -
+
+gies people use in situ, including how they integrate 
+
+cues with contextual expectations and how the absence 
+
+of expected cues becomes meaningful. 
+
+Across the three studies, we show that eNVCs reli -
+
+ably enhance emotional interpretation for literal posts 
+
+but that their benefits attenuate in sarcastic or contra -
+
+dictory contexts. The results reveal a dissociation un -
+
+der sarcasm, where uncertainty rises and accuracy falls 
+
+regardless of cue presence —showing that eNVCs can -
+
+not restore either subjective clarity or correct inference 
+
+when affect is ironic. This project thereby combines 
+
+computational, experimental, and qualitative methods 
+
+to delineate the key boundary conditions under which 
+
+digital nonverbal cues facilitate or complicate affective 
+
+understanding in contemporary text -based communica -
+
+tion. 
+
+## Background 
+
+Nonverbal Communication 
+
+Nonverbal communication refers to “the transfer and 
+
+exchange of messages in any and all modalities that 
+
+do not involve words” (Matsumoto, Frank, and Hwang 
+
+2013, p. 4). Classic taxonomies distinguish appearance, 
+
+environment, and dynamic expressive channels such as 
+
+facial movement, gesture, posture, and vocal tone (Ek -
+
+man and Friesen 1969; Hall and Knapp 2013; Burgoon, 
+
+Manusov, and Guerrero 2021). Core systems include ki -
+
+nesics, oculesics, haptics, proxemics, chronemics, and 
+
+paralinguistics (Argyle 1975; Birdwhistell 1952; Hall, 
+
+Horgan, and Murphy 2019). 
+
+Foundational estimates of verbal –nonverbal influ -
+
+ence (Mehrabian and Wiener 1967; Mehrabian and Fer -
+
+ris 1967) were limited to specific lab tasks and have 
+
+since been reinterpreted (Burgoon, Manusov, and Guer -
+
+rero 2021; Knapp, Hall, and Horgan 1972). Subsequent 
+
+work demonstrates that prosody conveys emotional 
+
+and pragmatic meaning independent of lexical con -
+
+tent. Studies of prominence, pitch movement, rhythm, 
+
+and temporal structure show how speakers use gradi -
+
+ent loudness (Kochanski et al. 2005; Cole 2015), pitch 
+
+accent (Watson, Tanenhaus, and Gunlogson 2008), and 
+
+intonational contour (Bolinger and Bolinger 1986; Ladd 
+
+2008) to signal stance and affect. Prosodic modula -
+
+tion is therefore a central carrier of emotional mean -
+
+ing (Scherer 2003; Ogden 2017). 
+
+In text -only settings these acoustic resources are ab -
+
+sent, and users adopt orthographic strategies —elonga -
+
+tion, expressive punctuation, spacing conventions, vo -
+
+calization markers —as forms of digital prosody (Her -
+
+ring and Androutsopoulos 2015; McCulloch 2019; Crys -
+
+tal 2006). Existing work has primarily focused on affec -
+
+tive cues such as emojis, emoticons, and GIFs (Derks, 
+
+Fischer, and Bos 2008; Jiang, Fiesler, and Brubaker 
+
+2018; Waterloo et al. 2018; Price and Robinson 2021), 
+
+with less attention to specific paralinguistic conven -
+
+tions like elongation, repetition, or vocalization mark -
+
+ers (Provine, Spencer, and Mandell 2007; Krishnan and 
+
+Hunt 2019; Tagliamonte 2016; Baron 2002). These stud -
+
+ies are fragmented across fields and often examine iso -
+
+lated cue types, limiting integration with foundational 
+
+nonverbal theory. 
+
+We address this gap by grounding electronic non -
+
+verbal cues (eNVCs) in canonical nonverbal systems. 
+
+Our taxonomy identifies (1) kinesic equivalents (textual 
+
+gestures, facial or bodily emojis) and (2) paralinguis -
+
+tic equivalents (orthographic loudness, pitch, rhythm, 
+
+vocalizations). This mapping links digital prosody to 
+
+theories of expressive behavior and supports system -
+
+atic, large -scale analysis. Given the absence of a unified 
+
+framework mapping classical NVC categories to digital 
+
+text, we ask: RQ1: How do nonverbal cues present them -
+
+selves in microblog posts? 
+
+Theory of Electronic Propinquity 
+
+Electronic Propinquity Theory (EPT) explains how in -
+
+terpretive effort varies with channel features and mes -
+
+sage complexity (Korzenny 1978; Korzenny and Bauer 
+
+1981). Factors such as bandwidth, cue availability, cue 
+
+alignment, and message complexity shape how difficult 
+
+a message is to interpret. Media Richness Theory (Daft 
+
+and Lengel 1986) offers a similar view, but EPT high -
+
+lights that cues help only when they point in the same 
+
+direction; misaligned cues increase effort. 
+
+In text -based communication, users rely on ex -
+
+pressive orthography —elongation, emojis, punctuation, 
+
+patterned spelling —to approximate prosody (Provine, 
+
+Spencer, and Mandell 2007; Herring and Androut -
+
+sopoulos 2015; McCulloch 2019). These cues can clar -
+
+ify affect (Rodríguez -Hidalgo, Tan, and Verlegh 2017) 
+
+or serve relational functions (Hancock 2004; Walther 
+
+1992). Yet they also frequently signal sarcasm: emoti -
+
+cons used tongue -in -cheek (Thompson and Filik 2016), 
+
+trailing punctuation (Hancock 2004), dramatic rep -
+
+etition, or sequences of positive emojis used ironi -
+
+cally (Danesi 2016). 
+
+This creates a theoretical tension. If the same cues in -
+
+tensify literal affect yet also index sarcastic inversion, do 
+
+they help or hinder interpretation when the text is non -
+
+literal? EPT predicts increased effort when cues con -
+
+tradict text; richness perspectives predict benefits from 
+
+added cues. No prior controlled study has jointly ma -
+
+nipulated sarcasm and eNVC presence. To disentangle 
+
+these effects, we ask: 
+
+RQ2a: Do eNVCs help readers accurately infer 
+
+author -intended emotions in microblog posts? 
+
+RQ2b: Does sarcasm moderate the effective -
+
+ness of eNVCs in supporting emotional inter -
+
+pretation? 
+
+Encoding and Decoding 
+
+Encoding concerns how communicators produce signals; 
+
+decoding concerns how receivers interpret them (Bur -
+
+goon, Manusov, and Guerrero 2021). Hall’s frame -
+
+work (Hall and Knapp 2013; Hall, Horgan, and Mur -
+
+phy 2019) emphasizes that decoding is inference -driven 
+
+and shaped by expectations and norms. In face -to -face 
+
+contexts, encoding involves gestures, facial movement, 
+
+and prosody; online, many of these cues appear through 
+
+symbolic approximations such as capitalization, repeti -
+
+tion, expressive punctuation, stylized spelling, and emo -
+
+jis. 
+
+Digital prosody compresses continuous acoustic vari -
+
+ation into discrete textual proxies (“soooo good,” 
+
+“WHAT??”). This flattening produces ambiguity: ex -
+
+clamation points may signal excitement or hostility; 
+
+elongation may be affectionate, playful, mocking, or sar -
+
+castic; all -caps may indicate enthusiasm or anger. Read -
+
+ers diverge substantially in tonal inferences (McCulloch 
+
+2019; Krishnan and Hunt 2019). 
+
+Ambiguities shape decoding. Without cues, readers 
+
+rely more on platform norms or expectations. When 
+
+cues are incongruent with content, as in irony or mixed -
+
+valence expressions, digital prosody may increase cog -
+
+nitive load rather than reduce uncertainty. These cases 
+
+reflect classic decoding challenges in which eNVCs add 
+
+information but do not resolve affective contradiction. 
+
+Sarcasm therefore represents a boundary condition: 
+
+cue –text alignment is unstable, and added cues may 
+
+not improve accuracy. This is consistent with theories 
+
+emphasizing interpretive effort under contradictory sig -
+
+nals. To capture these interpretive processes directly, 
+
+we ask: 
+
+RQ3: How do people interpret emotions 
+
+through eNVCs in microblog posts? 
+
+Taken together, these questions motivate our mixed -
+
+method design: (1) a nonverbal -theoretically grounded 
+
+taxonomy of eNVCs; (2) an experiment testing whether 
+
+eNVCs improve decoding accuracy and under which 
+
+boundary conditions; and (3) focus groups analyzing 
+
+how users reason through cues in context. 
+
+## Method 
+
+We conducted three studies to investigate the encod -
+
+ing and decoding of electronic nonverbal cues (eNVCs) 
+
+in text -based social media communication. All studies 
+
+were approved by the authors’ university Institutional 
+
+Review Board. User studies were conducted online, with 
+
+participants recruited from Prolific. 
+
+Prolific was chosen as a recruitment platform be -
+
+cause it provides access to a diverse pool of partici -
+
+pants across OECD countries, which aligns with the 
+
+global usage of X (formerly Twitter) and our interest 
+
+in capturing heterogeneous audience perceptions. Pro -
+
+lific’s international reach across OECD countries sup -
+
+ported our goal of sampling heterogeneous audiences. 
+
+We aimed for gender balance and a broad age range. 
+
+Participants provided informed consent and were com -
+
+pensated in line with Prolific’s fair payment standards. 
+
+Basic demographics and platform -usage patterns were 
+
+collected for descriptive reporting; no personally iden -
+
+tifying information was retained. 
+
+Content Analysis (Study 1) 
+
+Study 1 developed an exploratory codebook of elec -
+
+tronic nonverbal cues (eNVCs), drawing on prior com -
+
+munication research and an initial content analysis of 
+
+microblog posts. We used posts from Vent , a social me -
+
+dia platform where users tag each post with an author -
+
+selected emotion label from a fixed set of moods (Lyk -
+
+ousas et al. 2019). This built -in labeling makes Vent 
+
+uniquely suited for validating automated cue detection 
+
+against author -intended affect. The Vent corpus used 
+
+here was previously released by Lykousas et al. (2019) 
+
+and is publicly available. The codebook informed a 
+
+Python regex library for scalable detection (Table 3). 
+
+Dataset curation. We curated a three -day sample 
+
+from Twitter/X Trends (4 –7 December 2022), empha -sizing globally salient topics likely to contain dense 
+
+eNVC usage. From 4,021 tweets, we retained 118 En -
+
+glish posts containing at least one eNVC. Because the 
+
+goal of Study 1 was to develop and refine the taxonomy; 
+
+this purposive sample prioritized cue diversity over vol -
+
+ume. The resulting taxonomy was subsequently vali -
+
+dated at scale using the Vent corpus through the regex 
+
+pipeline described below. 
+
+Annotation. Observed cues were organized using 
+
+classic nonverbal communication schemata into two 
+
+text -suited domains: kinesics (textual depictions of 
+
+bodily displays, emoji/kaomoji, stage directions) and 
+
+paralinguistics (prosodic proxies such as capitalization, 
+
+elongation, and interjections). 
+
+Regex development. To scale coding, we imple -
+
+mented a Python regex pipeline targeting punctua -
+
+tion, elongations, capitalization, emojis, and other tex -
+
+tual markers. Patterns were drafted from corpus exam -
+
+ples, refined through literature consultation and itera -
+
+tive prototyping, with generative assistance used only 
+
+for pattern suggestions. 
+
+Validation. Using Vent posts, we iteratively tested 
+
+regex matches and manually reviewed stratified sam -
+
+ples. False positives (e.g., acronyms flagged as shouting) 
+
+informed successive refinements until acceptable preci -
+
+sion was reached across categories (Table 1). 
+
+Survey Experiment (Study 2) 
+
+Study 2 tested whether eNVCs improve readers’ ability 
+
+to recover author -intended emotions in microblog posts, 
+
+and whether this benefit holds for sarcastic posts. Us -
+
+ing X -style stimuli with ground -truth Vent labels, we 
+
+crossed eNVC presence (present vs. removed) with lit -
+
+erality (literal vs. sarcastic) across five emotions. 
+
+Participants We recruited 513 English -fluent X
+
+users via Prolific, spanning Gen Z to Boomers and bal -
+
+anced by sex. Eligibility required English fluency and 
+
+active platform use. All procedures received IRB ap -
+
+proval. 
+
+Materials Stimuli were drawn from Vent and anno -
+
+tated using the Study 1 regex library. Sarcasm labels 
+
+were generated in two stages. First, Llama 3.3 (70B, 
+
+via Groq API) classified each candidate post as literal 
+
+or sarcastic using a few -shot prompt with five anno -
+
+tated examples per category. Second, two researchers 
+
+independently reviewed all AI -generated labels against 
+
+the original post text and Vent emotion tag, resolving 
+
+disagreements through discussion. This two -stage pro -
+
+cedure ensured that sarcasm classifications reflected hu -
+
+man judgment rather than model artifacts. A balanced 
+
+2 × 2 set (literality × cue presence) was constructed 
+
+across five emotions, with 32 items shown per partici -
+
+pant. 
+
+Measures. Accuracy was coded as whether partici -
+
+pants selected the author -labeled emotion. The “Uncer -
+
+tain” option was analyzed as an indicator of perceived 
+
+ambiguity. 
+
+Procedure Participants completed a randomized 
+
+Qualtrics task displaying each post in X -style format. 
+
+All participants viewed items from each condition. The 
+
+task took about 8 minutes; participants were debriefed 
+
+and compensated. Participants were compensated $1.50 
+
+for their responses. 
+
+Focus Groups (Study 3) 
+
+Study 3 explored how users interpret and discuss eN -
+
+VCs in context. 
+
+Participants Screening via Prolific yielded 159 eli -
+
+gible respondents; 25 participated across six sessions. 
+
+Screening required frequent X use, English fluency, and 
+
+an eNVC recognition check. The final sample was bal -
+
+anced by sex with a mean age of 25. 
+
+Materials Participants completed a brief eNVC 
+
+recognition task and then discussed posts varying in 
+
+cue type and ambiguity. Stimuli were sampled from the 
+
+Study 1 corpus and reformatted for presentation. 
+
+Procedure Six 45 –60 minute text -only Zoom ses -
+
+sions simulated microblog -style interaction. For each 
+
+post, participants described the topic, inferred emo -
+
+tions, and identified cues. The moderator probed for 
+
+disagreements, platform norms, and cultural interpreta -
+
+tions. Sessions were transcribed. Participants were com -
+
+pensated $15.00 for their participation. 
+
+Analysis Transcripts were thematically coded to 
+
+identify how participants used textual cues, negotiated 
+
+ambiguity, and invoked platform norms when inferring 
+
+emotion. 
+
+## Results 
+
+Study 1
+
+A Taxonomy of eNVCs on Social Media 
+
+Building on prior work documenting how users adapt 
+
+capitalization, elongation, punctuation, and emojis to 
+
+signal affect and stance online (Krishnan and Hunt 
+
+2019; McCulloch 2019; Provine, Spencer, and Mandell 
+
+2007; Thompson and Filik 2016), we translated canoni -
+
+cal nonverbal communication (NVC) systems into their 
+
+electronic equivalents. Following (Burgoon, Manusov, 
+
+and Guerrero 2022), we organize electronic nonverbal 
+
+cues (eNVCs) in text -based microblogs into two do -
+
+mains: kinesics and paralinguistics .
+
+• Kinesics : textualized gestures, touch cues, facial 
+
+displays, eye movements, and emotion -conveying 
+
+emoji. 
+
+• Paralinguistics : vocalizations, vowel and conso -
+
+nant elongation (prosodic lengthening), capitaliza -
+
+tion (intensity), expressive punctuation (rhythm and 
+
+emphasis), and mixed -case alternation (pitch modu -
+
+lation). The subcategories below reflect how traditional NVC 
+
+forms manifest electronically. Tables 1 and 2 provide 
+
+formal definitions and examples. 
+
+Kinesics. Kinesics refers to communication through 
+
+bodily movement, including gestures, facial expressions, 
+
+posture, and eye behavior (Birdwhistell 1952; Burgoon, 
+
+Kinesics 
+
+sub -
+
+category 
+
+Body move -
+
+ments 
+
+Elaboration and Example 
+
+Use of emoji or text in parentheses 
+
+to show bodily movement or action. 
+
+Examples: , , *kicks* , .
+
+Manusov, and Guerrero 2021). Classic typologies differ -
+
+entiate emblems , illustrators , regulators , adaptors , and 
+
+affect displays (Ekman and Friesen 1969). In text -based 
+
+CMC, these cues appear in stylized or symbolic form. 
+
+Touch Use of text in parentheses, or touch -
+
+related emojis, to signal physical con -
+
+tact. Examples: , *holds hand* ,
+
+*hugs* , *leans in* .
+
+Because electronic enactment requires intentional selec -
+
+tion or typing, and because categories often overlap in 
+
+practice, we collapse these into five applied eNVC sub -
+
+types: 
+
+• Body movements (illustrators/emblems). Tex -
+
+tual or emoji -based actions such as , *kicks* , .
+
+These operate either independently (emblems) or 
+
+alongside text (illustrators). 
+
+• Touch (haptics). Text -based or emoji -based touch 
+
+such as *hugs* , , . These functions are consis -
+
+tently deliberate and signal intimacy or affiliation. 
+
+Eye move -
+
+ments 
+
+Facial ex -
+
+pressions 
+
+Emotion -
+
+conveying 
+
+emojis 
+
+Emojis, emoticons, or text depicting 
+
+gaze or eye gestures. Examples: ,
+
+;) , *squints* .
+
+Emojis or kaomoji showing affective 
+
+facial states. Examples: , , (.̂ )̂ ,
+
+XD .
+
+Emojis without explicit facial features 
+
+that still convey affect through sym -
+
+bolic or contextual use. Examples: 
+
+, , .
+
+• Eye movements (oculesics). Rendered via winks, 
+
+kaomoji, or text ( *squints* ). We code these within 
+
+kinesics due to their close functional relation to facial 
+
+display. 
+
+• Facial expressions. Emoji and kaomoji represent -
+
+ing facial affect ( , , (.̂ ..̂ )). 
+
+• Emotion -conveying emoji. Non -facial emoji that 
+
+convey affect by context ( , , ) (Kralj Novak 
+
+et al. 2015; Gesselman, Ta, and Garcia 2019). 
+
+Paralinguistics. Paralinguistics refers to the vocal 
+
+qualities of speech, such as loudness, pitch movement, 
+
+prominence, rhythm, and vocalizations, that shape af -
+
+fective interpretation alongside lexical content (Bur -
+
+goon, Manusov, and Guerrero 2021; Hall, Horgan, 
+
+and Murphy 2019). Research on prosody demonstrates 
+
+that these cues are gradient, continuous, and multi -
+
+dimensional (Ogden 2017; Kochanski et al. 2005; Cole 
+
+2015; Ladd 2008). They play a central role in signaling 
+
+emphasis, stance, and emotion (Scherer 2003). 
+
+In text -only environments, users cannot reproduce 
+
+prosody acoustically. Instead, they construct digital 
+
+prosody : stylized orthographic practices that readers 
+
+interpret through cultural and genre -specific norms 
+
+rather than through any phonetic equivalence (Crys -
+
+tal 2006; Herring and Androutsopoulos 2015; McCul -
+
+loch 2019). This distinction matters: such cues evoke 
+
+prosodic functions , not prosodic forms .
+
+Guided by this perspective, we treat paralinguistic 
+
+eNVCs as perceptual analogues of prosodic features. 
+
+Our taxonomy groups these cues into three communica -
+
+tively meaningful categories: 
+
+• Vocalics (approximated vocalizations). Inter -
+
+jections, laughter markers, and elongated spellings 
+
+(LOL , ugh , hmmm , heyyy ) evoke vocal sound or du -
+
+ration (Provine, Spencer, and Mandell 2007; Baron 
+
+Table 1: Subcategories of Kinesics eNVCs with elabo -
+
+rations and examples. 
+
+2002). These signals frequently index informality, 
+
+embodied reaction, or affective stance. 
+
+• Intensity cues. Capitalization and repeated punc -
+
+tuation (YES! , NO!!!! , ??? ) visually represent 
+
+heightened emotional force, urgency, or empha -
+
+sis (Herring and Androutsopoulos 2015). Their com -
+
+municative value reflects shared genre conventions 
+
+rather than acoustic intensity. 
+
+• Patterned stylization (contour -like cues). 
+
+Mixed -case strings, alternating patterns, and styl -
+
+ized repetition (ooOoOoh , Oh GREAT , heyyyy ) create 
+
+visual rhythms that readers interpret as playful, em -
+
+phatic, or sarcastic (McCulloch 2019; Tagliamonte 
+
+2016). These cues function as symbolic approxima -
+
+tions of intonational contour and pragmatic promi -
+
+nence (Bolinger and Bolinger 1986; Ladd 2008). 
+
+We therefore conceptualize digital prosody not as a
+
+literal encoding of acoustic features, but as a set of cul -
+
+turally shared semiotic resources that users mobilize to 
+
+convey affect, emphasis, and stance in microblog con -
+
+texts. This interpretation aligns with linguistic analyses 
+
+emphasizing that online prosodic cues work through in -
+
+ference, genre norms, and stylistic expectation (Crystal 
+
+2006; Herring and Androutsopoulos 2015; McCulloch 
+
+2019). 
+
+Affect displays. Affect displays, while not a distinct 
+
+structural category, cut across kinesics and paralinguis -
+
+tics. They denote the functional use of eNVCs to ex -
+
+press emotion (e.g., a as oculesics and an affect dis -
+
+play, or NOOO!!!! as both volume and an affect display). 
+
+We coded affect displays as an overlapping dimension Paralin - Elaboration and Example  Domain Subcategory Regex Pattern Example Matches      
+
+> Body /Touch (hug|wave|frown|smile|clap)| *hug* ,*frowns*
+
+guistics 
+
+sub - Kinesics  Facial / Eye Unicode ranges for faces: [0001F600 - ,       
+
+> 0001F64F]|
+> Body -part emoji Unicode ranges for body: [0001F400 -,
+
+category 
+
+Vocalics Written forms that evoke sounds or     
+
+> Emotion -
+> conveying
+> emoji
+> 0001F4FF]|
+> Heart/symbol ranges: [0001F490 -,,
+> 0001F9E1]|
+
+vocalizations. Examples: LOL , yawn ,
+
+hmmm , grrr , ughhh , heyyy . Paralinguistics              
+
+> Vocalics (̲ lol|yawn|ugh+|hmmm+) |̲ lol ,yawn ,ughhh
+> Volume [̲ A-Z]2, |̲ THIS ,STOP
+> Volume (punct.) !!+| or +| !!! ,???
+
+Volume Use of capitalization or repeated  Pitch (elonga -   
+
+> tion) ()2,| soooo ,noooo
+
+punctuation to signal intensity 
+
+or loudness. Examples: YES! ,
+
+absolutely NOT , !!! , ?? .
+
+Pitch Expressive elongations or alternations 
+
+of letters and punctuation to indi -
+
+cate rising/falling intonation. Exam -
+
+ples: ooOoOoh! , hey!!! , oh great! .
+
+Table 2: Subcategories of Paralinguistics eNVCs with 
+
+elaborations and examples. 
+
+noted alongside the primary category. 
+
+Ambiguous or cross -cutting cases (e.g., as both 
+
+oculesics and affect display) were resolved by coding 
+
+to the primary communicative function in text, with 
+
+notes for overlap. Full category definitions and examples 
+
+appear in Tables 1, 2. 
+
+Appendix Table 16 summarizes collection and selec -
+
+tion counts per topic. 
+
+Regex Library. The final regex library operational -
+
+izes our taxonomy into scalable, machine -readable 
+
+patterns. Table 3 summarizes the categories, regex 
+
+templates, and example matches. The first column 
+
+demonstrates how traditional NVC categories were 
+
+mapped to operational regex rules. The library is re -
+
+leased as an open -source Python and R package at 
+
+https://github.com/kokiljaidka/envc , providing a
+
+reusable toolkit for large -scale corpus analysis. 
+
+Patterns were designed to balance recall and preci -
+
+sion: broad enough to capture the variability of mi -
+
+croblog use (e.g., expressive elongations, multiple punc -
+
+tuation), yet constrained to reduce spurious matches 
+
+(e.g., distinguishing acronyms from shouting). 
+
+For kinesics, we included stage -direction cues (e.g., 
+
+*hug* ), Unicode ranges for facial and body -part emojis, 
+
+and a subset of affective symbols (e.g., , ). For par -
+
+alinguistics, we targeted vocalics lexicons ( lol , yawn ), 
+
+capitalization spans, repeated punctuation, elonga -
+
+tions, and alternating case forms that mimic prosodic 
+
+shifts. As an illustration, the post “I have so much 
+
+homework & I’m overthinking.. gawd I’m such 
+
+a mess...” (author -labeled emotion: stressed) was 
+
+matched by the regex library for repeated punctuation 
+
+(“...”), emoji ( ), and vocalics (“gawd”), demonstrat -
+
+ing how multiple eNVC categories co -occur within a 
+
+single post. Additional matched examples appear in Ap -
+
+pendix B.      
+
+> Pitch (alt. case) (̲ [A -Z][a -z])2, |̲ HiYa ,LoL
+
+Table 3: Regex patterns for detecting eNVC categories 
+
+in text. 
+
+Category frequencies. To characterize the distribu -
+
+tion of eNVC types at scale, we applied the regex li -
+
+brary to the Vent sample of posts containing at least one 
+
+eNVC. Paralinguistic cues were substantially more com -
+
+mon than kinesic cues: intensity markers (capitaliza -
+
+tion, repeated punctuation) were the most frequent cat -
+
+egory, followed by vocalics, emotion -conveying emoji, 
+
+and facial -expression emoji. Patterned stylization was 
+
+the rarest category. These distributions inform the rel -
+
+ative salience of cue types in microblog communication 
+
+but should not be treated as population estimates given 
+
+the platform -specific corpus. 
+
+Study 2 Results                                  
+
+> Do electronic nonverbal cues (eNVCs) improve emotion decoding?
+> Non−sarcastic items only •Within−subject comparison of eNVC vs. non−eNVC •Dashed line =chance (25%)
+> 100
+> 75
+> 50
+> 25
+> 0
+> eNVC non−eNVC eNVC non−eNVC eNVC non−eNVC eNVC non−eNVC eNVC non−eNVC
+> Condition (post type)
+> Post Type eNVC non−eNVC
+
+Figure 1: Within -subject comparison of decoding accu -
+
+racy for microblog posts with vs. without eNVCs (in the 
+
+no -sarcasm conditions) across five emotions (N = 513 ). 
+
+Dashed line indicates chance level (25%). 
+
+We began by comparing within -participant perfor -
+
+mance across the four experimental cells. Because each 
+
+participant evaluated an equal number of posts in ev -
+
+ery condition, we conducted paired -samples t-tests on 
+
+participant -level accuracy scores. 
+
+Paired comparisons. Participants were substan -
+
+tially more accurate on non -sarcastic posts when eN -                                  
+
+> Anger Fear Sadness Surprise Happiness
+> Mean  % of  posts  correctly  identified How does sarcasm affect the role of Electronic Nonverbal Cues (eNVCs) in emotion decoding?
+> Model−estimated probabilities with 95% CIs •Dashed line shows baseline probability for non−sarcastic /non−eNVC posts
+> 0.30
+> 0.7
+> 0.25
+> 0.6
+> 0.5
+> 0.4
+> 0.3
+> 0.20
+> 0.15
+> 0.10
+> Condition
+> No eNVC •No Sarcasm
+> eNVC • No Sarcasm
+> No eNVC •Sarcasm
+> eNVC • Sarcasm
+
+Figure 2: Mixed -effects predictions for accuracy and uncertainty. 
+
+VCs were present than when they were removed. On av -
+
+erage and across emotions, participants answered 1.32 
+
+more items correctly (out of 8 per condition) when eN -
+
+VCs were present than when they were absent (t512 =
+
+−17 .18 , p < .001 , 95% CI [−1.47 , −1.17] ) (see Figure 1). 
+
+A similar pattern held for sarcastic posts: participants 
+
+answered 0.92 more sarcastic items correctly when eN -
+
+VCs were preserved than when they were stripped 
+
+(t512 = −12 .17 , p < .001 , 95% CI [−1.07 , −0.77] ). These 
+
+within -subject comparisons confirm that, at the partic -
+
+ipant level, eNVCs improve decoding performance for 
+
+both literal and sarcastic posts, though the benefit is 
+
+smaller for sarcasm. 
+
+Mixed -effects accuracy models. To adjust for 
+
+item -level heterogeneity and fully exploit the trial -level 
+
+design, we fit mixed -effects logistic regressions with ran -
+
+dom intercepts for participants and emotions, using the 
+
+non -eNVC, non -sarcastic condition as the baseline. 
+
+The main -effects model revealed two robust findings 
+
+(Table 11). First, preserving eNVCs improved accuracy: 
+
+posts with eNVCs were significantly more likely to be 
+
+decoded correctly than those without them ( β = 0 .56 ,
+
+SE = 0 .05 , p < .001 , OR = 1 .75 ). Second, sarcasm sub -
+
+stantially impaired decoding (β = −1.27 , SE = 0.05 ,
+
+p < . 001 , OR = 0 .28 ). Demographic covariates were 
+
+small and inconsistent, with the exception of a modest 
+
+accuracy advantage for White participants. 
+
+A four -condition specification decomposed these ef -
+
+fects across the full 2 × 2 structure. Figure 1a shows 
+
+that, relative to the non -eNVC, non -sarcastic baseline: 
+
+• Non -sarcastic + eNVC posts were substantially 
+
+more accurate ( β = 0 .56 , SE = 0 .05 , p < .001 , OR 
+
+= 1.76 ). 
+
+• Sarcastic + no eNVC posts did not differ reliably 
+
+from baseline ( β = −0.17 , SE = 0 .42 , p = .69 ), 
+
+indicating increased variability in sarcastic decoding. 
+
+• Sarcastic + eNVC posts were markedly less accu -
+
+rate than baseline (β = −0.71 , SE = 0.05 , p < .001 ,
+
+OR = 0 .49 ). 
+
+Estimated marginal means show highest accuracy for 
+
+non -sarcastic eNVC posts and the lowest accuracy for 
+
+sarcastic posts regardless of cue presence. These results 
+
+demonstrate that eNVCs improve decoding in literal 
+
+contexts but cannot fully compensate for the semantic 
+
+inversion introduced by sarcasm. 
+
+Perceived ambiguity (uncertainty). We next an -
+
+alyzed selections of the “Uncertain” response option, 
+
+which reflects subjective ambiguity rather than cate -
+
+gorical accuracy. In the main -effects model, eNVCs did 
+
+not reliably reduce uncertainty ( β = −0.01 , SE = 0 .07 ,
+
+p = .83 ), whereas sarcasm strongly increased uncer -
+
+tainty (β = 0.99 , SE = 0.06 , p < .001 , OR = 2.69 ). 
+
+Thus, sarcastic posts were nearly three times more 
+
+likely to elicit explicit uncertainty than literal ones. 
+
+The four -condition uncertainty model sharpened this 
+
+pattern. Figure 1b shows that, relative to the non -
+
+eNVC, non -sarcastic baseline: 
+
+• Non -sarcastic + eNVC posts showed no reliable 
+
+difference in uncertainty ( β = −0.02 , SE = 0 .07 ,
+
+p = .73 ).  
+
+> Predicted  Probability
+> Accuracy
+> *** ***
+
+• Sarcastic + no eNVC posts elicited significantly 
+
+more uncertainty ( β = 0 .74 , SE = 0 .35 , p = .035 ,
+
+OR = 2 .10 ). 
+
+• Sarcastic + eNVC posts showed the largest in -
+
+crease in uncertainty (β = 0.97 , SE = 0.06 , p <
+
+.001 , OR = 2.65 ). 
+
+Thus, although eNVCs strengthen accuracy for literal 
+
+items, they do not diminish the subjective ambiguity 
+
+introduced by sarcasm. 
+
+In summary, across analytic approaches, eNVCs con -
+
+sistently improved accuracy for literal posts and pro -
+
+duced modest gains even for sarcastic ones in paired 
+
+comparisons. However, sarcasm sharply reduced cat -
+
+egorical accuracy and substantially heightened sub -
+
+jective ambiguity. Under sarcasm, eNVCs failed to 
+
+offset these effects —they neither lowered uncertainty 
+
+nor restored correct interpretation —illustrating a clear 
+
+boundary condition on the communicative value of tex -
+
+tual nonverbal cues. 
+
+Interpretation of findings Study 2 examined 
+
+whether eNVCs improve readers’ ability to decode 
+
+author -intended emotions in microblog posts. The 
+
+within -subject design yielded a strong and consis -
+
+tent advantage for eNVCs. A paired -samples analysis 
+
+showed that participants identified emotions more ac -
+
+curately when posts contained eNVCs than when the 
+
+same posts were presented without them. Across the 30 
+
+items, accuracy was significantly higher in the eNVC 
+
+condition. These effects held even though participants 
+
+who performed well in one condition tended to per -
+
+form well in the other, indicating that eNVCs improve 
+
+performance beyond baseline decoding skill. Emotion -
+
+specific analyses showed a broadly consistent eNVC ad -
+
+vantage, though the magnitude varied. Improvements 
+
+were largest for happiness, surprise, and fear - emotions 
+
+that in text -only form tend to rely on contextual or 
+
+stylistic disambiguation. Gains were smaller for sadness 
+
+and anger, which are more reliably signaled through lex -
+
+ical content alone. This pattern aligns with prior work 
+
+showing that paralinguistic and prosodic markers carry 
+
+more diagnostic value in positive or mixed -valence ex -
+
+pressions than in strongly negative disclosures (Coyle 
+
+and Carmichael 2019). 
+
+Mixed -effects models that accounted for participant -
+
+and emotion -level heterogeneity corroborated these re -
+
+sults. Relative to the reference condition (non -eNVC, 
+
+non -sarcastic), the odds of correct decoding were sub -
+
+stantially higher for non -sarcastic items containing eN -
+
+VCs ( OR = 1 .76 ), and substantially lower for sarcas -
+
+tic items regardless of cue presence ( OR = 0 .49 for 
+
+eNVC sarcasm; Table 12). These estimates reflect a ro -
+
+bust main effect of eNVCs and a large negative effect 
+
+of sarcasm. 
+
+Estimated marginal means provide further clarity. 
+
+For literal, non -sarcastic posts, eNVCs raised the proba -
+
+bility of correct decoding. For sarcastic posts, however, 
+
+accuracy remained low overall, reflecting the inherent 
+
+difficulty of resolving deliberate text –affect misalign -
+
+ment. 
+
+Analyses of perceived ambiguity (“uncertain” re -
+
+sponses) revealed a complementary pattern. For non -
+
+sarcastic items, uncertainty rates were uniformly low 
+
+and unaffected by eNVC presence. For sarcastic items, 
+
+uncertainty was substantially higher overall, and high -
+
+est for sarcastic items with eNVCs —indicating that ad -
+
+ditional cues do not resolve, and may even heighten, the 
+
+ambiguity introduced by irony. 
+
+Taken together, these results support a two -part con -
+
+clusion. First, eNVCs reliably enhance emotion recog -
+
+nition for literal or straightforward expressions in mi -
+
+croblog posts. Second, their benefits attenuate sharply 
+
+in sarcastic or affectively incongruent contexts: while 
+
+readers may feel less uncertain in some paired -sample 
+
+comparisons, eNVCs do not improve categorical ac -
+
+curacy once item -level variability is modeled. These 
+
+boundary conditions highlight contexts in which digi -
+
+tal nonverbal cues facilitate interpretation and those in 
+
+which they cannot overcome deeper semantic contra -
+
+dictions. We have explored these issues qualitatively in 
+
+Study 3. 
+
+Study 3
+
+Twelve posts were analyzed across six text -based focus 
+
+group sessions, with each post discussed in at least two 
+
+sessions (Appendix H). Transcripts were qualitatively 
+
+coded at multiple levels: individual answers, conversa -
+
+tional threads, and group consensus. Four interpretive 
+
+patterns emerged, each illuminating a distinct mecha -
+
+nism through which readers decode (or fail to decode) 
+
+affect from textual cues. 
+
+Cue convergence disambiguates affect. When 
+
+multiple eNVCs aligned in valence, participants re -
+
+ported high interpretive confidence, consistent with 
+
+Study 2’s accuracy gains for literal eNVC posts. Crit -
+
+ically, readers did not simply register individual cues; 
+
+they treated co -occurring cues as mutually reinforcing. 
+
+For “Just finished reading Fahrenheit 451... DAMN... I 
+
+really enjoyed reading it ”, one participant explained, 
+
+“the word ‘DAMN’ plus the emoji showcases that they 
+
+are impressed and mind blown,” and another added, 
+
+“the emoji seals it, it makes clear they’re positive, not 
+
+annoyed.” This convergence effect contradicts Walther 
+
+and Bazarova’s (Walther and Bazarova 2008) prediction 
+
+that cue complexity reduces clarity; instead, redundant 
+
+cues narrowed the interpretive space. Participants also 
+
+parsed distinct affective layers from converging cues. 
+
+For “EXAAAAAAAAAMS ”, one noted, “the emoji 
+
+shows sadness, but the stretched letters feel like frus -
+
+tration,” and another added, “it’s also like panic, like 
+
+they’re overwhelmed, not just sad.” Here, kinesic and 
+
+paralinguistic cues jointly specified a blended emotional 
+
+state (frustration + anxiety) that neither cue alone 
+
+would have conveyed, suggesting that eNVCs do not 
+
+merely amplify a single emotion but can scaffold affec -
+
+tive differentiation .Similarly, for “Today is Friday!!!!!!! thannkkkk 
+
+gooood” , a participant reasoned: “the exclamation 
+
+marks and the repeated use of the same letters denotes 
+
+excitement…while you read it you can hear a tired per -
+
+son being thankful for rest.” The metaphor of hearing 
+
+a voice through orthography illustrates how readers re -
+
+cruit prosodic imagery to resolve textual cues: a process 
+
+akin to intertextual reading (Orr 2003), where meaning 
+
+is constructed not from any single marker but from the 
+
+gestalt of overlapping signals. 
+
+Cue excess triggers sarcasm inference. The same 
+
+intensity markers that clarified literal affect became am -
+
+biguous or ironic when their density exceeded genre ex -
+
+pectations. This pattern provides qualitative ground -
+
+ing for Study 2’s finding that eNVCs under sarcasm 
+
+reduced accuracy rather than merely failing to help. 
+
+In “I think my record player just came in the mail 
+
+THANK YOU FEDEX” , one participant 
+
+read the repeated emojis as genuine intensification (“the 
+
+extra emojis mean the emotion is really strong”), while 
+
+another countered, “I’d use that many emojis mostly 
+
+if I were being sarcastic lol.” For “Oh I am soo tiii -
+
+ired ughh wow...” , participants converged on annoyance: 
+
+“the repeats show they’re sarcastic, mocking how peo -
+
+ple always say they’re tired.” These exchanges reveal a
+
+threshold effect: moderate eNVC use signals sincerity, 
+
+but excessive use activates an irony frame (Hancock 
+
+2004; Danesi 2016). Importantly, participants disagreed 
+
+about where the threshold lay, which helps explain why 
+
+sarcastic eNVC posts in Study 2 produced both low 
+
+accuracy and high uncertainty: readers apply different 
+
+genre calibrations to the same stimulus. 
+
+Absence as a cue: flat styling signals affective 
+
+weight. A theoretically novel finding was that partic -
+
+ipants inferred emotion not only from what was present 
+
+but from what was missing . This goes beyond standard 
+
+accounts of cue richness, which focus on what channels 
+
+provide; here, the interpretive resource is an expecta -
+
+tion violation. In “When the guy you like starts talking 
+
+to another girl.. ”, one participant reasoned: 
+
+“Unless they express anger in a calm way, then 
+
+wow. I think anger would be expressed with capi -
+
+tal letters, angry emojis…all in all I think the text 
+
+would [have been] dramatised.” 
+
+The absence of capitalization or exclamation marks 
+
+ruled out anger, leading the group toward disappoint -
+
+ment or resigned sadness. Similarly, for “I’m shit at 
+
+everything I do ”, a participant observed: “there’s 
+
+no exaggerated punctuation, no exclamation marks no 
+
+nothing, it’s so matter of fact.” Flat styling was read 
+
+as emotional weight: too heavy for performative com -
+
+plaint, too plain for humor. This diagnostic absence im -
+
+plies that readers maintain implicit expectations about 
+
+what “normal” emotional expression looks like on a 
+
+platform, and interpret deviations in either direction ,
+
+i.e., excessive cues or conspicuously missing cues, as 
+
+meaningful. For EPT, this suggests that interpretive 
+
+effort is shaped not just by what the channel transmits 
+
+but by the gap between what is transmitted and what 
+
+is expected. 
+
+Negativity bias under ambiguity. When cue –text 
+
+alignment was unclear, participants consistently de -
+
+faulted to more negative interpretations than the au -
+
+thor labels suggested. For the “another girl” post, read -
+
+ings ranged from disappointment and jealousy to anger 
+
+and sarcasm, with ellipses flagged as ironic: “It’s the 
+
+two dots before the emoji that show sarcasm.” Self -
+
+deprecating posts drew particular suspicion. Regarding 
+
+“I’m shit at everything I do ”, one participant in -
+
+ferred strategic intent: “The person is masking a nega -
+
+tive self emotion as a sarcastic tweet…trying to fish com -
+
+pliments to lift them up.” For “uhhh... all my friends 
+
+hate me... haha kill me” , others speculated the author 
+
+was “bragging a bit while supposedly showing some bad 
+
+traits.” These responses reveal a systematic interpretive 
+
+asymmetry: under uncertainty, readers attribute darker 
+
+motives (manipulation, insincerity, concealed distress) 
+
+rather than taking posts at face value. This negativ -
+
+ity bias echoes findings on cynical interpretation in 
+
+CMC (Ferguson 2021; McCr eery and Krach 2018) and 
+
+has practical implications for content moderation sys -
+
+tems that rely on surface -level cue detection without 
+
+modeling the audience’s tendency to “read down.” 
+
+Summary. Across these four patterns, Study 3 re -
+
+veals that eNVC decoding is not a simple feature -
+
+recognition task but an inferential process shaped by 
+
+cue convergence, genre -calibrated thresholds for sin -
+
+cerity, expectations about absent cues, and a system -
+
+atic negativity bias under ambiguity. These mecha -
+
+nisms help explain both the strong accuracy gains for 
+
+literal posts in Study 2 (convergence narrows inter -
+
+pretation) and the sharp accuracy losses under sar -
+
+casm (excess triggers competing frames). Together, 
+
+they extend encoding –decoding models by showing that 
+
+the interpretive value of eNVCs depends not on cue 
+
+presence alone but on the fit between cues, content, 
+
+and platform -specific expectations about how emotion 
+
+should be expressed. 
+
+## Discussion 
+
+Across three studies, this work shows how electronic 
+
+nonverbal cues (eNVCs) function in microblog commu -
+
+nication and how audiences interpret them. We develop 
+
+a taxonomy grounded in nonverbal communication the -
+
+ory, demonstrate experimentally that eNVCs generally 
+
+improve emotion recognition, and document how users 
+
+reason with these cues, including their responses to the 
+
+absence of expected cues. The findings refine accounts 
+
+of cue richness, interpretive effort, and social presence 
+
+by identifying when additional cues facilitate meaning 
+
+and when benefits diminish, particularly under sarcasm 
+
+or mixed affect. They also broaden eNVC research be -
+
+yond emojis to include symbolic, structural, and par -
+
+alinguistic markers. Methodologically, we integrate content analysis, au -
+
+tomated text processing, experimentation, and qual -
+
+itative inquiry. Study 1 introduced a scalable regex 
+
+pipeline; Study 2 provided cross -national causal evi -
+
+dence; and Study 3 illustrated how readers integrate 
+
+cues with platform norms and expectations. Together, 
+
+these approaches show the value of mixed methods for 
+
+understanding digital nonverbal behavior. 
+
+From Translation to Validation A central contri -
+
+bution is translating foundational nonverbal communi -
+
+cation categories into electronic form. Study 1 intro -
+
+duced a taxonomy distinguishing kinesics (textual ges -
+
+tures, emojis) and paralinguistics (vocalics, intensity, 
+
+elongation). Operationalizing this taxonomy via regu -
+
+lar expressions enabled scalable detection for affective 
+
+computing and moderation tasks. 
+
+Studies 2 and 3 validate the taxonomy. In Study 2, 
+
+participants more accurately identified author -intended 
+
+emotions when original eNVCs were present. Effects 
+
+were substantial for non -sarcastic items, consistent with 
+
+paired t-tests and marginal means. For sarcastic items, 
+
+eNVCs reduced accuracy and increased perceived am -
+
+biguity. Study 3 further showed that users integrate 
+
+multiple cues, debate ambiguous cases, and attend to 
+
+flat or minimal styling as meaningful. These convergent 
+
+findings confirm that the taxonomy captures expressive 
+
+resources users actively draw on when decoding affect. 
+
+Cue Richness, Interpretive Effort, and Bound -
+
+ary Conditions The gradient nature of spoken 
+
+prosody allows listeners to calibrate affective intensity 
+
+continuously; textual prosody, by contrast, compresses 
+
+this into discrete symbols. This compression has a the -
+
+oretical consequence: eNVCs can narrow the space of 
+
+plausible interpretations without eliminating ambigu -
+
+ity. Our results specify when narrowing succeeds and 
+
+when it fails. 
+
+For literal posts, eNVCs function as predicted by me -
+
+dia richness accounts (Daft and Lengel 1986): added 
+
+cues reduce interpretive candidates and raise accuracy 
+
+(OR = 1.76 ). The mechanism suggested by Study 3
+
+is cue convergence , when multiple eNVCs (e.g., elon -
+
+gation + emoji + punctuation) point toward the 
+
+same affect, readers treat the conjunction as confir -
+
+matory, not redundant. This contradicts Walther and 
+
+Bazarova’s (Walther and Bazarova 2008) prediction 
+
+that cue complexity reduces clarity and instead sup -
+
+ports an additive model of digital expressiveness. 
+
+For sarcastic posts, however, the same cues that clar -
+
+ify literal affect become sources of interference. Ac -
+
+curacy dropped below the non -eNVC baseline (OR 
+
+= 0 .49 ), and perceived ambiguity more than doubled. 
+
+This is not merely a failure of cues to help: it is an 
+
+active cost. We interpret this through EPT (Korzenny 
+
+1978; Korzenny and Bauer 1981): when cues and text 
+
+point in opposing affective directions, each additional 
+
+cue adds a competing signal that the reader must ad -
+
+judicate, raising interpretive effort rather than reduc -
+
+ing it. The focus groups corroborated this: participants 
+
+described elongation and emoji repetition in sarcastic 
+
+posts as confusing precisely because the same markers 
+
+were reliable in literal contexts. 
+
+This pattern, i.e., facilitation under alignment, inter -
+
+ference under misalignment, constitutes a coherence -
+
+dependent model of cue utility. It refines both media 
+
+richness and EPT by specifying that cue quantity is 
+
+subordinate to cue –text coherence as a predictor of in -
+
+terpretive success. 
+
+Implications for Design and Computation 
+
+These findings carry practical implications for three 
+
+domains. First, for affective computing , sentiment and 
+
+emotion classifiers that treat eNVCs as uniformly posi -
+
+tive signals will systematically misclassify sarcastic con -
+
+tent; models should incorporate cue –text coherence fea -
+
+tures. Second, for content moderation , the negativity 
+
+bias documented in Study 3, where ambiguous cues de -
+
+fault to negative readings, suggests that flagging sys -
+
+tems tuned to surface -level cue intensity may over -flag 
+
+ironic or playful posts. Third, for interface design , plat -
+
+forms could support affective clarity by offering struc -
+
+tured tone indicators (e.g., tone tags such as /s or 
+
+/gen ) that reduce reliance on ambiguous paralinguis -
+
+tic cues. These recommendations are preliminary and 
+
+require validation in deployed systems. 
+
+Decoding Beyond Presence: Absence, Thresh -
+
+olds, and Negativity Bias Study 3 extends the 
+
+coherence -dependent model by revealing three inter -
+
+pretive mechanisms that operate alongside cue conver -
+
+gence. First, participants treated the absence of ex -
+
+pected cues as diagnostically meaningful: flat styling 
+
+signaled emotional weight or resignation, not neutral -
+
+ity. This implies that readers maintain implicit base -
+
+lines for “normal” eNVC density on a platform and in -
+
+terpret deviations in either direction (either excessive 
+
+or conspicuously absent cues) as affectively loaded. For 
+
+EPT, this means interpretive effort is shaped not only 
+
+by what the channel transmits but by the gap between 
+
+transmission and expectation. Second, focus group dis -
+
+agreements about whether cue repetition was sincere 
+
+or ironic revealed a threshold effect : moderate eNVC 
+
+use reads as genuine, but excess activates a sarcasm 
+
+frame, with the threshold varying across readers. This 
+
+inter -individual variation helps explain the high uncer -
+
+tainty in Study 2’s sarcastic conditions, as participants 
+
+applied different genre calibrations to identical stim -
+
+uli. Third, under ambiguity, readers defaulted to neg -
+
+ative interpretations, attributing manipulation, insin -
+
+cerity, or concealed distress rather than taking posts at 
+
+face value (Ferguson 2021; McCreery and Krach 2018). 
+
+This negativity bias has direct consequences for affec -
+
+tive computing and moderation systems that rely on 
+
+surface -level cue detection without modeling audience 
+
+interpretive tendencies. 
+
+Taken together, these mechanisms show that eNVC 
+
+decoding is an inferential process governed by cue -text 
+
+coherence, genre -calibrated expectations, and system -
+
+atic interpretive asymmetries, and not a simple feature -recognition task. The project contributes theoretically 
+
+by specifying when and why cues help or complicate 
+
+interpretation, and practically by offering a validated, 
+
+scalable toolkit for detecting eNVCs. 
+
+Limitations Several limitations warrant discussion. 
+
+First, all stimuli are English -language microblogs. 
+
+eNVC conventions are likely language - and script -
+
+dependent: elongation patterns differ in logographic 
+
+writing systems, emoji semantics vary cross -culturally, 
+
+and punctuation norms are not universal. Although our 
+
+international participant sample captured some cross -
+
+national variation, cultural differences in cue interpreta -
+
+tion were not experimentally manipulated. The thresh -
+
+old and negativity -bias effects documented in Study 3
+
+may operate differently in high -context communica -
+
+tion cultures where indirectness carries different prag -
+
+matic weight. Second, author -labeled emotions from 
+
+Vent serve as ground truth, but self -reports may not 
+
+always match the affect perceived by third -party read -
+
+ers; this gap is inherent to any encoding –decoding study 
+
+and is partially addressed by the focus groups, which re -
+
+vealed how third -party readings diverge from author in -
+
+tent. Third, the taxonomy focuses on orthographic and 
+
+symbolic cues in text -only posts. Social media increas -
+
+ingly supports multimodal expression through GIFs, 
+
+short video, voice messages, memes, and hashtag prag -
+
+matics, all of which carry nonverbal meaning. The cue -
+
+convergence mechanism identified in Study 3 likely op -
+
+erates across modalities (e.g., a laughing GIF paired 
+
+with elongated text), but testing this requires differ -
+
+ent detection methods. Fourth, the Study 1 taxonomy 
+
+was developed from a purposive sample of 118 posts; 
+
+while the regex pipeline was validated on the larger 
+
+Vent corpus, the initial category set may not capture 
+
+all eNVC forms used across platforms and communi -
+
+ties. Fifth, Study 3’s finding that cue excess triggers sar -
+
+casm inference suggests that the sincerity –irony thresh -
+
+old varies across individuals and likely across platform 
+
+norms; our six focus groups cannot establish where this 
+
+threshold falls for broader populations. Despite these 
+
+constraints, the convergence of experimental and quali -
+
+tative evidence indicates that the coherence -dependent 
+
+model and its boundary conditions are robust. Future 
+
+work should test the taxonomy in multilingual corpora, 
+
+extend it to multimodal cues, and assess whether the 
+
+threshold and negativity -bias effects replicate across lin -
+
+guistic, cultural, and platform contexts. 
+
+## Conclusion 
+
+This project examined how eNVCs are encoded and de -
+
+coded through three complementary studies. Study 1 
+
+introduced a theoretically grounded taxonomy and scal -
+
+able regex pipeline. Study 2 offered experimental ev -
+
+idence that eNVCs improve recognition of author -
+
+intended emotions in literal posts, with effects substan -
+
+tially attenuated by sarcasm. Study 3 identified the in -
+
+terpretive mechanisms underlying these patterns: cue 
+
+convergence narrows interpretation for literal posts, cue 
+
+excess activates competing sarcasm frames, diagnostic 
+
+absence carries affective weight, and ambiguity triggers 
+
+a systematic negativity bias. 
+
+The central theoretical contribution is a coherence -
+
+dependent model of cue utility. Across studies, cue -text 
+
+alignment predicted interpretive success. When eNVCs 
+
+converged with lexical content, accuracy rose substan -
+
+tially (OR = 1 .76 ); when they accompanied sarcastic 
+
+or contradictory text, accuracy fell below baseline (OR 
+
+= 0 .49 ) and perceived ambiguity more than doubled. 
+
+This pattern refines both media richness and Electronic 
+
+Propinquity Theory by specifying that added cues as -
+
+sist interpretation only when they reinforce, rather than 
+
+compete with, textual affect. 
+
+Methodologically, the studies demonstrate the value 
+
+of combining computational, experimental, and quali -
+
+tative approaches. The taxonomy enables scalable de -
+
+tection; the experiment isolates causal effects; and 
+
+the focus groups reveal mechanisms: threshold effects, 
+
+absence -based inference, negativity bias, that are invis -
+
+ible in aggregate accuracy data. 
+
+In sum, this work contributes a theoretically 
+
+grounded taxonomy and detection toolkit for eNVCs, 
+
+controlled evidence of their interpretive value and 
+
+limits, and qualitative insight into how users reason 
+
+through digital prosody, including when cues clarify, 
+
+when they complicate, and when their absence speaks 
+
+loudest. 
+
+Acknowledgment: This work was supported by 
+
+the Singapore Ministry of Education AcRF TIER 3 
+
+Grant (MOET32022 -0001), Tier 1 programme (WBS 
+
+A-8000231 -01 -00) and A*STAR OTS A-8003288 -00 -00. 
+
+We’re grateful to feedback from the Journal Club at 
+
+CNM, NUS. 
+
+## References 
+
+Argyle, M. 1975. Bodily communication . International 
+
+Universities Press. 
+
+Baron, N. S. 2002. Alphabet to email: How written En -
+
+glish evolved and where it’s heading . Routledge. 
+
+Birdwhistell, R. L. 1952. Introduction to kinesics:(An 
+
+annotation system for analysis of body motion and ges -
+
+ture) . Department of State, Foreign Service Institute. 
+
+Bolinger, D.; and Bolinger, D. L. M. 1986. Intonation 
+
+and its parts: Melody in spoken English . Stanford Uni -
+
+versity Press. 
+
+Burgoon, J.; Manusov, V.; and Guerrero, L. 2022. Non -
+
+verbal communication . Routledge. 
+
+Burgoon, J. K.; Manusov, V.; and Guerrero, L. K. 2021. 
+
+Nonverbal communication . Routledge. 
+
+Cole, J. 2015. Prosody in context: A review. Language, 
+
+Cognition and Neuroscience , 30(1 -2): 1 –31. 
+
+Coyle, M. A.; and Carmichael, C. L. 2019. Perceived 
+
+responsiveness in text messaging: The role of emoji use. 
+
+Computers in Human Behavior , 99: 181 –189. 
+
+Crystal, D. 2006. Language and the Internet . Cam -
+
+bridge: Cambridge University Press, 2nd edition. Daft, R. L.; and Lengel, R. H. 1986. Organizational in -
+
+formation requirements, media richness and structural 
+
+design. Management science , 32(5): 554 –571. 
+
+Danesi, M. 2016. The semiotics of emoji: The rise of 
+
+visual language in the age of the internet . Bloomsbury 
+
+Publishing. 
+
+Derks, D.; Fischer, A. H.; and Bos, A. E. 2008. The role 
+
+of emotion in computer -mediated communication: A re -
+
+view. Computers in human behavior , 24(3): 766 –785. 
+
+Ekman, P.; and Friesen, W. V. 1969. The repertoire 
+
+of nonverbal behavior: Categories, origins, usage, and 
+
+coding. semiotica , 1(1): 49 –98. 
+
+Ferguson, C. J. 2021. Does the internet make the world 
+
+worse? Depression, aggression and polarization in the 
+
+social media age. Bulletin of Science, Technology & 
+
+Society , 41(4): 116 –135. 
+
+Gesselman, A. N.; Ta, V. P.; and Garcia, J. R. 2019. 
+
+Worth a thousand interpersonal words: Emoji as affec -
+
+tive signals for relationship -oriented digital communi -
+
+cation. PloS one , 14(8): e0221297. 
+
+Hall, J. A.; Horgan, T. G.; and Murphy, N. A. 2019. 
+
+Nonverbal communication. Annual review of psychol -
+
+ogy , 70: 271 –294. 
+
+Hall, J. A.; and Knapp, M. L. 2013. Nonverbal commu -
+
+nication , volume 2. Walter de Gruyter. 
+
+Hancock, J. T. 2004. Verbal irony use in face -to -face 
+
+and computer -mediated conversations. Journal of Lan -
+
+guage and Social Psychology , 23(4): 447 –463. 
+
+Herring, S. C.; and Androutsopoulos, J. 2015. 
+
+Computer -mediated discourse 2.0. The handbook of dis -
+
+course analysis , 127 –151. 
+
+Jiang, J. A.; Fiesler, C.; and Brubaker, J. R. 2018. ’The 
+
+Perfect One’ Understanding Communication Practices 
+
+and Challenges with Animated GIFs. Proceedings of the 
+
+ACM on human -computer interaction , 2(CSCW): 1–20. 
+
+Knapp, M. L.; Hall, J. A.; and Horgan, T. G. 1972. Non -
+
+verbal communication in human interaction . Thomson 
+
+Wadsworth. 
+
+Kochanski, G.; Grabe, E.; Coleman, J.; and Rosner, B. 
+
+2005. Loudness predicts prominence: Fundamental fre -
+
+quency lends little. The Journal of the Acoustical Soci -
+
+ety of America , 118(2): 1038 –1054. 
+
+Korzenny, F. 1978. A theory of electronic propinquity: 
+
+Mediated communication in organizations. Communi -
+
+cation Research , 5(1): 3 –24. 
+
+Korzenny, F.; and Bauer, C. 1981. Testing the theory of 
+
+electronic propinquity: Organizational teleconferencing. 
+
+Communication Research , 8(4): 479 –498. 
+
+Kralj Novak, P.; Smailović, J.; Sluban, B.; and Mozetič, 
+
+I. 2015. Sentiment of emojis. PloS one , 10(12): 
+
+e0144296. 
+
+Krishnan, A.; and Hunt, D. S. 2019. TTYL: -)… Nonver -
+
+bal cues and perceptions of personality and homophily 
+
+in synchronous mediated communication. Information, 
+
+Communication & Society , 24(1): 85 –101. 
+
+Ladd, D. R. 2008. Intonational phonology . Cambridge 
+
+University Press. 
+
+Lykousas, N.; Patsakis, C.; Kaltenbrunner, A.; and 
+
+Gómez, V. 2019. Sharing emotions at scale: The vent 
+
+dataset. In Proceedings of the International AAAI Con -
+
+ference on Web and Social Media , volume 13, 611 –619. 
+
+Matsumoto, D.; Frank, M. G.; and Hwang, H. S. 2013. 
+
+Nonverbal communication: Science and applications .
+
+Sage Publications. 
+
+McCreery, M. P.; and Krach, S. K. 2018. How the hu -
+
+man is the catalyst: Personality, aggressive fantasy, and 
+
+proactive -reactive aggression among users of social me -
+
+dia. Personality and Individual Differences , 133: 91 –95. 
+
+McCulloch, G. 2019. Because internet: Understanding 
+
+the new rules of language . Penguin. 
+
+Mehrabian, A.; and Ferris, S. R. 1967. Inference of at -
+
+titudes from nonverbal communication in two channels. 
+
+Journal of consulting psychology , 31(3): 248. 
+
+Mehrabian, A.; and Wiener, M. 1967. Decoding of in -
+
+consistent communications. Journal of personality and 
+
+social psychology , 6(1): 109. 
+
+Ogden, R. 2017. Introduction to English phonetics . Ed -
+
+inburgh university press. 
+
+Orr, M. 2003. Intertextuality: Debates and. Contexts .
+
+Price, L.; and Robinson, L. 2021. Tag analysis as a 
+
+tool for investigating information behaviour: comparing 
+
+fan -tagging on Tumblr, Archive of Our Own and Etsy. 
+
+Journal of Documentation , 77(2): 320 –358. 
+
+Provine, R. R.; Spencer, R. J.; and Mandell, D. L. 
+
+2007. Emotional expression online: Emoticons punc -
+
+tuate website text messages. Journal of language and 
+
+social psychology , 26(3): 299 –307. 
+
+Rodríguez -Hidalgo, C.; Tan, E. S.; and Verlegh, P. W. 
+
+2017. Expressing emotions in blogs: The role of textual 
+
+paralinguistic cues in online venting and social sharing 
+
+posts. Computers in Human Behavior , 73: 638 –649. 
+
+Scherer, K. R. 2003. Vocal communication of emotion: 
+
+A review of research paradigms. Speech communication ,
+
+40(1 -2): 227 –256. 
+
+Tagliamonte, S. 2016. Teen talk: The language of ado -
+
+lescents . Cambridge University Press. 
+
+Thompson, D.; and Filik, R. 2016. Sarcasm in writ -
+
+ten communication: Emoticons are efficient markers of 
+
+intention. Journal of Computer -Mediated Communica -
+
+tion , 21(2): 105 –120. 
+
+Walther, J. B. 1992. Interpersonal effects in computer -
+
+mediated interaction: A relational perspective. Com -
+
+munication research , 19(1): 52 –90. 
+
+Walther, J. B.; and Bazarova, N. N. 2008. Valida -
+
+tion and application of electronic propinquity theory 
+
+to computer -mediated communication in groups. Com -
+
+munication Research , 35(5): 622 –645. 
+
+Walther, J. B.; and Tidwell, L. C. 1995. Nonverbal cues 
+
+in computer -mediated communication, and the effect 
+
+of chronemics on relational communication. Journal of Organizational Computing and Electronic Commerce ,
+
+5(4): 355 –378. 
+
+Wang, A.; Phan, M.; Ho, D. E.; and Koyejo, S. 2025. 
+
+Fairness through Difference Awareness: Measuring De -
+
+sired Group Discrimination in LLMs. arXiv e -prints ,
+
+arXiv –2502. 
+
+Waterloo, S. F.; Baumgartner, S. E.; Peter, J.; and 
+
+Valkenburg, P. M. 2018. Norms of online expres -
+
+sions of emotion: Comparing Facebook, Twitter, Insta -
+
+gram, and WhatsApp. New media & society , 20(5): 
+
+1813 –1831. 
+
+Watson, D. G.; Tanenhaus, M. K.; and Gunlogson, 
+
+C. A. 2008. Interpreting pitch accents in online com -
+
+prehension: H* vs. L+ H. Cognitive science , 32(7): 
+
+1232 –1244. 
+
+## Paper Checklist 
+
+Please note that we compiled the paper using LuaLa -
+
+TeX because several results rely on emoji -based stimuli. 
+
+As a result, some minor formatting differences (e.g., 
+
+font rendering) may appear relative to the standard 
+
+pdfLaTeX output. We have ensured that all content, 
+
+figures, and layouts follow the submission guidelines as 
+
+closely as possible. We appreciate your understanding. 
+
+1.  For most authors... 
+
+(a)  Would answering this research question advance 
+
+science without violating social contracts, such as 
+
+violating privacy norms, perpetuating unfair pro -
+
+filing, exacerbating the socio -economic divide, or 
+
+implying disrespect to societies or cultures? Yes. 
+
+The study uses public social -media datasets and 
+
+consented online participants, does not enable in -
+
+dividual targeting, and aims to improve under -
+
+standing of emotion decoding in text -based com -
+
+munication. 
+
+(b)  Do your main claims in the abstract and introduc -
+
+tion accurately reflect the paper’s contributions 
+
+and scope? Yes. The abstract and introduction 
+
+clearly state the three studies, the eNVC taxon -
+
+omy and regex toolkit, the survey experiment, and 
+
+the focus -group analysis, and these correspond to 
+
+the reported results. 
+
+(c)  Do you clarify how the proposed methodologi -
+
+cal approach is appropriate for the claims made? 
+
+Yes. The paper motivates the mixed -method de -
+
+sign —content analysis with a regex pipeline, a 
+
+within -subjects survey experiment, and qualita -
+
+tive focus groups —as appropriate to answer the 
+
+three research questions. 
+
+(d)  Do you clarify what are possible artifacts in 
+
+the data used, given population -specific distribu -
+
+tions? Yes. The paper discusses that the data 
+
+are English -language, primarily Western/Anglo -
+
+phone, and platform -specific, and notes that in -
+
+terpretations of eNVCs may vary across linguistic 
+
+and cultural communities. 
+
+(e) Did you describe the limitations of your work? 
+
+Yes. The limitations include language and cultural 
+
+scope, platform coverage, stylistic forms not mod -
+
+eled by the taxonomy, and the boundary condi -
+
+tions introduced by sarcasm and mixed affect. 
+
+(f)  Did you discuss any potential negative societal 
+
+impacts of your work? Yes. The ethical consid -
+
+erations section notes risks of over -generalizing 
+
+eNVC interpretations, privileging Western -centric 
+
+norms, and essentializing differences if cue inter -
+
+pretations are treated as universal. 
+
+(g)  Did you discuss any potential misuse of your work? 
+
+Yes. The paper cautions against using eNVC mea -
+
+sures as universal or diagnostic signals and empha -
+
+sizes that interpretations are context - and culture -
+
+dependent, which would make misuse for stereo -
+
+typing or individual profiling inappropriate. 
+
+(h)  Did you describe steps taken to prevent or miti -
+
+gate potential negative outcomes of the research, 
+
+such as data and model documentation, data 
+
+anonymization, responsible release, access control, 
+
+and the reproducibility of findings? Yes. The pa -
+
+per collected no personally identifiable informa -
+
+tion during its user studies. We provide detailed 
+
+documentation of the regex toolkit, sampling, and 
+
+analysis pipelines to support responsible reuse. 
+
+(i)  Have you read the ethics review guidelines and 
+
+ensured that your paper conforms to them? Yes. 
+
+2.  Additionally, if your study involves hypotheses test -
+
+ing... 
+
+(a)  Did you clearly state the assumptions underlying 
+
+all theoretical results? Not applicable. The paper 
+
+reports empirical results addressing research ques -
+
+tions but does not present formal theoretical re -
+
+sults. 
+
+(b)  Have you provided justifications for all theoretical 
+
+results? Not applicable. 
+
+(c)  Did you discuss competing hypotheses or theories 
+
+that might challenge or complement your theoret -
+
+ical results? Not applicable. 
+
+(d)  Have you considered alternative mechanisms or 
+
+explanations that might account for the same out -
+
+comes observed in your study? Not applicable. 
+
+(e)  Did you address potential biases or limitations in 
+
+your theoretical framework? Not applicable. 
+
+(f)  Have you related your theoretical results to the 
+
+existing literature in social science? Not applica -
+
+ble. 
+
+(g)  Did you discuss the implications of your theoreti -
+
+cal results for policy, practice, or further research 
+
+in the social science domain? Not applicable. 
+
+3.  Additionally, if you are including theoretical proofs... 
+
+(a)  Did you state the full set of assumptions of all 
+
+theoretical results? Not applicable. 
+
+(b)  Did you include complete proofs of all theoretical 
+
+results? Not applicable. 4.  Additionally, if you ran machine learning experi -
+
+ments... 
+
+(a)  Did you include the code, data, and instructions 
+
+needed to reproduce the main experimental re -
+
+sults (either in the supplemental material or as a 
+
+URL)? Not applicable. The paper does not train 
+
+or benchmark predictive machine -learning models; 
+
+analyses use content coding, regular expressions, 
+
+and statistical modeling. 
+
+(b)  Did you specify all the training details (e.g., data 
+
+splits, hyperparameters, how they were chosen)? 
+
+Not applicable. No ML training is performed. 
+
+(c)  Did you report error bars (e.g., with respect to the 
+
+random seed after running experiments multiple 
+
+times)? Not applicable. 
+
+(d)  Did you include the total amount of compute and 
+
+the type of resources used (e.g., type of GPUs, in -
+
+ternal cluster, or cloud provider)? Not applicable. 
+
+(e)  Do you justify how the proposed evaluation is suf -
+
+ficient and appropriate to the claims made? Not 
+
+applicable. Evaluation relies on standard statisti -
+
+cal analyses rather than ML benchmarking. 
+
+(f)  Do you discuss what is “the cost” of misclassifica -
+
+tion and fault (in)tolerance? Not applicable. 
+
+5.  Additionally, if you are using existing assets (e.g., 
+
+code, data, models) or curating/releasing new assets, 
+
+without compromising anonymity ... 
+
+(a)  If your work uses existing assets, did you cite the 
+
+creators? Yes. Prior work and sources for the Vent 
+
+corpus, Twitter/X data, and large language mod -
+
+els used in stimulus curation are cited. 
+
+(b)  Did you mention the license of the assets? Yes. 
+
+The paper notes that social -media data are used 
+
+under platform terms of service and that exter -
+
+nally released datasets are used under their stated 
+
+access conditions. 
+
+(c)  Did you include any new assets in the supplemen -
+
+tal material or as a URL? Yes. The paper shares 
+
+the eNVC taxonomy, regex patterns, and study 
+
+materials (stimuli examples, moderator guides, 
+
+and codebook details) to support reuse. 
+
+(d)  Did you discuss whether and how consent was ob -
+
+tained from people whose data you’re using/cu -
+
+rating? Yes. For Studies 2 and 3, participants were 
+
+recruited via Prolific, provided informed consent, 
+
+and were compensated; for public social -media 
+
+data, the paper relies on existing dataset releases 
+
+and platform terms. 
+
+(e)  Did you discuss whether the data you are us -
+
+ing/curating contains personally identifiable in -
+
+formation or offensive content? Yes. The paper 
+
+notes that no personally identifying information 
+
+was retained and that some stimuli include neg -
+
+ative or self -deprecating content typical of social -
+
+media posts. 
+
+(f)  If you are curating or releasing new datasets, did 
+
+you discuss how you intend to make your datasets 
+
+FAIR? Not applicable. The paper does not release 
+
+a new standalone dataset; it provides tools and 
+
+materials built on existing corpora. 
+
+(g)  If you are curating or releasing new datasets, did 
+
+you create a Datasheet for the Dataset? Not ap -
+
+plicable. 
+
+6.  Additionally, if you used crowdsourcing or conducted 
+
+research with human subjects, without compro -
+
+mising anonymity ... 
+
+(a)  Did you include the full text of instructions given 
+
+to participants and screenshots? Yes. Sample stim -
+
+uli, task instructions, and the focus -group mod -
+
+erator guide are provided in the appendices and 
+
+supplemental material. 
+
+(b)  Did you describe any potential participant risks, 
+
+with mentions of Institutional Review Board 
+
+(IRB) approvals? Yes. The paper reports IRB 
+
+approval, informed consent procedures, and de -
+
+scribes the studies as minimal -risk online tasks in -
+
+volving exposure to everyday social -media posts. 
+
+(c)  Did you include the estimated hourly wage paid to 
+
+participants and the total amount spent on par -
+
+ticipant compensation? Yes, it is reported in the 
+
+Method section. 
+
+(d)  Did you discuss how data is stored, shared, and 
+
+deidentified? Yes. The paper notes that no per -
+
+sonally identifying information was retained, that 
+
+data are stored in deidentified form, and that only 
+
+public social -media content and anonymized tran -
+
+scripts are used in analysis. 
+
+Ethical considerations. Emotion decoding norms 
+
+are culturally contingent; emojis, elongations, and tex -
+
+tual gestures vary across linguistic and regional con -
+
+texts. To mitigate this, Studies 2 and 3 recruited partic -
+
+ipants internationally while fixing the survey language 
+
+to English. This captured cross -national variation while 
+
+maintaining shared linguistic grounding. Our approach 
+
+aligns with “difference -aware” perspectives (Wang et al. 
+
+2025), which warn against assuming uniform interpreta -
+
+tion. Establishing a cross -cultural eNVC taxonomy re -
+
+quires multilingual corpora, localized focus groups, and 
+
+openness to interpretive diversity to avoid essentializing 
+
+communicative practices. 
+
+## Appendix A: Demographics of Study 2 
+
+## Participants 
+
+A total of 513 participants completed the Study 2 task. 
+
+All demographic summaries reported below reflect this 
+
+final analytical sample. 
+
+Sex and Age 
+
+The sample was nearly evenly split by sex, with 259 fe -
+
+males (50.1%) and 254 males (49.1%). Four participants 
+
+did not provide valid sex information. 
+
+Participants ranged in age from 18 to 75. Using 
+
+standard generational boundaries, 25% were members of Generation Z (ages 18 –26), 52% were Millennials 
+
+(27 –42), 16% were Generation X (43 –58), and 6% were 
+
+Baby Boomers (59+). These distributions indicate that 
+
+although younger adults were well represented, the sam -
+
+ple included substantial mid -life and older participants, 
+
+consistent with our broad recruitment targets. 
+
+Sex Count (%) 
+
+Female 259 (50.1%) 
+
+Male 254 (49.1%) 
+
+Total (valid) 513 
+
+Table 4: Sex of participants in Study 2
+
+Country of Residence 
+
+Participants represented more than 25 countries across 
+
+six continents. The largest groups were from Spain 
+
+(189), the United Kingdom (96), Italy (28), Canada 
+
+(26), Poland (18), and Portugal (18). Additional partic -
+
+ipants resided in countries across Europe, Asia, Africa, 
+
+North America, South America, and Oceania. Table 5 
+
+presents a full breakdown. 
+
+Ethnicity 
+
+Participants reported their ethnicity using Prolific’s 
+
+simplified categories. The largest group identified as 
+
+White (241, 47%). This was followed by Black (190, 
+
+37%), Asian (41, 8%), Mixed (27, 5%), and Other (12, 
+
+2%). One participant selected “Prefer not to say.” 
+
+## Appendix B: Survey Experiment Items 
+
+## and Selected Results (Study 2) 
+
+This appendix presents example items and selected re -
+
+sponse distributions from the 30 -item emotion –identifi -
+
+cation task used in Study 2. Each item consisted of a 
+
+microblog post shown either with or without electronic 
+
+nonverbal cues (eNVCs), and participants selected the 
+
+emotion they believed the author intended to express. 
+
+Example 1: Happiness (non -eNVC) 
+
+Tweet: “singing is a wonderful remedy.” 
+
+Response options: Stressed, Calm (correct) , Sur -
+
+prised, Sad, Unsure, No emotion. 
+
+Example 2: Happiness (eNVC) 
+
+Tweet: “My cat cuddled with me and I feel better. I
+
+love caaaats ”
+
+Response options: Amused, Happy (correct) ,
+
+Empty, Ashamed, Unsure, No emotion. 
+
+Country Count 
+
+Australia 2
+
+Brazil 6
+
+Canada 26 
+
+Chile 8
+
+Croatia 2
+
+Czech Republic 1
+
+Egypt 2
+
+Estonia 2
+
+France 5
+
+Germany 6
+
+Greece 8
+
+Hungary 6
+
+India 9
+
+Indonesia 3
+
+Ireland 4
+
+Italy 28 
+
+Kenya 7
+
+Korea 1
+
+Malaysia 2
+
+Mexico 4
+
+Morocco 1
+
+Netherlands 9
+
+Norway 2
+
+Poland 18 
+
+Portugal 18 
+
+Slovenia 2
+
+South Africa 189 
+
+Spain 13 
+
+Sweden 2
+
+United Kingdom 96 
+
+United States 29 
+
+Vietnam 1
+
+Not Available 1
+
+Total 513 
+
+Table 5: Country of residence of Study 2 participants 
+
+To account for item -level heterogeneity and to fully 
+
+exploit the within -subject design of Study 2, we esti -
+
+mated generalized linear mixed -effects models predict -
+
+ing whether each trial was correctly decoded. All models 
+
+include random intercepts for participants and emotion 
+
+categories. 
+
+Model 1: Main Effects of eNVCs and 
+
+Sarcasm 
+
+Model 1 (Table 10) estimated the independent effects 
+
+of preserving nonverbal cues (eNVCs) and sarcasm, ad -
+
+justing for demographic covariates. The presence of eN -
+
+VCs significantly increased the odds of correct inter -
+
+pretation (βˆ = 0.559 , SE = 0.047 , p < .001 , OR 
+
+## Appendix C: Results: Accuracy 
+
+## Analyses 
+
+Table 9 reports the paired -samples t-tests comparing 
+
+accuracy across eNVC conditions. 
+
+= 1.75 ). Sarcasm had a large negative effect on accu -
+
+racy (βˆ = −1.274 , SE = 0.048 , p < .001 , OR = 0.28 ). 
+
+Demographic covariates were small and inconsistent, 
+
+aside from a modest positive effect for White partici -
+
+pants. Random intercept variances indicate meaningful Ethnicity Count (%) 
+
+White 241 (47%) 
+
+Black 190 (37%) 
+
+Asian 41 (8%) 
+
+Mixed 27 (5%) 
+
+Other 12 (2%) 
+
+Prefer not to say 1 (0.2%) 
+
+Total 512 
+
+Table 6: Ethnicity of participants in Study 2
+
+Response Option Count 
+
+Calm (correct) 355 
+
+Sad 9
+
+Stressed 15 
+
+Surprised 14 
+
+No emotion 35 
+
+Unsure / Other 61 
+
+Total 489 
+
+Table 7: Response distribution for Example 1
+
+heterogeneity across participants and emotions. 
+
+Model 2: Four -Condition Specification 
+
+Model 2 (Table 11) decomposed the 2 × 2 structure 
+
+into four mutually exclusive conditions, using the non -
+
+eNVC, non -sarcastic cell as the reference category. Es -
+
+timated marginal means are reported in Table 12. 
+
+Relative to this baseline: 
+
+• eNVC, non -sarcastic posts were substantially 
+
+Response Option Count 
+
+Happy (correct) 196 
+
+Amused 67 
+
+Disappointment 4
+
+Nervous 62 
+
+No emotion 72 
+
+Unsure / Other 88 
+
+Total 489 
+
+Table 8: Response distribution for Example 2                     
+
+> Comparison tdf Mean diff. 95% CI
+> Non -sarcastic: non -eNVC vs. eNVC −17 .18 512 −1.32 [−1.47 ,−1.17 ]
+> Sarcastic: eNVC vs. non -eNVC −12 .17 512 −0.92 [−1.07 ,−0.77 ]
+
+Table 9: Paired -samples t-tests comparing accuracy 
+
+across eNVC conditions. 
+
+Model 1: Main Effects of eNVCs and 
+
+Sarcasm 
+
+Model 1 (Table 13) assessed the independent effects of 
+
+eNVCs and sarcasm on the likelihood of choosing “Un -
+
+certain.” The effect of eNVCs was small and not sig -
+
+nificant ( βˆ = −0.015 , SE = 0 .070 , p = .832 ), indi -
+
+cating that preserving nonverbal cues did not reliably 
+
+reduce perceived ambiguity. By contrast, sarcasm was 
+
+a strong positive predictor of uncertainty (βˆ = 0.990 ,
+
+SE = 0.062 , p < . 001 , OR = 2.69 ), meaning sarcas -
+
+tic posts were nearly three times as likely to be labeled 
+
+“Uncertain” as literal ones. White participants showed 
+
+higher uncertainty rates than others, but other demo -
+
+graphic effects were near zero. 
+
+more likely to be decoded correctly (βˆ
+
+SE = 0.047 , p < .001 , OR = 1.76 ).  = 0.565 , Model 2: Four -Condition Specification 
+
+• Non -eNVC, sarcastic posts did not differ reliably 
+
+from baseline (βˆ = −0.171 , SE = 0.422 , p = .685 ), 
+
+indicating large variability in sarcastic decoding. 
+
+• eNVC, sarcastic posts were significantly less likely 
+
+to be decoded correctly (βˆ = −0.715 , SE = 0.046 ,
+
+p < .001 , OR = 0.49 ), confirming the strong accu -
+
+racy cost of sarcasm even when cues are preserved. 
+
+Consistent with Model 1, eNVCs improve accuracy 
+
+for literal posts but cannot offset the inherent semantic 
+
+inversion of sarcasm. 
+
+## Appendix D: Results: Uncertainty 
+
+Model 2 (Table 14) decomposed eNVC × sarcasm com -
+
+binations into four mutually exclusive conditions using 
+
+the non -eNVC, non -sarcastic cell as the reference. Es -
+
+timated marginal means are reported in Table 15. 
+
+Relative to baseline: 
+
+• eNVC, non -sarcastic posts showed no meaningful 
+
+change in uncertainty (βˆ = −0.024 , SE = 0.071 ,
+
+p = .732 ). 
+
+• Non -eNVC, sarcastic posts significantly increased 
+
+uncertainty ( βˆ = 0 .743 , SE = 0 .352 , p = .035 , OR 
+
+= 2.10 ). 
+
+• eNVC, sarcastic posts produced the strongest in -
+
+## Analyses  crease in uncertainty (βˆ
+
+p < .001 , OR = 2.65 ). 
+
+= 0.973 , SE = 0.063 ,
+
+In addition to categorical accuracy, we examined partic -
+
+ipants’ subjective uncertainty. For each trial, choosing 
+
+the “Uncertain” option indicates that the participant 
+
+perceived the emotional intent as ambiguous. As in Ap -
+
+pendix C, we estimated mixed -effects logistic models 
+
+with random intercepts for participants and emotion 
+
+categories. 
+
+This pattern mirrors the accuracy results in Ap -
+
+pendix C: sarcasm drives large increases in perceived 
+
+ambiguity, and eNVCs do not attenuate this effect. 
+
+Among sarcastic posts, preserving cues does not de -
+
+crease uncertainty relative to removing them. 
+
+Across both uncertainty models, sarcasm is the dom -
+
+inant predictor of perceived ambiguity, doubling or Predictor Estimate SE z p
+
+Intercept 0.390 0.236 1.65 .099 
+
+eNVC (present) 0.559 0.047 11.79 < .001 
+
+Sarcasm (yes) -1.274 0.048 -26.51 < .001 
+
+Gender (male) -0.010 0.040 -0.24 .808 
+
+White 0.171 0.041 4.14 < .001 
+
+Age -0.022 0.018 -1.22 .221 
+
+Random effects: Participant SD = 0.256 ; Emotion SD = 0.562 
+
+N observations: 16,352 (511 participants, 6 emotions) 
+
+Table 10: Mixed -effects logistic regression (Model 1): 
+
+Main effects of eNVCs and sarcasm.                                                       
+
+> Predictor Estimate SE zp
+> Intercept 0.204 0.181 1.13 .260
+> eNVC, non -sarcastic 0.565 0.047 11.92 <.001
+> Non -eNVC, sarcastic -0.171 0.422 -0.41 .685
+> eNVC, sarcastic -0.715 0.046 -15.43 <.001
+> Gender (male) -0.010 0.040 -0.24 .808
+> White 0.171 0.041 4.14 <.001
+> Age -0.022 0.018 -1.22 .221
+> Random effects: Participant SD =0.256 ;Emotion SD =0.384
+> Nobservations: 16,352 (511 participants, 6emotions)
+
+Table 11: Mixed -effects logistic regression (Model 2): 
+
+Four -condition specification. 
+
+tripling the likelihood that participants select the “Un -
+
+certain” option. In contrast, eNVCs do not reliably re -
+
+duce uncertainty and, in sarcasm conditions, do not off -
+
+set the interpretive difficulty introduced by ironic re -
+
+versal. Together with accuracy analyses, these results 
+
+highlight a boundary condition on the communicative 
+
+value of nonverbal cues in text: eNVCs aid literal de -
+
+coding but do not mitigate the uncertainty inherent in 
+
+sarcastic communication. 
+
+Table 12: Estimated marginal means (EMMs) for ac -
+
+curacy by condition (Study 2). Higher values indicate 
+
+greater probability of correct emotion identification. 
+
+Condition Pred. Prob. 95% CI SE 
+
+Non -eNVC, Non -sarcastic 0.56 [0.47, 0.64] 0.043 
+
+eNVC, Non -sarcastic 0.69 [0.61, 0.76] 0.038 
+
+Non -eNVC, Sarcastic 0.51 [0.33, 0.69] 0.096 
+
+eNVC, Sarcastic 0.38 [0.30, 0.46] 0.041 
+
+Predictor Estimate SE z p
+
+Intercept -2.612 0.173 -15.13 < .001 
+
+eNVC (present) -0.015 0.070 -0.21 .832 
+
+Sarcasm (yes) 0.990 0.062 15.86 < .001 
+
+Gender (male) -0.044 0.078 -0.57 .572 
+
+White 0.563 0.079 7.12 < .001 
+
+Age 0.016 0.034 0.47 .635 
+
+Random effects: Participant SD = 0.695 ; Emotion SD = 0.330 
+
+N observations: 16,352 (511 participants, 6 emotions) 
+
+Table 13: Mixed -effects logistic regression (Model 1): 
+
+Main effects on perceived uncertainty.                                                       
+
+> Predictor Estimate SE zp
+> Intercept -2.567 0.180 -14.29 <.001
+> eNVC, non -sarcastic -0.024 0.071 -0.34 .732
+> Non -eNVC, sarcastic 0.743 0.352 2.11 .035
+> eNVC, sarcastic 0.973 0.063 15.47 <.001
+> Gender (male) -0.044 0.078 -0.57 .572
+> White 0.563 0.079 7.12 <.001
+> Age 0.016 0.034 0.47 .635
+> Random effects: Participant SD =0.695 ;Emotion SD =0.317
+> Nobservations: 16,352 (511 participants, 6emotions)
+
+Table 14: Mixed -effects logistic regression (Model 2): 
+
+Four -condition specification for uncertainty. 
+
+Condition Pred. Prob. 95% CI SE 
+
+Non -eNVC, Non -sarcastic 0.094 [0.071, 0.123] 0.013 
+
+eNVC, Non -sarcastic 0.092 [0.070, 0.120] 0.013 
+
+Non -eNVC, Sarcastic 0.179 [0.104, 0.290] 0.047 
+
+eNVC, Sarcastic 0.215 [0.170, 0.269] 0.025 
+
+Table 15: Estimated marginal means (EMMs) for un -
+
+certainty by condition (Study 2). Higher values indicate 
+
+greater perceived ambiguity. Appendix E: Study 3 Screening Survey 
+
+## stimuli 
+
+Table 16 reports the selection of trending topics and 
+
+hashtags used for selecting the stimuli for the screening 
+
+survey of Study 3. 
+
+## Appendix F: Age of Participants in 
+
+## Study 3 Screening Survey 
+
+Figure 3: Bar graph of age distribution of participants 
+
+in Study 3 screening survey. 
+
+As shown in Figure 3, the majority of participants 
+
+in the Study 3 screening survey were between 18 and 
+
+30 years old, with representation tapering off in older 
+
+cohorts. This skew toward younger demographics is ex -
+
+pected given the participant pool, but the inclusion of 
+
+participants across age ranges allowed for diversity in 
+
+interpretations of electronic nonverbal cues (eNVCs). 
+
+The age spread ensured that while Gen Z voices were 
+
+dominant, perspectives from Millennials, Gen X, and 
+
+Baby Boomers were also included, strengthening the 
+
+robustness of qualitative comparisons. No.  Trending Section  Topic and Search 
+
+Query 
+
+Description 
+
+1 Trending  “#TheLastOfUs” 
+
+(#TheLastOfUs) 
+
+lang:en -filter:links 
+
+-filter:replies 
+
+The Last of Us, a popular video game series, 
+
+trended as HBO released the trailer for its TV 
+
+adaptation. 
+
+2 Trending  “Twitter’s TOS” 
+
+Twitter’s TOS 
+
+lang:en -filter:links 
+
+-filter:replies 
+
+Changes were recently made to Twitter’s 
+
+terms of service. 
+
+3 Gaming · Trend -
+
+ing 
+
+“#TheCallistoProto -
+
+col” 
+
+(#TheCallistoProtocol) 
+
+lang:en -filter:links -
+
+filter:replies 
+
+Hashtag for a new videogame developed by 
+
+Striking Distance Studios, released on Dec 2, 
+
+2022. 
+
+4 Music · Trending  “Wonho” 
+
+Wonho 
+
+-filter:links 
+
+filter:replies 
+
+lang:en 
+
+-
+
+Wonho, South Korean singer from Monsta X, 
+
+held his last concert before entering compul -
+
+sory military service. Fans trended his name 
+
+to express support. 
+
+5 Trending  “Kanye” 
+
+Kanye 
+
+-filter:links 
+
+filter:replies 
+
+lang:en 
+
+-
+
+Kanye West trended after suspension from 
+
+Twitter for antisemitic posts and a controver -
+
+sial image. Some users speculated suspension 
+
+was retaliation for posting an unflattering im -
+
+age of Elon Musk. 
+
+6 Gaming · Trend -
+
+ing 
+
+“#DragonAge” 
+
+(#DragonAge) 
+
+lang:en -filter:links 
+
+-filter:replies 
+
+Trending during the annual Dragon Age com -
+
+munity celebration on Dec 4. 
+
+7 NFL · Trending  “Colts” 
+
+Colts 
+
+-filter:links 
+
+filter:replies 
+
+lang:en 
+
+-
+
+Trended due to an NFL game featuring the 
+
+Colts. 
+
+8 Entertainment ·
+
+Trending 
+
+“The Way of Water” 
+
+“The Way of Water” 
+
+lang:en -filter:links -
+
+filter:replies 
+
+Trending due to anticipation for James 
+
+Cameron’s second Avatar movie. 
+
+9 Trending  “Portugal” 
+
+“Portugal” 
+
+-filter:links 
+
+filter:replies 
+
+lang:en 
+
+-
+
+Trended during a sports event featuring the 
+
+Portuguese national team. 
+
+10  Sports · Trending 
+
+Trending with 
+
+#NBAonTNT 
+
+“Shaq” 
+
+“Shaq” 
+
+-filter:links 
+
+filter:replies 
+
+lang:en 
+
+-
+
+Trended during a sports broadcast featuring 
+
+Shaquille O’Neal. 
+
+Table 16: Trending topics and hashtags sampled for screening survey (Study 3). Appendix G: Focus Group Discussion 
+
+## Protocol 
+
+Expected duration of focus group discussion: 
+
+around 45 minutes to 1 hour 
+
+Type of focus group discussion: Semi -structured 
+
+Research question to be answered: (RQ3) How 
+
+do people decode emotions using nonverbal cues in mi -
+
+croblog posts? 
+
+No. Question Objective 
+
+1 Please read this and think about it. In your own 
+
+words, what do you think this tweet is about? 
+
+2 What are some emotions you can identify in this 
+
+tweet? 
+
+Feel free to be as specific as you’d like. You are also 
+
+encouraged to work off each others’ responses if you 
+
+agree or disagree with their response. 
+
+3 Now, what are some of the ways you think the author 
+
+expresses these emotions? 
+
+Think about anything in the tweet that signals certain 
+
+emotions in you while reading. 
+
+## Appendix H: Focus Group Sessions and 
+
+## Posts Shown                                                                                             
+
+> No. Post S1 S2 S3 S4 S5 S6
+> 1
+> 2
+> Today is Friday!!!!!!! thannkkkk gooood
+> ifucking told all of them (my friends) to save aseat for
+> me... sigh
+> Ihave so much homework &I’m overthinking.. gawd
+> I’m such a mess...
+> I’m shit at everything Ido
+> Just finished reading Farenheit 451... DAMN... Ireally en -
+> joyed it
+> IM CUTTING MY HAIR TODAy!!!!!!!!
+> all my friends hate me... haha kill me
+> Oh I am soo tiiiired ughh wow I am so tired...
+> ssooooo isee acoffee machine here... oh myggod
+> I think my record player just came in the mail
+> THANK YOU FEDEX
+> EXAAAAAAAAAMS
+> When the guy you like starts talking to another girl..
+> ✓
+> ✓✓✓
+> ✓
+> 3✓✓
+> 4
+> 5
+> ✓
+> ✓✓
+> ✓
+> 6✓✓
+> 7✓✓
+> 8✓✓✓
+> 9✓✓
+> 10 ✓✓
+> 11 ✓✓
+> 12 ✓✓
+
+Table 18: Posts and focus group sessions in Study 3. A
+
+checkmark (✓) indicates that the post was discussed in 
+
+the given session. 
+
+To get participants to start thinking about the 
+
+meaning of the microblog post. Participants 
+
+may identify the subject, overall tone, emo -
+
+tions, eNVCs, and audiences amongst other 
+
+details from the post. 
+
+To get participants to think deeply about the 
+
+specific emotions they see in the post. 
+
+To get participants to identify details in the 
+
+post that helped them identify the emotions 
+
+they had previously named. This also helps 
+
+tie in the emotions that participants may have 
+
+felt the post embodies, with the actual written 
+
+content of the post.

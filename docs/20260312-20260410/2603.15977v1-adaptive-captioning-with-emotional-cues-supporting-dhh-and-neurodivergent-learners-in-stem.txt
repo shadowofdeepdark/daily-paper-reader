@@ -1,0 +1,267 @@
+Title: Adaptive Captioning with Emotional Cues: Supporting DHH and Neurodivergent Learners in STEM
+
+URL Source: https://arxiv.org/pdf/2603.15977v1
+
+Published Time: Wed, 18 Mar 2026 00:25:16 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Adaptive Captioning with Emotional Cues: Supporting DHH and Neurodivergent Learners in STEM 
+
+Sunday David Ubur 
+
+Department of Computer Science Virginia Tech 
+
+Blacksburg, Virginia, USA uburs@vt.edu 
+
+Denis Gracanin 
+
+Department of Computer Science Virginia Tech 
+
+Blacksburg, Virginia, USA gracanin@vt.edu 
+
+Eugenia Ha Rim Rho 
+
+Department of Computer Science Virginia Tech 
+
+Blacksburg, Virginia, USA eugenia@vt.edu 
+
+This is the author’s accepted manuscript of a paper presented at the 2025 13th International Conference on Affective Computing and Intelligent Interaction (ACII 2025). The final version is to appear in IEEE Xplore. DOI will be added when available. 
+
+Abstract —Real-time captioning is vital for Deaf and Hard of Hearing (DHH) and neurodivergent learners (e.g., those with ADHD), yet it often omits emotional and non-verbal cues essential for comprehension. This omission is particularly consequential in STEM education, where cognitively demanding material can exacerbate the challenges faced by caption users across diverse ability profiles. In this paper, we present a design-oriented exploration of four captioning prototypes that embed emotional and multimodal cues, including facial expressions, body gestures, keyword highlighting, and emoji. Across a pilot and a main study with 24 participants, we found that certain prototypes reduced self-reported cognitive load and improved comprehension scores compared to traditional captions. Qualitative feedback reveals the importance of customizable caption features to accommodate neurodivergent users’ preferences (e.g., ADHD or different levels of comfort with emojis). Our findings contribute to ongoing conversations in accessible technology research about how best to integrate emotional cues into captions in a way that is both usable and beneficial for a wide range of learners. 
+
+Index Terms —accessibility, real-time captioning, emotional expression, Deaf and Hard-of-Hearing, STEM education 
+
+I. I NTRODUCTION 
+
+Ensuring accessible learning in STEM (Science, Tech-nology, Engineering, and Mathematics) remains a critical challenge for students who are Deaf or Hard of Hearing (DHH) as well as those who identify with neurodiversity, such as ADHD. While automatic speech recognition (ASR) and Communication Access Realtime Translation (CART) services have improved, standard text-only captions can be cognitively taxing and still fail to convey vital non-verbal cues such as vocal tone, body gestures, and emotional emphasis [1]–[3]. This shortfall is especially problematic in STEM lectures, where emotional cues and prosodic emphasis signal difficulty or importance [4]–[6]. Moreover, learners with conditions such as ADHD may particularly benefit from clearer, more dynamic forms of captioning that highlight emotional context and key phrases. ADHD students often struggle with sustained attention, benefiting from multimodal cues that emphasize key content [7], [8]. By offering captions that provide not only textual content but also prosodic or facial indicators, we aim to support a broad spectrum of learning preferences and reduce extraneous cognitive load. Over the past several years, there has been emerging work on “emotive captions” that embed or visualize paralinguistic speech cues, from pitch and volume to facial and gestural information [9]–[11]. Within the accessibility community, no-table examples include research into “Caption Royale,” which explores a design space for affective captions [12], “Visible Nuance” [10], and others examining user-driven customization of emotional or prosodic cues in captioning systems [13], [14]. These studies consistently show that adding emotional or paralinguistic visualizations can improve user comprehension and engagement, but they also raise important questions about clutter, visual load, and user preferences. Further, many of these projects focus on entertainment media, social platforms (e.g., TikTok, YouTube), or pre-recorded materials—leaving open questions about real-time usage, especially in formal educational contexts like STEM, where domain-specific com-plexity could introduce additional cognitive burden. This work explores how to enrich real-time captioning with emotional and multimodal cues for STEM learners through a series of design probes. We present four prototypes that vary in the mode of emotional expression (e.g., on-screen emoji, text highlighting, embedded speaker video) and in how closely the captions are visually integrated with the instructor’s face or gestures. Specifically, we ask: RQ1: How does the integration of facial expressions, text highlighting, emoji, or other emotional cues in real-time STEM captions affect comprehension and cog-nitive load for DHH and neurodivergent students? RQ2: In what ways do different approaches to visualizing emotional and prosodic information (e.g., on-screen emoji, overlay on the speaker video, textual empha-sis) shape user preferences, perceived usability, and perceived connection with the instructor? 1
+
+> arXiv:2603.15977v1 [cs.HC] 16 Mar 2026
+
+In a pilot study ( n = 5 ) and a subsequent main study (n = 24 ), we evaluated user perceptions, cognitive load (via NASA-TLX [15]), and task comprehension across prototypes. Although limited by a modest sample size and partial ordering effects, our initial findings suggest that certain “emotion-enhanced” designs can reduce participants’ reported cognitive load compared to conventional captions and bolster compre-hension on short quizzes. 
+
+A. Contributions 
+
+Our research makes the following contributions to the field of accessibility and education:  
+
+> •
+
+Novel Emotive Captioning Approach: We introduce a real-time captioning framework that goes beyond stan-dard text by integrating emotional and multimodal cues (e.g., facial expressions, prosodic hints). This design tar-gets STEM settings, where subtle emphasis and instructor affect are vital for comprehension.  
+
+> •
+
+Empirical Evidence in STEM Contexts: Through a pilot and main study, we demonstrate that augmenting captions with emotional and multimodal elements can reduce cognitive load and improve short-term under-standing of complex material, revealing the potential for more sophisticated captioning solutions in demanding academic domains.  
+
+> •
+
+Emphasis on Customization: We highlight how in-dividual user preferences—especially among DHH and neurodivergent learners—vary widely, making flexible customization essential. Our findings suggest that user-driven toggles for emotive features (e.g., emojis, high-lighting) can strike a balance between clarity and richness of communication. II. R ELATED WORK 
+
+We discuss emotional cues in education, emotional expres-siveness and multi-modality for real-time captions. 
+
+A. Emotional Cues in Education 
+
+Emotional expression in instructional settings involves non-verbal cues such as facial expressions, vocal tone, pitch, and body gestures. These cues can convey an instructor’s enthusiasm, emphasis, or urgency and are critical for effective communication—particularly in STEM classes where content is often dense and abstract [16], [17]. While foundational research on universal emotions (e.g., anger, happiness) stresses the importance of nonverbal signals [18], [19], studies in edu-cational psychology highlight that emotional cues can improve learner engagement and retention by signaling which topics are most important or conceptually difficult [20]. In STEM lectures, instructors frequently rely on nonverbal behaviors to direct attention to key elements (e.g., pointing at equations or diagrams) and to communicate levels of confidence or urgency [21], [22]. These cues are especially relevant for neurodivergent learners (e.g., those with ADHD or autism), who may process visual information more effectively than auditory cues [23]. Research suggests that clarifying or trans-lating these emotional and gestural elements into accessible formats—such as visually distinct text or icons in captions— can reduce cognitive load and help learners keep pace with complex material [24]–[26]. 
+
+B. Emotional Expressiveness in Real-Time Captions 
+
+Captions have traditionally focused on providing textual equivalents of spoken language for DHH communities. More recently, research has expanded to include emotional and prosodic elements in captions to capture a fuller communi-cation experience [10], [11]. For example, studies show that including cues for vocal intonation (e.g., indicating raised pitch or emphasis) can help readers follow important shifts in content or speaker intent [9], [27]. These approaches use font or animation to reflect prosody but must avoid over-whelming viewers [28], [29]. In STEM education, emotional and prosodic cues can be especially valuable. Lessons may involve complex terminology, rapid shifts in difficulty level, and specialized gestures (e.g., pointing at a chemical structure or highlighting code syntax). Incorporating these cues into real-time captions can help DHH and neurodivergent learners identify moments of emphasis or conceptual change more quickly [30], [31]. However, existing solutions often target entertainment or general online content rather than highly technical, fast-paced STEM contexts [11]. Consequently, more research is required to understand how captioning systems can seamlessly integrate emotional cues, instructor gestures, and specialized vocabulary under stringent real-time constraints. 
+
+C. Integrating Multiple Modalities in Real-Time Captions 
+
+Recent work in multimodal captioning studies how to fuse textual information with visual data, such as facial expressions, voice pitch, and body gestures to enrich the accessibility experience [32], [33]. For instance, systems that analyze facial cues can display emotive icons or text effects indicating the speaker’s emotional state, while voice pitch analysis can inform dynamic text changes signaling urgency or enthusiasm [34], [35]. Although promising, many of these approaches focus on pre-recorded content and do not address the unique challenges of live, interactive lectures [36], [37]. In the STEM classroom, capturing nonverbal cues in real time is further complicated by instructor movement around the room, the need to reference multiple visual aids (e.g., whiteboards, slides, lab equipment), and potential occlu-sions of facial expressions [38]. Some learners benefit from gesture icons, while others—especially with ADHD—may find them distracting [39]. Thus, customizable captioning features—ranging from selectable emotional icons to on/off toggles for gesture annotations, could better accommodate neurodivergent preferences. Overall, while multimodal and emotion-enhanced captioning has made strides in entertain-ment and general communication contexts, STEM education remains underexplored. Prior solutions often do not address the specific demands of technical lectures that involve diagrams, formulas, and rapid topic shifts. Nor have they sufficiently investigated how neurodivergent students perceive or utilize emotional cues in real-time captions. This gap motivates our focus on a customizable, emotion-enhanced captioning system designed to maintain clarity while conveying crucial affective and instructional signals in STEM settings. III. F ORMATIVE PILOT STUDY 
+
+Before developing our main prototypes, we ran a brief pilot (n = 5 ) to explore how users perceived different ways of representing emotional or multimodal information in captions. While small in scale and without formal hypothesis testing, the pilot provided early signals that users want more than mere text but worry about clutter. 
+
+A. Procedure and Materials 
+
+Participants first watched a short recorded STEM lecture (Chemistry, 3 minutes) with only raw ASR transcripts. They then reviewed design mockups illustrating possible enhance-ments: (i) bold or colored highlighting of key/emotion-laden words, and (ii) emojis inserted to convey speaker mood (Figure 1. We collected open-ended feedback via an online survey (QuestionPro).  
+
+> Fig. 1. Proposed caption design mock-up
+
+B. Pilot Feedback and Refinements 
+
+Several found text-based highlighting helpful—one stated “it could help me notice important points faster” but were uncertain whether it conveyed genuine emotion. Emojis re-ceived mixed reactions: some welcomed them as “fun and quick to parse,” while others felt they might be “unprofessional or distracting for a formal STEM video.” One Deaf participant said, “I prefer reading standard English. Emojis are okay in chats, but not sure in class.” Despite these differences, participants unanimously agreed that a single “one-size-fits-all” approach was inadequate, suggesting that caption systems should allow customizations. From these insights, we refined four prototypes, each representing a different blend of visual and emotional cues. We then evaluated these prototypes in a main study with 24 participants. IV. M AIN STUDY 
+
+A. Overview and Rationale 
+
+Our main study aimed to compare a baseline traditional caption format with four enhanced prototypes, each embedding varying degrees of emotional expression or visual annotation. We view this primarily as a design exploration rather than a confirmatory experiment, given the small sample and the mul-tiple confounds (e.g., varying STEM topics). Nonetheless, we sought indicative evidence on whether emotive captions might reduce cognitive load or improve short-term comprehension. 
+
+B. Prototype Design 
+
+We developed a web-based captioning prototype that em-beds emotional cues into STEM lectures, aiming to highlight nonverbal aspects (e.g., vocal emphasis, instructor gestures) for learners who are DHH or neurodivergent. Implemented in HTML, CSS, and JavaScript, the simulated model processes pre-recorded 4-minute lecture segments, segments the tran-script into individual words, and annotates them with affective attributes such as color, animation, or icons. This approach offers a more expressive form of real-time captioning, reducing cognitive load by visually conveying tone and urgency. To explore diverse design choices, we created four discipline-specific variations, each featuring progressively richer capabilities:  
+
+> •
+
+P1: Text + Speaker Video: Plain text captions appear to the side of the instructor’s video, enabling viewers to see facial expressions and gestures in real time. Although unobtrusive, this layout contains no additional visual emphasis beyond sequential text.  
+
+> •
+
+P2: Caption Overlay on Video: Captions are overlaid on top of the speaker’s video, reducing the need to glance away. However, some participants cautioned that occluding lip movements or facial expressions could hinder users who rely heavily on visual cues.  
+
+> •
+
+P3: Text Highlighting + Minimal Animation: Key terms (e.g., “electron,” ”important,” ”warning” ) are bolded or colored to indicate emphasis, with subtle text-rising animations simulating prosodic changes. This de-sign avoids emojis, anticipating that some users might find them distracting.  
+
+> •
+
+P4: Text + Emojis/Icons + Discipline Visuals: Building on P3, this most visually ”rich” prototype integrates small emojis or discipline-specific icons (e.g., lab flasks for chemistry) to reinforce emotional states (e.g., excitement) or specialized vocabulary. While potentially more engag-ing, it also introduces the highest risk of visual clutter. Although each prototype relies on the same underlying textual transcript, we paired each with a short lecture from a different STEM domain (e.g., Engineering for P2, Biology for P3, Chemistry for P4) to reduce learning or memorization effects across conditions. We acknowledge the potential for domain-based confounds (some subjects may inherently seem simpler or more engaging), but this variety allowed us to evaluate how emotional captioning can adapt to a range of technical complexities. 
+
+C. Participants 
+
+Through academic mailing lists and DHH advocacy groups, we recruited 33 participants, with 24 completing all study phases (72.7% completion rate). Gender distribution was bal-anced (54.2% female, 33.3% male, 12.5% other/non-binary), with ages ranging from 19–40+ years. 
+
+1) Accessibility Characteristics: The participant cohort (Table I) included key populations of interest: 33.3% (n=8) identified as Deaf or Hard of Hearing (5 Deaf, 3 Hard of Hearing), 29.2% (n=7) reported ADHD, and 4.2% (n=1) reported dyslexia. Caption usage patterns revealed that 92% were regular users (split evenly between always and frequent users), and 58.3% rated captions as ”extremely useful” for their needs.                                                                                                                                   
+
+> TABLE I PARTICIPANTS DEMOGRAPHIC INFORMATION , A CCESSIBILITY
+> CHARACTERISTICS ,AND CAPTION USAGE
+> ID Age Gender Profession Accessibility Caption Usage
+> 133 Female Industrial ADHD Always 233 Female Industrial ADHD Always 326 Female Industrial Other Frequently 440 Female STEM Student Other Frequently 5–Female STEM Student DHH Always 623 Other STEM Student ADHD Frequently 721 Female STEM Student ADHD Frequently 8–Female STEM Student –Always 923 Other STEM Student ADHD + DHH Frequently 10 38 Other Other ADHD Frequently 11 19 Female STEM Student DHH Always 12 32 Female STEM Student ADHD + DHH Frequently 13 21 Female Other DHH Frequently 14 28 Male Other –Always 15 –Male Industrial DHH Occasionally 16 37 Male Other DHH Always 17 38 Male Other –Always 18 38 Male Industrial –Always 19 –Female Other –Always 20 22 Female Industrial Other Frequently 21 22 Female Non-STEM Other Frequently 22 24 Male Non-STEM Dyslexia Always 23 –Male Other DHH Frequently 24 –Male Academic –Never
+
+2) Rationale for Sample Composition: This distribution enabled us to:  
+
+> •
+
+Compare DHH vs. hearing caption users’ experiences.  
+
+> •
+
+Examine ADHD-related preferences (given 29% preva-lence).  
+
+> •
+
+Assess professional vs. student needs. While the DHH subgroup (n=8) provided essential acces-sibility insights, we acknowledge this as a study limitation and recommend future work with larger DHH samples. The inclusion of frequent caption users (92% of participants) ensured informed evaluations of prototype enhancements. 
+
+D. Procedure 1) Consent and Pre-Questionnaire: Gathered demograph-ics, prior caption usage, and any accessibility needs. 
+
+2) Part One (Baseline): Participants watched a short ( 3 minute) lecture clip with traditional captions (raw text from ASR, no markup). They answered two comprehension ques-tions and completed the NASA-TLX [15] for cognitive load. 
+
+3) Part Two (Enhanced Prototypes): Each participant then experienced the four prototypes in a randomized order (to mitigate learning or fatigue effects). For each prototype, they: watched a short STEM clip ( 4 minutes) with the prototype’s enhancements, answered 2–3 comprehension questions, and completed NASA-TLX subscales. 
+
+4) Post-Study Survey: Gathered open-ended feedback on preferences and perceived benefits or drawbacks of each prototype. 
+
+5) Note on Counterbalancing: We acknowledge that using different video topics (Engineering, Biology, etc.) for each prototype can introduce content-based variability. We also showed the baseline first, which does risk an order effect if participants “learned how to answer” by the time they reached the prototypes. Because our focus was exploratory, we ac-cepted these limitations but highlight them as a methodological caveat. 
+
+E. Measures and Analysis 1) Comprehension Accuracy: Binary scoring for each ques-tion (correct/incorrect). 
+
+2) Cognitive Load: We used NASA-TLX subscales (mental demand, frustration, etc.). 
+
+3) Qualitative Feedback: We performed a thematic analysis of open-ended survey responses, seeking insights on usability, emotional clarity, and perceived trade-offs. We used repeated-measures ANOVA and t-tests to compare comprehension and NASA-TLX scores. Where relevant, we report effect sizes (partial η2) to indicate practical significance. However, given the small sample and partial confounds, these results should be interpreted cautiously. V. R ESULTS 
+
+A. Comparing Baseline vs. Enhanced Prototypes 
+
+We first compared how many participants answered com-prehension questions correctly in the baseline vs. the four enhanced prototypes. In the baseline condition, only 54.17% of responses were correct overall. In contrast, each enhanced prototype yielded markedly higher correctness rates—reaching nearly 100% across participants. An independent t-test showed that these differences were statistically significant ( p < . 001 ), albeit confounded by the fact that different lecture content was used.                                   
+
+> TABLE II REPEATED -MEASURES ANOVA RESULTS FOR NASA-TLX SUBSCALES .VALUES IN PARENTHESES REPRESENT PARTIAL η2.
+> Subscale F-value p-value partial η2
+> Mental Demand F(3 ,10824 .458) = 4 .6065 p= 0 .0060 0.0013 Physical Demand F(3 ,9221 .0348) = 3 .4898 p= 0 .0216 0.0011 Effort F(3 ,8279 .4334) = 3 .6820 p= 0 .0173 0.0013 Frustration F(3 ,20878 .496) = 6 .7620 p= 0 .0006 0.0010
+
+B. NASA-TLX Results Across Prototypes 
+
+As shown in Figure 2, the baseline condition ( M = 44 .0)and Prototype 2 ( M = 68 .3) had relatively high Mental De-mand ratings, whereas Prototype 3 was the lowest ( M = 32 .5). Participants noted that the overlaid captions in P2 frequently obscured the speaker’s mouth and gestures, posing additional challenges for those who rely on lip-reading or visual fa-cial cues. By contrast, Frustration peaked under Prototype 4 (approximately 70 ), while P3 elicited moderate frustration (approximately 50 ). Physical Demand remained in the mid-range ( ≈ 30 –40 ), and Temporal Demand plus Performance 
+
+showed less pronounced variation. Effort roughly mirrored Mental Demand, with higher values for P2 ( ≈ 60 ) and lower for P3 ( ≈ 40 ). A repeated-measures ANOVA (Table II) revealed significant effects of prototype on Mental Demand , Physical Demand ,
+
+Effort , and Frustration (all p < 0.05 ). Despite reaching statis-tical significance, effect sizes were small (partial η2 ≈ 0.001 ), likely reflecting the large error term in our model. Specifically for Mental Demand, the effect was: 
+
+F (3 , 10824 .458) = 4 .6065 p = 0 .0060 partial η2 = 0 .0013 
+
+Post-hoc comparisons confirmed that P2 was significantly more demanding than P3 ( p < 0.05 ). Overall, these findings suggest that P2’s overlaid design may impose additional visual load, while the minimal, keyword-highlight approach in P3 was comparatively less mentally taxing.  
+
+> Fig. 2. NASA-TLX scores for Prototypes 1–4.
+
+C. Identification of Multimodal Cues and Effect 
+
+Figure 3 describes the effectiveness of emotional expression components and readability across the four prototypes. Live video (Prototypes 1 and 2) showed limited effectiveness in conveying emotions, with only 6.90% and 7.41% of users finding it effective, respectively. In contrast, visualizations and text effects (Prototypes 3 and 4) were more effective, with 33.33% and 34.62% of users identifying emotions suc-cessfully. Readability was highest for Prototypes 1 and 4, scoring 58.62% and 57.69%, while Prototype 2 had the lowest readability at 22.22%.  
+
+> Fig. 3. Effectiveness of emotional expression components and readability across Prototypes 1–4.
+
+D. Captioning Preferences and Usage Trends Across Respon-dent Groups 
+
+Figure 4 show clear differences in how captions are used and which prototypes are preferred by Deaf, Hard of Hear-ing (HoH), and neurodivergent respondents. Deaf participants mostly selected captions as “Always” and leaned towards Pro-totypes 3 and 4 because they effectively conveyed emotional tone and context, although they pointed out that excessive distractions, like emojis, were a drawback. HoH respondents valued simplicity, with Prototype 1 receiving significant praise for its clarity and the way it separates text from video. neurodivergent participants liked features such as keyword highlighting in Prototype 3 and found Prototype 4 easy to read, often mentioning accessibility and cognitive clarity as impor-tant factors. Overall, all groups emphasized the importance of simplicity, clarity, and minimizing distractions for perceived usefulness and accessibility.  
+
+> Fig. 4. Comparison of caption usage frequency, perceived usefulness, proto-type preferences, and feedback on accessibility features across Deaf, Hard of Hearing, and neurodivergent respondents.
+
+E. Qualitative Perceptions 
+
+In open-ended feedback, participants varied considerably on the value of emoji or domain-specific icons (P4). Some wrote, “Emojis helped me see if the instructor was excited or joking,” while others described them as “unnecessary fluff.” Two Deaf participants specifically mentioned that emojis felt distracting and that “clean text with color or bold is better than cartoony icons.” Meanwhile, P3—highlighting key words without emoji—was praised for balancing expressiveness and legibility. One ADHD participant noted, “Highlights drew my attention to important points without feeling overwhelmed.” Interestingly, some participants still favored P1 (separate caption box plus full speaker video), citing that “it’s easiest to read in one place while still seeing the face.” Another participant, though, disliked having to shift gaze from text to video. These tensions suggest personalization is crucial: for instance, letting each user choose overlay vs. side-by-side text, or toggling off emoji. 
+
+F. Summary of Findings 1) Prototype Variation: Not all enhancements uniformly helped. Certain design choices (like text over the speaker) was frustrating for some, and emoji were polarizing. 
+
+2) Reduced Cognitive Load: Relative to the baseline, par-ticipants generally reported reduced cognitive effort with pro-totypes that integrated emotional cues in a subtle, text-centric way (P3). 
+
+3) Strong Demand for Customization: Over half of par-ticipants explicitly requested ways to toggle or personalize features. 
+
+4) Preliminary Evidence of Improved Comprehension: Al-though partly confounded by different content, participants did better on short quizzes with emotive or visually emphasized captions. VI. D ISCUSSION 
+
+Our study set out to examine how embedding emotional and multimodal cues into real-time captions might improve comprehension and reduce cognitive load for STEM learners. Specifically, we asked: RQ1: How does the integration of facial expressions, text highlighting, emoji, or other emotional cues in real-time STEM captions affect comprehension and cog-nitive load for DHH and neurodivergent students? RQ2: In what ways do different approaches to visualiz-ing emotional and prosodic information shape user preferences, perceived usability, and perceived con-nection with the instructor? 
+
+1) Addressing RQ1: Our findings suggest that including emotional indicators—such as highlighting of keywords, emo-jis, and minimal text animation—can reduce perceived mental effort and increase short-term comprehension. The participant group that experienced these enhancements showed a jump from 54.17% correctness with traditional captions to nearly 100% correctness across the four prototypes. While some of this improvement is likely attributable to practice effects or differing lecture content, the self-reported NASA-TLX measures also revealed that prototypes incorporating subtle emotional cues (e.g., color highlighting) were perceived to be less mentally demanding than purely text-based captions. These results align with theories in cognitive load, which posit that well-designed multimodal cues can lower extrane-ous processing and support deeper engagement with STEM content [24], [25]. 
+
+2) Addressing RQ2: Though each prototype included a distinct configuration of emotional cues, user comments un-derscored how varied preferences can be. Prototypes that inserted emojis received polarized feedback, praised by some for clarity and immediacy (“I could see how the speaker was feeling”) but criticized by others as “cluttered” or “distracting.” Overlaid captions (Prototype 2) simultaneously allowed for eye-contact alignment but also frustrated participants who rely on lipreading. By contrast, many users lauded the simpler text-highlighting approach (Prototype 3), which struck a balance between expressiveness and readability. These findings high-light the challenge of conveying emotional cues without visual overload. [10], [11]. A single method for emotional expression does not appear optimal across diverse needs; customization and adaptability emerged as recurring themes in our data. 
+
+A. Methodological Limitations 
+
+Despite these promising indicators, the exploratory nature of our study introduces several limitations that constrain the interpretability of our results. 
+
+1) Study Population and Sample Size: We recruited 24 par-ticipants, among whom only 8 identified as DHH. While this subset allowed for some initial insights into the unique needs of DHH learners, it is insufficient for conclusive, generalizable claims about the entire DHH population. Future studies should broaden recruitment efforts to capture a wider range of DHH users, including those with varying levels of fluency in sign language, different familiarity with captioning, or additional needs such as cochlear implants. 
+
+2) Potential Order and Learning Effects: We chose to show the baseline (traditional captioning) condition first, then randomized only the order of the four enhanced prototypes. Although this approach partially mitigates carry-over effects across the prototypes themselves, participants likely learned the basic content presentation format from the baseline con-dition before seeing the enhanced versions. Moreover, each prototype was demonstrated with a different STEM topic, which introduces further content variability: some topics might have been inherently simpler or more engaging. These design decisions were pragmatic for an exploratory pilot but limit our ability to make definitive causal inferences. 
+
+3) Short Videos and Immediate Comprehension: Our study used short STEM lectures (3–4 minutes) followed by a small number of factual or conceptual questions. Participants’ im-proved performance in prototypes may not necessarily extrap-olate to longer lectures or more complex tasks involving multi-step reasoning or problem-solving. Additionally, we relied on immediate comprehension checks, not longer-term retention or conceptual depth. Future research should incorporate ex-tended tasks (e.g., multi-lecture modules, multi-day classes) and delayed post-tests to better assess whether emotional cues in captions yield sustained learning benefits. 
+
+B. Design Implications 
+
+Our results suggest both opportunities and constraints when designing emotion-enhanced captioning systems. Below, we synthesize key takeaways for practitioners and researchers.  
+
+> •
+
+Subtle Emotive Cues May Reduce Cognitive Load: 
+
+Previous research has emphasized that designers should balance expressiveness with clarity, ensuring that emo-tional cues supplement rather than dominate the visual field [28], [29]. Our exploratory study reinforces this principle in the underexplored context of real-time STEM captioning. Participants favored prototypes that used sub-tle visual enhancements—such as keyword highlight-ing without emojis—while describing overloaded designs with icons or animation as distracting. This suggests that even lightweight cues can enhance comprehension without adding unnecessary visual strain.  
+
+> •
+
+Avoid Overly Obstructive Overlays: Although some users appreciated caption-video overlays for visual align-ment, others—especially those who rely on lipread-ing—found them intrusive. Prior work has raised similar concerns about overlays occluding facial features [30], [31]. Our results underscore the importance of flexible layouts that preserve visibility of speaker expressions.  
+
+> •
+
+Customization is Critical: Prior work has noted that some Deaf users perceive emojis as “childish” or visually distracting [13], [14]. Our findings confirm this sentiment among several DHH participants, but also highlight a contrast: many participants with ADHD reported that emojis helped them quickly track emotional tone and stay engaged. This divergence underscores the need for user-driven customization—allowing individuals to enable, disable, or tailor emotive features like icons, highlights, or text animation based on personal preference.  
+
+> •
+
+Extended Accessibility Beyond DHH: While designed with DHH learners in mind, our findings reveal broader benefits. Neurodivergent users, including those with ADHD, and non-native English speakers reported im-proved focus and emotional clarity from enhanced cap-tions. These cross-cutting benefits point toward inclusive design opportunities. 
+
+1) Linking Back to STEM Pedagogy: Emotional cues may be particularly beneficial in STEM contexts, where the in-structor’s enthusiasm or caution can signal the difficulty or importance of a given concept [4], [5]. For instance, the intensity of a professor’s voice or a physical gesture might highlight a critical lab safety warning or a key theorem. By translating these nonverbal expressions into visual cues—such as color shifts, bold formatting, or timely icons—learners can quickly identify high-stakes material or areas needing extra attention. This alignment with STEM pedagogy underscores the unique value of emotive captioning in domains where miss-ing subtle cues could have especially significant consequences, whether it involves complex calculus proofs or safety-critical lab procedures [1]. 
+
+2) Connection to Accessibility Standards: Given the broader push for inclusive design, emotive captioning aligns with existing accessibility guidelines such as WCAG and Section 508 [40]. While these guidelines predominantly focus on text accuracy, proper synchronization, and navigability, our findings suggest that emotional expressiveness constitutes an-other layer of “equivalent context,” particularly in educational settings where tone and emphasis can shape understanding [3]. Researchers and practitioners could frame emotive captions as a complementary enhancement to meet or exceed the standards outlined in Deaf education best practices, thereby contributing to more holistic representations of speech. 
+
+C. Toward Deeper Evaluation 
+
+Given the exploratory nature of this study, future work should involve more rigorous, longitudinal investigations in real classroom environments. 
+
+1) Long-Term Classroom Deployments: Rather than short, self-contained lecture clips, future studies could instrument full course sessions over several weeks. This would enable analysis of how emotive captions affect not only immediate comprehension but also academic outcomes like homework, exams, and projects. Longitudinal use may reveal factors such as fatigue, novelty effects, or shifting preferences. 
+
+2) Adaptive and Intelligent Systems: Building on the de-mand for personalization, AI-driven captions could adapt emotive features based on user feedback. For instance, the system might reduce distracting emojis or amplify features like highlighting for certain learners. Real-time detection of speaker mood could dynamically adjust visuals to match vocal prosody. VII. C ONCLUSION 
+
+We presented a design exploration of four prototypes inte-grating emotional expression and multimodal cues into real-time captions for STEM lectures. Our pilot and main study indicate that certain enhancements can reduce self-reported cognitive load and boost short-term comprehension compared to conventional captions. However, these findings also high-light notable disagreements among users regarding emoji and overlay text, reflecting diverse sensory and cognitive needs. Despite design and sample limitations, this work contributes to ongoing discussions about enhancing captioning systems to be more expressive, accessible, and ultimately more reflective of the nuances in natural speech. We call for further research to rigorously test and refine emotive captioning approaches in real classroom or workplace environments, extending cus-tomizability and examining long-term educational outcomes. By embracing emotional cues in captions—and by giving users the freedom to adapt these cues—future systems can better serve the diversity of learners, particularly in the demanding context of STEM education. ETHICAL IMPACT STATEMENT 
+
+Human Subjects and IRB Approval: This research protocol was reviewed and approved by an Institutional Review Board (IRB #24-612), meeting the criteria for exemption under 45 CFR 46.104(d). All participants provided informed consent before taking part in the study. Prior to data collection, each participant was informed of their right to withdraw at any time without penalty. Personal identifiers were removed from data, and all results are reported in aggregated form to protect participant anonymity. 
+
+Recruitment, Compensation, and Demographics: Partici-pants were recruited via a public email flyer and mailing lists catering to Deaf/Hard of Hearing (DHH) communities and individuals with neurodivergent conditions such as ADHD or autism. The study took approximately 10 minutes. In lieu of monetary payment for every participant, they were offered the option to enter a random drawing for one of five $10 (USD) gift cards, drawn after the study concluded. This approach was standardized for all participants, independent of performance or personal characteristics. A total of 24 participants ultimately completed the study. 
+
+Privacy and Data Management: All data—including survey responses and transcribed text logs—were stored on secure, encrypted servers accessible only to the research team. Partic-ipant IDs were anonymized, and no personal identifiers (e.g., names, emails) were retained in the final dataset. Data will be retained for up to three years for possible replication or follow-up analysis, after which it will be deleted or irreversibly de-identified. 
+
+Risk Assessment and Mitigation: Participants were required only to watch short captioned videos and fill out a brief ques-tionnaire. There was no sensitive or invasive data collection. The potential risk was minimal, primarily relating to privacy. No covert or non-consensual sensing was used; participants could discontinue at any point without penalty. All participants confirmed consent by reviewing a consent form detailing study goals, procedures, and voluntary participation. 
+
+Potential Biases and Fairness: We recognize that emotion-oriented captions or detection models could inadvertently reflect biases if trained on datasets not representative of diverse user groups, including signers or people with atypical facial movements. Although this study did not deploy a large-scale AI model, we emphasize the importance of equitable data collection and transparent algorithms in future imple-mentations. Incorporating user-driven customization can help mitigate misclassification or marginalization. 
+
+Long-term Societal Impact: Captioning systems integrating emotional and multimodal cues could substantially assist DHH and neurodivergent individuals, particularly in STEM con-texts requiring high cognitive load. However, misuse—such as unauthorized emotional tracking—remains a concern. We advocate for strong consent frameworks, privacy protections, and responsible use guidelines to ensure such systems promote accessibility without facilitating involuntary surveillance. If deployed responsibly, we believe these technologies can en-hance communication equity across a broad range of learners. REFERENCES [1] M. Fink, J. Butler, T. Stremlau, S. L. Kerschbaum, and B. J. Bruegge-mann, “Honoring access needs at academic conferences through com-puter assisted real-time captioning (CART) and sign language interpret-ing,” College Composition and Communication , vol. 72, no. 1, pp. 103– 106, 2020. [2] D. Matsumoto and H. S. Hwang, “Facial expressions,” Nonverbal communication: Science and applications , vol. 0, pp. 15–52, 2013. [3] H. T. Pang, X. Zhou, and M. Chu, “Cross-cultural differences in using nonverbal behaviors to identify indirect replies,” Journal of Nonverbal Behavior , vol. 48, pp. 323–344, 2024. [4] R. Abu-Zhaya, M. V. Kondaurova, D. Houston, and A. Seidl, “Vocal and tactile input to children who are deaf or hard of hearing,” Journal of Speech, Language, and Hearing Research , vol. 62, no. 7, pp. 2372– 2385, 2019. [5] J. Butler, “Embodied captions in multimodal pedagogies,” in Com-position Forum , vol. 39, ERIC. Penn State University, USA: The Association of Teachers of Advanced Composition, 2018, pp. 1–18. [6] S. D. Ubur, S. Over, D. Gracanin, and C. C. Comer, “Advancing ac-cessibility: Leveraging technology to empower deaf and hard of hearing students in STEM higher education,” in 2025 Collaborative Network for Engineering & Computing Diversity (CoNECD) , no. 10.18260/1-2–54067. San Antonio, Texas: ASEE Conferences, February 2025, https://peer.asee.org/54067. [7] E. Simpson, S. Dalal, and B. Semaan, “”hey, can you add captions?”: The critical infrastructuring practices of neurodiverse people on TikTok,” Proc. ACM Hum.-Comput. Interact. , vol. 7, no. CSCW1, Apr. 2023. [Online]. Available: https://doi.org/10.1145/3579490 [8] A. Antonietti, R. A. Fabio, P. Iannello, E. Zugno et al. , “Multimedia learning in ADHD students,” in Attention-Deficit Hyperactivity Disor-der: Diagnosis, prevalence and treatment . Nova Science Publishers, Inc., 2021, pp. 71–95. [9] C. de Lacerda Pataca, M. Watkins, R. Peiris, S. Lee, and M. Huenerfauth, “Visualization of speech prosody and emotion in captions: Accessibility for deaf and hard-of-hearing users,” in Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems . New York: ACM, 2023, pp. 1–15. [10] J. Kim, S. Ahn, and J.-H. Hong, “Visible nuances: A caption system to visualize paralinguistic speech cues for deaf and hard-of-hearing individuals,” in Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems , vol. 54. New York: ACM, 2023, pp. 1–15. [11] J. Ohene-Djan, J. Wright, and K. Combie-Smith, “Emotional subtitles: A system and potential applications for deaf and hearing impaired people,” in CVHI . USA: Citeseer, 2007, pp. 1–6. [12] C. de Lacerda Pataca, S. Hassan, N. Tinker, R. L. Peiris, and M. Huen-erfauth, “Caption royale: Exploring the design space of affective cap-tions from the perspective of deaf and hard-of-hearing individuals,” in 
+
+Proceedings of the CHI Conference on Human Factors in Computing Systems . New York: ACM, 2024, pp. 1–17. [13] E. J. McDonnell, T. Eagle, P. Sinlapanuntakul, S. H. Moon, K. E. Ringland, J. E. Froehlich, and L. Findlater, ““caption it in an accessible way that is also enjoyable”: Characterizing user-driven captioning practices on TikTok,” in CHI ’24: Proceedings of the 2024 CHI Conference on Human Factors in Computing Systems , ser. CHI ’24. New York: ACM, 2024. [Online]. Available: https://doi.org/10.1145/3613904.3642177 [14] L. May, K. Ohshiro, K. Dang, S. Sridhar, J. Pai, M. Fuentes, S. Lee, and M. Cartwright, “Unspoken sound: Identifying trends in non-speech audio captioning on youtube,” in CHI ’24: Proceedings of the 2024 CHI Conference on Human Factors in Computing Systems , ser. CHI ’24. New York: ACM, 2024. [Online]. Available: https://doi.org/10.1145/3613904.3642162 [15] S. G. Hart, “NASA-task load index (NASA-TLX); 20 years later,” in Proceedings of the human factors and ergonomics society annual meeting , vol. 50, Sage publications Sage CA: Los Angeles, CA. Los Angeles, CA: Sage, 2006, pp. 904–908. [16] P. Ekman, W. V. Friesen, M. O’Sullivan, and K. Scherer, “Relative importance of face, body, and speech in judgments of personality and affect,” Journal of personality and social psychology , vol. 38, no. 2, p. 270, 1980. [17] T. B. Moeslund, A. Hilton, V. Kr¨ uger, and L. Sigal, Visual analysis of humans . Denmark: Springer, 2011. [18] P. Ekman, “An argument for basic emotions,” Cognition & emotion ,vol. 6, no. 3-4, pp. 169–200, 1992. [19] A. Mehrabian, “Silent messages: implicit communication of emotions and attitudes,” 1981. [20] J. Sweller, “Cognitive load theory, learning difficulty, and instructional design,” Learning and instruction , vol. 4, no. 4, pp. 295–312, 1994. [21] S. Walther, K. Stegmayer, J. Sulzbacher, T. Vanbellingen, R. M¨ uri, W. Strik, and S. Bohlhalter, “Nonverbal social communication and gesture control in schizophrenia,” Schizophrenia Bulletin , vol. 41, no. 2, pp. 338–345, 2015. [22] S. Ghasemi, M. Behravan, S. D. Ubur, and D. Graˇ canin, “Attention and sensory processing in augmented reality: Empowering ADHD popula-tion,” in Universal Access in Human-Computer Interaction , M. Antona and C. Stephanidis, Eds. Cham: Springer Nature Switzerland, 2024, pp. 301–320. [23] F. Makhmudov, A. Kultimuratov, and Y.-I. Cho, “Enhancing multimodal emotion recognition through attention mechanisms in BERT and CNN architectures,” Applied Sciences , vol. 14, no. 10, p. 4199, 2024. [24] S. W. Bechtold, “The cognitive theory of multimedia learning: The impact of social cues,” in Learning, Design, and Technology: An International Compendium of Theory, Research, Practice, and Policy .Pima Community College, Tucson, AZ, USA: Springer, 2023, pp. 561– 574. [25] R. Liu, X. Xu, H. Yang, Z. Li, and G. Huang, “Impacts of cues on learning and attention in immersive 360-degree video: an eye-tracking study,” Frontiers in Psychology , vol. 12, p. 792069, 2022. [26] S. D. Ubur, N. A. Etori, S. Ghasemi, K. King, D. Graˇ canin, and M. Gini, “EasyCaption: Investigating the impact of prolonged exposure to captioning on VR HMD on general population,” in Universal Access in Human-Computer Interaction , M. Antona and C. Stephanidis, Eds. Cham: Springer Nature Switzerland, 2024, pp. 382–403. [27] S. Shigeno, “Speaking with a happy voice makes you sound younger,” 
+
+International Journal of Psychological Studies , vol. 8, no. 4, pp. 71–76, 2016. [28] R. Rashid, J. Aitken, and D. I. Fels, “Expressing emotions using animated text captions,” in Computers Helping People with Special Needs: 10th International Conference, ICCHP 2006, Linz, Austria, July 11-13, 2006. Proceedings 10 , vol. 4061. Berlin, Germany: Springer, 2006, pp. 24–31. [29] S. Malik, J. Aitken, and J. K. Waalen, “Communicating emotion with animated text,” Visual Communication , vol. 8, no. 4, pp. 469–479, 2009. [30] A. Brown, R. Jones, M. Crabb, J. Sandford, M. Brooks, M. Armstrong, and C. Jay, “Dynamic subtitles: the user experience,” in Proceedings of the ACM international conference on interactive experiences for TV and online video . New York: ACM, 2015, pp. 103–112. [31] T. Schlippe, S. Alessai, G. El-Taweel, M. W¨ olfel, and W. Zaghouani, “Visualizing voice characteristics with type design in closed captions for Arabic,” in 2020 International Conference on Cyberworlds (CW) .France: IEEE, 2020, pp. 196–203. [32] C. Viegas, M. Inan, L. Quandt, and M. Alikhani, “Including facial expressions in contextual embeddings for sign language generation,” in 
+
+Proceedings of the 12th Joint Conference on Lexical and Computational Semantics (*SEM 2023) , A. Palmer and J. Camacho-collados, Eds. Toronto, Canada: Association for Computational Linguistics, Jul. 2023, pp. 1–10. [Online]. Available: https://aclanthology.org/2023.starsem-1.1/ [33] J. Jia, Z. Wu, S. Zhang, H. M. Meng, and L. Cai, “Head and facial gestures synthesis using PAD model for an expressive talking avatar,” 
+
+Multimedia Tools and Applications , vol. 73, pp. 439–461, 2014. [34] W. Villegas-Ch, A. Maldonado Navarro, and A. Mera-Navarrete, “Using generative adversarial networks for the synthesis of emotional facial expressions in virtual educational environments,” Intelligent Systems with Applications , vol. 25, p. 200479, 2025. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S2667305325000055 [35] H. Tang, Y. Fu, J. Tu, T. S. Huang, and M. Hasegawa-Johnson, “EAVA: a 3D emotive audio-visual avatar,” in 2008 IEEE Workshop on Applications of Computer Vision . USA: IEEE, 2008, pp. 1–6. [36] L. Li, S. Wang, Z. Zhang, Y. Ding, Y. Zheng, X. Yu, and C. Fan, “Write-a-speaker: Text-based emotional and rhythmic talking-head generation,” in Proceedings of the AAAI conference on artificial intelligence , vol. 35. Washington DC: AAAI, 2021, pp. 1911–1920. [37] J. Oshiba, M. Iwata, and K. Kise, “Face image generation of anime characters using an advanced first order motion model with facial landmarks,” IEICE TRANSACTIONS on Information and Systems , vol. 106, no. 1, pp. 22–30, 2023. [38] F. Grundmann, K. Epstude, and S. Scheibe, “Face masks reduce emotion-recognition accuracy and perceived closeness,” PloS one ,vol. 16, no. 4, p. e0249792, 2021. [39] L. D¨ ollinger, P. Laukka, L. B. H¨ ogman, T. B¨ anziger, I. Makower, H. Fischer, and S. Hau, “Training emotion recognition accuracy: results for multimodal expressions and facial micro expressions,” Frontiers in Psychology , vol. 12, p. 708867, 2021. [40] W3C, “Web content accessibility guidelines (WCAG) 2.1,” https://www.w3.org/TR/WCAG21/, 2018.

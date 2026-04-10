@@ -6,73 +6,103 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-01 ~ 2026-04-10
-- 运行时间：2026-04-10 02:23:20 UTC
+- 最新运行日期：2026-03-12 ~ 2026-04-10
+- 运行时间：2026-04-10 02:59:35 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：6
+- 本次总论文数：27
+- 精读区：16
 - 速读区：11
 
 ### 今日简报（AI）
-聚焦语言理解前沿，从神经语义整合到多模态幽默识别全面跟进。  
-重点关注情感语调与语义的整合机制，以及大型视觉语言模型对双关与社交语境的捕捉能力。  
-建议下步留意模型在真实交流场景中的理解稳定性与跨模态迁移表现。
-- 详情：[/20260401-20260410/README](/20260401-20260410/README)
+1) 本期共完成 27 篇论文阅读，其中 16 篇精读、11 篇速读，聚焦语言理解与人机交互。  
+2) 情感语调与语义整合机制、以及界面设计对用户注意力与隐私理解的影响，是最具启发的方向。  
+3) 下阶段可关注多模态线索在理解效率与用户信任构建中的应用研究。
+- 详情：[/20260312-20260410/README](/20260312-20260410/README)
 
 ### 精读区论文标签
-1. [Neural Integration of Affective Prosodic and Semantic Cues in Non-literal Forms of Speech Understanding](/20260401-20260410/biorxiv-10-64898-2026-01-05-694352-v2-neural-integration-of-affective-prosodic-and-semantic-cues-in-non-literal-forms-of-speech-understanding)  
+1. [Neural Integration of Affective Prosodic and Semantic Cues in Non-literal Forms of Speech Understanding](/20260312-20260410/biorxiv-10-64898-2026-01-05-694352-v2-neural-integration-of-affective-prosodic-and-semantic-cues-in-non-literal-forms-of-speech-understanding)  
    标签：评分：10.0/10、query:profile-1
-   evidence：反语和讽刺中韵律与语义线索的神经整合
-2. ["I See What You Did There": Can Large Vision-Language Models Understand Multimodal Puns?](/20260401-20260410/2604.05930v1-i-see-what-you-did-there-can-large-vision-language-models-understand-multimodal-puns)  
+   evidence：讽刺与反语理解中韵律与语义线索的神经整合
+2. [Designing for Understanding: How Interface-Level Consent Designs Shape Attention and Understanding in Privacy Disclosures](/20260312-20260410/2603.13747v1-designing-for-understanding-how-interface-level-consent-designs-shape-attention-and-understanding-in-privacy-disclosures)  
+   标签：评分：9.5/10、query:q5
+   evidence：使用眼动追踪测量阅读行为和注意力分配
+3. [Harm or Humor: A Multimodal, Multilingual Benchmark for Overt and Covert Harmful Humor](/20260312-20260410/2603.17759v1-harm-or-humor-a-multimodal-multilingual-benchmark-for-overt-and-covert-harmful-humor)  
    标签：评分：9.0/10、query:profile-1
-   evidence：视觉语言模型中的多模态双关语与比喻意义
-3. [URMF: Uncertainty-aware Robust Multimodal Fusion for Multimodal Sarcasm Detection](/20260401-20260410/2604.06728v1-urmf-uncertainty-aware-robust-multimodal-fusion-for-multimodal-sarcasm-detection)  
+   evidence：针对隐性有害幽默的多模态基准
+4. [DEAF: A Benchmark for Diagnostic Evaluation of Acoustic Faithfulness in Audio Language Models](/20260312-20260410/2603.18048v1-deaf-a-benchmark-for-diagnostic-evaluation-of-acoustic-faithfulness-in-audio-language-models)  
+   标签：评分：9.0/10、query:q8
+   evidence：声学忠实度的诊断性评估，关注情感韵律和多模态线索
+5. [DEAF: A Benchmark for Diagnostic Evaluation of Acoustic Faithfulness in Audio Language Models](/20260312-20260410/2603.18048v2-deaf-a-benchmark-for-diagnostic-evaluation-of-acoustic-faithfulness-in-audio-language-models)  
+   标签：评分：9.0/10、query:q8
+   evidence：针对包括情感韵律及其对理解影响在内的声学维度基准
+6. [Predicting States of Understanding in Explanatory Interactions Using Cognitive Load-Related Linguistic Cues](/20260312-20260410/2603.20079v1-predicting-states-of-understanding-in-explanatory-interactions-using-cognitive-load-related-linguistic-cues)  
+   标签：评分：9.0/10、query:profile-1
+   evidence：利用语言线索和交互式眼动行为预测理解状态
+7. [Reading Between the Lines: How Electronic Nonverbal Cues shape Emotion Decoding](/20260312-20260410/2603.21038v1-reading-between-the-lines-how-electronic-nonverbal-cues-shape-emotion-decoding)  
+   标签：评分：9.0/10、query:q4
+   evidence：排版和标点等电子非语言线索在情感解码中的作用
+8. [Revisiting Real-Time Digging-In Effects: No Evidence from NP/Z Garden-Paths](/20260312-20260410/2603.23624v1-revisiting-real-time-digging-in-effects-no-evidence-from-npz-garden-paths)  
+   标签：评分：9.0/10、query:q5
+   evidence：使用自定步阅读和Maze方法研究人类实时句子加工
+9. [Convergent Representations of Linguistic Constructions in Human and Artificial Neural Systems](/20260312-20260410/2603.29617v1-convergent-representations-of-linguistic-constructions-in-human-and-artificial-neural-systems)  
+   标签：评分：9.0/10、query:profile-1
+   evidence：利用脑电图和人工模型研究语言结构的神经机制
+10. ["I See What You Did There": Can Large Vision-Language Models Understand Multimodal Puns?](/20260312-20260410/2604.05930v1-i-see-what-you-did-there-can-large-vision-language-models-understand-multimodal-puns)  
+   标签：评分：9.0/10、query:profile-1
+   evidence：多模态双关语与比喻意义理解
+11. [URMF: Uncertainty-aware Robust Multimodal Fusion for Multimodal Sarcasm Detection](/20260312-20260410/2604.06728v1-urmf-uncertainty-aware-robust-multimodal-fusion-for-multimodal-sarcasm-detection)  
    标签：评分：9.0/10、query:q2
-   evidence：多模态讽刺检测以及文本与图像间的语义不一致性
-4. [Is Cross-Lingual Transfer in Bilingual Models Human-Like? A Study with Overlapping Word Forms in Dutch and English](/20260401-20260410/2604.07067v1-is-cross-lingual-transfer-in-bilingual-models-human-like-a-study-with-overlapping-word-forms-in-dutch-and-english)  
+   evidence：基于文本与图像语义不一致的多模态讽刺检测
+12. [Continuous Interpretive Steering for Scalar Diversity](/20260312-20260410/2604.07006v1-continuous-interpretive-steering-for-scalar-diversity)  
+   标签：评分：9.0/10、query:q3
+   evidence：大语言模型中的分级语用推理与标量多样性
+13. [Is Cross-Lingual Transfer in Bilingual Models Human-Like? A Study with Overlapping Word Forms in Dutch and English](/20260312-20260410/2604.07067v1-is-cross-lingual-transfer-in-bilingual-models-human-like-a-study-with-overlapping-word-forms-in-dutch-and-english)  
    标签：评分：9.0/10、query:q10
-   evidence：双语语言模型、跨语言激活和心理语言学刺激
-5. [Dissociable pupil-linked arousal during overt and inner speech](/20260401-20260410/biorxiv-10-64898-2026-03-29-715074-v1-dissociable-pupil-linked-arousal-during-overt-and-inner-speech)  
+   evidence：双语模型与人类的跨语言激活对比
+14. [During natural vision, semantic novelty modulates fixation-related processing in primate cortex](/20260312-20260410/biorxiv-10-64898-2026-03-18-712708-v1-during-natural-vision-semantic-novelty-modulates-fixation-related-processing-in-primate-cortex)  
+   标签：评分：9.0/10、query:q5
+   evidence：自然视觉中语义新颖性调节脑电图中的注视相关加工
+15. [Dissociable pupil-linked arousal during overt and inner speech](/20260312-20260410/biorxiv-10-64898-2026-03-29-715074-v1-dissociable-pupil-linked-arousal-during-overt-and-inner-speech)  
    标签：评分：9.0/10、query:q10
-   evidence：使用瞳孔测量法测量内在言语和外显言语期间的唤醒度
-6. [Human brains implicitly and rapidly distinguish AI from human voices before decoding prosodic meaning](/20260401-20260410/biorxiv-10-64898-2026-04-08-716483-v1-human-brains-implicitly-and-rapidly-distinguish-ai-from-human-voices-before-decoding-prosodic-meaning)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：脑电数据、韵律意义和神经时间进程
+   evidence：出声言语与内在言语过程中的瞳孔测量
+16. [Human brains implicitly and rapidly distinguish AI from human voices before decoding prosodic meaning](/20260312-20260410/biorxiv-10-64898-2026-04-08-716483-v1-human-brains-implicitly-and-rapidly-distinguish-ai-from-human-voices-before-decoding-prosodic-meaning)  
+   标签：评分：9.0/10、query:q8
+   evidence：人类与AI语音中语调和韵律意义的脑电数据
 
 ### 速读区论文标签
-1. [A Synthetic Eye Movement Dataset for Script Reading Detection: Real Trajectory Replay on a 3D Simulator](/20260401-20260410/2604.05475v1-a-synthetic-eye-movement-dataset-for-script-reading-detection-real-trajectory-replay-on-a-3d-simulator)  
-   标签：评分：8.5/10、query:q5
-   evidence：用于剧本阅读检测的合成眼动数据集
-2. [Social Meaning in Large Language Models: Structure, Magnitude, and Pragmatic Prompting](/20260401-20260410/2604.02512v1-social-meaning-in-large-language-models-structure-magnitude-and-pragmatic-prompting)  
-   标签：评分：8.0/10、query:q6
-   evidence：基于语用学理论的大语言模型语用与社交推理
-3. [Temporal structure of the language hierarchy within small cortical patches](/20260401-20260410/2604.03021v1-temporal-structure-of-the-language-hierarchy-within-small-cortical-patches)  
-   标签：评分：8.0/10、query:q1
-   evidence：言语产生和语言层级协调的神经机制
-4. [Gaze to Insight: A Scalable AI Approach for Detecting Gaze Behaviours in Face-to-Face Collaborative Learning](/20260401-20260410/2604.03317v1-gaze-to-insight-a-scalable-ai-approach-for-detecting-gaze-behaviours-in-face-to-face-collaborative-learning)  
-   标签：评分：8.0/10、query:q5
-   evidence：在协作学习中检测眼动行为
-5. [Positional Cognitive Specialization: Where Do LLMs Learn To Comprehend and Speak Your Language?](/20260401-20260410/2604.00923v1-positional-cognitive-specialization-where-do-llms-learn-to-comprehend-and-speak-your-language)  
-   标签：评分：7.0/10、query:q10
-   evidence：大语言模型中语言感知与产出的认知专业化
-6. [Eyes Can't Always Tell: Fusing Eye Tracking and User Priors for User Modeling under AI Advice Conditions](/20260401-20260410/2604.01741v1-eyes-cant-always-tell-fusing-eye-tracking-and-user-priors-for-user-modeling-under-ai-advice-conditions)  
-   标签：评分：7.0/10、query:q5
-   evidence：关于认知负荷与决策信心的眼动追踪研究
-7. [Prosodic ABX: A Language-Agnostic Method for Measuring Prosodic Contrast in Speech Representations](/20260401-20260410/2604.02102v1-prosodic-abx-a-language-agnostic-method-for-measuring-prosodic-contrast-in-speech-representations)  
-   标签：评分：7.0/10、query:q8
-   evidence：测量语音表征中的韵律对比
-8. [Large Language Models Align with the Human Brain during Creative Thinking](/20260401-20260410/2604.03480v1-large-language-models-align-with-the-human-brain-during-creative-thinking)  
-   标签：评分：7.0/10、query:q7
-   evidence：使用fMRI数据的创造性思维过程中的脑-LLM对齐
-9. [Neural Responses to Unexpected Stimulus Repetitions and Omissions in Auditory Cortex Provide Mixed Evidence for Predictive Coding](/20260401-20260410/biorxiv-10-64898-2026-03-30-715297-v1-neural-responses-to-unexpected-stimulus-repetitions-and-omissions-in-auditory-cortex-provide-mixed-evidence-for-predictive-coding)  
-   标签：评分：6.5/10、query:q10
-   evidence：研究听觉处理中的预测编码和内部模型
-10. [Do Emotions in Prompts Matter? Effects of Emotional Framing on Large Language Models](/20260401-20260410/2604.02236v1-do-emotions-in-prompts-matter-effects-of-emotional-framing-on-large-language-models)  
-   标签：评分：6.0/10、query:q6
-   evidence：情感框架对阅读理解和社会推理的影响
-11. [Pragmatics Meets Culture: Culturally-adapted Artwork Description Generation and Evaluation](/20260401-20260410/2604.02557v1-pragmatics-meets-culture-culturally-adapted-artwork-description-generation-and-evaluation)  
-   标签：评分：6.0/10、query:q6
-   evidence：语用生成任务与文化能力评估
+1. [Adaptive Captioning with Emotional Cues: Supporting DHH and Neurodivergent Learners in STEM](/20260312-20260410/2603.15977v1-adaptive-captioning-with-emotional-cues-supporting-dhh-and-neurodivergent-learners-in-stem)  
+   标签：评分：8.5/10、query:q4
+   evidence：包含表情符号和关键词高亮的多模态线索以辅助理解
+2. [Adaptive Captioning with Emotional Cues: Supporting DHH and Neurodivergent Learners in STEM](/20260312-20260410/2603.15977v2-adaptive-captioning-with-emotional-cues-supporting-dhh-and-neurodivergent-learners-in-stem)  
+   标签：评分：8.5/10、query:q4
+   evidence：包含表情符号和关键词高亮的多模态线索以辅助理解
+3. [Words at Play: Benchmarking Audio Pun Understanding in Large Audio-Language Models](/20260312-20260410/2603.18678v1-words-at-play-benchmarking-audio-pun-understanding-in-large-audio-language-models)  
+   标签：评分：8.5/10、query:profile-1
+   evidence：语音双关语理解与意义推断
+4. [Gesture2Speech: How Far Can Hand Movements Shape Expressive Speech?](/20260312-20260410/2603.19831v1-gesture2speech-how-far-can-hand-movements-shape-expressive-speech)  
+   标签：评分：8.5/10、query:q8
+   evidence：手势补充语音韵律以表达意图
+5. [Tailoring AI-Driven Reading Scaffolds to the Distinct Needs of Neurodiverse Learners](/20260312-20260410/2603.28370v2-tailoring-ai-driven-reading-scaffolds-to-the-distinct-needs-of-neurodiverse-learners)  
+   标签：评分：7.5/10、query:q4
+   evidence：视觉支架和象形图对阅读理解的影响
+6. [Covertly improving intelligibility with data-driven adaptations of speech timing](/20260312-20260410/2603.30032v1-covertly-improving-intelligibility-with-data-driven-adaptations-of-speech-timing)  
+   标签：评分：7.5/10、query:q1
+   evidence：针对性语速调节以改善理解
+7. [A geometric foundation for word meaning in the brain](/20260312-20260410/biorxiv-10-64898-2026-01-28-702241-v2-a-geometric-foundation-for-word-meaning-in-the-brain)  
+   标签：评分：7.5/10、query:q7
+   evidence：词义与语义特征的神经流形
+8. [As Language Models Scale, Low-order Linear Depth Dynamics Emerge](/20260312-20260410/2603.12541v1-as-language-models-scale-low-order-linear-depth-dynamics-emerge)  
+   标签：评分：7.0/10、query:q3
+   evidence：反语和情感任务的线性代理模型
+9. [A hierarchical generative model reveals enhanced latent precision of brain-body interaction dynamics during interoceptive attention](/20260312-20260410/biorxiv-10-64898-2026-04-05-716599-v1-a-hierarchical-generative-model-reveals-enhanced-latent-precision-of-brain-body-interaction-dynamics-during-interoceptive-attention)  
+   标签：评分：6.5/10、query:profile-1
+   evidence：多模态关联整合与脑电建模
+10. [Team LEYA in 10th ABAW Competition: Multimodal Ambivalence/Hesitancy Recognition Approach](/20260312-20260410/2603.12848v1-team-leya-in-10th-abaw-competition-multimodal-ambivalencehesitancy-recognition-approach)  
+   标签：评分：6.0/10、query:q8
+   evidence：对矛盾/犹豫等微妙行为状态的多模态识别
+11. [Causal Tracing of Audio-Text Fusion in Large Audio Language Models](/20260312-20260410/2603.13768v1-causal-tracing-of-audio-text-fusion-in-large-audio-language-models)  
+   标签：评分：6.0/10、query:q8
+   evidence：研究模型在音频理解过程中如何将声学特征与文本上下文结合
 
 
 <div class="dpr-home-promo-card">
