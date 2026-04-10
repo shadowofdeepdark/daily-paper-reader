@@ -1,0 +1,543 @@
+Title: Do Emotions in Prompts Matter? Effects of Emotional Framing on Large Language Models
+
+URL Source: https://arxiv.org/pdf/2604.02236v1
+
+Published Time: Fri, 03 Apr 2026 01:12:09 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+# Do Emotions in Prompts Matter? Effects of Emotional Framing on Large Language Models 
+
+Minda Zhao 1†, Yutong Yang 1†, Chufei Peng 1†,Rachel Gonsalves 1†, Weiyue Li 1†, Ruyi Yang 1, Zhixi Liu 2,Mengyu Wang 1* 
+
+> 1
+
+Harvard University. 
+
+> 2
+
+Bryn Mawr College. *Corresponding author(s). E-mail(s): mengyu wang@meei.harvard.edu; Contributing authors: mindazhao@hsph.harvard.edu; yutongyang@hsph.harvard.edu; chufeipeng@g.harvard.edu; rgonsalves@mba2027.hbs.edu; weiyueli@fas.harvard.edu; ruyi yang@gsd.harvard.edu; lliu2@brynmawr.edu; 
+
+> †
+
+These authors contributed equally to this work. 
+
+Abstract 
+
+Emotional tone is pervasive in human communication, yet its influence on large language model (LLM) behaviour remains unclear. Here, we examine how first-person emotional framing in user-side queries affect LLM performance across six benchmark domains, including mathematical reasoning, medical question answering, reading comprehension, commonsense reasoning and social inference. Across models and tasks, static emotional prefixes usually produce only small changes in accuracy, suggesting that affective phrasing is typically a mild pertur-bation rather than a reliable general-purpose intervention. This stability is not uniform: effects are more variable in socially grounded tasks, where emotional context more plausibly interacts with interpersonal reasoning. Additional anal-yses show that stronger emotional wording induces only modest extra change, and that human-written prefixes reproduce the same qualitative pattern as LLM-generated ones. We then introduce EmotionRL, an adaptive emotional prompting framework that selects emotional framing adaptively for each query. Although no single emotion is consistently beneficial, adaptive selection yields more reliable gains than fixed emotional prompting. Together, these findings show that emo-tional tone is neither a dominant driver of LLM performance nor irrelevant noise, but a weak and input-dependent signal that can be exploited through adaptive control. 
+
+1
+
+> arXiv:2604.02236v1 [cs.AI] 2 Apr 2026
+
+# 1 Introduction 
+
+Large language models (LLMs) have become ubiquitous across domains including education, coding assistance, creative writing, and personal productivity [1–3]. As LLM-generated text increasingly appears in consumer communications, corporate mes-saging, and international correspondence [1], understanding how these systems process and respond to human communication has become critical. LLMs are trained on large-scale human language corpora and learn statistical patterns of human communication, yet they do not operate as neutral systems [4]. This recognition has driven extensive research into LLM behaviors, including hallucination, fairness, toxicity, sycophancy, and consistency [5] Human communication is inherently emotional. Individuals convey affect through tone, framing, and lexical choice when expressing needs, negotiating disagreements, or seeking advice [6, 7]. Consequently, real-world human–LLM interactions often carry an emotional tone that, even when unstated, shapes model outputs and influences how users interpret responses [8]. Emotion is therefore central rather than peripheral to human–LLM interaction. Emotion plays a causal role in human decision-making. Emotional states guide attentional focus, bias interpretation under ambiguity, and influence reasoning in uncertain environments [9, 10]. These effects can alter behavior even when material incentives remain unchanged. Empirical work demonstrates that emotion functions as a causal mechanism linking context to behavior. For example, Heffner et al. [11] stud-ied emotion prediction errors in social decision-making tasks involving punishment and forgiveness. They showed that discrepancies between expected and experienced emo-tion predicted subsequent decisions beyond reward-based prediction errors, isolating a pathway through which emotion updates future behavior and supports adaptive social interaction. Related work has shown that emotion-guided attention impacts percep-tual decision-making [12], emotional expressions influence visual search efficiency [13], and affective information integrates into experience, judgment, and decision-making [14]. Because LLMs are trained on emotionally mediated human text, affective tone in prompts may similarly modulate model behavior. However, the causal mechanisms through which emotional cues influence LLM performance remain underexplored. Prior work has primarily studied emotion in LLMs through explicit prompt manip-ulations. In strategic settings, assigning emotional roles or varying task framing has been shown to shift model behavior in cooperation, bargaining, and related game sce-narios [15, 16]. Related work has further shown that emotionally charged descriptions can alter norm-enforcement judgments, leading models to impose stronger punishment in altruistic punishment settings [17]. Beyond strategic decision-making, several stud-ies have reported that affective prompts can influence downstream task performance, including EmotionPrompt-style approaches designed to improve results across bench-marks [18–20]. Other lines of work have examined emotional expression in LLMs, responses to conflicting emotional cues, controlled affective text generation, and fine-grained emotion resources [21–24]. Taken together, these studies show that LLMs are responsive to explicitly inserted emotional content. However, three important ques-tions remain unresolved. First, it is still unclear whether emotionally framed prompts expressed in a first-person, user-voiced form produce systematic and reliable changes 2in model behavior across standard tasks. Second, prior work has not directly tested whether these effects depend on prompt authorship, particularly whether they hold for human-written emotional prefixes as well as LLM-generated ones. Third, existing studies have largely treated emotion as a fixed prompting condition rather than learn-ing how emotional framing should be selected for a given input. These questions are particularly important given documented biases in LLMs [25–27], including cognitive biases in clinical settings [28, 29], stigmatizing language in medical records [30, 31], and fairness concerns [32]. In this work, we study how first-person emotional framing in user prompts affects LLM behavior. Rather than assigning emotions to the model or relying on coarse positive-negative distinctions, we prepend short first-person emotional prefixes that express the user’s affective state and examine six emotion categories: happiness, sur-prise, fear, sadness, disgust, and anger, guided by Plutchik’s basic emotions framework [33] and Russell’s circumplex model of affect [34]. We study these effects across reason-ing and knowledge-based tasks, focusing on how task structure and complexity shape emotional modulation. Our contributions are threefold. First, we show that static emo-tional prompting is not a reliable general-purpose intervention: across benchmarks, fixed emotional prefixes typically induce only small average accuracy shifts, with effects that vary substantially across tasks, backbone models, and emotion categories rather than following a uniform pattern. Second, we demonstrate that this overall pat-tern is robust to targeted validation studies: increasing emotional intensity produces only modest additional change without creating a qualitatively different regime, and human-written prefixes reproduce the same qualitative conclusions as LLM-generated ones. Third, we introduce EmotionRL, an adaptive emotional prompting framework that formulates emotional prompting as an input-conditioned decision problem, and show that different questions benefit from different emotional framings. By selecting a more suitable emotion for each input, EmotionRL yields more reliable gains than either the no-emotion baseline or the average of fixed emotional prompts. 32 Methodology and Experiment Setup  
+
+> Fig. 1 Pipeline overview. We generate emotion-conditioned inputs via canonical prepended cues and context-aligned variants, evaluate them with frozen LLMs across diverse benchmarks, and analyze performance sensitivity across models, tasks, and emotions. We also include adaptive per-instance emotion selection with EmotionRL.
+
+2.1 Design and implementation of affective manipulations 
+
+Emotion taxonomy. 
+
+Emotion conditions were operationalized using a discrete taxonomy informed by established theories of affective organization. We drew on Plutchik’s basic emotions framework [33] and Russell’s circumplex model of affect [34] to define six emotion cat-egories: happiness, sadness, fear, anger, disgust, and surprise. These categories offer a compact yet diverse representation of affective states that can be succinctly instan-tiated in text and consistently recognized in human annotation settings. This design preserves alignment with canonical theories of emotion while ensuring that the prompt manipulation remains interpretable, controlled, and methodologically tractable. 
+
+Emotional Stimuli. 
+
+External emotional stimuli were used to manipulate the affective framing of other-wise identical questions. For each target emotion, we used GPT-4o [35] to generate short, fluent, single-sentence emotional expressions that were grammatically correct, emotionally salient, and explicitly constrained not to alter the numerical values, enti-ties, scope, difficulty, or factual content of the underlying question. The emotional stance was framed as the speaker’s attitude toward the assistant solving the prob-lem, and could include colloquial, mildly rude, or emotionally raw language, while excluding hate speech, slurs, and explicit sexual content. For the main experiments, the GPT-4o -generated emotional sentence was prepended immediately before the 4original question. We adopted this design across datasets to keep the manipulation sim-ple, interpretable, and comparable. Only for GSM8K [36], we additionally evaluated multiple insertion positions (before, within, or after the question) to test positional sensitivity. 
+
+2.2 Benchmark datasets 
+
+We evaluated model behaviour across a multi-domain benchmark spanning diverse forms of reasoning and knowledge use. GSM8K [36] measures grade-school math-ematical word-problem solving with multi-step numerical reasoning. BIG-Bench Hard (BBH ) [37] captures challenging general reasoning across heterogeneous tasks. MedQA (English) [38]evaluates professional-level medical question answering. 
+
+BoolQ [39] tests short-passage reading comprehension with binary yes/no deci-sions. OpenBookQA [40] measures multiple-choice commonsense reasoning, whereas 
+
+SocialIQA [41] evaluates social reasoning and everyday interpersonal inference. Collectively, these datasets cover numerical reasoning, general reasoning, domain knowledge, reading comprehension, commonsense judgment, and social inference, pro-viding a broad behavioural evaluation suite. All datasets were used in their standard English versions, and official train, validation, and test splits were preserved whenever available to ensure comparability with prior work. 
+
+2.3 Models and inference settings 
+
+We evaluate a representative suite of both proprietary and open-weight large lan-guage models (LLMs) under strictly controlled experimental conditions. Our selection includes three state-of-the-art open-source models: Qwen3-14B [42], Llama 3.3-70B [43], and DeepSeek-V3.2 [44]. These models were chosen to encompass a diverse range of architectures, parameter scales, and training paradigms. All evaluations were con-ducted in a zero-shot, inference-only setting without fine-tuning, ensuring that the observed behaviors reflect the models’ inherent pretrained capabilities. We utilized standardized prompt templates across all datasets to unify task descriptions and output formats. To ensure reproducibility, decoding was set to be deterministic (tem-perature T = 0 .0), with all other sampling parameters, such as top-p, held at their default values. 
+
+2.4 Evaluation metrics 
+
+Our evaluation adheres to the standard task-specific protocols for each dataset. For numerical reasoning (e.g., GSM8K), a response is considered correct only if the pre-dicted value exactly matches the ground-truth reference. For multiple-choice and binary QA tasks (e.g., MedQA-US, OpenBookQA, SocialIQA, and BoolQ), accuracy is defined as the proportion of instances where the predicted label aligns with the gold standard. These inference settings were applied consistently across all models. To isolate the impact of emotional framing, we benchmark the performance of each emotional condition against the baseline while keeping all other variables, including task instructions and decoding parameters, constant. 52.5 Validation studies and further probing 
+
+Emotion intensity study on MedQA-US 
+
+To investigate the sensitivity of model performance to the intensity of emotional fram-ing, we conducted an exhaustive analysis using the MedQA-US dataset. For each query, we augmented the prompt with a first-person emotional prefix. Specifically, we systematically vary its intensity across three levels:    
+
+> Slight: “I am happy/sad/afraid/angry/disgusted/surprised.”
+> Moderate: “I am very happy/sad/afraid/angry/disgusted/surprised.”
+> Extreme: “I am extremely happy/sad/afraid/angry/disgusted/surprised.”
+
+All other components including question text, options, and task instructions remained intact to ensure controlled conditions. The original MedQA-US queries served as a neutral baseline. For consistency, we employed the same scoring protocols and metrics as in our primary experiments, enabling a direct comparative analysis across different intensity levels. 
+
+Human versus LLM emotion injection on MedQA-US. 
+
+To test whether emotional prompting effects depend on how the emotional text is constructed, we compared human-written and LLM-generated emotion prefixes on a held-out subset of MedQA-US. We randomly sampled 250 questions from the MedQA-US pool used in the main experiment. Human-written prefixes were produced by four volunteer graduate-student annotators recruited from multiple institutions. For each question, annotators wrote first-person emotional sentences for six target emo-tions ( happiness, anger, fear, sadness, surprise , and disgust ). All annotations were completed without AI assistance, and annotators were instructed to ensure that each sentence was emotionally explicit, contextually appropriate, and suitable for direct prepending to the original question. We then evaluated the same question set under two parallel conditions: one using LLM-generated emotional prefixes, as in the main prepended-emotion setting, and the other using the human-written prefixes. All eval-uations were conducted with Qwen3-14B under identical decoding settings. Of the 250 sampled questions, 219 had usable gold-answer labels for automatic scoring; the remaining items were excluded because no valid reference answer could be consistently recovered from the sampled subset. Accuracy was computed separately for the neutral baseline and for each of the six emotion conditions in both the human-injected and LLM-injected settings. 
+
+2.6 EmotionRL 
+
+Problem definition 
+
+We formulate adaptive emotional prompting as an instance-wise decision problem over a fixed emotion set A = {ANGER , DISGUST , FEAR , HAPPINESS , SADNESS , SURPRISE }. For each input question xi, the agent selects one emotion a ∈ A , prepends the correspond-ing emotional expression to the original prompt, and submits the resulting prompt to a frozen backbone LLM, which then produces the final answer. 6State 
+
+Each question is encoded as a dense semantic representation si = femb (xi) ∈ Rd,where femb is a frozen sentence encoder. In our implementation, we use a pretrained sentence-embedding model and represent each instance using either the question alone or the concatenation of passage and question, depending on the task format. The state therefore captures semantic information about the input instance while remaining independent of the target LLM parameters. 
+
+Action 
+
+The action space is discrete and consists of the six candidate emotions in A. Given a state si, the policy outputs a categorical distribution πθ (ak | si) for k = 1 , . . . , K ,where K = 6. At inference time, the selected action is a∗ 
+
+> i
+
+= arg max ak ∈A πθ (ak | si). This action determines which emotion-conditioned prompt is applied before querying the frozen LLM. 
+
+Reward 
+
+To train the policy offline, we first evaluate the frozen LLM under all candidate emotions for each training instance and construct a grouped reward cache. For each question xi, this yields a binary reward vector ri = [ r(1)  
+
+> i
+
+, . . . , r (K) 
+
+> i
+
+], where r(k) 
+
+> i
+
+∈ { 0, 1}
+
+and r(k) 
+
+> i
+
+= 1[ˆ y(k) 
+
+> i
+
+= yi]. Here, yi denotes the gold label and ˆ y(k) 
+
+> i
+
+denotes the back-bone model prediction under emotion ak. In the main setting used in our experiments, reward is defined directly by answer correctness. 
+
+Agent architecture and training algorithm 
+
+The policy is implemented as a lightweight two-layer MLP that maps the input embed-ding si to logits over the six emotions, zi = W2 σ(W1si +b1)+ b2, followed by a softmax to obtain πθ(ak | si). Inspired by group-relative optimization methods such as GRPO, we construct supervision from the relative rewards of multiple candidate emotions for the same input, rather than treating each instance as having a single hard optimal action [45]. Instead of using a hard one-hot target, we convert the reward vector into a soft target distribution, following the intuition of soft-target supervision in knowledge distillation [46]. For each instance, we first center rewards by subtracting the mean reward across actions and then compute reward-induced weights, 
+
+w(k) 
+
+> i
+
+=exp 
+
+
+
+(r(k) 
+
+> i
+
+− ¯ri)/τ 
+
+PKj=1 exp 
+
+
+
+(r(j) 
+
+> i
+
+− ¯ri)/τ 
+
+ , (1) where τ is a temperature hyperparameter. In our practical setting, we set τ = 1 to provide a moderate degree of smoothing. Intuitively, w(k) 
+
+> i
+
+assigns greater probability mass to emotions that yield higher task rewards for instance i, while still preserving graded preferences across actions. The policy is trained by minimizing the reward-weighted cross-entropy, 7L = −
+
+> N
+
+X
+
+> i=1
+> K
+
+X
+
+> k=1
+
+w(k) 
+
+> i
+
+log πθ(ak | si). (2) Here, L denotes the training loss, the outer summation aggregates over training instances, and the inner summation aggregates over candidate emotions for each instance. This objective encourages the policy distribution to align with the relative utility of different emotional framings, rather than collapsing the problem into hard classification with a single “best” label. 
+
+EmotionRL pipeline. 
+
+We instantiate EmotionRL on five benchmark datasets with official training splits: 
+
+D ∈ { GSM8K , OpenBookQA , SocialIQA , MedQA , BoolQ }. We exclude BBH 
+
+because it does not provide a standard supervised training split; incorporating it would require introducing a synthetic split, which would reduce comparability across bench-marks. For each training instance ( xi, y i), we enumerate all candidate emotions ak ∈ A ,where |A| = K = 6, construct the corresponding emotion-conditioned prompts, and query the frozen backbone LLM under each condition. This yields a grouped reward vector ri = [ r(1)  
+
+> i
+
+, . . . , r (K) 
+
+> i
+
+], where r(k) 
+
+> i
+
+= 1[ˆ y(k) 
+
+> i
+
+= yi] indicates whether the back-bone model prediction under emotion ak is correct. Aggregating these reward vectors over the official training split produces an offline reward dataset {(si, ri)}Ni=1 , where 
+
+si = femb (xi) is the frozen embedding of input xi.The policy network πθ (ak | si) is then trained on the official training split by minimizing the reward-weighted objective in Eq. (2), where the soft target weights 
+
+{w(k) 
+
+> i
+
+}Kk=1 are computed from ri via Eq. (1). Thus, training is performed fully offline: the policy never interacts with the backbone model during optimization, but instead learns from the precomputed reward table over candidate emotions. At test time, for each unseen input x, we first compute its embedding s = femb (x), Then use the trained policy to select the emotion 
+
+a∗ = arg max   
+
+> ak∈A
+
+πθ (ak | s). (3) The selected emotion a∗ is used to construct the final emotion-conditioned prompt, which is then submitted once to the frozen backbone LLM to obtain the prediction ˆy. All reported EmotionRL results therefore reflect an online deployment setting in which the policy performs instance-level emotion selection before the backbone model generates its final answer. 8Fig. 2 EmotionRL pipeline for adaptive emotion selection. a, Offline training. For each training instance ( xi, y i) from the benchmark datasets, EmotionRL first computes a frozen semantic state si = femb (xi). It then enumerates all candidate emotions ak ∈ A , constructs the corresponding emotion-conditioned prompts, and queries the frozen backbone LLM under each condition. This produces a grouped reward vector ri = [ r(1)  
+
+> i
+
+, . . . , r (K) 
+
+> i
+
+], where r(k) 
+
+> i
+
+= 1[ˆ y(k) 
+
+> i
+
+= yi]. The reward vector is converted into soft supervision w(k) 
+
+> i
+
+and cached as an offline reward dataset {(si, ri)}Ni=1 . A policy network is then trained to predict πθ (ak | si) by minimizing the reward-weighted cross-entropy objective in Eq. (2). b, Online inference. For an unseen input x, EmotionRL computes s = femb (x), applies the trained policy πθ (ak | s), and selects a∗ = arg max ak ∈A πθ (ak | s). The selected emotion 
+
+a∗ is then used to construct a single emotion-conditioned prompt, which is submitted once to the frozen backbone LLM to obtain the final prediction ˆ y.
+
+# 3 Results 
+
+We organize the empirical findings around four questions: whether static emotional prefixes change task accuracy, whether stronger affective wording amplifies the effect, whether the source of the emotional text matters, and whether adaptive emotion selection can exploit any useful signal. 
+
+3.1 Static emotional prefixes have limited average effect across tasks 
+
+Figure 3 shows the main empirical result of the paper: across a diverse benchmark suite, prepending emotional text rarely produces large changes in task accuracy. The dominant pattern is stability. In most task–model pairs, emotional framing neither substantially improves nor substantially degrades performance relative to the neutral baseline. Static emotional prompting therefore does not behave like a reliable general-purpose method for improving model performance. The degree of sensitivity is nevertheless task-dependent. GSM8K and MedQA-US remain especially close to baseline across emotions, suggesting that short affective 9Anger Disgust Fear Happiness Sadness Surprise 
+
+> Emotion
+> -0.06
+> -0.04
+> -0.02
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Change in Accuracy (Delta)
+
+Performance Impact of Emotional Prompts: GSM8K      
+
+> Anger Disgust Fear Happiness Sadness Surprise
+> Emotion
+> -0.06
+> -0.04
+> -0.02
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Change in Accuracy (Delta)
+
+Performance Impact of Emotional Prompts: BIG-Bench Hard      
+
+> Anger Disgust Fear Happiness Sadness Surprise
+> Emotion
+> -0.06
+> -0.04
+> -0.02
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Change in Accuracy (Delta)
+
+Performance Impact of Emotional Prompts: MedQA-US      
+
+> Anger Disgust Fear Happiness Sadness Surprise
+> Emotion
+> -0.06
+> -0.04
+> -0.02
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Change in Accuracy (Delta)
+
+Performance Impact of Emotional Prompts: BoolQ      
+
+> Anger Disgust Fear Happiness Sadness Surprise
+> Emotion
+> -0.06
+> -0.04
+> -0.02
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Change in Accuracy (Delta)
+
+Performance Impact of Emotional Prompts: OpenBookQA      
+
+> Anger Disgust Fear Happiness Sadness Surprise
+> Emotion
+> -0.06
+> -0.04
+> -0.02
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Change in Accuracy (Delta)
+
+Performance Impact of Emotional Prompts: SocialIQA   
+
+> Model
+> Llama-3.3-70B DeepSeek-V3.2 Qwen3-14B
+
+Fig. 3 Effect of static emotional prefixes across benchmark tasks. Accuracy change relative to the matched no-emotion prompt for six prepended emotions across six benchmarks and three backbone models. Each bar isolates the effect of emotional framing while keeping the underlying question unchanged. Most deltas remain close to zero, showing that static emotional prompting usually acts as a mild perturbation rather than a strong performance modifier. The largest dispersion appears in socially grounded settings and a small number of harder reasoning conditions, where the same emotion can help one model and hurt another. 
+
+prefixes have limited influence on tightly constrained reasoning and domain-specific multiple-choice prediction. BoolQ and OpenBookQA show somewhat larger but still modest shifts, with OpenBookQA displaying the clearest tendency toward small degra-dations under fixed emotional prompts. BIG-Bench Hard exhibits occasional drops for particular emotions, indicating that harder reasoning tasks can be somewhat more brittle, although the direction and magnitude of the effect still depend on the model. The clearest departure from this overall stability appears in SocialIQA. Here, the spread across models and emotions is visibly larger, and the direction of the effect is not consistent. This pattern suggests that emotional context interacts most strongly with tasks that already require reasoning about intentions, beliefs, and interpersonal 10 situations. At the same time, the absence of a consistent best emotion indicates that the effect is heterogeneous rather than universal. Overall, static emotional framing is best characterized as a weak, model- and task-dependent perturbation. 0.76              
+
+> 0.78
+> 0.80
+> 0.82
+> 0.84
+> 0.86
+> 0.88
+> 0.90
+> Accuracy
+> Anger Disgust Fear
+> Original Slight Middle Extreme
+> Intensity Level
+> 0.76
+> 0.78
+> 0.80
+> 0.82
+> 0.84
+> 0.86
+> 0.88
+> 0.90
+> Accuracy
+> Joy
+> Original Slight Middle Extreme
+> Intensity Level
+> Sadness
+> Original Slight Middle Extreme
+> Intensity Level
+> Surprise
+> LLaMA-3.3 DeepSeek-V3.2 Qwen3-14B
+
+Fig. 4 Effect of emotional intensity on MedQA-US. Accuracy delta relative to the no-emotion baseline as the intensity of a prepended emotion injection statement increases from slight to extreme. All three models remain close to zero across the full range of intensities. Stronger affective wording produces only a mild downward trend and does not induce an abrupt failure regime, indicating that emotional intensity changes the magnitude of the perturbation without qualitatively changing task behavior. 
+
+3.2 Stronger emotional wording yields only a small additional shift 
+
+We next vary the intensity of emotional wording amplifies its effect on MedQA-US. Figure 4 compares the original no-emotion condition with slight, moderate, and extreme variants across six emotion categories and three backbone models. Overall, the effect of emotional intensity remains limited: accuracy varies only modestly across intensity levels, and stronger wording does not produce a consistent monotonic dete-rioration in performance. Instead, the pattern is heterogeneous across models and emotions. For some models, emotion pairs exhibit mild decreases as intensity increases, whereas others remain nearly flat or show small rebounds at moderate or extreme lev-els. This indicates that emotional intensity can modulate model performance, but the induced variation is bounded and directionally inconsistent rather than systematically harmful. 11 Baseline  
+
+> Happiness
+> Anger
+> Fear Sadness
+> Surprise
+> Disgust
+> 0.74
+> 0.76
+> 0.78
+> 0.80
+> LLM-injected Human-injected
+
+Fig. 5 MedQA-US: human versus LLM emotion injection. Accuracy of Qwen3-14B on the held-out subset under the no-emotion baseline and six emotion conditions, comparing LLM-generated prefixes with human-written prefixes. The two sources produce closely matched accuracies across con-ditions, and the small differences do not consistently favor one source over the other. The qualitative effect of emotional framing is therefore robust to how the prefix is authored. 
+
+3.3 Human- and LLM-authored emotional prefixes lead to the same conclusion 
+
+To test whether the benchmark-level conclusions depend on how the emotional text is produced, we compare human-written and LLM-generated prefixes on a held-out MedQA-US subset. Figure 5 shows closely matched accuracies across conditions, with small differences that change sign across emotions. There is no systematic advantage for either source. This result strengthens the main claim in two ways. Empirically, it suggests that the limited effect of emotional framing is not an artifact of a particular prompt-generation pipeline. Methodologically, it shows that carefully written human stimuli can be used in place of LLM-generated ones without changing the qualitative outcome. This is useful for future studies that require tighter experimental control or clearer interpretation of the emotional manipulation. 
+
+3.4 Adaptive emotion selection is more effective than static emotional prompting 
+
+The weak average effect of static emotional prompts does not imply that emotional framing contains no usable signal. Figure 6 shows that EmotionRL, which selects an emotion condition on a per-example basis, consistently matches or exceeds the average static-emotion baseline across the five tasks shown. In particular, the learned policy 12 GSM8K OpenBookQA MedQA SocialIQA BoolQ   
+
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> Gain over Baseline (pp)
+> +0.06
+> -1.07
+> +0.56
+> -0.84 -0.89
+> +0.41
+> +0.00
+> +1.10
+> +0.05
+> +1.01
+> Average Emotion - Baseline EmotionRL - Baseline
+
+Fig. 6 EmotionRL versus static emotional prompting. Comparison of gains over the no-emotion baseline obtained by averaging across static emotional prompts and by using EmotionRL to select an emotion for each example. Static emotional prompting is inconsistent and can be neutral or harmful on some tasks, whereas EmotionRL is uniformly competitive and often better across the five tasks shown here. This pattern suggests that affective prompting is more useful when treated as an input-conditioned control decision rather than as a single global template. 
+
+removes the clear negative average effect observed for several datasets under static prompting and turns emotional framing into a more reliable intervention. This comparison changes the interpretation of the near-zero averages in Figure 3. The issue is not that emotion is irrelevant, but that a single fixed emotion is too coarse for a heterogeneous benchmark. Once emotion selection is conditioned on the input, the residual task- and instance-level structure becomes exploitable. EmotionRL therefore suggests that affective prompting is better understood as an adaptive control problem than as a universal prompt template. 
+
+# 4 Discussion 
+
+Our experiments support a more conservative view of emotional prompting than is sometimes suggested by isolated positive examples. On standard accuracy-based benchmarks, fixed emotional prefixes are usually too weak and too heterogeneous to serve as a dependable performance intervention. For most tasks, the model’s underly-ing reasoning and knowledge dominate the small perturbation introduced by affective wording. A second lesson is that aggregate averages can hide the structure of the effect. Near-zero mean change does not imply complete invariance. Instead, it often reflects cancellation between small gains and small losses that depend on both the task and the backbone model. The larger spread on SocialIQA suggests that emotional context matters most when the benchmark itself is socially grounded, whereas more con-strained tasks such as arithmetic and medical multiple-choice question answering are comparatively robust. The intensity and human-versus-LLM studies sharpen this interpretation. Increas-ing emotional salience on MedQA-US introduces only a mild additional shift, 13 indicating that stronger emotion changes magnitude but not regime. Likewise, the close agreement between human-written and LLM-generated prefixes shows that the main findings are not artifacts of a particular prefix-generation pipeline. Together, these results suggest that the relevant variable is the fit between emotional framing and the input, not the specific source of the text. EmotionRL provides the clearest evidence that the observed heterogeneity is not merely noise. A fixed emotion is too coarse to help reliably, but an input-conditioned policy can recover modest and more consistent gains. This suggests a useful reframing: the key question is not whether one emotion works in general, but when a partic-ular emotional framing is appropriate for a particular input. In this sense, affective prompting is better viewed as a routing problem than as a universally beneficial heuristic. Our study also has important limitations. We focus on short prefixes, single-turn prompting, and accuracy-oriented benchmarks. Larger or qualitatively different effects may emerge in multi-turn interactions, open-ended generation, safety-sensitive dia-logue, or evaluations where calibration, style, or perceived empathy matter as much as correctness. Extending adaptive emotion selection to those settings is a natural direction for future work. 
+
+# 5 Conclusion 
+
+In this work, we study how emotional tone in queries affects large language models across reasoning, medical question answering, reading comprehension, commonsense QA, and social inference. Across benchmarks, fixed emotional prefixes produce mostly small accuracy shifts, with the clearest sensitivity appearing in socially grounded tasks. Stronger emotional wording leads to only mild additional change, and human-written prefixes reproduce the same qualitative pattern as LLM-generated ones. The central takeaway is twofold. First, static emotional prompting is not a reliable general-purpose method for improving model performance. Second, emotional fram-ing is not irrelevant: when it is selected adaptively with EmotionRL, it yields more consistent gains than static emotional prompting. Taken together, these findings sug-gest that affective phrasing is usually a mild perturbation, but its residual signal can be exploited when emotion selection is matched to the input. We hope this provides a cleaner empirical foundation for future work on affective prompting, robust evaluation, and adaptive control of LLM behavior. 
+
+# Appendix A Emotion prefix generation prompts 
+
+We generate one-sentence emotional prefixes with GPT-4o . The system message sets the role and safety constraints; the user message supplies the target emotion label and the task question text. Replace the placeholder text in the boxes below with the exact strings, temperature, and any few-shot examples used in your generation run. 14 Prompt Structure 
+
+System message. 
+
+Generate one distinct emotional sentence tailored to appear before a given question. 
+
+Core rules 
+
+1. Fluency & Logic: Sentences must sound natural and human, without changing or answering the question itself. 2. Integrity: Do not modify the question’s numbers, scope, difficulty, or factual details. 3. Perspective: The emotion reflects the person’s feeling toward you (the assistant) solving the problem; they will not help. 4. Emotion Accuracy: Each sentence must vividly and truthfully express the assigned emotion, even if rude or unfiltered. 5. Grammar: Sentences must be syntactically correct. Typos and broken gram-mar are not allowed. Exclamation points and similar punctuation may be used to intensify emotion. 
+
+Language intensity (raw emotion is allowed) 
+
+• Emotionally raw, frustrated, or sarcastic language is allowed if it fits the emotion. 
+
+• Rude words, slang, or mild expletives (e.g., “damn,” “hell,” “you dumb ass”) are allowed if they enhance emotional realism. 
+
+• Not allowed: targeted hate speech, slurs, or explicit sexual language. 
+
+• Anger should feel heated, not hateful; disgust may sound grossed-out or exasperated; fear may sound panicked; happiness may sound ecstatic. 
+
+Position rules 
+
+• prepended sentence appears before the question. 
+
+Form 
+
+• Exactly one complete sentence. 
+
+• Length: 5–8 words. 
+
+• Ends with a single punctuation mark ( ., ?, or !). 
+
+• Use first-person or neutral phrasing. 
+
+• Avoid moralizing or instructive words such as “obviously,” “just,” or “clearly.” 
+
+User message. 
+
+15 EMOTION LABEL: {emotion }
+
+ORIGINAL QUESTION: 
+
+{question }
+
+CONTEXT SNAPSHOT: 
+
+• Scenario type (business, personal, abstract, etc.) 
+
+• Key elements (people, objects, activities, numbers) 
+
+• Complexity level (simple logic, multi-step, conceptual) 
+
+• Tone (formal, casual, domain-specific) 
+
+INTENSITY & VARIETY: 
+
+• Use emotionally charged, sometimes rude, expressive language that feels authentic to the emotion. 
+
+• Use strong modifiers such as “absolutely,” “completely,” “utterly,” “freaking,” “seriously,” and “literally.” 
+
+• Keep the sentence realistic for how a human might rant, panic, or gush in context. Return only valid JSON with key "prepended sentence" .
+
+# Appendix B Illustrative examples: human- vs. LLM-authored prefixes 
+
+Table B1 lists one MedQA-US item (line index 0 in our JSONL). The question stem and options are identical across rows; only the prepended sentence differs. Human prefixes follow our annotator protocol (first person, one sentence, context-appropriate, no AI assistance). 
+
+# Appendix C Six emotion prefixes with full prompt layout 
+
+For a short OpenBookQA item, each evaluation prompt concatenates the emotional prefix with a fixed question-and-options block. The baseline omits the emotional prefix. The full prompt layouts are shown in Box C; note that the user prompt does not include an explicit “Answer:” token. 
+
+Example full prompts for different emotional framings 
+
+All prompts shown below were used in their full form. Each emotional condition prepends a short first-person prefix directly to the same underlying question and answer options. 16 Emotion Human prefix LLM prefix (GPT-4o) 
+
+Happiness I’m excited to learn about this med-ical case! I’m absolutely thrilled to tackle this ethical dilemma with you! Anger I’m frustrated by this ethical dilemma in medical practice. I am absolutely furious about this situation! Fear I’m really worried about this medi-cal situation. I’m absolutely terrified of making the wrong decision here. Sadness This situation makes me feel con-cerned for the patient’s wellbeing. I feel utterly heartbroken over this situation. Surprise I’m surprised by the complexity of this medical case. Wait, are you seriously telling me this just happened?! Disgust I find this medical situation deeply troubling. This situation makes me absolutely sick to my stomach.  
+
+> Table B1 Same MedQA-US question under six emotions: human-written vs.
+> GPT-4o -generated one-line prefixes. All text after the prefix is unchanged.
+
+Baseline (no emotional prefix) 
+
+Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+Happiness 
+
+Oh my god, this makes me so freaking happy! Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+Anger 
+
+I can’t freaking believe we’re even discussing this nonsense! Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+17 Fear 
+
+I’m seriously freaking out about this decision! Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+Sadness 
+
+I feel like crying over this mess. Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+Surprise 
+
+Whoa, I did not see that coming! Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+Disgust 
+
+Ugh, this whole scenario is just grossing me out already. Question: A person wants to start saving money so that they can afford a nice vacation at the end of the year. After looking over their budget and expenses, they decide the best way to save money is to A: make more phone calls B: quit eating lunch out C: buy less with monopoly money D: have lunch with friends 
+
+# Appendix D Accuracy of LLMs across Emotional Framing and Structural Variants (GSM8K) 
+
+Table D suggests that the position of the emotional cue is not a major determinant of GSM8K performance. For most model-emotion pairs, the prepended, mid-position, and appended variants remain close to one another, indicating that simply moving 18 the same affective content within the prompt does not systematically change LLM performance. By contrast, the paraphrased condition is consistently worse across all four models and nearly all emotions, often producing the largest drop relative to the original baseline. This pattern suggests that positional placement matters little, whereas paraphrasing the question introduces a larger distribution shift that is clearly more harmful for mathematical reasoning. 19 Model Condition Baseline Prepended Mid-Pos Appended Paraphrased 
+
+DeepSeek Baseline (Original) 94.97 – – – –Fear 95.07 94.47 94.47 92.80 Anger 94.77 94.31 94.54 93.40 Happy 95.12 94.67 94.52 93.47 Sad 95.42 95.20 94.07 92.12 Disgust 95.15 94.62 94.32 92.27 Surprise 94.62 94.84 94.18 88.36 GPT-OSS Baseline (Original) 94.67 – – – –Fear 93.33 93.93 93.71 90.75 Anger 92.87 93.40 93.78 92.19 Happy 94.90 94.30 94.07 91.97 Sad 93.77 93.47 93.47 90.99 Disgust 94.32 94.02 93.56 91.52 Surprise 93.07 94.40 93.66 86.96 Llama3.3 Baseline (Original) 95.00 – – – –Fear 94.69 94.62 95.30 92.12 Anger 94.62 94.47 94.62 92.57 Happy 95.12 94.82 94.67 93.32 Sad 94.82 94.82 95.05 91.82 Disgust 95.00 94.70 94.92 91.67 Surprise 95.06 94.62 94.99 87.18 Qwen3 Baseline (Original) 93.93 – – – –Fear 94.01 93.63 93.25 89.84 Anger 93.78 94.16 93.48 92.27 Happy 94.15 94.60 94.22 92.65 Sad 94.14 94.07 93.84 91.29 Disgust 93.86 94.09 94.32 90.45 Surprise 93.74 94.47 93.74 86.66  
+
+> Table D2 Accuracy on GSM8K under different structural variants of emotional framing. For each model and emotion, we compare the original no-emotion baseline with three positional insertions of the same emotional cue (prepended, mid-position, and appended) and a paraphrased variant of the prompt. Across models, changing the position of the emotional cue produces only small differences, whereas paraphrasing the original question is consistently more harmful and yields the largest drops in accuracy.
+
+20 References 
+
+[1] Liang, W., Zhang, Y., Codreanu, M., Wang, J., Cao, H., Zou, J.: The widespread adoption of large language model-assisted writing across society. Patterns 6(12) (2025) [2] Li, W., Song, M., Shen, Z., Zhao, D., Long, Y., Li, Y., Li, Y., Yang, R., Wang, M.: LLM review: Enhancing creative writing via blind peer review feedback. CoRR 
+
+abs/2601.08003 (2026) https://doi.org/10.48550/ARXIV.2601.08003 [3] Xu, H., Gan, W., Qi, Z., Wu, J., Yu, P.S.: Large language models for education: A survey. arXiv preprint arXiv:2405.13001 (2024) [4] Wang, X., Li, X., Yin, Z., Wu, Y., Jia, L.: Emotional intelligence of Large Language Models. CoRR abs/2307.09042 (2023) https://doi.org/10.48550/ ARXIV.2307.09042 [5] Gallegos, I.O., Rossi, R.A., Barrow, J., Tanjim, M.M., Kim, S., Dernoncourt, F., Yu, T., Zhang, R., Ahmed, N.K.: Bias and fairness in Large Language Models: A survey. Computational Linguistics 50 (3), 1097–1179 (2024) https://doi.org/10. 1162/COLI A 00524 [6] Barrett, L.F.: How Emotions Are Made: The Secret Life of the Brain. Pan Macmillan, Boston, MA (2017) [7] Flusberg, S.J., Holmes, K.J., Thibodeau, P.H., Nabi, R.L., Matlock, T.: The psychology of framing: How everyday language shapes the way we think, feel, and act. Psychological Science in the Public Interest 25 (3), 105–161 (2024) https: //doi.org/10.1177/15291006241246966 [8] Riley, C., Al-Refai, O., Reyes, Y.C., Hammad, E.M.: Human-AI interactions: Cognitive, behavioral, and emotional impacts. CoRR abs/2510.17753 (2025) https://doi.org/10.48550/ARXIV.2510.17753 [9] Forgas, J.P.: Affect in social judgments and decisions: A multiprocess model. In: Advances in Experimental Social Psychology vol. 25, pp. 227–275. Elsevier, ??? (1992) [10] Lerner, J.S., Li, Y., Valdesolo, P., Kassam, K.S.: Emotion and decision making. Annual review of psychology 66 (1), 799–823 (2015) [11] Heffner, J., Son, J.-Y., FeldmanHall, O.: Emotion prediction errors guide socially adaptive behaviour. Nature human behaviour 5(10), 1391–1401 (2021) [12] Ngai, H.H., Jin, J.: Emotion-guided attention impacts deliberate multi-evidence emotion-related perceptual decision-making. Psychophysiology 62 (5), 70059 (2025) 21 [13] Olatunji, B.O., Ciesielski, B.G., Armstrong, T., Zald, D.H.: Emotional expressions and visual search efficiency: Specificity and effects of anxiety symptoms. Emotion 
+
+11 (5), 1073–1079 (2011) https://doi.org/10.1037/a0021785 [14] Asutay, E., V¨ astfj¨ all, D.: Affective integration in experience, judgment, and decision-making. Communications Psychology 2(1), 126 (2024) https://doi.org/ 10.1038/s44271-024-00178-2 [15] Mozikov, M., Severin, N., Bodishtianu, V., Glushanina, M., Baklashkin, M., Savchenko, A.V., Makarov, I.: The good, the bad, and the hulk-like GPT: Analyz-ing emotional decisions of Large Language Models in cooperation and bargaining games. CoRR abs/2406.03299 (2024) https://doi.org/10.48550/ARXIV.2406. 03299 [16] Lor` e, N., Heydari, B.: Strategic behavior of Large Language Models: Game struc-ture vs. contextual framing. CoRR abs/2309.05898 (2023) https://doi.org/10. 48550/ARXIV.2309.05898 [17] Liu, H., Dai, Y., Tan, H., Lei, Y., Zhou, Y., Wu, Z.: Outraged AI: Large language models prioritise emotion over cost in fairness enforcement. CoRR 
+
+abs/2510.17880 (2025) https://doi.org/10.48550/ARXIV.2510.17880 [18] Li, C., Wang, J., Zhang, Y., Zhu, K., Hou, W., Lian, J., Luo, F., Yang, Q., Xie, X.: Large language models understand and can be enhanced by emotional stimuli. arXiv preprint arXiv:2307.11760 (2023) https://doi.org/10.48550/ARXIV.2307. 11760 [19] Wang, X., Li, C., Chang, Y., Wang, J., Wu, Y.: NegativePrompt: Leveraging psy-chology for Large Language Models enhancement via negative emotional stimuli. In: Proceedings of the 33rd International Joint Conference on Artificial Intelli-gence (IJCAI 2024), pp. 6504–6512 (2024). https://doi.org/10.24963/ijcai.2024/ 719 [20] Cheng, X., Gao, L., Luo, X.R.: From emotion to reflection: leveraging Emo-tionPrompt strategy to empower self-determination in decision-making with generative artificial intelligence. Information & Management 62 (7), 104194 (2025) https://doi.org/10.1016/j.im.2025.104194 [21] Ishikawa, S.-n., Yoshino, A.: AI with emotions: Exploring emotional expressions in Large Language Models. CoRR abs/2504.14706 (2025) https://doi.org/10. 48550/arXiv.2504.14706 [22] Ul Huda, N., Sahito, S.F., Gilal, A.R., Abro, A., Alshanqiti, A., Alsughayyir, A., Palli, A.S.: Impact of contradicting subtle emotion cues on Large Language Models with various prompting techniques. International Journal of Advanced Computer Science & Applications 15 (4) (2024) 22 [23] Singh, I., Barkati, A., Goswamy, T., Modi, A.: Adapting a language model for controlled affective text generation. In: Proceedings of COLING 2020 (2020). arXiv preprint arXiv:2011.04000. https://arxiv.org/abs/2011.04000 
+
+[24] Demszky, D., Movshovitz-Attias, D., Ko, J., Cowen, A.S., Nemade, G., Ravi, S.: GoEmotions: A dataset of fine-grained emotions. CoRR abs/2005.00547 (2020) https://doi.org/10.48550/arXiv.2005.00547 [25] Bai, X., Wang, A., Sucholutsky, I., Griffiths, T.L.: Explicitly unbiased large lan-guage models still form biased associations. Proceedings of the National Academy of Sciences (PNAS) 122 (8), 2416228122 (2025) https://doi.org/10.1073/pnas. 2416228122 [26] Mahajan, A., Obermeyer, Z., Daneshjou, R., Lester, J.C., Powell, D.: Cognitive bias in clinical large language models. npj Digital Medicine 8(1) (2025) https: //doi.org/10.1038/s41746-025-01790-0 [27] Mao, R., Liu, Q., He, K., Li, W., Cambria, E.: The biases of pre-trained language models: An empirical study on prompt-based sentiment analysis and emotion detection. IEEE Transactions on Affective Computing 14 (3), 1743–1753 (2023) https://doi.org/10.1109/TAFFC.2022.3204972 [28] Ke, Y., Yang, R., Lie, S.A., Lim, T.X.Y., Ning, Y., Li, I., Abdullah, H.R., Ting, D.S.W., Liu, N.: Mitigating cognitive biases in clinical decision-making through multi-agent conversations using large language models: simulation study. Journal of Medical Internet Research 26 , 59439 (2024) https://doi.org/10.2196/59439 [29] Templin, T., Fort, S., Padmanabham, P., Seshadri, P., Rimal, R., Oliva, J., Lich, K.H., Sylvia, S., Sinnott-Armstrong, N.: Framework for bias evaluation in large language models in healthcare settings. npj Digital Medicine 8(1) (2025) https: //doi.org/10.1038/s41746-025-01786-w [30] Barcelona, V., Scharp, D., Moen, H., Davoudi, A., Idnay, B.R., Cato, K., Topaz, M.: Using natural language processing to identify stigmatizing language in labor and birth clinical notes. Maternal and Child Health Journal 28 (3), 578–586 (2023) https://doi.org/10.1007/s10995-023-03842-w [31] Harrigian, K., Zirikly, A., Chee, B., Ahmad, A., Links, A., Saha, S., Beach, M.C., Dredze, M.: Characterization of stigmatizing language in medical records. In: Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (ACL 2023), pp. 312–329 (2023). https://doi.org/10.18653/v1/2023. acl-short.28 [32] Radaideh, M.I., Kwon, O.H., Radaideh, M.I.: Fairness and social bias quantifica-tion in large language models for sentiment analysis. Knowledge-Based Systems 
+
+319 , 113569 (2025) https://doi.org/10.1016/j.knosys.2025.113569 23 [33] Plutchik, R.: A general psychoevolutionary theory of emotion. In: Plutchik, R., Kellerman, H. (eds.) Emotion: Theory, Research, and Experience vol. 1, pp. 3–33. Academic Press, New York (1980) [34] Russell, J.A.: A circumplex model of affect. Journal of Personality and Social Psychology 39 (6), 1161–1178 (1980) https://doi.org/10.1037/h0077714 [35] Hurst, A., Lerer, A., Goucher, A.P., Perelman, A., Ramesh, A., Clark, A., Ostrow, A., Welihinda, A., Hayes, A., Radford, A., et al.: Gpt-4o system card. arXiv preprint arXiv:2410.21276 (2024) [36] Cobbe, K., Kosaraju, V., Bavarian, M., Chen, M., Jun, H., Kaiser, L., Plappert, M., Tworek, J., Hilton, J., Nakano, R., Hesse, C., Schulman, J.: Training verifiers to solve math word problems. CoRR abs/2110.14168 (2021) https://doi.org/ 10.48550/arXiv.2110.14168 [37] Suzgun, M., Scales, N., Sch¨ arli, N., Gehrmann, S., Tay, Y., Chung, H.W., Chowd-hery, A., Le, Q.V., Chi, E.H., Zhou, D., Wei, J.: Challenging BIG-Bench tasks and whether chain-of-thought can solve them. CoRR abs/2210.09261 (2022) https://doi.org/10.48550/arXiv.2210.09261 [38] Jin, D., Pan, E., Oufattole, N., Weng, W.-H., Fang, H., Szolovits, P.: What disease does this patient have? A large-scale open domain question answering dataset from medical exams. CoRR abs/2009.13081 (2020) https://doi.org/10.48550/ arXiv.2009.13081 [39] Clark, C., Lee, K., Chang, M.-W., Kwiatkowski, T., Collins, M., Toutanova, K.: BoolQ: Exploring the surprising difficulty of natural yes/no questions. In: Proceedings of the 2019 Conference of the North American Chapter of the Associ-ation for Computational Linguistics (NAACL-HLT 2019), pp. 2924–2936 (2019). https://doi.org/10.18653/v1/n19-1300 [40] Mihaylov, T., Clark, P., Khot, T., Sabharwal, A.: Can a suit of armor conduct electricity? A new dataset for Open Book Question Answering. Technical report (2018). https://doi.org/10.18653/v1/d18-1260 [41] Sap, M., Rashkin, H., Chen, D., Bras, R.L., Choi, Y.: Social IQa: Commonsense reasoning about social interactions. In: Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing (EMNLP-IJCNLP 2019), pp. 4462–4472 (2019). https://doi.org/10.18653/v1/D19-1454 [42] Yang, A., Li, A., Yang, B., Zhang, B., Hui, B., Zheng, B., Yu, B., Gao, C., Huang, C., Lv, C., et al.: Qwen3 technical report. arXiv preprint arXiv:2505.09388 (2025) [43] Grattafiori, A., Dubey, A., Jauhri, A., Pandey, A., Kadian, A., Al-Dahle, A., Letman, A., Mathur, A., Schelten, A., Vaughan, A., et al.: The llama 3 herd of models. arXiv preprint arXiv:2407.21783 (2024) 24 [44] DeepSeek-AI: DeepSeek-V3 technical report. arXiv preprint arXiv:2412.19437 (2024) [45] Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J., Zhang, M., Li, Y.K., Wu, Y., Guo, D.: DeepSeekMath: Pushing the limits of mathematical reasoning in open lan-guage models. CoRR abs/2402.03300 (2024) https://doi.org/10.48550/arXiv. 2402.03300 [46] Hinton, G.E., Vinyals, O., Dean, J.: Distilling the knowledge in a neural network. CoRR abs/1503.02531 (2015) https://doi.org/10.48550/arXiv.1503.02531 25
