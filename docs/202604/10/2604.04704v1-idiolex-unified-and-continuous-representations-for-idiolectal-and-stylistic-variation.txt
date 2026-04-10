@@ -1,0 +1,525 @@
+Title: IDIOLEX: Unified and Continuous Representations for Idiolectal and Stylistic Variation
+
+URL Source: https://arxiv.org/pdf/2604.04704v1
+
+Published Time: Tue, 07 Apr 2026 01:47:54 GMT
+
+Number of Pages: 27
+
+Markdown Content:
+Preprint. Under review. 
+
+# IDIOLE X: Unified and Continuous Representations for Idiolectal and Stylistic Variation 
+
+Anjali Kantharuban 1 Aarohi Srivastava 2 Fahim Faisal 3 Orevaoghene Ahia 4
+
+Antonios Anastasopoulos 3, 5 David Chiang 2 Yulia Tsvetkov 4 Graham Neubig 11Carnegie Mellon University 2University of Notre Dame 3George Mason University 
+
+4University of Washington 5Archimedes Research Unit 
+
+Correspondence : anjaliruban@cmu.edu 
+
+## Abstract 
+
+Existing sentence representations primarily encode what a sentence says, rather than how it is expressed, even though the latter is important for many applications. In contrast, we develop sentence representations that capture style and dialect, decoupled from semantic content. We call this the task of idiolectal representation learning . We introduce I DIOLE X, a framework for training models that combines supervision from a sentence’s provenance with linguistic features of a sentence’s content, to learn a continuous repre-sentation of each sentence’s style and dialect. We evaluate the approach on dialects of both Arabic and Spanish. The learned representations capture meaningful variation and transfer across domains for analysis and classi-fication. We further explore the use of these representations as training objectives for stylistically aligning language models. Our results suggest that jointly modeling individual and community-level variation provides a useful perspective for studying idiolect and supports downstream ap-plications requiring sensitivity to stylistic differences, such as developing diverse and accessible LLMs. 
+
+Code: github.com/AnjaliRuban/IdioleX 
+
+## 1 Introduction Che, ¿me tirás una mano con esto? No entiendo un pomo y estoy medio perdido, posta 
+
+> Dale, tranqui. Contame bien qué onda y vemos cómo destrabamos esto. Si estás en bolas, arrancamos de cero y listo.
+> Sírvase formular su consulta de manera ordenada y exhaustiva. Una vez recibida la exposición completa de los hechos, procederé —en la medida de mis competencias— a emitir una respuesta conforme a criterios de coherencia, corrección y rigor conceptual. Casual, Use of Argentinian Slang Formal, Bureaucratic, Impersonal
+
+Figure 1: I DIOLE X used to compare the idiolec-tal alignment between user input and GPT 5.1 generations in casual Argentinian Spanish. 
+
+Much of mainstream evaluation and optimiza-tion of large language models (LLMs) priori-tizes semantic correctness (Clark et al., 2020; Lewis et al., 2020; Liu et al., 2023; Chiang et al., 2024; Singh et al., 2025; Kim et al., 2025). User-specific linguistic and stylistic adaptation re-ceives comparatively less emphasis in standard benchmarks, despite substantial literature on controllable generation, style transfer, and per-sonalization (Jin et al., 2022; Dong et al., 2023; Durandard et al., 2025a). Although semantic cor-rectness is essential, maximizing understanding in languages with diverse speaker populations requires modeling variation across dialect, reg-ister, and style, which we collectively refer to as 
+
+idiolect (Allan, 2013). In 1948, Bernard Bloch coined the term idiolect to refer to “the totality of the possible utterances of one speaker at one time in using language to interact with one other speaker” (Bloch, 1948). In modern linguistics, the concept of idiolect encompasses all the person-, interlocutor-, and context-specific considerations of language use. Since LLMs are not stable interlocutors with consistent personalities and backgrounds (Durandard et al., 2025a), the 1
+
+> arXiv:2604.04704v1 [cs.CL] 6 Apr 2026
+
+Preprint. Under review. lack of common linguistic ground can result in misunderstanding of both users’ and systems’ idiolect (Frisch & Giulianelli, 2024; Fleisig et al., 2024; Nias et al., 2025; Lin et al., 2025). Prior NLP work related to idiolect has largely appeared under task-specific formulations such as dialect identification (DID; Tiedemann & Ljube ˇsi ´c, 2012; Lui & Cook, 2013) and authorship attribution (AA; Stamatatos et al., 1999; Zhu & Jurgens, 2021; Rivera-Soto et al., 2021; Wegmann et al., 2022). Although these tasks rely on similar linguistic signals to one another, they have historically been studied in isolation. Similarly, there have been attempts to learn style-aware representations for authorship verification using either contrastive learning over sentence pairs based on authorship (Wegmann et al., 2022) or explicit linguistic features (Patel et al., 2023), but none that combine both nor any that make use of more granulated levels of idiolectal proximity. 
+
+We propose I DIOLE X, a training framework for learning idiolectal sentence represen-tations with minimal supervision . These representations allow us to capture idiolectal similarity between utterances and to support a range of applications, including compar-isons between text segments and downstream uses such as post-training or evaluation of LLMs. I DIOLE X is language-agnostic and relies on weak supervision from hierarchi-cal proximity and LLM-generated linguistic features rather than task-specific labels. The resulting representations are designed to de-prioritize semantic content while encoding stylistic and linguistic structure in a continuous space, enabling applications across analysis, classification, and alignment. Specifically, we show that I DIOLE X representations are successful in multiple contexts: 1. A Base for Existing Tasks that outperforms prior neural approaches on DID and AA across Arabic and Spanish varieties (§4). 2. Embeddings for Similarity Scoring that encode linguistic structure and dialectal variation with minimal semantic interference (§5). 3. A Style Alignment Training Objective to improve idiolectal and dialectal alignment during post-training (§6). 
+
+## 2 Idiolectal Representation Learning 
+
+Idiolectal variation – differences in how individuals use language in terms of lexicon, morphology, syntax, and register – has long been studied in work on authorship attribution, dialect identification, and style transfer (Zhu & Jurgens, 2021; Wegmann et al., 2022; Patel et al., 2025). We build on these lines of research towards idiolectal representation learning (IRL) to encode stylistic and dialectal properties independent of the task. 
+
+Stylistic & Dialectal Similarity We assume that stylistic and dialectal similarity correlate with a proximity hierarchy : that language use tends to be most similar within the same individual and same document, followed by the same individual across documents, then among speakers within a shared dialect community, and least similar across different dialect communities. As such, idiolectal similarity can be modeled as a continuous space reflecting shared linguistic features across speakers and communities. We use this proximity hierarchy (same document > same author > same dialect > cross-dialect) to provide weak supervision during training while avoiding discrete categorization. 
+
+Relationship to Semantic Content We consider the following desideratum: if two doc-uments are stylistically similar but discuss different topics, their representations should remain relatively close, whereas documents that are semantically similar but differ substan-tially in style or dialect should be more distant. While stylistic and semantic signals are intertwined, our objective emphasizes linguistic form over topical content. 
+
+## 3 IDIOLE X
+
+We introduce I DIOLE X, a framework for training sentence representations that encode id-iolectal variation by combining weak supervision from proximity information (defined 2Preprint. Under review. Linguistic Features Utterance 1 (Anchor) Utterances {2, ..., N} Proximity Scores Pre-trained Text Embedding Model Feature Prediction Head Margin Ranking Loss Centering & VicReg Loss Supervised Contrastive Loss Feature Prediction BCE Loss                    
+
+> Phase 1 Objectives Phase 2 Objectives
+> 1 -α×
+> α×
+> ++
+> Anchor Same Comment Same Author Same Dialect Community Different Dialect Community
+> Proximity to Anchor: -322111100000000
+
+Figure 2: I DIOLE X training framework. During training, all batches are sampled such that every individual item can act as an anchor for contrastive learning, necessitating that there are 2 3−n samples for each proximity score n ∈ [0, 3 ].
+
+above, §2) with LLM-extracted linguistic features. Our goal is to encourage representa-tions that are consistent with the view of stylistic variation described in Section 2. Rather than relying on a single supervision signal, we integrate multiple sources that provide complementary perspectives on linguistic variation, seen in Figure 2. 
+
+3.1 Data Schema Data Sampling & Filtering We construct training data from publicly available Reddit comments associated with regional communities. For each language, we identify the main regional subreddits and collect comments from the inception of the subreddit until December 2024 using the Pushshift archive (Baumgartner et al., 2020) and filter for language and poor-quality. A full list of subreddits and filtering criteria are provided in Appendix A. 
+
+Proximity Scores Because stylistic similarity is not directly observable, we approximate it using relative comparisons derived from authorship and community structure. For each anchor sentence, we sample comparison sentences representing varying degrees of proximity: (3) same comment, (2) same author, (1) same dialect community, and (0) different communities. These groupings provide a weak but structured signal that encourages the representation space to reflect stylistic relationships without requiring explicit labels. Proximity scores are assigned for each pair of sentences between 0 (different community) and 3 (same comment) based on the most exclusive category the sentence belongs to, as seen in Figure 2. This ranking is inherently noisy; however, across a large number of samples, it still provides useful gradients. To mitigate this noise, we introduce an additional level of supervision using LLM-generated dialectal features. 
+
+Linguistic Features In addition to relational supervision, we incorporate automatically extracted linguistic features that reflect common dimensions of dialectal variation (Williams et al., 2008). These linguistic features are extracted from linguistic textbooks on Spanish (Lipski, 2012) and Arabic (Ryding & Wilmsen, 2021) dialectology. Feature extraction is performed using an LLM prompted to identify whether each attribute is present on a sentence-by-sentence level, since LLMs have been demonstrated to have meta-linguistic capabilities (Begus et al., 2025). In this work, we use GPT 5 mini 1 for feature extraction. We view these signals as approximate cues whose limitations (varying extraction quality) are mitigated through complementary supervision from relational structure. Details of prompts, feature definitions, and annotation procedures are provided in Appendix A.3. 
+
+3.2 Architecture 
+
+The I DIOLE X framework builds on a pretrained sentence encoder that serves as the backbone for representation learning. This design allows the framework to be applied to different languages by substituting the underlying pretrained model. Importantly, the architecture is intentionally minimal: it does not assume task-specific structures or discrete label prediction, 
+
+> 1
+
+gpt-5-mini-2025-08-07 
+
+3Preprint. Under review. and can be used as a general-purpose representation learner for stylistic and dialectal variation. Past work has demonstrated that transformer-based language models encode this infor-mation across different layers (Tenney et al., 2019). Sentence representations are obtained by applying learned layer-wise attention over all transformer layers (inspired by Rei et al. (2020)) followed by token-level mean pooling. The resulting representations are mean-centered and L2-normalized during training. Training proceeds in two stages due to limitations on the quantity of data that can be annotated with linguistic features. First, the encoder is optimized on the full train set using a relative similarity objective – a margin ranking loss – that encourages sentences with higher expected stylistic overlap to be closer in representation space than less related sentences. This pre-training primes the model to move from semantic to stylistic encoding and makes use of the significantly larger amount of unannotated data to maximize generalizability. In the second stage, feature-level supervision is incorporated alongside the margin ranking loss on a smaller subset of the training data through auxiliary objectives that encourage the representation to encode dimensions captured by the extracted linguistic features. Combining relational and feature signals allows the model to balance global structure with interpretable variation. We additionally apply normalization and regularization techniques to stabilize training and reduce representation collapse, promoting a well-conditioned embedding space suitable for downstream analysis. 
+
+Margin Ranking Loss The margin ranking loss calculates the pairwise difference in the semantic similarity s of each sentence with a given anchor sentence, a, and then compares it to the difference in proximity score r between sentences i and j:MRL (a, i, j) = max (0, −(r(xa, xi) − r(xa, xj)) × (s(xa, xi) − s(xa, xj)) + λ).In other words, we enforce that higher-proximity pairs have a greater cosine similarity by at least λ. Because we structure our mini-batch such that every sentence can act as an anchor, see Figure 2, we sum over every possible anchor and pair of comparison sentences for the final loss. During training, the margin λ starts at 0, then increases linearly to 0.5. 
+
+Feature Prediction The feature prediction head takes the idiolectal sentence represen-tations and applies a two-layer prediction model for the set of LLM-generated linguistic features, with a binary cross-entropy loss applied on the logits. 
+
+Supervised Contrastive Loss The supervised contrastive loss acts as an additional similar-ity loss, but in place of the ranking from earlier, it uses the Jaccard similarity w(xi, xj) over the feature vectors x as the weights for a supervised contrastive loss for sentences in a batch 
+
+B and τ = 0.07: SCL (i, j) = w(xi, xj) log esim (zi ,zj )/τ
+
+# ∑
+
+> k∈B
+
+esim (zi ,zk )/τ .As with MRL, we sum over all combinations of i, j ∈ B. This allows us to better identify the true similarity of sentences from different dialects as a linguist would see them, but we are limited by the chosen features. Both feature losses are used after a larger pre-training stage because the features are only available for a subset of the data. 
+
+Centering & Variance Constraints We enforce mean centering around 0 using a learned 
+
+μ and combine a variance and decorrelation loss to encourage a standard deviation of 1.0 across each dimension and decorrelation between dimensions to avoid anisotropy. The centering vector μ is learned jointly with the encoder parameters using batch-wise estimates. Each language’s I DIOLE X model is trained independently, starting from a language-specific pre-trained base model, AraBert v2 2 for Arabic and Bertin 3 for Spanish (Antoun et al., 2020; 
+
+> 2https://huggingface.co/aubmindlab/bert-base-arabertv2
+> 3https://huggingface.co/bertin-project/bertin-roberta-base-spanish
+
+4Preprint. Under review. 
+
+Spanish Arabic Models F1 EM F1 EM 
+
+IDIOLE X 0.85 0.62 0.43 0.43 Fine-tuned I DIOLE X 0.84 0.63 0.61 0.61 Fine-tuned I DIOLEX + Lexical 0.85 0.63 0.66 0.66 Fine-tuned BERT 0.80 0.59 0.56 0.56 Centroid Clustering w/ BERT 0.77 0.57 0.20 0.22 Centroid Clustering w/ E5 0.74 0.54 0.15 0.17 S¨ alev¨ a & Palen-Michel, 2024 0.82 0.50 – –Abu Kwaik & Saad, 2019 – – 0.67 0.67 
+
+Samih et al., 2019 – – 0.59 0.59 Table 1: DID F1-score and exact match accuracy (EM) results on Spanish (DSL-ML) and Arabic (MADAR 26). External baselines are: the top scoring submission to DSL-ML, the top scoring submission to MADAR 26, and the top scoring neural 
+
+submission to MADAR 26. 0.0 0.2 0.4 0.6 0.8 1.0       
+
+> P(Argentina)
+> 0
+> 12
+> 25
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> P(Spain)
+> 0
+> 12
+> 25
+> 0.0 1.0
+> 0
+> 100
+> % of Dataset
+> Spain
+> Argentina
+> Both
+
+Figure 3: Non-fine-tuned I DIOLE Xclassification model’s likelihood dis-tribution over samples on multi-label Spanish DID. 
+
+la Rosa et al., 2022). Data from 10 authors from each dialect is withheld for each of the development and test sets (150 in total per set). Hyperparameters, model configurations, and optimization settings are reported in Appendix B.1 to facilitate reproducibility. 
+
+## 4 Performance on Classification Benchmarks 
+
+We show that I DIOLE X provides strong performance on downstream style-related tasks with the addition of task-specific heads. We evaluate this ability for dialect identification (DID) and authorship attribution (AA). For each task, we evaluate three versions of the models trained via I DIOLE X. 1. IDIOLE X: The model representations as-is, with a trained classification head, demon-strating the performance of the representations in a cross-domain context. 2. Fine-tuned I DIOLE X: The model representations with a trained classification head after finetuning on the train split for each task. 3. Fine-tuned I DIOLE X + Lexical : The model representations with a trained classifica-tion head after finetuning, ensembled with a trained logistic regression head that is fed TF-IDF representations. The I DIOLE X framework prioritizes the encoding of the morphological and syntactic features associated with idiolect (see Appendix A.3), so the addition of explicit lexical features aids in tasks where lexical variation gives significant information. We evaluate I DIOLE X against two baselines: (1) a fine-tuned BERT-based system (similar training to Fine-tuned I DIOLEX ), and (2) a centroid clustering baseline. For any systems based on BERT, we use the same monolingual models used as the pre-trained encoder for training our I DIOLE X models. The centroid clustering baseline is constructed with frozen encoder representations from which dialect centroids are calculated on the train data. Where comparable, we also report winning shared-task scores on the datasets we evaluate on. More information on classification model training is found in Appendix B.2.1, and further details regarding the baselines can be found in Appendix B.2.2. 
+
+4.1 Dialect Identification 
+
+DID relies heavily on stylistic cues such as lexical choices, morphology, and syntactic patterns, which may overlap across dialects. For Spanish, we use the multi-label DSL-ML 2024 shared task dataset (Chifu et al., 2024; Zampieri et al., 2024). For Arabic, we evaluate on MADAR 26 (Bouamor et al., 2018; 2019), which contains sentences annotated with 25 city-level dialect labels along with Modern Standard Arabic. 5Preprint. Under review. Table 1 reports F1 scores and exact match accuracy (EM) on DSL-ML and MADAR 26. For DSL-ML, our models outperform both the winning VarDial 2024 submission by S ¨alev ¨a & Palen-Michel (2024) and all baselines. Fine-tuning and lexical ensembling provide marginal benefits, demonstrating the strength of I DIOLE X representations despite the domain mis-match. Figure 3 shows the predicted likelihood distributions from the base I DIOLE X model for sentences labeled by annotators as Argentinian, Spanish, and both. A likelihood over the threshold of 0.5 results in the sentence being assigned that label. Single-label samples receive high likelihoods while multi-label samples exhibit broader distributions, reflecting mixed dialectal cues. This behavior is consistent with our goals of encoding dialect-ness in a continuous manner to allow for nuance in analysis. On Arabic single-label DID, I DIOLE X achieves an accuracy of 0.66, outperforming Samih et al. (2019) by 7 points (0.59) and coming within 1 point of Abu Kwaik & Saad (2019) (0.67), the best reported result from the shared task. Samih et al. (2019)’s system, although neural, incorporates explicit heuristics such as named regional entities, whereas I DIOLE X relies purely on learned representations. In contrast, Abu Kwaik & Saad (2019) uses a non-neural, feature-engineered approach tailored specifically to this task, which likely contributes to its strong performance. Despite this, I DIOLE X, as a general-purpose representation framework evaluated across multiple tasks, achieves near state-of-the-art performance without task-specific engineering, highlighting the strength and generality of its learned representations. 
+
+4.2 Authorship Attribution        
+
+> Models Accuracy
+> IDIOLE X31% Fine-tuned I DIOLE X36% Fine-tuned I DIOLE X + Lexical 38%
+> Fine-tuned BERT 28% Centroid Clustering w/ BERT 16% Centroid Clustering w/ E5 27% Table 2: Open-set authorship attribution exact match accuracy on the PAN 19 benchmark.
+
+AA is another task that relies on stylistic pat-terns rather than semantic content. To assess stylistic variation independent of dialect, we in-clude the PAN 2019 Spanish authorship attribu-tion dataset (Kestemont et al., 2019), an open-set benchmark. This benchmark specifically exam-ines cross-domain capabilities: the test set data is all in a single domain that is not present during training. The original Spanish PAN 19 shared task was conducted on the story level, so we omit submissions as a baseline since we are pre-dicting on a sentence-level. Sentence-level attri-bution is particularly challenging due to semantic constraints on feature realization and feature sparsity in short texts. Since there are <UNK> author labels, we assign the <UNK> class label to any samples where the difference in likelihood between the top two labels is below a threshold, which was calcu-lated per-problem via hyperparameter search over a development set (see Appendix B.2.1). Table 2 reports that I DIOLE X models in all training formats outperform baselines, achieving 10% absolute improvement over the strongest comparison model. Since PAN 19 is a cross-domain benchmark, these results demonstrate that I DIOLE X captures stylistic linguistic features that generalize beyond semantic and topical domains. 
+
+## 5 Disentangling Idiolect from Semantics 
+
+To evaluate whether the learned embeddings reduce semantic interference, per Section 2, we examine their relationship to traditional semantic representations via comparison to idiolectal similarity scores computed by calculating the cosine similarity of representations. 
+
+5.1 Relationship to Semantic Similarity 
+
+To assess the degree to which I DIOLE X representations are influenced by semantic content, we compare the idiolectal similarity scores with semantic similarity scores computed using representations generated by Multilingual-E5 (Wang et al., 2024), one of the highest perform-ing open-source semantic embedding models according to the Massive Text Embedding Benchmark (MTEB) (Muennighoff et al., 2023). 6Preprint. Under review. 0.5 0.6 0.7 0.8 0.9 1.0      
+
+> Semantic Similarity
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Idiolectal Similarity
+> Pearson r=0.09
+> Spanish
+> 0.5 0.6 0.7 0.8 0.9 1.0
+> Semantic Similarity
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Pearson r=0.19
+> Arabic
+> Same Author
+> Same Dialect
+> Different Dialect
+
+Figure 4: I DIOLE X-based stylistic similarity scores of a random sample of the withheld test set of the Reddit corpus plotted against Multilingual-E5 se-mantic similarity scores (Wang et al., 2024). We see a low, but positive correlation. 0.00 
+
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> Idiolectal Similarity
+> Same Country
+> Same Region
+> Other
+
+Figure 5: Stylistic similarity on the MADAR-26 dataset calculated via the Arabic I DIOLE Xmodel on sentences with identical semantic content. We see clear differentiation by dialec-tal proximity. 
+
+In Figure 4, we plot stylistic similarity against semantic similarity for a random sample of sentence pairs from the Reddit test set in both Spanish and Arabic. Each point corresponds to a pair of sentences, colored by relational category (same author, same dialect, different dialect). For both languages, the correlation between semantic and idiolectal similarity is positive but weak (Pearson ρ = 0.09 for Spanish and ρ = 0.19 for Arabic). This indicates that while stylistic similarity is not fully independent of semantic similarity, the two are only loosely coupled. This is expected in any true idiolectal representation because some linguistic features are tied to semantic content (e.g., double negation is dependent the presence of a negative). Still, this is not usually the case, hence the low magnitude of correlation. 
+
+5.2 Controlling for Semantics 
+
+To more directly test whether I DIOLE X models capture dialectal variation independent of meaning, we utilize the MADAR 26 dataset (Bouamor et al., 2018), which contains parallel sentences across dialects. Because the sentences are semantically equivalent translations, any differences in similarity must arise from linguistic form rather than content. In Figure 5, we plot idiolectal similarity scores on the MADAR 26 dataset, calculated on parallel samples, grouped by geographical proximity: same country (but different city), same dialectal region, or different dialectal region. For this analysis, MSA is considered to exist in its own dialectal region. We observe a clear gradient where geographic proximity indicates higher average stylistic similarity. The differences between groups are statistically significant ( p < 0.005). Because semantic content is held constant, this pattern provides strong evidence that the I DIOLE Xframework results in models that encode dialectal structure in a content-independent manner, to the point of capturing fine-grained geographic variations. We do not claim complete disentanglement of style and semantics; as discussed in Section 2, linguistic structure and semantic content depend on one another to various degrees. Rather, our objective is a shift in emphasis: I DIOLE X representations prioritize linguistic patterns over topicality. The empirical evidence suggests that this shift is achieved in practice. 
+
+## 6 Applications in LLM Post-Training 
+
+Because I DIOLE X provides a continuous measure of idiolectal similarity, it offers a possible objective for aligning LLM outputs when sensitivity to stylistic and dialectal variation is desired. As a proof of concept, we incorporate idiolectal representations into LLM post-7Preprint. Under review.                                                                                                        
+
+> Model ADI2 ChrF++ mar egy pse syr sau mar egy pse syr sau
+> Allam + I DIOLEX SFT 0.54 0.48 0.14 0.12 0.11 33.2 36.4 36.1 34.6 36.7 Allam + SFT 0.49 0.45 0.12 0.13 0.11 31.8 33.3 34.2 35.1 37.3
+> Allam 0.26 0.28 0.05 0.07 0.04 30.7 33.3 34.3 33.5 35.4 Llama 3.1+ I DIOLE X SFT 0.60 0.29 0.12 0.10 0.07 27.0 25.4 27.1 26.4 29.5 Llama 3.1 + SFT 0.57 0.27 0.11 0.08 0.05 22.0 22.4 25.4 23.9 28.2 Llama 3.1 0.09 0.12 0.02 0.02 0.01 21.1 20.2 23.9 21.0 29.0 Gaber et al. (2026) 0.57 0.45 0.10 0.18 0.10 29.2 39.5 38.4 33.2 42.9 Das Gollapalli et al. (2026) 0.70 0.63 0.12 0.10 0.07 4.6 5.5 5.8 6.0 7.4 Mutal et al. (2026) 0.38 0.15 0.07 0.22 0.05 34.5 31.0 38.3 17.7 38.2 Table 3: Dialectalness (ADI2) and translation performance (ChrF++) scores on the AMIYA shared task evaluation set for Moroccan ( mar ), Egyptian ( egy ), Palestinian ( pse ), Syrian ( syr ), and Saudi ( sau )Arabic. Our models, particularly Allam + I DIOLEX SFT, balance style and translation quality across dialects, as compared to reported scores for top submissions for the AMIYA shared task (Robinson et al., 2026) (bottom three rows). Best scores from our experiments are bolded, while best reported scores from the AMIYA shared task are underlined.
+
+training with two instruction-tuned LLMs: Llama 3.1 8B, 4 which is multilingual (Grattafiori et al., 2024), and Allam 7B, 5 which is pretrained on English and Arabic only (Bari et al.). We show that this leads to improved dialectal alignment without sacrificing fluency on the AMIYA shared task test set, using ADI2 dialectal adherence via the Al-Qasida evaluation framework (Robinson et al., 2025) and English → Dialectal Arabic (DA) translation quality (ChrF++) on MADAR. 
+
+6.1 Supervised Fine-Tuning with I DIOLE X
+
+Standard supervised fine-tuning (SFT) optimizes cross-entropy loss, which does not explic-itly encourage dialectal fidelity. As a result, models trained with standard SFT may produce fluent outputs that lack strong dialectal alignment. We find that with standard SFT, models that demonstrate the highest dialectal alignment (Das Gollapalli et al. (2026) in Table 3) exhibit substantial degradation in fluency, as measured by ChrF++, highlighting a trade-off between alignment and generation quality. To address this, we augment SFT with an I DIOLE X-based embedding alignment objective. For each training sample, we precompute the I DIOLE X embedding ei of the ground-truth response. During training, we pool the LLM’s hidden states ¯hi over the generated tokens and project them into the I DIOLE X embedding space via a learned projection head gθ . The resulting loss then combines standard cross-entropy with a cosine similarity term: 
+
+L = LCE + α  1 − cos (gθ ( ¯hi), ei)
+
+where α = 0.5. Intuitively, this ensures that the same idiolectal information encoded by IDIOLE X representations is recoverable from the hidden state of the LLM. Following Gaber et al. (2026), we construct instruction–response pairs by augmenting monolingual DA text from the AMIYA closed-data track using GPT 5o Mini 6 to form instruction-answer pairs Robinson et al. (2026). Unlike prior work, we train on a relatively small dataset (approximately 50k pairs). Additional training details, including information on training data, are provided in Appendix B.2.3. 
+
+6.2 Alignment Benefits 
+
+Across all models in Table 3, using SFT with I DIOLEX consistently improves dialectal alignment while maintaining or improving translation quality. This effect is particularly 
+
+> 4https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct
+> 5https://huggingface.co/humain-ai/ALLaM-7B-Instruct-preview
+> 6gpt-5-mini-2025-08-07
+
+8Preprint. Under review. strong for Moroccan, Egyptian, and Palestinian Arabic. For example, Das Gollapalli et al. (2026) achieves high ADI2 scores but suffers from low ChrF++, while Mutal et al. (2026) attains better translation performance at the cost of weaker alignment. In contrast, Allam 7B fine-tuned with I DIOLE X achieves both high dialectal alignment and competitive translation performance, despite being trained on fewer than 50k samples compared to the 2M used by Mutal et al. (2026). Performance varies with data availability. Moroccan and Egyptian Arabic have the largest training sets (10,612 and 8,317 monolingual samples, respectively), and correspondingly show the strongest gains. Palestinian Arabic, by contrast, has very limited data (743 samples), both in our setup and in the shared task. Prior work (Gaber et al. (2026)) mitigates this by incorporating Jordanian data, which is dialectally similar. Although we also include Jordanian samples (7,217) without explicitly labeling them as Palestinian, our model still achieves strong performance on Palestinian. Our strong performance in Palestinian across metrics demonstrates that our model was able to align well dialectally to Palestinian despite the data scarcity – suggesting that I DIOLE X benefits more from coverage of related idiolects and dialects than models that are trained with discrete dialect labels. Finally, unlike AMIYA submissions, which may fine-tune separate models for each dialect, our models are trained once without dialect-specific specialization. Our strong performance across dialects indicates that I DIOLE X with SFT not only improves dialectal alignment, but also enables models to adapt their output dialect appropriately based on the input. 
+
+## 7 Related Work 
+
+Idiolectal and stylistic variation has been studied across authorship attribution, dialect identification, stylistic representation learning, and personalized language modeling. Our work builds on these lines by learning continuous, reusable sentence representations that capture stylistic and dialectal variation across tasks. 
+
+Authorship Attribution & Dialect Identification Authorship attribution (AA) models individual writing style through supervised or contrastive objectives for applications such as forensic linguistics (Stamatatos et al., 1999; Halvani et al., 2019; Bischoff et al., 2020; Fabien et al., 2020; Rivera-Soto et al., 2021; Huertas-Tato et al., 2025), while dialect identification (DID) focuses on linguistic variation across regions and communities for uses in text classifi-cation (Tiedemann & Ljube ˇsi ´c, 2012; Lui & Cook, 2013; Bouamor et al., 2018). Both tasks rely on an overlapping set of stylistic and linguistic signals and are typically formulated as discrete classification problems, but are rarely approached in conjunction with one another. In contrast, we leverage authorship and dialect structure as weak supervision to learn 
+
+continuous representations rather than closed-set predictions. 
+
+Style Representations Standard sentence embeddings are optimized primarily for seman-tic similarity and have limited sensitivity to stylistic variation (Reimers & Gurevych, 2019; Krasnowska-Kiera ´s & Wr ´oblewska, 2019; Wang et al., 2024). Recent work has proposed learning style-aware representations, including CISR (Wegmann et al., 2022), StyleDistance (Patel et al., 2025), and approaches that incorporate explicit linguistic features such as LISA vectors (Patel et al., 2023). Our approach is closely related, but differs by jointly leveraging proximity scores gleaned from authorship and community metadata and feature prediction to learn representations that reflect stylistic similarity. 
+
+Personalization and Stylistic Alignment Personalized language modeling and user rep-resentations capture individual variation in language use, often entangling stylistic and semantic preferences (Lin et al., 2017; Welch et al., 2020; Koco ´n et al., 2021). More recent work explores controlling the stylistic properties of LLM outputs and evaluating dialectal fidelity (Durandard et al., 2025a;b; Robinson et al., 2025). We continue this line of work by using learned stylistic representations as training signals during post-training, enabling alignment with user-level linguistic variation. 9Preprint. Under review. 
+
+## 8 Conclusion 
+
+We introduce I DIOLE X, a framework for idiolectal representation learning that models stylistic and dialectal variation in a continuous manner by combining supervision from proximity scores with LLM-extracted linguistic features. We show that these represen-tations capture meaningful idiolectal structure, generalize across domains, and support multiple downstream uses like DID and AA. They exhibit low correlation with semantic similarity and provide an effective training objective for improving dialectal alignment in post-training. More broadly, I DIOLE X highlights the value of treating idiolect as a graded and compositional phenomenon through a shift from discrete labels and tags to continuous representations. This approach provides a practical and extensible framework for studying variation across languages and building tools that are more sensitive to variation. 
+
+## Ethical Considerations 
+
+All experiments in this work are conducted using existing, publicly available datasets and do not involve direct interaction with human subjects. Datasets derived from online sources such as Reddit may contain informal or inconsistently labeled dialectal data, without expert linguistic validation. Consequently, both models evaluated using I DIOLE X representations trained on this data may exhibit uneven performance across language varieties. While modeling dialectal and stylistic variation can enable more inclusive and expressive language technologies, it also raises questions about appropriateness and user preference. Speakers may not always want language models to generate text in their own idiolect, particularly in contexts where standard or neutral varieties are expected, or where incorrect or exaggerated dialectal usage could be perceived as inauthentic or undesirable. This work does not evaluate user attitudes toward dialectal generation, and we do not assume that improved modeling of dialectal variation necessarily implies that models should produce such variation by default. We view these considerations as emphasizing the importance of careful evaluation, user control, and contextual sensitivity when incorporating dialectal representations into down-stream systems. Further work is needed to better understand how such representations interact with user preferences and social norms in deployed language technologies. 
+
+## References 
+
+Gheith A Abandah, Moath R Khaleel, Iyad F Jafar, Mohammad R Abdel-Majeed, Yousef H Hamdan, Ashraf E Suyyagh, Asma A Abdel-Karim, and Shorouq M AlAwawdeh. Jor-danian Arabic to Modern Standard Arabic translation using a large model tuned on a purpose-built dataset and synthetic error injection. Jordanian Journal of Computers & Information Technology , 11(3), 2025. Kathrein Abu Kwaik and Motaz Saad. ArbDialectID at MADAR shared task 1: Lan-guage modelling and ensemble learning for fine grained Arabic dialect identification. In Wassim El-Hajj, Lamia Hadrich Belguith, Fethi Bougares, Walid Magdy, Imed Zi-touni, Nadi Tomeh, Mahmoud El-Haj, and Wajdi Zaghouani (eds.), Proceedings of the Fourth Arabic Natural Language Processing Workshop , pp. 254–258, Florence, Italy, August 2019. Association for Computational Linguistics. doi: 10.18653/v1/W19-4632. URL 
+
+https://aclanthology.org/W19-4632/ .Tareq Al-Moslmi, Mohammed Albared, Adel Al-Shabi, Nazlia Omar, and Salwani Ab-dullah. Arabic senti-lexicon: Constructing publicly available language resources for arabic sentiment analysis. Journal of Information Science , 44(3):345–362, 2018. doi: 10.1177/0165551516683908. URL https://doi.org/10.1177/0165551516683908 .Naif Alanazi, Mohammed Al-Batineh, and Hussein Abu-Rayyash. Saudial: The Saudi Arabic dialects game localization dataset. Data in Brief , pp. 111906, 2025. 10 Preprint. Under review. Keith Allan. What is common ground? In Perspectives on linguistic pragmatics , pp. 285–310. Springer, 2013. Fakhraddin Alwajih, Abdellah El Mekki, Samar Mohamed Magdy, AbdelRahim A. El-madany, Omer Nacar, El Moatez Billah Nagoudi, Reem Abdel-Salam, Hanin Atwany, Youssef Nafea, Abdulfattah Mohammed Yahya, Rahaf Alhamouri, Hamzah A. Al-sayadi, Hiba Zayed, Sara Shatnawi, Serry Sibaee, Yasir Ech-chammakhy, Walid Al-Dhabyani, Marwa Mohamed Ali, Imen Jarraya, Ahmed Oumar El-Shangiti, Aisha Alraeesi, Mohammed Anwar AL-Ghrawi, Abdulrahman S. Al-Batati, Elgizouli Mo-hamed, Noha Taha Elgindi, Muhammed Saeed, Houdaifa Atou, Issam Ait Yahia, Abdel-hak Bouayad, Mohammed Machrouh, Amal Makouar, Dania Alkawi, Mukhtar Mo-hamed, Safaa Taher Abdelfadil, Amine Ziad Ounnoughene, Anfel Rouabhia, Rwaa Assi, Ahmed Sorkatti, Mohamedou Cheikh Tourad, Anis Koubaa, Ismail Berrada, Mustafa Jarrar, Shady Shehata, and Muhammad Abdul-Mageed. Palm: A cultur-ally inclusive and linguistically diverse dataset for Arabic LLMs. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar (eds.), Proceed-ings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 32871–32894, Vienna, Austria, July 2025. Association for Computa-tional Linguistics. ISBN 979-8-89176-251-0. doi: 10.18653/v1/2025.acl-long.1579. URL 
+
+https://aclanthology.org/2025.acl-long.1579/ .Wissam Antoun, Fady Baly, and Hazem Hajj. AraBERT: Transformer-based model for Arabic language understanding. In LREC 2020 Workshop Language Resources and Evaluation Conference 11–16 May 2020 , pp. 9, 2020. URL https://aclanthology.org/2020.osact-1. 2/ .M Saiful Bari, Yazeed Alnumay, Norah A Alzahrani, Nouf M Alotaibi, Hisham Abdullah Alyahya, Sultan AlRashed, Faisal Abdulrahman Mirza, Shaykhah Z Alsubaie, Hassan A Alahmed, Ghadah Alabduljabbar, et al. ALLaM: Large language models for Arabic and English. In The Thirteenth International Conference on Learning Representations . URL 
+
+https://openreview.net/forum?id=MscdsFVZrN .Jason Baumgartner, Savvas Zannettou, Brian Keegan, Megan Squire, and Jeremy Blackburn. The Pushshift Reddit dataset. In Proceedings of the International AAAI Conference on Web and Social Media , volume 14, pp. 830–839, 2020. doi: 10.1609/icwsm.v14i1.7347. Gasper Begus, Maksymilian Dabkowski, and Ryan Rhodes. Large linguistic models: Investi-gating LLMs’ metalinguistic abilities. IEEE Transactions on Artificial Intelligence , 2025. URL 
+
+https://ieeexplore.ieee.org/abstract/document/11022724 .Sebastian Bischoff, Niklas Deckers, Marcel Schliebs, Ben Thies, Matthias Hagen, Efstathios Stamatatos, Benno Stein, and Martin Potthast. The importance of suppressing domain style in authorship analysis, 2020. URL https://arxiv.org/abs/2005.14714 .Bernard Bloch. A set of postulates for phonemic analysis. Language , 24(1):3–46, 1948. Houda Bouamor, Nizar Habash, Mohammad Salameh, Wajdi Zaghouani, Owen Rambow, Dana Abdulrahim, Ossama Obeid, Salam Khalifa, Fadhl Eryani, Alexander Erdmann, and Kemal Oflazer. The MADAR Arabic dialect corpus and lexicon. In Nicoletta Calzolari, Khalid Choukri, Christopher Cieri, Thierry Declerck, Sara Goggi, Koiti Hasida, Hitoshi Isahara, Bente Maegaard, Joseph Mariani, H ´el `ene Mazo, Asuncion Moreno, Jan Odijk, Stelios Piperidis, and Takenobu Tokunaga (eds.), Proceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018) , Miyazaki, Japan, May 2018. European Language Resources Association (ELRA). URL https://aclanthology.org/ L18-1535/ .Houda Bouamor, Sabit Hassan, and Nizar Habash. The MADAR shared task on Arabic fine-grained dialect identification. In Wassim El-Hajj, Lamia Hadrich Belguith, Fethi Bougares, Walid Magdy, Imed Zitouni, Nadi Tomeh, Mahmoud El-Haj, and Wajdi Zaghouani (eds.), Proceedings of the Fourth Arabic Natural Language Processing Workshop , pp. 199–207, Florence, Italy, August 2019. Association for Computational Linguistics. doi: 10.18653/ v1/W19-4622. URL https://aclanthology.org/W19-4622/ .11 Preprint. Under review. Abdelaziz Bounhar. Atlaset: A Moroccan Darija text corpus. https://huggingface.co/ datasets/atlasia/Atlaset/ , 2025. Wei-Lin Chiang, Lianmin Zheng, Ying Sheng, Anastasios Nikolas Angelopoulos, Tianle Li, Dacheng Li, Banghua Zhu, Hao Zhang, Michael Jordan, Joseph E. Gonzalez, and Ion Stoica. Chatbot arena: An open platform for evaluating LLMs by human preference. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp (eds.), Proceedings of the 41st International Conference on Machine Learning , volume 235 of Proceedings of Machine Learning Research , pp. 8359–8388. PMLR, 21–27 Jul 2024. URL https://proceedings.mlr.press/v235/chiang24b.html .Adrian-Gabriel Chifu, Goran Glava ˇs, Radu Tudor Ionescu, Nikola Ljube ˇsi ´c, Aleksandra Mileti ´c, Filip Mileti ´c, Yves Scherrer, and Ivan Vuli ´c. VarDial evaluation campaign 2024: Commonsense reasoning in dialects and multi-label similar language identification. In Yves Scherrer, Tommi Jauhiainen, Nikola Ljube ˇsi ´c, Marcos Zampieri, Preslav Nakov, and J ¨org Tiedemann (eds.), Proceedings of the Eleventh Workshop on NLP for Similar Lan-guages, Varieties, and Dialects (VarDial 2024) , pp. 1–15, Mexico City, Mexico, June 2024. Association for Computational Linguistics. doi: 10.18653/v1/2024.vardial-1.1. URL 
+
+https://aclanthology.org/2024.vardial-1.1/ .Jonathan H. Clark, Eunsol Choi, Michael Collins, Dan Garrette, Tom Kwiatkowski, Vitaly Nikolaev, and Jennimaria Palomaki. TyDi QA: A benchmark for information-seeking question answering in typologically diverse languages. Transactions of the Association for Computational Linguistics , 8:454–470, 2020. doi: 10.1162/tacl a 00317. URL https: //aclanthology.org/2020.tacl-1.30/ .Sujatha Das Gollapalli, Mouad Hakam, Mingzhe Du, and See-Kiong Ng. NUS-IDS at AMIYA/VarDial 2026: Improving Arabic dialectness in LLMs with reinforcement learning. In Yves Scherrer, No ¨emi Aepli, Verena Blaschke, Tommi Jauhiainen, Nikola Ljube ˇsi ´c, Preslav Nakov, Jorg Tiedemann, and Marcos Zampieri (eds.), Proceedings of the 13th Workshop on NLP for Similar Languages, Varieties and Dialects , Rabat, Morocco, March 2026. Association for Computational Linguistics. URL https://aclanthology.org/2026. vardial-1.30/ .Yi Dong, Zhilin Wang, Makesh Sreedhar, Xianchao Wu, and Oleksii Kuchaiev. SteerLM: Attribute conditioned SFT as an (user-steerable) alternative to RLHF. In Houda Bouamor, Juan Pino, and Kalika Bali (eds.), Findings of the Association for Computational Linguistics: EMNLP 2023 , pp. 11275–11288, Singapore, December 2023. Association for Computational Linguistics. doi: 10.18653/v1/2023.findings-emnlp.754. URL https://aclanthology. org/2023.findings-emnlp.754/ .No ´e Durandard, Saurabh Dhawan, and Thierry Poibeau. Language style matching in large language models. In Fr ´ed ´eric B ´echet, Fabrice Lef `evre, Nicholas Asher, Seokhwan Kim, and Teva Merlin (eds.), Proceedings of the 26th Annual Meeting of the Special Interest Group on Discourse and Dialogue , pp. 620–636, Avignon, France, August 2025a. Association for Computational Linguistics. URL https://aclanthology.org/2025.sigdial-1.50/ .No´ e Durandard, Saurabh Dhawan, and Thierry Poibeau. LLMs stick to the point, humans to style: Semantic and stylistic alignment in human and LLM communication. In Fr ´ed ´eric B ´echet, Fabrice Lef `evre, Nicholas Asher, Seokhwan Kim, and Teva Merlin (eds.), Proceed-ings of the 26th Annual Meeting of the Special Interest Group on Discourse and Dialogue , pp. 206–213, Avignon, France, August 2025b. Association for Computational Linguistics. URL 
+
+https://aclanthology.org/2025.sigdial-1.16/ .Mahmoud El-Haj. Habibi - a multi dialect multi national Arabic song lyrics corpus. In Nicoletta Calzolari, Fr ´ed ´eric B ´echet, Philippe Blache, Khalid Choukri, Christopher Cieri, Thierry Declerck, Sara Goggi, Hitoshi Isahara, Bente Maegaard, Joseph Mariani, H ´el `ene Mazo, Asuncion Moreno, Jan Odijk, and Stelios Piperidis (eds.), Proceedings of the Twelfth Language Resources and Evaluation Conference , pp. 1318–1326, Marseille, France, May 2020. European Language Resources Association. ISBN 979-10-95546-34-4. URL https:// aclanthology.org/2020.lrec-1.165/ .12 Preprint. Under review. Ma ¨el Fabien, Esau Villatoro-Tello, Petr Motlicek, and Shantipriya Parida. BertAA : BERT fine-tuning for authorship attribution. In Pushpak Bhattacharyya, Dipti Misra Sharma, and Rajeev Sangal (eds.), Proceedings of the 17th International Conference on Natural Lan-guage Processing (ICON) , pp. 127–137, Indian Institute of Technology Patna, Patna, India, December 2020. NLP Association of India (NLPAI). URL https://aclanthology.org/ 2020.icon-main.16/ .Eve Fleisig, Genevieve Smith, Madeline Bossi, Ishita Rustagi, Xavier Yin, and Dan Klein. Linguistic bias in ChatGPT: Language models reinforce dialect discrimination. In Yaser Al-Onaizan, Mohit Bansal, and Yun-Nung Chen (eds.), Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing , pp. 13541–13564, Miami, Florida, USA, November 2024. Association for Computational Linguistics. doi: 10.18653/v1/2024. emnlp-main.750. URL https://aclanthology.org/2024.emnlp-main.750/ .Ivar Frisch and Mario Giulianelli. LLM agents in interaction: Measuring personality consistency and linguistic alignment in interacting populations of large language models. In Ameet Deshpande, EunJeong Hwang, Vishvak Murahari, Joon Sung Park, Diyi Yang, Ashish Sabharwal, Karthik Narasimhan, and Ashwin Kalyan (eds.), Proceedings of the 1st Workshop on Personalization of Generative AI Systems (PERSONALIZE 2024) , pp. 102– 111, St. Julians, Malta, March 2024. Association for Computational Linguistics. URL 
+
+https://aclanthology.org/2024.personalize-1.9/ .Rana Gaber, Yara Allam, Serag Amin, Ranwa Aly, and Bashar Alhafni. MBZUAI at AMIYA shared task 2026: Adapting open-source LLMs for dialectal Arabic. In Yves Scherrer, No ¨emi Aepli, Verena Blaschke, Tommi Jauhiainen, Nikola Ljube ˇsi ´c, Preslav Nakov, Jorg Tiedemann, and Marcos Zampieri (eds.), Proceedings of the 13th Workshop on NLP for Similar Languages, Varieties and Dialects , Rabat, Morocco, March 2026. Association for Computational Linguistics. URL https://aclanthology.org/2026.vardial-1.31/ .Naman Goyal, Cynthia Gao, Vishrav Chaudhary, Peng-Jen Chen, Guillaume Wenzek, Da Ju, Sanjana Krishnan, Marc’Aurelio Ranzato, Francisco Guzm ´an, and Angela Fan. The Flores-101 evaluation benchmark for low-resource and multilingual machine translation. 
+
+Transactions of the Association for Computational Linguistics , 10:522–538, 2022. doi: 10.1162/ tacl a 00474. URL https://aclanthology.org/2022.tacl-1.30/ .Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, et al. The Llama 3 herd of models. 2024. URL https://arxiv.org/abs/2407.21783 .Oren Halvani, Christian Winter, and Lukas Graner. Assessing the applicability of authorship verification methods. In Proceedings of the 14th International Conference on Availability, Reliability and Security , ARES ’19, New York, NY, USA, 2019. Association for Computing Machinery. ISBN 9781450371643. URL https://doi.org/10.1145/3339252.3340508 .Javier Huertas-Tato, Alejandro Martin, and David Camacho. PART: Pre-trained authorship representation transformer, 2025. URL https://arxiv.org/abs/2209.15373 .Di Jin, Zhijing Jin, Zhiting Hu, Olga Vechtomova, and Rada Mihalcea. Deep learning for text style transfer: A survey. Computational Linguistics , 48(1):155–205, March 2022. doi: 10.1162/coli a 00426. URL https://aclanthology.org/2022.cl-1.6/ .Mike Kestemont, Efstathios Stamatatos, Enrique Manjavacas, Walter Daelemans, Martin Pot-thast, and Benno Stein. PAN19 authorship analysis: Cross-domain authorship attribution, November 2019. URL https://doi.org/10.5281/zenodo.3530313 .Seungone Kim, Juyoung Suk, Ji Yong Cho, Shayne Longpre, Chaeeun Kim, Dongkeun Yoon, Guijin Son, Yejin Cho, Sheikh Shafayat, Jinheon Baek, Sue Hyun Park, Hyeonbin Hwang, Jinkyung Jo, Hyowon Cho, Haebin Shin, Seongyun Lee, Hanseok Oh, Noah Lee, Namgyu Ho, Se June Joo, Miyoung Ko, Yoonjoo Lee, Hyungjoo Chae, Jamin Shin, Joel Jang, Seonghyeon Ye, Bill Yuchen Lin, Sean Welleck, Graham Neubig, Moontae Lee, Kyungjae Lee, and Minjoon Seo. The BiGGen bench: A principled benchmark for fine-grained evaluation of language models with language models. In Luis Chiruzzo, Alan 13 Preprint. Under review. Ritter, and Lu Wang (eds.), Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , pp. 5877–5919, Albuquerque, New Mexico, April 2025. Association for Computational Linguistics. ISBN 979-8-89176-189-6. URL https://aclanthology.org/ 2025.naacl-long.303/ .Jan Koco ´n, Marcin Gruza, Julita Bielaniewicz, Damian Grimling, Kamil Kanclerz, Piotr Miłkowski, and Przemysław Kazienko. Learning personal human biases and represen-tations for subjective tasks in natural language processing. In 2021 IEEE International Conference on Data Mining (ICDM) , pp. 1168–1173. IEEE, 2021. Katarzyna Krasnowska-Kiera ´s and Alina Wr ´oblewska. Empirical linguistic study of sentence embeddings. In Anna Korhonen, David Traum, and Llu ´ıs M `arquez (eds.), Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , pp. 5729–5739, Florence, Italy, July 2019. Association for Computational Linguistics. doi: 10.18653/v1/P19-1573. URL https://aclanthology.org/P19-1573/ .Javier De la Rosa, Eduardo G. Ponferrada, Manu Romero, Paulo Villegas, Pablo Gonz ´alez de Prado Salas, and Mar ´ıa Grandury. BERTIN: Efficient pre-training of a Spanish language model using perplexity sampling. Procesamiento del Lenguaje Natural , 68(0):13–23, 2022. URL http://journal.sepln.org/sepln/ojs/ojs/index.php/pln/article/view/6403 .Patrick Lewis, Barlas Oguz, Ruty Rinott, Sebastian Riedel, and Holger Schwenk. MLQA: Evaluating cross-lingual extractive question answering. In Dan Jurafsky, Joyce Chai, Natalie Schluter, and Joel Tetreault (eds.), Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics , pp. 7315–7330, Online, July 2020. Association for Computational Linguistics. doi: 10.18653/v1/2020.acl-main.653. URL https:// aclanthology.org/2020.acl-main.653/ .Fangru Lin, Shaoguang Mao, Emanuele La Malfa, Valentin Hofmann, Adrian de Wynter, Xun Wang, Si-Qing Chen, Michael J. Wooldridge, Janet B. Pierrehumbert, and Furu Wei. Assessing dialect fairness and robustness of large language models in reasoning tasks. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar (eds.), 
+
+Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 6317–6342, Vienna, Austria, July 2025. Association for Computational Linguistics. ISBN 979-8-89176-251-0. doi: 10.18653/v1/2025.acl-long.317. URL https: //aclanthology.org/2025.acl-long.317/ .Zih-Wei Lin, Tzu-Wei Sung, Hung-Yi Lee, and Lin-Shan Lee. Personalized word representa-tions carrying personalized semantics learned from social network posts. In 2017 IEEE Automatic Speech Recognition and Understanding Workshop (ASRU) , pp. 533–540. IEEE, 2017. John M. Lipski. Geographical and Social Varieties of Spanish: An Overview , chapter 1, pp. 1–26. John Wiley & Sons, Ltd, 2012. ISBN 9781118228098. doi: https://doi.org/ 10.1002/9781118228098.ch1. URL https://onlinelibrary.wiley.com/doi/abs/10.1002/ 9781118228098.ch1 .Jiawei Liu, Chunqiu Steven Xia, Yuyao Wang, and Lingming Zhang. Is your code generated by ChatGPT really correct? Rigorous evaluation of large language models for code generation. In A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt, and S. Levine (eds.), 
+
+Advances in Neural Information Processing Systems , volume 36, pp. 21558–21572. Curran Associates, Inc., 2023. URL https://proceedings.neurips.cc/paper files/paper/2023/ file/43e9d647ccd3e4b7b5baab53f0368686-Paper-Conference.pdf .Marco Lui and Paul Cook. Classifying English documents by national dialect. In Sarvnaz Karimi and Karin Verspoor (eds.), Proceedings of the Australasian Language Technology Association Workshop 2013 (ALTA 2013) , pp. 5–15, Brisbane, Australia, December 2013. URL 
+
+https://aclanthology.org/U13-1003/ .Niklas Muennighoff, Nouamane Tazi, Loic Magne, and Nils Reimers. MTEB: Massive text embedding benchmark. In Andreas Vlachos and Isabelle Augenstein (eds.), Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics ,14 Preprint. Under review. pp. 2014–2037, Dubrovnik, Croatia, May 2023. Association for Computational Linguistics. doi: 10.18653/v1/2023.eacl-main.148. URL https://aclanthology.org/2023.eacl-main. 148/ .Jonathan Mutal, Perla Al Almaoui, Simon Hengchen, and Pierrette Bouillon. AladdinFTI @ AMIYA - three wishes for Arabic NLP: Fidelity, diglossia, and multidialectal generation. In Yves Scherrer, No ¨emi Aepli, Verena Blaschke, Tommi Jauhiainen, Nikola Ljube ˇsi ´c, Preslav Nakov, Jorg Tiedemann, and Marcos Zampieri (eds.), Proceedings of the 13th Workshop on NLP for Similar Languages, Varieties and Dialects , Rabat, Morocco, March 2026. Association for Computational Linguistics. URL https://aclanthology.org/2026.vardial-1.27/ .Jaye Nias, Dwayne Brandon, Thane Douglass, Ashley Haynes, Niara Patterson, and Krystal Cooper. From culture to code: An intersectional analysis of AAVE slang in large language models. In Proceedings of the 5th Biennial African Human Computer Interaction Conference ,pp. 141–150, 2025. URL https://dl.acm.org/doi/full/10.1145/3757232.3757243 .Ajay Patel, Delip Rao, Ansh Kothary, Kathleen McKeown, and Chris Callison-Burch. Learning interpretable style embeddings via prompting LLMs. In Houda Bouamor, Juan Pino, and Kalika Bali (eds.), Findings of the Association for Computational Lin-guistics: EMNLP 2023 , pp. 15270–15290, Singapore, December 2023. Association for Computational Linguistics. doi: 10.18653/v1/2023.findings-emnlp.1020. URL https: //aclanthology.org/2023.findings-emnlp.1020/ .Ajay Patel, Jiacheng Zhu, Justin Qiu, Zachary Horvitz, Marianna Apidianaki, Kathleen McKeown, and Chris Callison-Burch. StyleDistance: Stronger content-independent style embeddings with synthetic parallel examples. In Luis Chiruzzo, Alan Ritter, and Lu Wang (eds.), Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , pp. 8662–8685, Albuquerque, New Mexico, April 2025. Association for Computational Linguistics. ISBN 979-8-89176-189-6. URL https://aclanthology.org/ 2025.naacl-long.436/ .Ricardo Rei, Craig Stewart, Ana C. Farinha, and Alon Lavie. COMET: A neural framework for MT evaluation. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pp. 2685–2702, 2020. URL https://aclanthology.org/ 2020.emnlp-main.213/ .Nils Reimers and Iryna Gurevych. Sentence-BERT: Sentence embeddings using Siamese BERT-networks. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) , pp. 3982–3992, 2019. URL https://aclanthology.org/D19-1410/ .Rafael A. Rivera-Soto, Olivia Elizabeth Miano, Juanita Ordonez, Barry Y. Chen, Aleem Khan, Marcus Bishop, and Nicholas Andrews. Learning universal authorship representations. In Marie-Francine Moens, Xuanjing Huang, Lucia Specia, and Scott Wen-tau Yih (eds.), 
+
+Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing , pp. 913–919, Online and Punta Cana, Dominican Republic, November 2021. Association for Computational Linguistics. doi: 10.18653/v1/2021.emnlp-main.70. URL https: //aclanthology.org/2021.emnlp-main.70/ .Nathaniel R. Robinson, Shahd Abdelmoneim, Anjali Kantharuban, Otba Alsboul, Salima Lamsiyah, Kelly Marchisio, and Kenton Murray. AMIYA shared task: Arabic modeling in your accent at VarDial 2026. In Proceedings of the 13th Workshop on NLP for Similar Languages, Varieties and Dialects , pp. 1–17, Rabat, Morocco, March 2026. Association for Computational Linguistics. URL https://aclanthology.org/2026.vardial-1.1/ .Nathaniel Romney Robinson, Shahd Abdelmoneim, Kelly Marchisio, and Sebastian Ruder. AL-QASIDA: Analyzing LLM quality and accuracy systematically in dialectal Arabic. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar (eds.), Findings of the Association for Computational Linguistics: ACL 2025 , pp. 22048–22065, Vienna, Austria, July 2025. Association for Computational Linguistics. ISBN 979-8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.1137. URL https://aclanthology.org/2025. findings-acl.1137/ .15 Preprint. Under review. Karin Ryding and David Wilmsen. The Cambridge Handbook of Arabic Linguistics . Cambridge Handbooks in Language and Linguistics. Cambridge University Press, 2021. Jonne S ¨alev ¨a and Chester Palen-Michel. Brandeis at VarDial 2024 DSL-ML shared task: Multilingual models, simple baselines and data augmentation. In Yves Scher-rer, Tommi Jauhiainen, Nikola Ljube ˇsi ´c, Marcos Zampieri, Preslav Nakov, and J ¨org Tiedemann (eds.), Proceedings of the Eleventh Workshop on NLP for Similar Languages, Va-rieties, and Dialects (VarDial 2024) , pp. 241–251, Mexico City, Mexico, June 2024. As-sociation for Computational Linguistics. doi: 10.18653/v1/2024.vardial-1.22. URL 
+
+https://aclanthology.org/2024.vardial-1.22/ .Younes Samih, Hamdy Mubarak, Ahmed Abdelali, Mohammed Attia, Mohamed Eldes-ouki, and Kareem Darwish. QC-GO submission for MADAR shared task: Arabic fine-grained dialect identification. In Wassim El-Hajj, Lamia Hadrich Belguith, Fethi Bougares, Walid Magdy, Imed Zitouni, Nadi Tomeh, Mahmoud El-Haj, and Wajdi Za-ghouani (eds.), Proceedings of the Fourth Arabic Natural Language Processing Workshop , pp. 290–294, Florence, Italy, August 2019. Association for Computational Linguistics. doi: 10.18653/v1/W19-4639. URL https://aclanthology.org/W19-4639/ .Shivalika Singh, Angelika Romanou, Cl ´ementine Fourrier, David Ifeoluwa Adelani, Jian Gang Ngui, Daniel Vila-Suero, Peerat Limkonchotiwat, Kelly Marchisio, Wei Qi Leong, Yosephine Susanto, Raymond Ng, Shayne Longpre, Sebastian Ruder, Wei-Yin Ko, Antoine Bosselut, Alice Oh, Andre Martins, Leshem Choshen, Daphne Ippolito, Enzo Ferrante, Marzieh Fadaee, Beyza Ermis, and Sara Hooker. Global MMLU: Understanding and addressing cultural and linguistic biases in multilingual evaluation. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar (eds.), Pro-ceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 18761–18799, Vienna, Austria, July 2025. Association for Computa-tional Linguistics. ISBN 979-8-89176-251-0. doi: 10.18653/v1/2025.acl-long.919. URL 
+
+https://aclanthology.org/2025.acl-long.919/ .E. Stamatatos, N. Fakotakis, and G. Kokkinakis. Automatic authorship attribution. In Henry S. Thompson and Alex Lascarides (eds.), Ninth Conference of the European Chapter of the Association for Computational Linguistics , pp. 158–164, Bergen, Norway, June 1999. Association for Computational Linguistics. URL https://aclanthology.org/E99-1021/ .Taghreed Tarmom, William Teahan, Eric Atwell, and Mohammad Ammar Alsalka. Compres-sion versus traditional machine learning classifiers to detect code-switching in varieties and dialects: Arabic as a case study. Natural Language Engineering , 26(6):663–676, 2020. Ian Tenney, Dipanjan Das, and Ellie Pavlick. BERT rediscovers the classical NLP pipeline. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , pp. 4593–4601, 2019. J ¨org Tiedemann and Nikola Ljube ˇsi ´c. Efficient discrimination between closely related languages. In Martin Kay and Christian Boitet (eds.), Proceedings of COLING 2012 , pp. 2619–2634, Mumbai, India, December 2012. The COLING 2012 Organizing Committee. URL https://aclanthology.org/C12-1160/ .Liang Wang, Nan Yang, Xiaolong Huang, Linjun Yang, Rangan Majumder, and Furu Wei. Multilingual E5 text embeddings: A technical report. arXiv preprint arXiv:2402.05672 ,2024. Anna Wegmann, Marijn Schraagen, and Dong Nguyen. Same author or just same topic? towards content-independent style representations. In Spandana Gella, He He, Bod-hisattwa Prasad Majumder, Burcu Can, Eleonora Giunchiglia, Samuel Cahyawijaya, Sewon Min, Maximilian Mozes, Xiang Lorraine Li, Isabelle Augenstein, Anna Rogers, Kyunghyun Cho, Edward Grefenstette, Laura Rimell, and Chris Dyer (eds.), Proceedings of the 7th Workshop on Representation Learning for NLP , pp. 249–268, Dublin, Ireland, May 2022. Association for Computational Linguistics. doi: 10.18653/v1/2022.repl4nlp-1.26. URL https://aclanthology.org/2022.repl4nlp-1.26/ .16 Preprint. Under review. Charles Welch, Jonathan K. Kummerfeld, Ver ´onica P ´erez-Rosas, and Rada Mihalcea. Com-positional demographic word embeddings. In Bonnie Webber, Trevor Cohn, Yulan He, and Yang Liu (eds.), Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pp. 4076–4089, Online, November 2020. Asso-ciation for Computational Linguistics. doi: 10.18653/v1/2020.emnlp-main.334. URL 
+
+https://aclanthology.org/2020.emnlp-main.334/ .Angie Williams, Peter Garrett, and Nikolas Coupland. Dialect recognition. In Handbook of Perceptual Dialectology , pp. 345–358. John Benjamins Publishing Company, 2008. Marcos Zampieri, Kai North, Tommi Jauhiainen, Mariano Felice, Neha Kumari, Nishant Nair, and Yash Mahesh Bangera. Language variety identification with true labels. In Nicoletta Calzolari, Min-Yen Kan, Veronique Hoste, Alessandro Lenci, Sakriani Sakti, and Nianwen Xue (eds.), Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024) , pp. 10100–10109, Torino, Italia, May 2024. ELRA and ICCL. URL https://aclanthology.org/2024.lrec-main.882/ .Jian Zhu and David Jurgens. Idiosyncratic but not arbitrary: Learning idiolects in online registers reveals distinctive yet consistent individual styles. In Marie-Francine Moens, Xu-anjing Huang, Lucia Specia, and Scott Wen-tau Yih (eds.), Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing , pp. 279–297, Online and Punta Cana, Dominican Republic, November 2021. Association for Computational Linguistics. doi: 10. 18653/v1/2021.emnlp-main.25. URL https://aclanthology.org/2021.emnlp-main.25/ .
+
+## A Training Data 
+
+A.1 Sampling 
+
+We collect publicly available Reddit comments using the Pushshift archive for each sub-reddit listed in Table 4, spanning from each subreddit’s inception through December 2024 (Baumgartner et al., 2020). Comments are segmented into sentences by punctuation using regex, and language filtered using fastText language identification. Only sentences classified as the target language are retained. Users that appear as [deleted] , [removed] , and AutoModerator are thrown out since they do not belong to one consistent user. Any sentences with fewer than 5 words (under the definition of word as a space-delineated token) are removed and any comments with fewer than 2 sentences or users with fewer than 2 comments are removed due to constraints around batch construction. 
+
+A.2 Splitting 
+
+From the original set of authors for each dialect, 10 are randomly selected to be in each of the dev and test splits. This ensures that the dev and test splits are made up of completely unseen authors to avoid contamination with the train set. Of the remaining authors, all are present in the pre-train set. The train set contains a subset of the pre-train set and is the set for which feature extraction is performed. This set is made up of 200 authors per dialect, or all of the authors in the pre-train set, whichever is lower. 
+
+A.3 Feature Extraction 
+
+A.3.1 Feature Inventory 
+
+We use sets of linguistic features extracted from language-specific dialect resources (Ryding & Wilmsen, 2021; Lipski, 2012). These features focus primarily on morphol-ogy/morphosyntax, affixes and functional lexemes, and orthography. A full list of Spanish features can be found in Table 5 and a full list of Arabic features can be found in Table 6. 17 Preprint. Under review. 
+
+Language Subreddit Dialect Label # Authors # Sentences Pre-Train Train Dev Test Arabic 
+
+r/algeria Algerian 3728 24003 5977 149 182 r/Egypt Egyptian 21117 536429 16188 209 129 r/Iraq Iraqi 2542 21595 7810 90 224 r/jordan Jordanian 14745 427230 15159 272 204 r/Kuwait Kuwaiti 1739 13099 6027 88 228 r/lebanon Lebanese 1705 12020 7083 413 227 r/Libya Libyan 788 6344 6202 298 238 r/Morocco Moroccan 3462 27940 6131 121 243 r/Oman Omani 516 1515 1515 106 102 r/Palestine Palestinian 530 2016 2016 151 252 r/qatar Qatari 402 794 794 93 119 r/saudiarabia Saudi 25982 639810 10743 201 463 r/Sudan Sudanese 795 9297 9297 327 125 r/Syria Syrian 1765 48265 13355 598 394 r/UAE Emirati 318 458 458 93 98 
+
+Total 80134 1770815 108755 3209 3228 Spanish 
+
+r/argentina Argentinian 122963 21532596 41160 399 4607 r/BOLIVIA Bolivian 6431 196137 12431 401 742 r/chile Chilean 65314 7563763 35592 850 1819 r/Colombia Colombian 56421 2166716 19553 1246 159 r/cuba Cuban 2846 65180 9191 529 1458 r/Dominican Dominican 3892 65488 6966 455 105 r/ecuador Ecuadorian 5628 163765 9003 145 244 r/ElSalvador El Salvadorian 4119 154321 13914 91 189 r/guatemala Guatemalan 10756 404417 15783 1299 621 r/Honduras Honduran 6882 281450 19740 364 1989 r/mexico Mexican 151978 8729427 50212 792 1500 r/Panama Panamanian 13608 1016097 17441 459 950 r/Paraguay Paraguayan 9845 479757 15455 675 225 r/PERU Peruvian 23411 792837 12280 2054 431 r/spain Peninsular 18903 395424 7792 262 384 r/uruguay Uruguayan 29093 3274405 33568 784 1694 r/vzla Venezuelan 25078 2202730 16640 481 2120 
+
+Total 557168 49484510 336721 11286 19237 
+
+Table 4: Data split sizes for Reddit data by dialect. 
+
+18 Preprint. Under review. 
+
+Spanish Binary Features Subject Pronouns & Verbal Morphology 
+
+contains explicit subject yo contains 2pl present suffix ais contains explicit subject tu contains 2pl present suffix eis contains explicit subject usted contains 2pl present suffix is contains explicit subject vos contains voseo present suffix as stressed contains explicit subject vosotros or vosotras contains voseo present suffix es stressed contains explicit subject ustedes contains voseo imperative form contains explicit subject nosotros or nosotras contains explicit subject ellos or ellas 
+
+Diminutives 
+
+contains diminutive suffix ito or ita contains diminutive suffix illo or illa contains diminutive suffix ico or ica contains diminutive suffix ino or ina contains diminutive suffix in regional contains diminutive suffix ete contains diminutive suffix ingo or inga contains diminutive suffix iquio or iquia contains diminutive suffix icho or icha 
+
+Clitic & Orthographic Variation 
+
+contains differential object marking a before animate direct object contains preverbal object clitic contains accusative clitic doubling lo a NP contains enclitic on infinitive contains accusative clitic doubling la a NP contains enclitic on gerund contains accusative clitic doubling los a NP contains multiple clitics in sequence contains accusative clitic doubling las a NP contains se plus object clitic contains dative clitic doubling le a NP contains strong pronoun object doubling contains dative clitic doubling les a NP contains indirect object strong pronoun doubling contains inverted question mark contains inverted exclamation mark contains all caps word contains repeated punctuation 
+
+Table 5: Spanish linguistic features extracted via LLM for I DIOLE X training. All features are sentence-level binary indicators. 
+
+A.3.2 Prompting 
+
+To annotate sentences with the linguistic features they contain, we prompt an LLM (in our case, GPT 5 mini 7). The LLM is asked to return a JSON dictionary of binary features with the following prompt: You are a deterministic feature extractor. Task: For each feature key, output 1 if the sentence contains an explicit surface cue described by that feature; otherwise, output 0. Use a recall-oriented policy: if the cue is reasonably present, set 1. Return VALID JSON ONLY with exactly one top-level key: ’features’. ’features’ maps each feature string EXACTLY (copy verbatim) to 0 or 1. Feature keys: features Sentence: sentence In cases where the LLM returns an invalid response (i.e. due to safety filtering), we default to marking every feature as 0. 
+
+A.4 Batching 
+
+Each batch begins with an anchor sentence being sampled, which acts as the seed for the rest of the batch. This anchor sentence is randomly sampled from the dataset. The other sentences in the batch fall into the following categories: 1. Same Comment : A different sentence from the same content. r = 32. Same Author : A sentence from a different comment by the author. r = 23. Same Subreddit : A sentence from the same subreddit/region but written by a differ-ent author. r = 14. Different Subreddit : A sentence from a different subreddit/region versus the anchor. 
+
+r = 0
+
+7gpt-5-mini-2025-08-07 
+
+19 Preprint. Under review. 
+
+Arabic Binary Features Morphosyntax & Clause Structure 
+
+contains case endings u a i contains future prefix sa contains tanwin un an in contains future particle sawfa contains dual suffix an or ayn contains dialectal future marker rah ha ghadi bash contains 2sg feminine suffix ki contains progressive marker 3am qa3id jaalis ka bi contains 2sg feminine dialect suffix sh or ish contains imperfect prefix bi or ba contains pronoun hum contains imperfect prefix ka contains pronoun hunna contains imperfect prefix 3a contains dialect possessive suffix o or u contains analytic passive in it ta is verb initial clause contains internal passive kutiba is subject initial clause contains passive prefix ta it et contains overt present copula contains relative alladhi forms contains zero copula equational contains relative illi yalli elli 
+
+Negation, Interrogatives & Discourse Particles 
+
+contains negator laysa contains yes no particle hal contains negator lan contains dialect yes no particle huwwa wash ish contains negator lam contains interrogative ayy contains negator lamma contains interrogative eh contains ma verbal negation contains interrogative shu contains ma verb sh negation contains interrogative wesh contains negator mish or mesh contains interrogative shinu contains negator mu or mo contains discourse wallahi contains egyptian ayywa contains discourse ya3ni contains msa adverb haqqan 
+
+Dialectal Lexical Markers & Orthography 
+
+contains egyptian izaay contains egyptian demonstrative da di dol contains egyptian keda contains levantine demonstrative hada haydi contains egyptian ba2a contains maghrebi demonstrative had contains levantine baddi contains gulf wain contains levantine halla contains gulf negator mo contains levantine shu contains gulf yalla contains levantine demonstrative hada contains maghrebi barcha contains maghrebi hshuma contains maghrebi prefix ka contains yemeni maish contains yemeni shill contains nonstandard qaf gaf contains nonstandard hamza omission contains nonstandard alef maqsura variation contains arabic question mark contains question mark contains exclamation mark ! contains repeated punctuation contains ellipsis contains tatweel contains letter lengthening contains laughter token 
+
+Table 6: Arabic linguistic features extracted via LLM for I DIOLE X training. All features are sentence-level binary indicators. 
+
+This is done by sampling randomly over the set of sentences from the comment, the set of comments by the same author, the set of authors from the same subreddit, and the set of subreddits. For training efficiency, we structure the batch such that every sentence has at least one sentence that falls into one of these categories. In practice, to ensure this, we use mini-batches of size 16 where for each anchor xa, there are 2 3−n samples with proximity score 
+
+n ∈ [0, 3 ]. In other words, for every sentence, there will be 1 other sentence from the same comment, 2 from the same author but a different comment, 4 from a different author but the same subreddit, and 8 from another subreddit. 
+
+## B Experimental Details 
+
+B.1 Training Under the I DIOLE X Framework 
+
+B.1.1 Base Models 
+
+We used the the most prolific pre-trained monolingual language model for each language. We focused on models with fewer than 200 M parameters to ensure that the resulting model would be lightweight enough to use as a training objective or reward model. Specifically, 20 Preprint. Under review. for Spanish we use BERTIN 8, a RoBERTa-base model trained on the Spanish component of mC4 (la Rosa et al., 2022). For Arabic, we use AraBERT v2 9, a BERT-base model trained on Arabic news corpora (Antoun et al., 2020). Both models follow the standard BERT-base architecture with 12 transformer layers and a hidden dimensionality of 768. Tokenization is performed using the HuggingFace tokenizer corresponding to each pre-trained model. Inputs are truncated to a maximum length of 512 tokens. 
+
+B.1.2 Auxiliary Prediction Heads 
+
+To incorporate linguistic supervision, we add two auxiliary heads on top of the encoder. 
+
+Feature Prediction A two-layer feedforward network predicts the binary feature vector associated with each sentence representation. The architecture consists of: Linear (d, 2 d) → ReLU → Linear (2d, F)
+
+where d is the encoder hidden size and F is the number of linguistic features (different per language). The model is trained using binary cross-entropy with logits. 
+
+Contrastive Similarity Represenations For supervised contrastive learning, representa-tions are passed through a projection head: Linear (d, d) → ReLU → Linear (d, 256 ).The resulting vectors are ℓ2 normalized before computing contrastive similarity based on the Jaccard similarity of the feature vectors. 
+
+B.1.3 Training Objectives 
+
+Training combines three losses. 
+
+Margin Ranking Loss (MRL) The margin ranking loss encourages sentences with higher proximity score to be closer in embedding space. The margin λ is linearly increased from 0 to 0.5 during training. 
+
+Supervised Contrastive Loss (SCL) We additionally apply a supervised contrastive loss where the similarity between samples is weighted using the Jaccard similarity between their feature vectors. 
+
+Feature prediction loss. The feature prediction head is trained using binary cross-entropy on the predicted feature logits. 
+
+Final Objective The final training objective is 
+
+L = ( 1 − α)Lrank + αL f eat , (1) where 
+
+L f eat = 0.25 LBCE + Lsupcon .
+
+B.1.4 Variance and Decorrelation Regularization 
+
+To prevent representation collapse and reduce embedding anisotropy, we apply a VICReg-style regularization term consisting of: • a variance constraint encouraging the standard deviation of each embedding di-mension to exceed 1, • a decorrelation penalty on off-diagonal covariance entries. 
+
+> 8https://huggingface.co/bertin-project/bertin-roberta-base-spanish
+> 9https://huggingface.co/aubmindlab/bert-base-arabertv2
+
+21 Preprint. Under review. 
+
+B.1.5 Sentence Representation Construction 
+
+Sentence embeddings are obtained from the transformer using a layer-wise attention mech-anism similar to that used by COMET (Rei et al., 2020). Let hl denote the hidden states from layer l. A learned scalar weight wl is applied to each layer and normalized using a softmax: ˜h =
+
+> L
+
+# ∑
+
+> l=0
+
+αl hl , αl = exp (wl )
+
+∑Lk=0 exp (wk) . (2) The resulting token representations are then aggregated using average pooling over all non-padding tokens to obtain a sentence-level representation. During training, embeddings are mean-centered using a running estimate of the global embedding mean across all distributed workers. After centering, vectors are ℓ2 normalized. 
+
+B.1.6 Training Procedure 
+
+Training proceeds in two stages. 
+
+Stage 1: Ranking Pretraining The encoder is trained using only the margin ranking loss on the full dataset. This stage uses all available sentences. 
+
+Stage 2: Feature-Aware Training Training is then continued on the subset of sentences with feature annotations. During this stage the feature prediction and contrastive losses are added. 
+
+B.1.7 Optimization 
+
+Models are trained using the Adam optimizer with a learning rate of 1 × 10 −5 and linear warmup for 25k steps. Training uses a batch size of 32 sentences. Supervised contrastive learning uses a tempera-ture τ = 0.07, and Jaccard weights are truncated to the top 5 neighbors. 
+
+B.1.8 Training Infrastructure 
+
+Training is performed using PyTorch DistributedDataParallel across 4 GPUs. All models are implemented in PyTorch and trained using the HuggingFace Transformers library. 
+
+B.1.9 Training Hyperparameters 
+
+Table 7 summarizes the primary hyperparameters used for training using the I DIOLE Xframework. Unless otherwise specified, the same configuration is used across all languages, with only the underlying pretrained encoder differing. 
+
+B.2 Evaluation Protocols 
+
+B.2.1 IDIOLE X-based Classification Procedure 
+
+To evaluate whether models trained via the I DIOLE X framework can support downstream classification tasks, we fine-tune classification heads on top of the pretrained encoder models. This section describes the training procedure, optimization settings, and implementation details used to produce the classification results reported in Section 4. 
+
+Models For each classification task, we initialize a sequence classification model using the same pretrained encoder architecture used in the representation learning stage; that is, AraBERT v2 (Antoun et al., 2020) for Arabic and BERTIN (la Rosa et al., 2022) for Spanish. The encoder weights are loaded directly from the I DIOLE X checkpoint containing 22 Preprint. Under review.            
+
+> Parameter Value
+> Hidden size 768 Transformer layers 12 Maximum sequence length 512 Batch size 32 Ranking group size 16 Pretraining epochs 3Full training epochs 10 Validation frequency 250 steps Margin ranking margin 0
+
+→ 0.5 Feature loss weight ( α) 0.5 Feature BCE weight 0.25 Supervised contrastive temperature τ 0.07 Jaccard top-k positives 5Feature head hidden size 2d    
+
+> Projection head output size 256 Feature vector dimension 41 Learning rate 1
+
+× 10 −5    
+
+> Learning rate warmup 25k steps Early stopping patience 25 GPUs 4Hours
+
+≤ 48 hrs Table 7: Training hyperparameters used for I DIOLE X. 
+
+pretrained encoder parameters. The I DIOLE X checkpoints contain only encoder weights; the classification layer is newly initialized to match the number of target classes. The classification head consists of a linear projection from the encoder’s pooled repre-sentation to the label space. For multi-label tasks (DSL-ML), the model is configured for multi-label classification, whereas single-label (MADAR-26, PAN-19) tasks use standard softmax classification. 
+
+Training Training is performed using the AdamW optimizer with linear learning rate decay and warmup. The learning rate schedule follows a linear warmup followed by linear decay over the course of training steps. Unless otherwise stated, the training hyperparame-ters found in Table 8 are used.    
+
+> Hyperparameter Value Learning Rate 1
+
+× 10 −5     
+
+> Batch Size 32 Weight Decay 0.01 Warmup Ratio 0.1 Early Stopping Patience 3 epochs Max Sequence Length 512 tokens Table 8: Hyperparameters used for classification fine-tuning.
+
+Gradient clipping with a maximum norm of 1.0 is applied to stabilize training. Mixed precision training (FP16) is optionally used when GPU support is available (always in our case). Because MADAR 26 consists of 26 classes, we apply an additional label smoothing of 0.1 to improve performance for that classifier. Training proceeds for a maximum of 25 epochs, with early stopping based on validation macro F1 score. In tasks that allow unknown classes (e.g., open-set authorship attribution), an additional 
+
+<UNK> label is assigned to examples whose predicted confidence falls below a tuned threshold. This threshold is determined via a held out set of 50% of the validation data. 23 Preprint. Under review.                                          
+
+> Language Model KMeans Centroid-Based Retrieval F1-macro Accuracy F1-macro Accuracy Accuracy* Arabic (MADAR 26) BERT 0.11 0.14 0.20 0.22 0.10 E5 0.04 0.07 0.15 0.17 0.06 Spanish (DSL-ML) BERT 0.50 0.46 0.77 0.57 0.07 E5 0.44 0.45 0.74 0.54 0.06 Spanish (PAN 19) BERT 0.07 0.32 0.14 0.16 0.07 E5 0.10 0.33 0.21 0.27 0.08 Table 10: Clustering and retrieval-based evaluation of dialectal structure in sentence embedding spaces.
+
+Lexical Ensembling For some experiments, a lexical model is combined with the neu-ral classifier, reflecting performance improvements that past work has found for specific datasets. The lexical component consists of a TF-IDF representation over character n-grams followed by a logistic regression classifier trained using the SAGA solver. The lexical classifier’s model settings are reflected in Table 9.    
+
+> Hyperparameter Value Learning Rate 1
+
+× 10 −5     
+
+> Batch Size 32 Weight Decay 0.01 Warmup Ratio 0.1 Early Stopping Patience 3 epochs Max Sequence Length 512 tokens Table 9: Hyperparameters used for the lexical component of the classifier.
+
+The lexical classifier outputs probability distributions over classes, which are linearly com-bined with the neural model predictions: 
+
+P = ωPlex + ( 1 − ω)Pneural 
+
+The ensemble weight ω is tuned on the validation set to maximize macro F1. 
+
+Evaluation Metrics Evaluation follows the protocols described in Section 4. Predictions are evaluated using macro-averaged F1 score and exact match accuracy (important for multi-label tasks, where it evaluates how well the model predicts all the correct labels for each item). 
+
+B.2.2 Classification Baselines 
+
+Closed-set Classification We fine-tune the same monolingual models used in our I DIOLE Xtraining, BERTIN (la Rosa et al., 2022) for Spanish tasks and AraBERTv2 (Antoun et al., 2020) for Arabic tasks, on the three classification datasets used in our experiments: MADAR 26 (Arabic), DSL-ML (Spanish), and PAN 19 (Spanish). To maintain consistency with I DIOLE X’s representation-based evaluation, we use the same logistic regression probe as in the I DIOLE Xclassification setup. Specifically, we extract the [CLS] representations from the fine-tuned baseline models and use them as input features to the logistic regression probe; these constitute the reported baseline results. 
+
+Clustering To evaluate how well embedding models capture dialect-specific structure without supervised classification, we employ a set of clustering-based baselines over sentence-level embeddings. We conduct all experiments using BERTIN (la Rosa et al., 2022) for Spanish and AraBERTv2 (Antoun et al., 2020) for Arabic (the same monolingual BERT-based models used in our closed-set baseline), as well as Multilingual E5 (Wang et al., 2024), a state-of-the-art multilingual sentence-embedding model commonly used in recent 24 Preprint. Under review. embedding evaluation work. Using frozen encoder representations, we fit KMeans on the training-set embeddings and then apply the fitted model to the test-set embeddings, assessing the resulting structure using F1 and Accuracy .Our Clustering-Based evaluation framework consists of three complementary metric cate-gories, each capturing different aspects of dialect separation in the embedding space: 
+
+Centroid-Based Classification. We compute class centroids by averaging embeddings from the training set for each dialect. We then classify test samples by computing the Euclidean distance from each test embedding to all training-set centroids and assigning each test sam-ple to the nearest centroid. This provides a simple nearest-centroid baseline that evaluates how well embeddings support geometric separation of dialects. F1-macro and accuracy are computed by comparing the predicted dialect labels (from the nearest centroid) to the true dialect labels for each test sample. We report both F1-macro and accuracy, where higher values indicate better dialect separation in the embedding space. 
+
+KMeans Clustering Metrics. We fit KMeans clustering on the training-set embeddings, using the number of unique dialect labels as the number of clusters. We then apply the fitted model to the test-set embeddings and evaluate the clustering quality using F1-macro and accuracy, which measure how well the unsupervised clusters align with the true dialect labels. F1-macro and accuracy are computed by mapping each cluster to its dominant dialect label (the most frequent true label in that cluster) and then comparing the predicted cluster assignments to the true dialect labels. Higher values indicate that the embedding space naturally separates dialects without explicit supervision. 
+
+Retrieval Baseline. For each anchor sentence, we sample 3 positive examples (same dialect) and 3 negative examples (different dialects), then rank all 6 candidates by cosine similarity to the anchor. We report the fraction of trials where all positives rank above all negatives (Accuracy* ), which measures the model’s ability to distinguish same-dialect from different-dialect samples in a retrieval setting. Tables 10 presents comprehensive results across all metrics and datasets. The tables show that while both models capture some dialect structure, there is significant variation across languages and metric types, with E5 generally performing better on centroid-based metrics while BERTIN shows competitive performance on retrieval tasks. 
+
+B.2.3 Post-Training 
+
+We incorporate I DIOLE X into the supervised fine-tuning (SFT) stage of post-training by integrating it into the training objective. By operating on the model’s internal representations rather than on the generated text, we avoid issues stemming from length mismatches between ground truth (or model length limits) and generations. 
+
+Data The original AMIYA training data is primarily monolingual text data, not instruction-tuning pairs. To ensure our fine-tuning didn’t degrade instruction-following abilities, we use a method similar to that by Gaber et al. (2026) to convert these corpora into instruction-response pairs, using a combination of template-based methods and LLM-based augmenta-tion. We draw from 9 corpora spanning 5 target dialects (Egyptian, Moroccan, Palestinian, Saudi, Syrian) as well as 5 additional dialects (Jordanian, Iraqi, Yemeni, Tunisian, and Kuwaiti): For parallel corpora containing aligned translations, we create instruction pairs without any LLM calls. Each source sentence is prefixed with a randomly sampled translation instruction template: 1. English → DA: ”Translate this to [dialect]: [source]”, ”Say this in [dialect]: [source]”, ”How would you say this in [dialect]? [source]” 2. MSA → DA: ”Convert this to [dialect]: [source]”, ”Rewrite this in [dialect]: [source]” The dialectal translation serves as the ground-truth response. This yields high-quality, naturally dialectal training pairs. 25 Preprint. Under review.                                         
+
+> Source Type Dialects Size Method MADAR-26 (train) (Bouamor et al., 2018) Bitext Multi-Dialectal 2k sentences per Template FLORES-200 (Goyal et al., 2022) Bitext Multi-Dialectal 1k sentences per Template SauDial (Alanazi et al., 2025) Bitext Saudi 1k sentences Template PALM (train) (Alwajih et al., 2025) Monolingual Multi-Dialectal 4k sentences LLM HABIBI (El-Haj, 2020) Monolingual Multi-Dialectal 525k verses LLM EDC (Tarmom et al., 2020) Monolingual Egyptian 13k sentences LLM Atlaset (Bounhar, 2025) Monolingual Moroccan 1.1M tokens LLM MASC (Al-Moslmi et al., 2018) Monolingual Multi-Dialectal 6k sentences LLM JODA Abandah et al. (2025) Monolingual Jordanian 50k sentences LLM
+
+Table 11: AMIYA data used for post-training and how it was augmented to make instruction-following data. 
+
+For monolingual corpora (containing only dialectal text without paired translations), we use a two-step LLM augmentation process to generate full instruction-response pairs. First, for each dialectal corpus text, we prompt GPT-5-mini to generate a dialectal question that the text could naturally answer. You are a native speaker of [dialect]. Below is a text in [dialect]. Write a short question (1 sentence) in [dialect] that someone might ask a chatbot, where this text would be a natural answer. Rules: Write ONLY the question. The question must be in [dialect], NOT Modern Standard Arabic. Use dialectal question words like: [dialect-specific examples]. The question should be about [randomly sampled topic]. Topics are sampled from 8 categories aligned with the AL-QASIDA evaluation: food/recipes, proverbs, cultural traditions, geography, history, dialect expressions, nature, and arts. Dialect-specific question words are provided to encourage authentic dialectal phrasing. A naive approach would use the original corpus text directly as the ground-truth response. However, we found this produced poor SFT results: corpus fragments are typically 3-5 words (e.g., song lyrics, social media posts), and models trained on these learned to produce extremely short, often incoherent responses. We instead prompt the LLM to generate a full conversational answer incorporating the corpus text: You are a helpful chatbot that ONLY speaks [dialect]. A user asked you: [generated question] Write a helpful, detailed answer (3-6 sentences) in [dialect]. You MUST incorporate this phrase naturally in your answer: [corpus text] This produces training pairs where the question is dialectal, the answer is a full multi-sentence response in dialect, and the original human-written dialectal text is preserved within the answer, ensuring the ground truth contains authentic dialectal vocabulary and phrasing rather than just LLM-generated approximations. Due to computational constraints, we randomly sample at most 5k sentences per dataset for our monolingual training data, resulting in about 39k instruction-answer pairs total plus 10k translation pairs. 
+
+Architecture Our approach adds two components to a standard LoRA-based SFT. First, we use an encoder trained under the I DIOLE X framework on the language of interest. The parameters of this model stay frozen during SFT. To reduce per-step overhead, we pre-compute the I DIOLE X embeddings of the ground truth data and store it in a cache. Then, we introduce a small two-layer projection head gθ that maps from the LLM’s hidden dimension to the I DIOLE X embedding dimension. The output of this projection head is L2-normalized in the same manner as the I DIOLE X representations are to ensure they fall in the same normalized embedding space. For each training sample i with input tokens xi and response starting at position si, the combined loss is: 26 Preprint. Under review. 
+
+Li = LCE (xi, si) + α · L A(xi, si, ei)
+
+The cross-entropy loss ( LCE ) is computed only over response tokens. The alignment loss (LA) pools the LLM’s last-layer hidden states over response tokens and projects to IdioleX space: 
+
+Lemb = 1 − cosine similarity (gθ (hi), ei)
+
+where ht is the mean-pooled hidden state at position t from the last transformer layer. 
+
+Experimental Details We use α = 0.5, LoRA rank 32 on all linear layers, a learning rate of 2 × 10 −4 with cosine annealing, and train for 1 epoch. The projection head adds approximately 6M parameters (for a 4096-dimensional LLM projecting to 768-dimensional IDIOLE X embedding space). IDIOLE X embeddings are precomputed once on a single GPU before distributed training begins, cached to disk, and loaded by all workers. The LLM with LoRA adapters and the projection head are wrapped into a single ‘nn.Module‘ for compatibility with DeepSpeed ZeRO-2, which requires a single model instance. For efficiency, training was done with gradient checkpointing and mixed precision (bfloat16). 27
