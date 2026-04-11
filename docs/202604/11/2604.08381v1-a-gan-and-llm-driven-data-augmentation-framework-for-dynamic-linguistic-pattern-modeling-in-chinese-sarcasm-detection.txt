@@ -1,0 +1,530 @@
+Title: A GAN and LLM-Driven Data Augmentation Framework for Dynamic Linguistic Pattern Modeling in Chinese Sarcasm Detection
+
+URL Source: https://arxiv.org/pdf/2604.08381v1
+
+Published Time: Fri, 10 Apr 2026 01:33:23 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+1
+
+# A GAN and LLM-Driven Data Augmentation Framework for Dynamic Linguistic Pattern Modeling in Chinese Sarcasm Detection 
+
+Wenxian Wang, Xiaohu Luo, Junfeng Hao, Xiaoming Gu, Xingshu Chen, Zhu Wang, and Haizhou Wang*, Member, IEEE, 
+
+Abstract —Sarcasm is a rhetorical device that expresses crit-icism or emphasizes characteristics of certain individuals or situations through exaggeration, irony, or comparison. Existing methods for Chinese sarcasm detection are constrained by limited datasets and high construction costs. And they mainly focus on the textual features, overlooking user-specific linguistic patterns that shape how opinions and emotions are expressed. This paper proposes a Generative Adversarial Network (GAN) and Large Language Model (LLM)-driven data augmentation framework to dynamically model users’ linguistic patterns for enhanced Chinese sarcasm detection. First, we collect raw data from various topics on Sina Weibo. Then, we train a GAN on these data and apply a GPT-3.5 based data augmentation technique to synthesize an extended sarcastic comment dataset, named SinaSarc. This dataset contains target comments, contextual information, and user historical behavior. Finally, we extend the BERT architecture to incorporate multi-dimensional information, particularly user historical behavior, enabling the model to capture dynamic linguistic patterns and uncover implicit sarcastic cues in comments. Experimental results demonstrate the effec-tiveness of our proposed method. Specifically, our model achieves the highest F1-scores on both the non-sarcastic and sarcastic categories, with values of 0.9138 and 0.9151 respectively, which outperforms all existing state-of-the-art (SOTA) approaches. This study presents a novel framework for dynamically modeling users’ long-term linguistic patterns in Chinese sarcasm detection, contributing to both dataset construction and methodological advancement in this field. 
+
+Index Terms —Chinese sarcasm detection, User historical be-havior, Generative adversarial network, Data augmentation. 
+
+I. I NTRODUCTION 
+
+# SARCASM is a rhetorical device that uses subtle language to criticize some viewpoints, individuals, or events. In recent years, sarcasm has become increasingly prevalent on social media, as it enables users to convey intense emotions 
+
+This work was supported in part by the National Natural Science Foundation of China (NSFC) under Grant 62572331. (*Corresponding author: Haizhou Wang.) 
+
+Wenxian Wang and Xingshu Chen are with the Key Laboratory of Data Protection and Intelligent Management, the Cyber Science Research Institute, Sichuan University, Chengdu 610207, China (e-mail: catean@scu.edu.cn; chenxsh@scu.edu.cn). Xiaohu Luo, Junfeng Hao and Haizhou Wang are with the School of Cyber Science and Engineering, Sichuan University, Chengdu 610207, China (e-mail: xiaohuluo@stu.scu.edu.cn; haojunfeng@stu.scu.edu.cn; whzh.nc@scu.edu.cn). Xiaoming Gu is with the State Key Laboratory of Fluid Power and Mechatronic Systems, Zhejiang University, Hangzhou 310027, China (e-mail: xiaominggu@zju.edu.cn). Zhu Wang is with the Law School, Sichuan University, Chengdu 610207, China (e-mail: wangzhu@scu.edu.cn). 
+
+in a more vivid manner. However, the subtlety of sarcasm poses a significant challenge to sarcasm detection methods. This is because the sarcastic nature of a comment is closely tied to the user’s linguistic patterns; the same sentence can carry completely different meanings when spoken by different people. For instance, as illustrated in Fig. 1, in response to the social issue of insufficient daily sunshine in Chengdu, a user comments by quoting the official promotional slogan “the happiest city.” Based solely on the immediate context, the comment could be interpreted either as a positive endorsement or as sarcastic comment. However, by learning the user’s long-term linguistic pattern from his historical behavior, especially the strong tendency toward sarcastic expression, our model can more accurately identify the comment as sarcastic. Target Comment & Context   
+
+> Detect Without User Historical Behavior
+> What Impact Does the Users' Linguistic Patterns Have on Chinese Sarcasm Detection?
+> 成都入秋以来日均日照时长仅 1.6 小时
+> ( Since the start of autumn, Chengdu has been getting an average of just 1.6 hours of sunshine per day.)
+> 真 的 不 会 抑 郁 吗 成 都 的 朋 友 ( Don’t people in Chengdu get depressed with so little sunshine?)
+> 这是“最具幸福感城市”知道吗 (Oh, this is the “happiest city,” you know) -Target comment
+> Detect With User Historical Behavior
+> A Description of User Historical Behavior
+> Target comment
+> Context
+> Non-Sarcasm
+> Target comment
+> Context
+> Behavior
+> Sarcasm
+> This user posted 159 comments ( ≈5/day), 67% of which were sarcastic, mostly on public incidents topic, and 62% were nested reply comments, indicating a strong pattern of sarcasm, rebuttal-oriented engagement.
+
+Fig. 1: Here is an example demonstrating the importance of users’ long-term linguistic patterns for sarcasm detection. By learning such patterns from user historical behavior, our model can more accurately identify sarcastic comments. 
+
+A. Background 
+
+Existing sarcasm detection methods mainly fall into three categories: rule-based approaches, machine learning ap-proaches, and deep learning approaches. Rule-based ap-proaches identify sarcastic features via manually defined lin-guistic or emotional rules [1], [2], [3], [4]; some studies using features like emoji polarity [5] have achieved high accuracy for known sarcasm patterns, but they struggle with the implicit and context-dependent nature of sarcasm due to inability to capture subtle linguistic cues. This limitation led to the shift to machine learning approaches, which improve performance by learning sarcasm’s statistical characteristics from data [6], [7], [8], [9], [10], [11]. But these methods still 
+
+> arXiv:2604.08381v1 [cs.CL] 9 Apr 2026 2
+
+rely heavily on handcrafted features, restricting scalability and robustness. Deep learning approaches thus emerged as a more effective alternative: they automatically capture deep semantic and contextual features through complex neural networks [12], [13], [14], [15], [16], [17], [18], [19], such as dual-module BiLSTM [20], multimodal frameworks with quantum probability [21], knowledge-enhanced graph networks [22]. These methods reduce reliance on manual feature design and achieve substantial success in handling sarcasm’s complex contextual nature. 
+
+B. Challenges 
+
+Although substantial research has been devoted to sarcasm detection in English, comparatively limited attention has been paid to the Chinese context. Currently, Chinese sarcasm de-tection research faces two key challenges. 1) Existing methods overlook the role of users’ long-term linguistic patterns in sarcasm detection. Sarcasm is a subtle form of expression that is closely tied to users’ long-term linguistic patterns. Due to individual differences in expressive style, the same words may convey different meanings when produced by different users. Therefore, it is necessary to develop methods that can capture and model such long-term linguistic patterns for more accurate sarcasm detection. 2) Lack of large-scale annotated Chinese sarcasm datasets with user historical behavior. Existing Chi-nese sarcasm datasets are scarce and costly to con-struct. Moreover, most datasets focus on target texts and their immediate context, while overlooking user-level information derived from their historical behavior. Such information reflects users’ long-term linguistic patterns and behavioral tendencies, which provide implicit cues for sarcasm detection. 
+
+C. Contributions 
+
+In this paper, we propose a Generative Adversarial Net-work (GAN) and Large Language Model (LLM)-driven data augmentation framework for dynamic linguistic pattern mod-eling in Chinese sarcasm detection, and build a new Chinese sarcasm dataset SinaSarc . Specifically, our contributions are summarized as follows. 1) We present a novel GAN and LLM-driven data augmentation framework for Chinese sarcasm detec-tion to dynamically model users’ linguistic patterns, which is the first time in this field. To address the scarcity of annotated Chinese sarcasm data, and discover hidden sarcastic cues from users’ long-term linguistic patterns, we propose this framework. Specifically, We use the collected raw data to train the GANs to gen-erate an annotated dataset enriched with user historical behavior, which allows the model to learn users’ long-term linguistic patterns and expressive styles,. There-fore, it can better infer individual sarcasm tendencies and disambiguate otherwise ambiguous expressions. In addition, a GPT-3.5 based data augmentation technique is employed to enhance linguistic diversity and coverage. Compared to end-to-end LLM prompting, this hybrid de-sign provides more structured and controllable data gen-eration, while reducing the need for extensive prompting and repeated inference, resulting in a scalable and cost-efficient solution for constructing large-scale datasets. The experiment shows that our method outperforms the existing SOTA models and achieves the highest F1-scores on both the non-sarcastic and sarcastic categories, with values of 0.9138 and 0.9151 respectively. 2) SinaSarc: a new Chinese sarcasm dataset for dy-namic users’ linguistic pattern modeling. Existing Chinese sarcasm datasets primarily focus on the com-ment and context, overlooking user-specific factors that shape sarcasm expression. To address this, we con-struct a new dataset, SinaSarc , based on the proposed framework. This dataset contains 20,000 annotated in-stances and includes multi-dimensional attributes such as comment content, topic, comment hierarchy, and user historical behavior. By incorporating these behav-ior information, the dataset provides a foundation for accurately modeling users’ dynamic linguistic patterns. 3) We conduct extensive experiments to fully validate the effectiveness of our method. Through compre-hensive experimental evaluation, we verify that incor-porating user historical behavior enables the model to capture users’ long-term linguistic patterns, allowing it to uncover deeper semantic cues in target comments. As a result, the model can disambiguate subtle expressions and reliably determine the sarcastic nature of comments, highlighting the critical role of user-level information in enhancing sarcasm detection. 
+
+D. Organization 
+
+This paper is organized into five sections. Section I intro-duces the research background and significance, summarizes existing studies on sarcasm detection, and outlines the main contributions of this paper. Section II reviews current meth-ods for sarcasm detection, discussing their effectiveness and identifying existing challenges. In Section III, we present a new framework for Chinese sarcasm detection, with a detailed description of the overall design, dataset construction, and model development. Section IV describes the experimental setup and analyzes the results, demonstrating the effectiveness of the proposed method from multiple perspectives. Section V concludes the paper, providing a summary of the research as well as a discussion of its innovations and achievements. II. R ELATED WORK 
+
+In recent years, with the advancement of sentiment analysis techniques and the growing popularity of social media, re-search on sarcasm detection has received increasing attention. Existing sarcasm detection approaches can be categorized into three types: rule-based approaches, machine learning approaches, and deep learning approaches. 3
+
+A. Rule-Based Approaches 
+
+Early sarcasm detection mainly relied on rule-based ap-proaches that use predefined linguistic or emotional rules [1], [3], [4], [5], [23], [24]. Surve et al. [1] observed that sarcasm on Twitter often appears as a contrast between positive sentiment words and negative situations. They proposed a bootstrapping algorithm that learns positive sentiment phrases and negative situation phrases from sarcastic tweets. Farias et al. [3] treated sarcasm detection as a classification task and showed that emotional polarity and affective states are useful features. Veale et al. [4] studied sarcasm in creative similes by detecting conceptual incompatibility between the attribute and the comparison object. There are also some methods used emoji polarity [5], emoticons and punctuation [23], and hashtags with polarity reversal rules [24]. However, because sarcasm is often implicit and context-dependent, rule-based approaches have limited ability to capture subtle linguistic cues. 
+
+B. Machine Learning Approaches 
+
+Machine learning methods attempt to automatically learn features from data for sarcasm detection [7], [10], [11], [25]. Davidov et al. [25] proposed a semi-supervised approach that extracts syntactic patterns and punctuation features from a small labeled dataset. Rodr´ ıguez et al. [10] proposed SINCERE, a graph-based framework that uses sentiment and emotion embeddings, while Touahri et al. [11] combined traditional machine learning models with neural models and sarcasm-specific lexical features. Although these methods im-prove performance compared with rule-based approaches, they rely heavily on manual feature engineering. 
+
+C. Deep Learning Approaches 
+
+Deep learning methods reduce the need for manual feature design and can learn complex semantic patterns. Existing approaches can be divided into target text-based approaches [22], [26], [27], [28], [29], [30] and context-based approaches [20], [31], [32], [33], [34], [35]. Target text-based approaches mainly detect emotional in-consistency within the text. Poria et al. [26] proposed a deep learning framework that uses pre-trained CNN models to ex-tract sentiment, emotion, and personality features from tweets and combines them with semantic representations for classi-fication. Ghosh et al. [27] developed a hybrid neural model that integrates CNN, LSTM, and DNN to capture sequential dependencies and semantic information in short texts. Goel et al. [29] proposed an ensemble framework that combines CNN, BiLSTM, and GRU with pre-trained embeddings such as Word2Vec, GloVe, and fastText. Recently, researchers have tended to focus on modeling internal relationships within the text. Tay et al. [28] proposed the Multi-dimensional Intra-Attention Recurrent Network, which uses intra-attention to capture word-level contrast relationships while using LSTM to model sentence semantics. Wang et al. [22] proposed KSDGCN, which constructs commonsense-augmented graphs and dependency graphs to capture emotional incongruity and entity relationships within the text. Since sarcasm often depends on surrounding discourse, many studies incorporate contextual information. Zhang et al. [20] proposed a dual-module BiLSTM model that cap-tures both global and fine-grained sarcasm cues from context. Babanejad et al. [33] introduced two models that combine contextual embeddings from BERT or SBERT with affective features to improve context understanding. Srivastava et al. [34] proposed a hierarchical BERT architecture that encodes contextual utterances and target responses separately and mod-els conversation-level dependencies. Potamias et al. [35] fur-ther combined RoBERTa with a recurrent convolutional neural network to capture long-range contextual contradictions. With the growth of social media, sarcasm detection has expanded from text-only analysis to multimodal analysis that incorporates images and other modalities [13], [14], [15], [16], [17], [18], [21], [36], [37], [38]. Wei et al. [13] proposed DeepMSD, which extracts deep knowledge from text–image pairs using large vision–language models and performs cross-knowledge graph reasoning to detect incongruity. Wang et al. [18] introduced the S3 Agent framework, which uses multiple analysis agents and large vision–language models to capture sarcastic cues from different perspectives. Liang et al. [38] proposed MMGCL, which constructs a multimodal graph from textual, visual, and OCR features and applies graph contrastive learning to improve representation quality. In Chinese sarcasm detection, current approaches have con-sidered target text and contextual information but overlooked the relationship between users’ long-term linguistic styles and the emotional tendencies of their comments. In this paper, we present a novel GAN and LLM-driven data augmentation framework for Chinese sarcasm detection, which effectively learns users’ long-term linguistic patterns from their historical behavior to better identify the implicit sarcastic meanings behind commsents. III. M ETHODOLOGY 
+
+In order to dynamically model users’ long-term linguis-tic patterns, we proposes a framework that integrating user historical behavior for Chinese sarcasm detection, based on the generative adversarial networks and LLM-driven data augmentation technique, as shown in Fig. 2. Specifically, our framework consists of 5 main modules: Dataset Construction, Comment Generation, Data Augmentation, Historical Behav-ior Generation, and Sarcastic Comment Detection .
+
+A. Dataset Construction 
+
+Most existing Chinese sarcasm datasets only include target text and contextual information. Few studies incorporate user historical behavior during dataset construction. Without such information, datasets cannot reflect users’ long-term linguistic patterns, which limits the modeling of individual emotional expression habits. To address this issue, we first collected raw data, which was used to train the generation modules rather than the final detection model. We developed a web crawler to collect com-ments from Weibo across several topics, including lifestyle, politics, entertainment, relationships , and public incidents .4感谢学校的高效率，所有的事都慢半拍，确保 我们都能跟上。& 时政&跟评&讽刺&历史行为  
+
+> (Thanks to the efficiency of the school, everything was slow and half a beat to make sure we could all keep up. &Political & Nested comment &Sarcasm &Historical behavior )
+
+…
+
+Raw data      
+
+> Conditional feature Noise
+> Positional encoding
+> Real data Generated data
+> Embedding
+> Transformer Convolutional layer
+> Maximum pooling layer
+> Fully connected layer
+> WGAN-GP loss
+> Generator Discriminator Classifier
+
+Comment Generation 
+
+…
+
+SinaSarc 
+
+> Embedding
+> Convolutional layer
+> Maximum pooling layer
+> Log-softmax
+> Average loss
+
+… 感谢学校的高效率，所有的事都慢半拍，确保我们都能跟上。 
+
+> (Thanks to the efficiency of the school, everything was slow and half a beat to make sure we could all keep up.)
+> 感谢政府的高效率，所有的事都慢半拍，确保我们都能跟上。
+> (Thanks to the efficiency of the government, everything was slow and half a beat to make sure we could all keep up.)
+
+GPT3.5 
+
+Data Augmentation        
+
+> Comment feature Topic feature
+> Comment hierarchy feature
+> Embedding Embedding Embedding
+> Basic features of comments
+> Nonlinear layers
+> Generated behavior
+> Generator
+> Word Embedding
+> Generated data Real data
+> Generated behavior Positive example
+> Real behavior Positive example
+> Real behavior Negative example
+> Input
+> Hidden layer
+> Hidden layer
+> Output
+> Discriminator
+> Softmax
+
+Historical Behavior Generation 
+
+Basic features of comments &Historical behavior  
+
+> Comment feature
+> Topic feature
+> Comment hierarchy feature
+> Behavior feature
+> Linear layer
+> ReLU
+> Linear layer
+> ReLU …
+> BERT
+> Textual representation
+> Contextual feature representation
+> Feature fusion
+> Fully connected layer
+> Sigmoid
+
+Sarcastic 
+
+Non-sarcastic 
+
+> Target Text Processing
+> User Embedding
+
+Sarcastic Comment Detection 
+
+> Log-softmax
+> Fully connected layer
+
+Fig. 2: Modeling diagram of our proposed method. These topics typically involve trending events and contain diverse user opinions. In addition to target comments, we also collected historical comments posted by those users. After data collection, we removed noise such as advertise-ment links and HTML tags and standardized the text format. We collected some basic information, including Comment Content, Label, Topic, Comment Hierarchy . To incorporate users’ linguistic patterns, we further extracted several historical behavior features for each user, including Comment Count, Topic Distribution, Sarcasm Rate, Comment Frequency, Reply Ratio .During the annotation stage, we first analyzed the linguistic characteristics of sarcastic comments and formulated corre-sponding annotation guidelines. In general, sarcasm in social media often exhibits properties such as contrast between literal and intended meanings, emotional reversal, targeted criticism, and strong dependence on contextual or cultural information. Data annotation was conducted by three annotators according to the predefined guidelines, resulting in a total of 5,000 annotated samples. Annotators were required to consider the overall context of the comment, including the related post and discussion background, and to make judgments based on the complete semantic meaning of the comment rather than isolated words or phrases. In addition, the annotation focused only on whether sarcasm was present, without considering the sentiment polarity of the comment. Given the subjective nature of sarcasm detection, we established three levels of sarcasm classification: 0 (sarcastic), 1 (non-sarcastic), and 2 (ambiguous). For comments labeled as 2 (ambiguous), group discussions were held to determine whether they contained sarcasm. The complete annotation guidelines and detailed examples are publicly available in our project repository on GitHub 1.In the following work, we first train a GAN on the collected raw data to synthesize user comment information. We then apply GPT-3.5 for data augmentation to expand and diversify the dataset. Furthermore, considering that long-term linguistic patterns may encode implicit sarcasm cues, we employ an additional GAN to generate user historical behavior, enriching the dataset with user-level signals. This enables the detection model to not only learn textual and contextual semantics, but also capture users’ linguistic patterns for more accurate sarcasm identification. By augmenting the raw data with the proposed framework, we constructed a dataset of 20,000 Chinese comments, named 
+
+SinaSarc . The dataset contains 10,000 sarcastic and 10,000 non-sarcastic instances, covering both target comments and user historical behaviors. Table I compares our dataset with existing Chinese sarcasm detection datasets. Most prior datasets, such as those from Tang et al. [39], Lin et al. [40], and Xiang et al. [41], are constructed through manual annotation or lexicon-based ap-proaches and mainly focus on textual features, with relatively limited consideration of contextual or user-level information. Some datasets (e.g., Gong et al. [42], Zhang et al. [20]) incorporate contextual information; however, the distribution of sarcastic and non-sarcastic samples remains relatively im-
+
+> 1
+
+https://github.com/yiyepianzhounc/SinaSarc 5
+
+TABLE I: Chinese Sarcasm Dataset Comparison                                           
+
+> Dataset Source Total Sarcastic Non-sarcastic Method Key Components Tang et al. [39] Plurk 950 950 0Bootstrapping+Manual Text Lin et al. [40] PTT 26,629 17,256 9,373 Lexicon-based Text Gong et al. [42] Guanchazhe 91,782 2,486 89,296 Manual Contextual Information Xiang et al. [41] Sina Weibo 8,702 968 7,734 Manual Text Zhang et al. [20] Bilibili 79,045 2,814 76,231 Manual Contextual Information SinaSarc (Ours) Sina Weibo 20,000 10,000 10,000 Data Augmentation User Historical Behavior
+
+balanced, which may affect the learning of robust sarcasm patterns. In contrast, our SinaSarc dataset is built on a GAN and LLM-driven data augmentation framework, which intro-duces diverse and semantically consistent samples. It contains 20,000 instances evenly distributed between sarcastic and non-sarcastic classes, providing a balanced setting for model training. In addition, the dataset incorporates user historical behavior as an integral component, enabling models to capture users’ long-term linguistic patterns, which are important for understanding the implicit and context-dependent nature of sarcasm. 
+
+B. Comment Generation 
+
+As shown in Fig. 2, this module generates several Chinese comments with category labels (sarcastic, non-sarcastic) and contextual information. To ensure the generated comments are semantically coherent, highly realistic and consistent with target attributes, we construct a generative framework based on Transformer [43] decoder and Wasserstein Generative Ad-versarial Network with Gradient Penalty (WGAN-GP) [44], which integrates a pre-trained BERT [45] embedding layer, a Transformer generator, a Text-CNN [46] based WGAN-GP discriminator and a sentiment classifier. The whole framework is trained in two stages: generator pre-training and joint adversarial training. The generator takes random noise and conditional feature vectors as inputs to generate comment sequences with speci-fied attributes. The discriminator distinguishes real comments from synthetic ones to enhance the authenticity of outputs. The classifier constrains the sentiment consistency of generated comments.  
+
+> •
+
+Generator 
+
+The generator adopts a Transformer decoder as the core architecture, which is used to model the sequential dependency of comments and realize autoregressive generation. It takes random latent noise z ∈ R128 and conditional feature vector 
+
+f ∈ R9 as inputs, where the conditional feature is formed by concatenating sentiment label, topic and comment hierarchy. First, the noise and conditional feature are fused and pro-jected to generate the memory vector for decoding, as shown in Equation 1. memory = σ (Wproj · [z; f ] + bproj ) (1) where [z; f ] denotes concatenation, Wproj and bproj are train-able parameters, and σ denotes the ReLU activation function. The generation process starts with the special token ⟨SOS ⟩,and generates each token autoregressively with the guidance of positional encoding and Transformer decoder layers. As shown in Equation 2, the output layer maps decoder states to vocabulary distribution via log-softmax. 
+
+P (wt|w1, . . . , w t−1, z, f, θ G) = 
+
+LogSoftmax (Wout · Ht + bout ) (2) where Ht is the hidden state at step t output by the Trans-former decoder, and θG denotes all parameters of the genera-tor. During pre-training, the generator is optimized by min-imizing the negative log-likelihood loss between generated sequences and real sequences, as shown in Equation 3. 
+
+LGpre = − 1
+
+N
+
+> N
+
+X
+
+> i=1
+> T
+
+X
+
+> t=1
+
+I(wi,t ̸ = pad )·
+
+log P (wi,t |wi, 1, . . . , w i,t −1, z, f, θ G)
+
+(3) where N is batch size, T is maximum sequence length, and 
+
+I(·) is the indicator function to mask padding tokens. In adversarial training, the generator is optimized by a weighted combination of adversarial loss and classification loss, as shown in Equation 4: 
+
+LG = α · L Gadv + (1 − α) · L Gcls (4) where α ∈ (0 , 1) is the weight hyperparameter to balance the authenticity and attribute consistency of generated comments.  
+
+> •
+
+Discriminator 
+
+The discriminator adopts a multi-filter Text-CNN structure to judge the authenticity of input comment sequences. It takes comment sequence S and conditional feature f as inputs, and outputs a realism score without activation. First, the word embedding of sequence and conditional feature are concatenated along the feature dimension, as shown in Equation 5: 
+
+X = [ Emb (S); f ⊗ 1T ] (5) where Emb (S) is the word embedding matrix of sequence S,and 1T denotes a all-one vector for feature expansion. Multi-scale convolution and max-pooling are applied to extract local text features, which is described in Equation 6: 
+
+Fk = MaxPool (δ (Conv2D k(X))) (6) where Conv2D k denotes convolution with kernel size k, δ
+
+denotes ReLU activation, and MaxPool denotes adaptive max-pooling. The concatenated features are fed into a fully connected layer to obtain the final score, as presented in Equation 7: 
+
+D(S, f, θ D ) = Wf c · [Fk] + bf c (7) 6
+
+where [Fk] denotes the concatenation of multi-scale local feature vectors, and θD denotes all trainable parameters of the discriminator. The WGAN-GP loss of discriminator is defined as Equa-tion 8: 
+
+LD = ES∼Preal [D(S, f )] − ES∼Pf ake [D(S, f )] + λGP · L GP 
+
+(8) where E[·] denotes the expectation operator, S ∼ Preal 
+
+indicates that the sample S is drawn from the real user comment distribution, S ∼ Pf ake indicates that the sample 
+
+S is drawn from the synthetic comment distribution generated by the generator. λGP is the gradient penalty coefficient, and 
+
+LGP is the gradient penalty term that enforces the Lipschitz constraint on the discriminator.  
+
+> •
+
+Classifier 
+
+The classifier shares the same Text-CNN feature extraction structure with the discriminator, and is used to predict the sentiment label of input comments, so as to guide the generator to produce label-consistent outputs. It takes sequence S and conditional feature f as inputs and outputs the log-probability of sentiment labels via LogSoftmax, as shown in Equation 9: 
+
+C(S, f, θ C ) = LogSoftmax (Wcls · Hf eat + bcls ) (9) where θC denotes parameters of the classifier, and Hf eat is the fused Text-CNN feature. The classification loss is the average of negative log-likelihood loss on real comments and synthetic comments, as formulated in Equation 10: 
+
+LC = 12
+
+ LCreal + LCf ake 
+
+ (10) where LCreal and LCf ake are computed by Equation 11 and Equation 12 respectively: 
+
+LCreal = −E(S,f,y )∼Preal [C(S, f, θ C )[ y]] (11) 
+
+LCf ake = −E(S,f,y )∼Pf ake [C(S, f, θ C )[ y]] (12) where y denotes the ground-truth sentiment label. This module is capable of generating comments with con-textual information. These comments follow real language patterns and possess specific topic and comment hierarchy, thereby providing high-quality synthetic data for subsequent tasks. 
+
+C. Data Augmentation 
+
+Constructing a large, manually labeled dataset is costly, which makes data augmentation a preferred approach. Data augmentation typically relies on invariance, rules, or heuris-tic knowledge. This study addresses the challenges of data scarcity and limited diversity in Chinese sarcasm comment detection through data augmentation techniques. By applying data augmentation, this research generates new and diverse samples, improving the model’s generalization ability and ro-bustness to various expressions of sarcasm. Data augmentation is mainly performed through context-aware text replacement with GPT-3.5. The text replacement strategy generates new comments by identifying and replacing key words within the sentences, as shown in Equation 13. 
+
+T ′ = T − W + W ′ (13) In this context, T represents the original text, W denotes the selected vocabulary for replacement, W ′ refers to the new vocabulary after replacement, and T ′ is the generated new text. To ensure coherence and maintain semantic integrity, the replaced vocabulary is typically selected as synonyms or contextually similar words. Previous studies on data aug-mentation through text replacement primarily used synonyms for target words. However, synonyms are often limited and lack sufficient diversity, which can result in inadequate data variation after replacement. Therefore, this study employs GPT-3.5 to find contextually similar words for replacement, which maintains the natural fluency of sentences. We applies ChatGPT to perform context-aware word re-placement. We leverage deep contextual representations to predict semantically appropriate alternatives for target words, expanding beyond traditional synonym substitution. For ex-ample, in the sarcastic statement, “ 这张票真值了，两个 小
+
+时的电影感觉看了五个 小时” (This movie ticket was totally worth it—two hours that felt like five!), a synonym replace-ment approach might substitute “ 电影” (movie) with “ 影片”(film). In contrast, the LLM can generate more diverse yet contextually coherent replacements such as “ 戏剧” (drama), “音乐会” (concert) or “ 脱口秀” (talk show), while preserving the sarcastic tone. 
+
+D. Historical Behavior Generation 
+
+For our generated data, we focus on comment texts, topic information, and comment hierarchy, similar to existing re-search on Chinese sarcasm detection. However, the impact of mining user linguistic patterns on sarcasm detection remains under-explored in this field. As shown in Fig. 2, we developed a model based on GAN to generate user historical behavior features [47], which reflects users’ linguistic patterns. This model aims to learn the mapping from users’ basic comment features to their historical behaviors based on the raw data we collected, and then synthesize realistic historical behavior features for the generated data in our work above. This model consists of two key components: the generator and the discriminator. The generator takes the basic comment features of input comments and generates corresponding his-torical behavior features. We selected three types of basic comment features: comment content, topics, and comment hierarchy (top-level comment, nested comment). The discrim-inator distinguishes between the generated historical behavior features and the real behavior features, thereby improving the training of the generator. 
+
+a) Feature Extraction: We extract two types of features from the dataset: basic comment features and user historical behavior features.  
+
+> •
+
+Basic Comment Features 7
+
+1) Comment Content: The textual content of the com-ment, which captures the basic semantic information of the comment. [48], [49]. 2) Topic: The topic associated with the comment. Since Weibo comments are posted under specific posts or themes, topic information may influence the occurrence of sarcasm [6]. 3) Comment Hierarchy: Whether the comment is a top-level comment or a nested one. Nested comments often appear in discussions and interactions, where sarcastic expressions are more likely to occur.  
+
+> •
+
+User Historical Behavior Features 
+
+We extract five dimensions of user historical behavior features: 1) Comment Count: The total number of comments pre-viously posted by the user. 2) Topic Distribution: The main topics that the user has commented on in the past, which may relate to sarcasm tendencies [7], [50]. 3) Sarcasm Rate: The proportion of sarcastic comments in the user’s historical comments, reflecting the user’s habitual use of sarcasm [7], [50]. 4) Comment Frequency: The average daily comment count of the user over a given time span. 5) Reply Ratio: The ratio of nested comments to the total number of historical comments, indicating the user’s level of interaction in discussions [7]. 
+
+b) Generator: Before introducing the model, we provides a standard explanation of the abbreviations used for the reader’s convenience, PE for Positive Example, NE for Negative Ex-ample, GB for Generated Behavior, and RB for Real Behavior. The first three layers of the generator capture the comment content, topic, and comment hierarchy. A nonlinear hidden layer then transforms the basic comment features into gen-erated historical behavior features. These generated features should align with the basic features of the input comments and closely resemble real historical behavior. The relevant mathematical expressions are as follows: 
+
+Lt = min  
+
+> ΘG
+
+J(D(P E ⊕ GB ), 1) (14) 
+
+Lc = min  
+
+> ΘG
+
+J(RB, GB ) (15) 
+
+LG = λL t + (1 − λ)Lc (16) Here, Lt represents the loss in the process of generating historical behavior features from basic comment features. Lc
+
+denotes the closeness loss, which ensures that the generated historical behavior features are more realistic and reasonable. 
+
+LG is the total loss of the generator. J represents the cross-entropy function. D is the discriminator function. The ⊕
+
+symbol indicates the connection of two embeddings. The balancing parameter λ in LG controls the weights of the two losses. 
+
+c) Discriminator: As shown in Fig. 2, the discriminator is used to determine whether the generated historical behavior features are similar to the real historical behavior features. The goal of the discriminator is to guide training by distinguishing between generated and real behavior features. Specifically, the discriminator classifies pairs from real training data (PE, RB) as true, pairs from the generator (PE, GB) as false, and unmatched fake samples (NE, RB) as false. The relevant mathematical expressions are as follows: 
+
+Lr = min  
+
+> ΘD
+
+J(D(P E ⊕ RB ), 1) (17) 
+
+Lf = min  
+
+> ΘD
+
+J(D(P E ⊕ GB ), 0) (18) 
+
+Lh = min  
+
+> ΘD
+
+J(D(N E ⊕ RB ), 0) (19) 
+
+LD = Lr + 12 Lf + 12 Lh (20) This paper defines four loss functions: Lr to measure the discernibility of real samples, Lf to measure the discernibility of generated samples, and Lh to measure the discernibility of fake samples. LD represents the total loss of the discriminator. 
+
+E. Sarcastic Comment Detection 
+
+As shown in Fig. 2, this paper proposes a Chinese sarcasm detection model that incorporates user historical behavior to learn their linguistic patterns. The model consists of three sub-modules: the target text processing, the user embedding, and the feature fusion. This model combines text information with user historical behavior to dynamically model users’ linguistic patterns. In the target text processing module, the BERT is used to process the comment content and capture semantic infor-mation. The user embedding module uses a fully connected neural network to process context and user historical behavior, extracting relevant users’ linguistic patterns. The feature fusion module combines the outputs from the target text processing and user embedding modules, connecting the two sets of fea-tures while sharing layer parameters to capture the combined representation of both text and users’ linguistic patterns. 
+
+1) Target Text Processing: The text processing module is implemented by fine-tuning a pre-trained BERT model. This paper modifies the BERT configuration based on task require-ments, adjusting the number of hidden layers and attention heads to fit the sarcasm detection task. The module repre-sents the input comment content as input IDs and attention masks. Through the BERT encoding process, the last hidden state corresponding to the [CLS] token is extracted as the representation of the comment, denoted as H ∈ RL×d. This captures the semantic information within the comment to help determine if it contains sarcasm, as shown in Equation 21. 
+
+H = BERT (E, M ) (21) The BERT function represents the encoding process of the BERT model. E denotes the embedding representation of the input sequence X, specifically E = [ e1, e 2, ..., e n], where ei
+
+is the embedding representation of the i-th token in the input sequence X = [ x1, x 2, ..., x n], and xi is the i-th token in the input sequence. M indicates the attention mask for the input sequence, representing valid positions. 8
+
+2) User Embedding: The user embedding module pro-cesses context and user historical behavior. These information are represented as a numeric feature vector, including Label, Topic, Comment Hierarchy, Comment Count, Topic Distribu-tion, Sarcasm Rate, Comment Frequency, Reply Ratio . This module uses a fully connected neural network composed of multiple linear layers and activation functions to map the user embedding vector x ∈ Rk to a fixed-dimensional user feature representation u ∈ Rm. The embedded user features reflect users’ linguistic patterns, providing auxiliary information for sarcasm detection. The mathematical expression is shown in Equation 22. 
+
+u = f (x) = max (0 , W T x + b) (22) Where f (x) represents the ReLU activation function, W
+
+denotes the weights of the multiple linear layers, and b is the bias term. 
+
+3) Feature Fusion: The feature fusion module concatenates the outputs of the target text processing and user embedding modules. It uses a fully connected neural network with shared layer parameters to classify the comments. This study employs a fully connected neural network as the classifier, consisting of linear layers and a Sigmoid activation function. The con-catenated features are input to the network, which outputs the probability that the comment is sarcastic. The text information captures the semantics within the comments, while the user historical behavior reflects the users’ linguistic patterns. The combination of these two information sources aids in better understanding the comment’s meaning and the users’ intent. The mathematical expressions are as follows: 
+
+combined = [ H, u ] (23) 
+
+z = Wcls · combined + bcls (24) 
+
+y = sigmoid (z) (25) Where H ∈ RL×d represents the output of the text processing module, u ∈ Rm is the output of the user embedding module, Wcls denotes the weights of the fully connected neural network with shared layer parameters, bcls is the bias term, and 
+
+· indicates matrix multiplication. The Sigmoid function maps the output to a probability value between 0 and 1. IV. E XPERIMENTS 
+
+A. Experiment settings 1) Experimental Environment: In this section, we con-ducted various experiments to demonstrate the effectiveness of our proposed sarcasm detection method. All experiments were carried out in an environment with an Intel(R) Xeon(R) Gold 6130 CPU @ 2.10GHz processor and Tesla V100 GPU with 32GB memory. 
+
+2) Experimental Data: This experiment used the proposed 
+
+SinaSarc dateset. The dataset is balanced, containing 10,000 sarcastic comments and 10,000 non-sarcastic comments, for a total of 20,000 samples. Each sample includes the comment content, the corresponding label, topic, comment hierarchy, and user historical behavior. The balanced dataset helps avoid bias toward any particular category during model training, ensuring better performance in sarcasm detection. The dataset was split into training, validation, and test sets with a 6:2:2 ratio. We used Accuracy (Acc.), Precision (Pre.), Recall (Rec.) ,and F1 Score to evaluate the performance of our detection method. 
+
+B. Comparison Experiments 
+
+To demonstrate that the model proposed in this study outperforms existing models in the Chinese sarcasm detection task, this section compares the proposed model with SOTA text classification models, including machine learning mod-els Random Forest, SVM, AdaBoost , neural network models 
+
+FNN, LSTM, BiLSTM, LSTM-Att, BiLSTM-Att , pre-trained transformer models BERT-base, BERT-large, RoBERTa-base, RoBERTa-large, SBERT , and large language models (LLMs) 
+
+GPT-4-Turbo, Qwen2-7B, Baichuan2-7B-Chat, Gemini-1.5-Pro, Mixtral 8x7B . We also assessed the impact of extracted text features (T), contextual features (C), and user historical behavior features (U) on sarcasm detection. Table II shows the performance of various baseline models and our proposed model on the dataset. It is clear that models focusing solely on the target text perform poorly. Models that consider contextual information show slightly better perfor-mance, but none of these models account for the impact of users’ linguistic patterns on sarcasm detection. Our model performs the best, achieving the highest F1 score and accuracy. This is because our model integrates text features, contextual information, and user historical behavior features. The multi-dimensional feature fusion effectively captures the complexity of sarcastic comments and user behavior habits, providing deeper insights into user linguistic patterns and preferences. The second-best performance comes from the RoBERTa-large model. This indicates that the RoBERTa-large effectively captures information in the text, enhancing the understanding of sentence structure and better incorporating user historical behavior than other models. Models only focusing on target comment text features perform poorly. This may be because these traditional models may not fully capture the subtle variations and deeper semantics of sarcasm. 
+
+C. Ablation Experiment 
+
+To validate the effectiveness of the user historical behavior features proposed in this paper, we conducted ablation exper-iments on various features. The subsets of the feature set can be represented using the set difference function, as shown in Equation 26. 
+
+F \ F ′ = {x | x ∈ F ∧ x / ∈ F ′} (26) Where F represents the overall collection of user historical be-havior features, and F ′ represents a subset of the user historical behavior features collection. In the ablation experiments, we selected the following targets for ablation:  
+
+> •
+
+F : The complete set of user historical behavior features.  
+
+> •
+
+F \ CC : The user historical behavior feature set without 
+
+Comment Count . 
+
+> •
+
+F \ T D : The user historical behavior feature set without 
+
+Topic Distribution .9
+
+TABLE II: Results of comparison of experimental                                                                                                                                                                                                               
+
+> Category Model Features Acc. Non-sarcastic Sarcastic TCUPre. Rec. F1 Pre. Rec. F1
+> Machine Learning Random Forest [51] ✓0.8032 0.7985 0.8912 0.8423 0.8122 0.6766 0.7383 SVM [20] ✓0.8183 0.8569 0.8307 0.8436 0.7668 0.8005 0.7833 AdaBoost [52] ✓0.7231 0.7506 0.7946 0.7720 0.6775 0.6204 0.6477 Neural Network FNN [53] ✓0.8464 0.8610 0.8820 0.8714 0.8242 0.7953 0.8095 LSTM [28] ✓✓0.8428 0.8650 0.8692 0.8671 0.8106 0.8049 0.8078 BiLSTM [54] ✓✓0.8371 0.8545 0.8722 0.8633 0.8107 0.7865 0.7984 LSTM-Att [55] ✓✓0.8335 0.8515 0.8692 0.8603 0.8062 0.7821 0.7939 BiLSTM-Att [56] ✓✓0.8414 0.8598 0.8735 0.8666 0.8138 0.7953 0.8044 Pre-trained BERT-base [45] ✓✓✓0.8627 0.8680 0.9046 0.8860 0.8541 0.8023 0.8274 BERT-large [45] ✓✓✓0.8735 0.8804 0.9089 0.8944 0.8627 0.8225 0.8421 RoBERTa-base [57] ✓✓✓0.8800 0.8922 0.9059 0.8990 0.8616 0.8427 0.8521 RoBERTa-large [57] ✓✓✓0.8861 0.8915 0.9187 0.9049 0.8778 0.8392 0.8580 SBERT [58] ✓✓✓0.8298 0.8411 0.8771 0.8588 0.8118 0.7619 0.7860 LLMs GPT-4-Turbo 2✓✓✓0.8378 0.8638 0.8606 0.8622 0.8008 0.8050 0.8029 Qwen2-7B 3✓✓✓0.8574 0.8480 0.8710 0.8593 0.8674 0.8438 0.8554 Baichuan2-7B 4✓✓✓0.8578 0.8798 0.8790 0.8794 0.8263 0.8274 0.8269 Gemini-1.5-Pro 5✓✓✓0.8337 0.8458 0.8780 0.8616 0.8146 0.7701 0.7917 Mixtral 8x7B 6✓✓✓0.8332 0.8433 0.8808 0.8616 0.8170 0.7648 0.7901
+> Proposed Our model ✓✓✓0.9144 0.9208 0.9069 0.9138 0.9083 0.9220 0.9151
+> •
+
+F \ SR : The user historical behavior feature set without 
+
+Sarcasm Rate . 
+
+> •
+
+F \ CF : The user historical behavior feature set without 
+
+Comment Frequency . 
+
+> •
+
+F \ RR : The user historical behavior feature set without 
+
+Reply Ratio .F\CC F\TD F\SR F\CF F\RR F   
+
+> Methods
+> 0.8 0.82 0.84 0.86 0.88 0.9 0.92
+> Score
+> Precision Recall F1 Accuracy
+
+Fig. 3: Results of ablation experiments The experimental results are shown in Fig. 3. It is ev-ident that detection performance decreases when a specific behavioral feature is removed, indicating that the selected user historical behavior features are effective for Chinese sarcasm detection. Upon further analysis, when the feature Sarcasm Rate is excluded, We observed that the model’s performance declined the most. This phenomenon may be attributed to the strong correlation between sarcasm and individual language    
+
+> 2OpenAI, 2024. GPT-4-Turbo introduction. https://openai.com/index/hello-gpt-4o/
+> 3https://huggingface.co/Qwen/Qwen-7B
+> 4https://huggingface.co/baichuan-inc/Baichuan2-7B-Base
+> 5Google DeepMind, 2025. https://blog.google/technology/ai/google-gemini-next-generation-model-february-2025/
+> 6Mistral AI, 2023. Mixtral of experts. https://mistral.ai/news/mixtral-of-experts
+
+habits: the same statement can convey different meanings depending on the speaker. When the Sarcasm Rate feature is absent, the model relies more heavily on textual cues. For example, the comment “ 这
+
+种真的是天才” (“This is truly genius”) may appear neutral or even positive. However, when made by a user with a high historical tendency toward sarcasm, the full model correctly identifies it as sarcastic. In contrast, without this feature (as in the ‘F/SR’ setting), the model behaves more conservatively and only labels comments as sarcastic when highly confident. Since the semantics of this comment are not overtly sarcastic, the model classifies it as non-sarcastic, leading to a decline in model performance. 
+
+D. Noise Experiment 
+
+To assess the model’s performance when handling noisy data, we designed a noise experiment. This experiment simu-lates common imperfections in real-world data processing by artificially introducing label noise. We randomly selected a certain percentage of data samples (from 0.05 to 0.45) in the training set and changed their labels to the opposite ones. Let 
+
+L be the original label set, and we define a noise function 
+
+f that alters the labels with a certain probability p, where p
+
+ranges from 0.05 to 0.45. The noisy label set is L′:
+
+L′ = f (L, p ) (27) In this equation, the function f operates on each label l ∈ L
+
+and changes l to its opposite with probability p. For instance, if the original label is “sarcastic,” it will be changed to “non-sarcastic” with probability p, and vice versa. In the experiment, we first trained the baseline models without noise to establish a performance benchmark. Then, the models were trained on training data with varying levels of noise, with independent training and evaluation conducted 10 0.05 0.15 0.25 0.35 0.45 
+
+> Noise Rate
+> 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9
+> F1 Score
+> Our Model Random Forest SVM AdaBoost FNN LSTM BiLSTM LSTM-Att BiLSTM-Att BERT-base BERT-large RoBERTa-base RoBERTa-large SBERT
+
+Fig. 4: Results of noise experiment for each noise level to observe the specific effects of noise on model performance. The experimental results are shown in Fig. 4. It is clear that the performance of all models declines after introducing noise, as label errors directly affect the model’s ability to capture the true data distribution during learning. Consequently, the models learn incorrect patterns, leading to decreased per-formance. However, the proposed model shows the smallest decline and consistently outperforms the others, demonstrating its superiority in handling noisy data. This may be due to our model’s structure. By incorporating contextual information and user historical behavior as extra feature inputs, our model may better understand the true context behind the target text when faced with noise, resulting in more accurate predictions. The experimental results demonstrate that our model not only achieves SOTA performance on clean data but also maintains strong robustness and stable performance under label-noise conditions, making it well-suited for real-world social media sarcasm detection scenarios where noisy labels are inevitable. 
+
+E. Robustness Experiment 
+
+In the first experiment, we used a balanced dataset for model comparison. However, in real-world scenarios, the proportion of sarcastic comments may be much smaller. To verify the robustness of the proposed model, we tested its performance with varying proportions of sarcastic comments. We kept the dataset size fixed at 20,000 and incrementally increased the percentage of sarcastic comments from 10% to 90% in 10% steps. 10 20 30 40 50 60 70 80 90 
+
+> Percentage of Sarcastic Comments (%)
+> 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9
+> F1 Score
+> Our Model Random Forest SVM AdaBoost FNN LSTM BiLSTM LSTM-Att BiLSTM-Att BERT-base BERT-large RoBERTa-base RoBERTa-large SBERT
+
+Fig. 5: Results of robustness experiment As shown in Fig. 5, our method and RoBERTa-large per-form best when the proportion of sarcastic comments reaches 50%. Even at relatively high proportions of sarcastic com-ments, our model consistently outperforms others, demonstrat-ing greater robustness in practical scenarios. This may be due to the multi-dimensional feature fusion in our model, which combines textual content, contextual information, and user his-torical behavior features. These factors work together to enable the model to more accurately capture the subtle semantics of sarcasm and the user’s linguistic patterns, reducing reliance on the dataset’s proportion. The RoBERTa-large model performs relatively well. Compared with traditional machine learning approaches that only rely on text features or general deep learning models that introduce limited contexts, RoBERTa-large, through large-scale pre-trained language modeling, can effectively capture the complex semantic implications and contextual dependencies in the text. Meanwhile, by integrating users’ historical behaviors with multi-level context informa-tion, the model’s robustness against intention inconsistencies in satirical expressions has been further enhanced. 5k 10k 15k 20k Dataset Size 0.2 0.4 0.6 0.8 1F1 Score 
+
+> Our Model Random Forest SVM AdaBoost FNN LSTM BiLSTM LSTM-Att BiLSTM-Att BERT-base BERT-large RoBERTa-base RoBERTa-large SBERT
+
+Fig. 6: Results of dataset size experiments 
+
+F. Impact of Dataset Size on Detection Performance 
+
+To validate the effectiveness of the SinaSarc dataset gen-erated by our GAN and LLM-driven data augmentation framework for Chinese sarcasm detection, we conducted an experiment to expand the dataset size, from 5,000 to 20,000. Our model was compared with several SOTA models on these datasets. The results are shown in Fig. 6. Notably, our proposed model consistently outperforms all baseline methods across different dataset scales, demonstrating strong data efficiency. Even with only 5k training samples, our model achieves a relatively high F1 score, already surpassing most baselines trained on the full 20k dataset. As the dataset size increases to 20k, the model reaches its peak performance while maintaining a clear advantage over competing methods. This superior data efficiency can be attributed to the core design of our approach. Unlike conventional models that rely primarily on text (T) or text combined with context (T+C), our model integrates text, context, and user historical behavior (T+C+U) to capture users’ long-term linguistic patterns. These user-level signals provide personalized and stable cues that complement limited textual information, enabling the model 11 
+
+TABLE III: Examples of Sarcasm Detection Results                                  
+
+> No. Topic Comment Hierarchy Comments Correct results Test results
+> 1Lifestyle Nested comment 你是真的懂设计 (You really know design) Sarcastic Non-sarcastic 2Politics Nested comment 成都省的GDP 当然高了(Chengdu province’s GDP is certainly high) Sarcastic Non-sarcastic 3Entertainment Top-level comment
+> 这张票真值了，两个 小时的电影感觉看了五个 小时(This movie ticket was totally worth it—two hours that felt like five!) Sarcastic Non-sarcastic 4Relationships Nested comment
+> 男人到某一阶段就会自动解锁历史 学家 、哲学家 、政治
+> 家等角色(Men just naturally become historians, philosophers, and statesmen at a certain stage in life.) Sarcastic Non-sarcastic 5Public Incidents Top-level comment
+> 这届网友可 真“苛刻”，连救援人员的休息时间都要盯着，
+> 就怕他们 累着(This group of netizens is really “harsh” — they even keep an eye on the rescuers’ rest time, fearing they might get tired) Non-sarcastic Sarcastic
+
+to learn more robust sarcasm representations even under low-resource settings. In contrast, although pre-trained models and LLMs can leverage rich contextual information, they do not explicitly model such user-specific linguistic patterns, and thus consistently underperform our approach across all dataset scales. 
+
+G. Case Analysis 
+
+As shown in Table III, to gain a deeper understanding of the complexity of sarcasm detection and explore potential im-provements to our proposed method, we analyzed the model’s detection results. We randomly selected 1 incorrect sample from each topic to analyze the causes of the errors In Case 1, the model misclassified a sarcastic nested com-ment as non-sarcastic. The target comment “ 你是真的懂设计 ”(You really know design) is sarcastic because it conveys irony through exaggerated praise. The expression appears positive on the surface but, in context, implies criticism of the design. The model failed to capture this implicit reversal of meaning and relied heavily on the literal positive wording, leading to an incorrect judgment. In Cases 2, the model misclassified the sarcastic com-ment as non-sarcastic because the target comment contained expressions that required external background knowledge to accurately identify its sarcastic intent. “ 成 都 省”(Chengdu Province) is a sarcastic term used for Chengdu city, reflecting public dissatisfaction with the resource allocation favoring it over other cities in Sichuan. In Case 3, the sarcastic comment “ 这 张 票 真 值 了 ， 两个小时的电影感觉看了五个 小时” (This movie ticket was totally worth it—two hours that felt like five!) was also misclassified as non-sarcastic. This statement uses hyperbole to express dissatisfaction with the length and quality of the movie. Although the wording contains no explicit negative terms, the sarcastic intent lies in the contrast between the literal meaning of “ 值” (worth it) and the actual negative experience of time dragging on. The model failed to recognize this rhetorical exaggeration and instead interpreted the surface-level meaning, which resulted in misclassification. Case 4 presented a metaphorical expression that caused the model to misclassify a sarcastic comment as non-sarcastic. This case critiques certain men who express excessively to project a learned image, which can be off-putting. The comment lacked obvious sarcastic indicators and relied on subtle metaphorical language. In Case 5, the model mistakenly classified non-sarcastic comments as sarcastic due to the presence of quotation marks, emotional reversals, and other obvious indicators of sarcasm. These case analyses reveal that the model has limita-tions in capturing sarcasm that relies on external background knowledge, rhetorical strategies, and metaphorical expressions. To address these shortcomings, future work will focus on integrating external knowledge graphs to provide richer con-textual understanding, developing approaches to model and interpret rhetorical devices, and establishing mechanisms to align metaphors with their underlying referents. 
+
+H. Representation Learning Effect Experiment 
+
+To qualitatively assess the feature representations learned by our model, we conduct a representation learning analysis and visualize the high-dimensional embeddings of sarcastic and non-sarcastic samples using t-SNE, as shown in Fig. 7. For comparison, we also present the embeddings produced by several representative baselines. As observed from the visualization, most baseline models fail to clearly separate sarcastic and non-sarcastic samples in the embedding space. The two classes are heavily intermixed, with substantial overlap and no distinct boundary, indicating limited discriminative capability in capturing the implicit and context-dependent nature of sarcasm. In contrast, our model achieves a clear separation between the two classes. As shown in Fig. 7 (h), sarcastic and non-sarcastic samples form well-defined and minimally overlapping clusters, demonstrating more discriminative and structured representations. This im-provement can be attributed to the integration of user historical behavior, which enables the model to capture users’ long-term linguistic patterns and uncover subtle semantic distinctions that are difficult to identify using text or context alone. V. C ONCLUSION 
+
+This study proposes a GAN and LLM-driven data aug-mentation framework to dynamically model users’ linguis-tic patterns in Chinese sarcasm detection, and constructs a novel dataset SinaSarc . Experimental results demonstrate that modeling users’ linguistic patterns from their historical behavior significantly enhances the accuracy and robustness of 12 
+
+(a) LSTM (b) BiLSTM (c) BERT-base (d) BERT-large 
+
+(e) RoBERTa-base (f) RoBERTa-large (g) SBERT (h) Our Model 
+
+Fig. 7: Results of characterization learning experiment sarcasm detection. Nonetheless, the current dataset is domain-constrained, and generated samples may not fully capture the subtlety of natural sarcastic expressions. Future work will focus on extending the dataset to broader domains and incor-porating richer user and multimodal features. In addition, it could also incorporate ideas from Masked Emotion Modeling [59] to further explore the intrinsic connections between the multidimensional emotional characteristics in satirical expres-sions. REFERENCES [1] E. Riloff, A. Qadir, P. Surve et al. , “Sarcasm as contrast between a positive sentiment and negative situation,” in Proceedings of the 18th Conference on Empirical Methods in Natural Language Processing ,Seattle, WA, USA, October 2013, pp. 704–714. [2] A. Reyes, P. Rosso, and D. Buscaldi, “From humor recognition to irony detection: The figurative language of social media,” Data & Knowledge Engineering , vol. 74, pp. 1–12, 2012. [3] D. I. H. Far´ ıas, V. Patti, and P. Rosso, “Irony detection in twitter: The role of affective content,” ACM Transactions on Internet Technology ,vol. 16, no. 3, pp. 1–24, 2016. [4] T. Veale and Y. Hao, “Detecting ironic intent in creative comparisons,” in 
+
+Proceedings of the 19th European Conference on Artificial Intelligence ,2010, pp. 765–770. [5] M. Nirmala, A. H. Gandomi, M. R. Babu et al. , “An emoticon-based novel sarcasm pattern detection strategy to identify sarcasm in microblogging social networks,” IEEE Transactions on Computational Social Systems , vol. 11, no. 4, pp. 5319–5326, 2023. [6] D. Hazarika, S. Poria, S. Gorantla et al. , “Cascade: Contextual sarcasm detection in online discussion forums,” in Proceedings of the 27th International Conference on Computational Linguistics , Santa Fe, NM, USA, August 2018, pp. 1837–1848. [7] D. Bamman and N. Smith, “Contextualized sarcasm detection on twit-ter,” in Proceedings of the 9th International Conference on Web and Social Media , Oxford, UK, May 2015, pp. 574–577. [8] A. Joshi, V. Sharma, and P. Bhattacharyya, “Harnessing context in-congruity for sarcasm detection,” in Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing ,Beijing, China, July 2015, pp. 757–762. [9] C. C. Liebrecht, F. A. Kunneman, and A. P. J. Van Den Bosch, “The perfect solution for detecting sarcasm in tweets# not,” in Proceedings of the 4th Workshop on Computational Approaches to Subjectivity, Sentiment and Social Media Analysis , Atlanta, GA, USA, June 2013, pp. 29–37. [10] A. Rodriguez, Y. L. Chen, and C. Argueta, “Sincere: A hybrid framework with graph-based compact textual models using emotion classification and sentiment analysis for twitter sarcasm detection,” IEEE Transactions on Computational Social Systems , vol. 11, no. 5, pp. 5593–5606, 2024. [11] I. Touahri and A. Mazroui, “Enhancement of a multi-dialectal sentiment analysis system by the detection of the implied sarcastic features,” 
+
+Knowledge-Based Systems , vol. 227, p. 107232, 2021. [12] D. Ghosh, A. R. Fabbri, and S. Muresan, “Sarcasm analysis using conversation context,” Computational Linguistics , vol. 44, no. 4, pp. 755–792, 2018. [13] Y. Wei, H. Zhou, S. Yuan et al. , “Deepmsd: Advancing multimodal sar-casm detection through knowledge-augmented graph reasoning,” IEEE Transactions on Circuits and Systems for Video Technology , vol. 35, no. 7, pp. 6413–6423, 2025. [14] F. Yao, X. Sun, H. Yu et al. , “Mimicking the brain’s cognition of sarcasm from multidisciplines for twitter sarcasm detection,” IEEE Transactions on Neural Networks and Learning Systems , vol. 34, no. 1, pp. 228–242, 2021. [15] L. Ou and Z. Li, “Multi-modal sarcasm detection on social media via multi-granularity information fusion,” ACM Transactions on Multimedia Computing, Communications and Applications , vol. 21, no. 3, pp. 1–23, 2025. [16] X. Zhuang, F. Zhou, and Z. Li, “Multi-modal sarcasm detection via knowledge-aware focused graph convolutional networks,” ACM Trans-actions on Multimedia Computing, Communications and Applications ,vol. 21, no. 5, pp. 1–22, 2025. [17] J. Tang, B. Ni, F. Zhou et al. , “Fine-grained semantic disentanglement network for multimodal sarcasm analysis,” ACM Transactions on Mul-timedia Computing, Communications and Applications , vol. 21, no. 6, pp. 1–22, 2025. [18] P. Wang, Y. Zhang, H. Fei et al. , “S3 agent: Unlocking the power of vllm for zero-shot multi-modal sarcasm detection,” ACM Transactions on Multimedia Computing, Communications and Applications , vol. 21, no. 11, pp. 1–16, 2025. [19] Y. Zhang, Y. Yu, M. Wang et al. , “Self-adaptive representation learning model for multi-modal sentiment and sarcasm joint analysis,” ACM Transactions on Multimedia Computing, Communications and Applica-tions , vol. 20, no. 5, pp. 1–17, 2024. [20] L. Zhang, X. Zhao, Q. Mao et al. , “A novel retrospective-reading model for detecting chinese sarcasm comments of online social network,” IEEE Transactions on Computational Social Systems , vol. 12, no. 2, pp. 792– 806, 2025. 13 
+
+[21] Y. Liu, Y. Zhang, and D. Song, “A quantum probability driven frame-work for joint multi-modal sarcasm, sentiment and emotion analysis,” 
+
+IEEE Transactions on Affective Computing , vol. 15, no. 1, pp. 326–341, 2023. [22] X. Wang, Y. Wang, D. He et al. , “Elevating knowledge-enhanced entity and relationship understanding for sarcasm detection,” IEEE Transactions on Knowledge and Data Engineering , vol. 37, no. 6, pp. 3356–3371, 2025. [23] P. Carvalho, L. Sarmento, M. J. Silva et al. , “Clues for detecting irony in user-generated contents: Oh...!! it’s so easy ;-),” in Proceedings of the 1st International CIKM Workshop on Topic-sentiment Analysis for Mass Opinion , New York, NY, USA, November 2009, pp. 53–56. [24] D. G. Maynard and M. A. Greenwood, “Who cares about sarcastic tweets? investigating the impact of sarcasm on sentiment analysis,” in 
+
+Proceedings of the 9th International Conference on Language Resources and Evaluation , Reykjavik, Iceland, May 2014, pp. 4238–4243. [25] D. Davidov, O. Tsur, and A. Rappoport, “Semi-supervised recognition of sarcastic sentences in twitter and amazon,” in Proceedings of the 14th International Conference on Computational Natural Language Learning , Uppsala, Sweden, July 2010, pp. 107–116. [26] S. Poria, E. Cambria, D. Hazarika et al. , “A deeper look into sarcastic tweets using deep convolutional neural networks,” in Proceedings of the 26th International Conference on Computational Linguistics: Technical Papers , Osaka, Japan, December 2016, pp. 1601–1612. [27] A. Ghosh and T. Veale, “Fracking sarcasm using neural network,” in 
+
+Proceedings of the 7th Workshop on Computational Approaches to Subjectivity, Sentiment and Social Media Analysis , San Diego, CA, USA, June 2016, pp. 161–169. [28] Y. Tay, L. A. Tuan, S. C. Hui et al. , “Reasoning with sarcasm by reading in-between,” in Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics , Melbourne, Australia, July 2018, pp. 1010–1020. [29] P. Goel, R. Jain, A. Nayyar et al. , “Sarcasm detection using deep learning and ensemble learning,” Multimedia Tools and Applications , vol. 81, no. 30, pp. 43 229–43 252, 2022. [30] A. Agrawal and A. An, “Affective representations for sarcasm detection,” in The 41st International ACM SIGIR Conference on Research & Development in Information Retrieval , Ann Arbor, MI, USA, July 2018, pp. 1029–1032. [31] B. C. Wallace, L. Kertz, and E. Charniak, “Humans require context to infer ironic intent (so computers probably do, too),” in Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics ,Baltimore, MD, USA, June 2014, pp. 512–516. [32] B. C. Wallace and E. Charniak, “Sparse, contextually informed models for irony detection: Exploiting user communities, entities and sentiment,” in Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing , Beijing, China, July 2015, pp. 1035– 1044. [33] N. Babanejad, H. Davoudi, A. An et al. , “Affective and contextual em-bedding for sarcasm detection,” in Proceedings of the 28th International Conference on Computational Linguistics , Barcelona, Spain (Online), December 2020, pp. 225–243. [34] H. Srivastava, V. Varshney, S. Kumari et al. , “A novel hierarchical bert architecture for sarcasm detection,” in Proceedings of the Second Workshop on Figurative Language Processing , Online, July 2020, pp. 93–97. [35] R. A. Potamias, G. Siolas, and A. G. Stafylopatis, “A transformer-based approach to irony and sarcasm detection,” Neural Computing and Applications , vol. 32, no. 23, pp. 17 309–17 320, 2020. [36] S. Yuan, Y. Wei, H. Zhou et al. , “Enhancing semantic awareness by sentimental constraint with automatic outlier masking for multimodal sarcasm detection,” IEEE Transactions on Multimedia , vol. 27, pp. 5376–5386, 2025. [37] A. Phukan, S. Pal, and A. Ekbal, “Hybrid quantum-classical neural network for multimodal multitask sarcasm, emotion, and sentiment analysis,” IEEE Transactions on Computational Social Systems , vol. 11, no. 5, pp. 5740–5750, 2024. [38] B. Liang, L. Gui, Y. He et al. , “Fusion and discrimination: A multimodal graph contrastive learning framework for multimodal sarcasm detection,” 
+
+IEEE Transactions on Affective Computing , vol. 15, no. 4, pp. 1874– 1888, 2024. [39] Y. Tang and H. H. Chen, “Chinese irony corpus construction and ironic structure analysis,” in Proceedings of the 25th International Conference on Computational Linguistics: Technical Papers , 2014, pp. 1269–1278. [40] S. K. Lin and S. K. Hsieh, “Sarcasm detection in chinese using a crowdsourced corpus,” in Proceedings of the 28th Conference on Computational Linguistics and Speech Processing , 2016, pp. 299–310. [41] R. Xiang, X. Gao, Y. Long et al. , “Ciron: a new benchmark dataset for chinese irony detection,” in Proceedings of the Twelfth Language Resources and Evaluation Conference , 2020, pp. 5714–5720. [42] X. Gong, Q. Zhao, J. Zhang et al. , “The design and construction of a chinese sarcasm dataset,” in Proceedings of the Twelfth Language Resources and Evaluation Conference , 2020, pp. 5034–5039. [43] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, and I. Polosukhin, “Attention is all you need,” in Proceedings of the 31st International Conference on Neural Information Processing Systems , Long Beach, California, USA, 2017, p. 6000–6010. [44] I. Gulrajani, F. Ahmed, M. Arjovsky, V. Dumoulin, and A. Courville, “Improved training of wasserstein gans,” in Proceedings of the 31st International Conference on Neural Information Processing Systems ,Long Beach, California, USA, 2017, p. 5769–5779. [45] J. Devlin, M. W. Chang, K. Lee et al. , “Bert: Pre-training of deep bidirectional transformers for language understanding,” in Proceedings of the 17th Conference of the North American Chapter of the Asso-ciation for Computational Linguistics: Human Language Technologies ,Minneapolis, MN, USA, June 2019, pp. 4171–4186. [46] Y. Kim, “Convolutional neural networks for sentence classification,” in 
+
+Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP) , Doha, Qatar, Oct. 2014, pp. 1746–1751. [47] X. Tang, T. Qian, and Z. You, “Generating behavior features for cold-start spam review detection with adversarial learning,” Information Sciences , vol. 526, pp. 274–288, 2020. [48] P. Liu, W. Chen, G. Ou et al. , “Sarcasm detection in social media based on imbalanced classification,” in Proceedings of the 15th International Conference on Web-age Information Management , Macau, China, June 2014, pp. 459–471. [49] Z. Wen, L. Gui, Q. Wang et al. , “Sememe knowledge and auxiliary information enhanced approach for sarcasm detection,” Information Processing & Management , vol. 59, no. 3, p. 102883, 2022. [50] A. Rajadesingan, R. Zafarani, and H. Liu, “Sarcasm detection on twitter: A behavioral modeling approach,” in Proceedings of the 8th International Conference on Web Search and Data Mining , New York, NY, USA, February 2015, pp. 97–106. [51] A. Chaudhary, S. Kolhe, and R. Kamal, “An improved random forest classifier for multi-class classification,” Information Processing in Agri-culture , vol. 3, no. 4, pp. 215–222, 2016. [52] A. J. Wyner, M. Olson, J. Bleich et al. , “Explaining the success of adaboost and random forests as interpolating classifiers,” Journal of Machine Learning Research , vol. 18, no. 48, pp. 1–33, 2017. [53] J. M. P´ erez and F. M. Luque, “Atalaya at semeval 2019 task 5: Robust embeddings for tweet classification,” in Proceedings of the 13th International Workshop on Semantic Evaluation , Minneapolis, MN, USA, June 2019, pp. 64–69. [54] A. Khan, D. Majumdar, and B. Mondal, “A hybrid transformer based model for sarcasm detection from news headlines,” Journal of Intelligent Information Systems , vol. 63, no. 4, pp. 1339–1359, 2025. [55] W. Dai, J. Tao, X. Yan et al. , “Addressing unintended bias in toxicity detection: An lstm and attention-based approach,” in Proceedings of the 5th International Conference on Artificial Intelligence and Computer Applications , Dalian, China, November 2023, pp. 375–379. [56] M. Neog and N. Baruah, “A deep learning framework for assamese toxic comment detection: Leveraging lstm and bilstm models with attention mechanism,” in Proceedings of the 2nd International Conference on Advances in Data-driven Computing and Intelligent Systems , BITS Pilani, India, September 2023, pp. 485–497. [57] Y. Cui, W. Che, T. Liu et al. , “Revisiting pre-trained models for chinese natural language processing,” in Findings of the Association for Computational Linguistics: EMNLP , Online, November 2020, pp. 657–668. [58] H. Madhu, S. Satapara, S. Modha et al. , “Detecting offensive speech in conversational code-mixed dialogue on social media: A contextual dataset and benchmark experiments,” Expert Systems with Applications ,vol. 215, p. 119342, 2023. [59] D. Sui, B. Li, H. Yang et al. , “A simple and interactive transformer for fine-grained emotion detection,” IEEE Transactions on Audio, Speech, and Language Processing , vol. 33, pp. 347–358, 2025.

@@ -1,0 +1,775 @@
+Title: When Models Know More Than They Say: Probing Analogical Reasoning in LLMs
+
+URL Source: https://arxiv.org/pdf/2604.03877v1
+
+Published Time: Tue, 07 Apr 2026 00:47:10 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+Preprint. Under review. 
+
+# When Models Know More Than They Say: Probing Analogical Reasoning in LLMs 
+
+Hope McGovern 1
+
+hem52@cam.ac.uk 
+
+Caroline Craig 2,3 
+
+cacraig@athenahealth.com 
+
+Tom Lippincott 4
+
+tom@cs.jhu.edu 
+
+> 1
+
+Cambridge University 
+
+> 2
+
+Northeastern University 
+
+> 3
+
+Athenahealth 
+
+> 4
+
+Johns Hopkins University 
+
+Hale Sirin 4
+
+hsirin1@jhu.edu 
+
+## Abstract 
+
+Analogical reasoning is a core cognitive faculty essential for narrative un-derstanding. While LLMs perform well when surface and structural cues align, they struggle in cases where an analogy is not apparent on the sur-face but requires latent information—suggesting limitations in abstraction and generalisation. In this paper we compare a model’s probed represen-tations with its prompted performance at detecting narrative analogies, revealing an asymmetry: for rhetorical analogies, probing significantly outperforms prompting in open-source models, while for narrative analo-gies, they achieve a similar (low) performance. This suggests that the relationship between internal representations and prompted behavior is task-dependent and may reflect limitations in how prompting accesses available information. 
+
+## 1 Introduction 
+
+Humans rely on narratives to explain causes, encode memory, and convey moral lessons (Bruner, 1986). Despite remarkable advances in language modeling, we still lack benchmarks for assessing whether LLMs acquire the competencies that support narrative understanding, including allusion detection, figurative language production, and complexity (Hamilton et al., 2025). Analogical reasoning is a core cognitive faculty of identifying structural similarities between a familiar situation (source) and a new, less understood one (target), allowing knowledge from the source to be mapped and applied to the target (Gentner & Smith, 2013). While humans effortlessly perceive such parallels across diverse episodes, LLMs remain largely untested in this respect. Recent work highlights narrative understanding as key for model performance (Kim et al., 2023; Karpinska et al., 2024; Hamilton et al., 2025; Srivastava et al., 2023). Pretrained models can encode latent information about entities and relations without explicit supervision (Li et al., 2021), and prompting strategies like chain-of-thought (CoT) have been used as evidence that LLMs can perform reasoning-like operations. But such results leave open a deeper question: do LLMs internalize typological structures—the narrative schemas and rhetorical functions that underlie coherent storytelling—or are they simply leveraging surface-level correlations at scale? Analogical reasoning is defined as the ability to perceive similarities between concepts, situations or events based on (systems of) relations rather than surface phenomena (Holyoak, 2012; Sourati et al., 2024). Narrative offers a rigorous testbed for analogical reasoning: it 1
+
+> arXiv:2604.03877v1 [cs.CL] 4 Apr 2026
+
+Preprint. Under review. requires integrating causal chains, temporal dependencies, and thematic abstractions across extended spans of text. Unlike paraphrase or entailment, recognizing that two passages instantiate the same narrative function despite divergent surface forms reflects a higher-order cognitive ability. Such abilities are critical not only for literary analysis and typological exegesis (McGovern et al., 2025), but also for practical applications in problem solving, education and scientific discovery (Dunbar & Klahr, 2012). If models truly learn structured representations of text, they should exhibit efficiencies akin to human narrative understanding: abstraction, reuse of functional templates, and recognition of rhetorical parallels. If they do not, this supports the view that despite their scale, LLMs remain shallow in representation. 
+
+1.1 Our Contribution 
+
+We introduce NARB (Narrative Analogical Reasoning Benchmark ), a suite of benchmark tasks designed to probe analogical reasoning in literary texts. • Benchmarking: We evaluate recent decoder-only LLMs on a hierarchy of tasks from basic narrative role identification to complex rhetorical and structural parallelism. • Diagnosis: We apply interpretability probes to assess which model layers encode narrative and rhetorical information, and to what extent. We compare a model’s probed representations to its prompted performance, showing that for complex nar-rative analogies, what is achievable with prompting alone is not always decodable from internal states, and vice versa. In this way, our work contributes to ongoing discussions about the interpretability and functional validity of probing, especially for abstract tasks. • Findings: Our results highlight that neither probing nor prompting method alone provides a complete picture of model capabilities, showing that the limitation lies not in the task but in how models translate internal representations into prompted behavior. 
+
+## 2 Background 
+
+2.1 Diagnostic Probing 
+
+Our method of analysing model internals builds on diagnostic probing, particularly the edge probing framework of Tenney et al. (2019b), which decomposes linguistic tasks into graph edges predicted from hidden representations. They find that pretrained models capture progressively deeper features across layers, from syntax to co-reference. Tenney et al. (2019a) further showed a ‘layerwise progression’ in BERT, with syntactic information localised early and semantic features appearing at higher layers. More recent work complicates this picture. He et al. (2024) find that grammatical features are distributed throughout GPT-2’s layers and vary with sentence complexity. Critically, Niu et al. (2022) show that previously reported layer effects may reflect artefacts of position and training dynamics, and Belinkov (2022) warns that information discovered by a probe is not necessarily used by the model at inference time. This motivates a core aspect of our analysis: we compare probed representations to prompted 
+
+performance, showing that for complex analogical tasks, what is decodable from internal states is not always accessible through prompting. Probing also remains under-explored in literary or narrative contexts, where understanding involves event structure, temporal coherence, and causal reasoning across long-form inputs. 
+
+2.2 Analogical Reasoning for Narrative Tasks 
+
+The precise mechanisms and representational structures underlying narrative analogy re-main under-explored, especially in computational settings. Elson (2012) introduces a story intention graph approach that uses propositional generalisation over discourse relations. 2Preprint. Under review. Anchor When I remember the challenges I went through when I was starting my business, I break into tears. But I do not regret a thing. I think that the most precious gold goes through the hottest furnace. It made me better. Analogy Once upon a time, in a small village, there lived a talented young presenter named Lily. She faced repeated challenges, but each ob-stacle made her stronger and more resilient, ultimately earning her respect and admiration. Table 1: Example narrative parallelism pair from the Analogy dataset 
+
+Latin English 
+
+satietas sitiret satiety might thirst ,
+
+uirtus infirmaretur strength might be weakened ,
+
+sanitas uulneraretur health might be wounded ,
+
+uita moreretur life might die .Table 2: Rhetorical Parallelism in Latin: The repeated syntactic and semantic inversion emphasizes paradoxical transformation. For instance, the propositions ‘A Lion watched a fat Bull’ and ‘A Fox observed a Crow’ are abstracted to a shared form like ‘A predator stalking its prey.’ Their system relies on dependency graphs and logic-based pattern-matching (via Prolog), incorporating both hy-pernym generalisation and temporal sequencing to detect analogies. This method contrasts bottom-up statistical matching with top-down structural isomorphisms, offering one of the earliest computational treatments of analogical narrative structure. A key insight here is that narrative analogy often involves category-level parallelism: map-ping characters, goals, and events by type or function rather than surface similarity. Sourati et al. (2024) introduce a triplet-based benchmark dataset, Analogical Reasoning over Nar-ratives (ARN), that tests whether models can distinguish deep analogies from superficial resemblance, showing that while LLMs perform well when surface and structural cues align, they struggle in cases where an analogy is not apparent on the surface but requires latent information—suggesting limitations in abstraction and generalisation. Outside narrative domains, analogical reasoning has also been probed through prompting techniques. Wicke et al. (2024) show that Chain-of-Thought (CoT) explanations for spatial analogies yield modest improvements in alignment with human judgments. More com-pellingly, Yasunaga et al. (2024) demonstrate that analogical prompting —asking models to first generate a relevant exemplar before solving a target problem—outperforms both zero-and few-shot CoT baselines, particularly in larger models like GPT-4 and PaLM-2. These findings suggest that LLMs can sometimes exhibit analogical reasoning, especially under structured prompting regimes and at larger scales. However, it remains unclear whether their apparent analogical inferences reflect genuine conceptual abstraction or sophisticated pattern-matching, and the absence of explicit structural priors—such as event schemas or narrative roles—may constrain both the generalisability and interpretability of these analogies. 
+
+## 3 Tasks and Datasets 
+
+We consider two reasoning tasks, representing different notions of parallelism: 
+
+Task 1: Narrative Parallelism. Whether a model can recognize systematic structural cor-respondences between complete narratives. Given an anchor story and a set of candidate stories, the task is to identify which candidates are most parallel to the anchor, independent of surface similarity as seen in Table 1. Parallel narratives may differ substantially in setting, 3Preprint. Under review. characters, or vocabulary, but share an underlying schema or functional progression (e.g. temptation–fall–redemption) (McGovern et al., 2024). This task probes the extent to which models encode high-level narrative structure rather than topical or lexical overlap. 
+
+Task 2: Rhetorical Parallelism. Whether a model can recognize localized stylistic and semantic symmetry within a document. Given a span serving as an anchor (e.g., a line from a sermon or poem), the model must rank other spans by their degree of rhetorical parallelism with the anchor. Parallel spans typically instantiate a shared syntactic template or semantic inversion (e.g., paradox or antithesis), but may vary in lexical content as seen in Table 2 (reproduced from Bothwell et al. (2023)). Unlike narrative parallelism, this task emphasizes fine-grained form–meaning correspondences over short textual distances. Appendix A describes the corresponding data sets, Analogical Reasoning over Narratives (ARN) (Sourati et al., 2024) and Augustinian Sermon Parallelism (ASP) (Bothwell et al., 2023), in detail along with examples of positive instances from each. 
+
+## 4 Experiments 
+
+4.1 Problem Formulation 
+
+We formalize parallelism as an anchor-based ranking problem . While parallelism could be framed as a binary decision – are these two spans (or narratives) parallel or not – in practice, human judgments of parallelism are comparative: given a reference item, some candidates are more parallel than others, even among negatives. Accordingly, we cast both rhetorical and narrative parallelism as ranking tasks. Each example consists of an anchor a paired with a candidate set C = {c1, . . . , cn}, partitioned into positives C+ and negatives C− according to gold annotations. A successful model should assign higher scores to true parallel candidates than to non-parallel ones. Evaluation is therefore based on ranking metrics rather than classification accuracy. Unlike standard triplet setups—which we found trivially solvable in preliminary experiments—our formulation associates each anchor with multiple positives and neg-atives, and requires ordering the entire candidate pool by degree of parallelism. This preserves within-class variation and supports finer-grained analysis via MRR and MAP. 
+
+4.2 Data Preparation and Sampling Data cleaning (ARN). We use the ARN dataset described in section C and use a filtering method to ensure grammatical acceptability. This reduces the dataset from 1,315 to 872 unique fluent narratives. See section C.1 for details of the filtering process and the document-level embedding strategy. 
+
+4.2.1 Candidate pool construction 
+
+Narrative parallelism. For each anchor narrative, we construct a candidate pool by sampling a fixed number of narratives that share the same proverb (positives) and narratives that do not (negatives). Positives include both near and far analogies, while negatives include both near and far distractors, ensuring that surface similarity alone is insufficient for high ranking. Unless otherwise stated, we sample X positives and Y negatives per anchor. An example is shown in Table 6. 
+
+Rhetorical parallelism. Each annotated rhetorical set S = {s1, . . . , sk} gives rise to multiple ranking examples. Each branch si ∈ S serves as an anchor in turn; the remaining branches form the positive candidate set. Negative spans are sampled from the same sermon but outside the annotated parallel set, controlling for topic and discourse context. The average number of spans in a parallel branch is 2.62; for each anchor we sample a substantially larger pool of negatives to produce a non-trivial ranking problem. 4Preprint. Under review. 
+
+Data splits. We partition all datasets into training, validation, and test splits using an 80/10/10 ratio. All reported results use 5-fold cross-validation, with metrics averaged across folds and reported as mean ± standard deviation. 
+
+4.3 Models 
+
+4.3.1 Embedding Extraction 
+
+We evaluate decoder-only Transformer models from the LLaMA 3 family at three scales: 1B, 3B, and 8B parameters. We select LLaMA 3 due to its strong performance on general capability benchmarks, the availability of multiple model sizes under a shared architecture, and its open-source release via HuggingFace, which enables controlled layer-wise analysis. For each model, we retain activations from all transformer layers. Prior work has shown that linguistic competencies emerge at different depths in Transformer models – early layers encoding lexical information, intermediate layers capturing syntactic and semantic structure, and later layers reflecting discourse-level properties (Tenney et al., 2019a). Extending this line of inquiry to decoder-only architectures, we train probes on (i) individual layers, and (ii) a learned scalar mixture over all layers. Comparing these settings allows us to localize where information relevant to parallelism is most strongly represented. The scalar mixture assigns a learned weight to each layer, producing a weighted sum of layer representations. We contrast the resulting performance with that obtained from probes trained on embeddings extracted from single layers in isolation. Span representations are obtained via mean pooling over token embeddings within the span. As an ablation, we also evaluate max pooling, finding qualitatively similar trends. Following standard probing practice for decoder-only models, we extract activations from the final token of each span, consistent with evidence that feed-forward layers in Transformers function as key–value memories encoding learned textual patterns (Geva et al., 2021; Meng et al., 2023). 
+
+4.3.2 Scoring Models 
+
+Given an anchor and a candidate span, we evaluate both non-parametric and learned scoring functions to assess rhetorical parallelism. As a strong baseline, we use cosine simi-larity between span embeddings, testing whether parallelism can be reduced to embedding proximity alone. We additionally train low-capacity learned rankers—a linear model and a shallow MLP—over standard pairwise comparison features derived from the two embed-dings. Model capacity is intentionally constrained following best practices in probe design (Hewitt & Liang, 2019). For the rhetorical task, we include distance-based ablations to control for positional con-founds, as parallel spans frequently occur near one another in text. These baselines allow us to isolate representational sensitivity to rhetorical structure beyond simple adjacency. Full mathematical definitions of feature maps, scoring functions, and ablations are provided in section F. 
+
+4.4 Evaluation Metrics 
+
+For parallelism tasks, we report standard information retrieval metrics: Mean Reciprocal Rank (MRR), pairwise accuracy, and Mean Average Precision (MAP), which we treat as our primary metric due to its sensitivity to multiple positives. For auxiliary classification tasks (section 6), we report F1, AUROC, and accuracy. All metrics range from 0 to 1, with higher values indicating better performance. 5Preprint. Under review. 
+
+## 5 Results 
+
+Narrative parallelism probing achieves moderate but consistent performance (Figure 2). The best classifier (MLP) achieves MAP of 0.3506 for base and 0.3493 for instruction-tuned variants, with logistic regression slightly lower (0.3467 and 0.3447) and cosine similarity performing worst (0.3239 and 0.3230). Learned classifiers provide modest improvements over cosine similarity (8–9% relative improvement), suggesting narrative parallelism benefits from non-linear transformations. Layerwise analysis reveals that narrative parallelism information is evenly distributed across layers (Figure 3). Individual layers achieve MAP scores of 0.33–0.35, comparable to the all-layers configuration (0.35), indicating that narrative parallelism does not require integration across multiple layers. This contrasts with rhetorical parallelism, which shows clear progression from early to late layers. 
+
+Rhetorical parallelism probing demonstrates exceptional performance, substantially higher than narrative parallelism (Figure 2). Embedding-based classifiers achieve MAP of 0.93 (MLP) and 0.91 (logistic regression), with cosine similarity achieving 0.89. However, the distance-only baseline achieves MAP of 0.9843 (Table 4), exceeding all embedding-based methods. Combining embeddings with distance (FULL classifier) yields MAP of 0.9845, es-sentially identical to distance-only, indicating that spatial proximity dominates performance and provides strong evidence for locality dependence in rhetorical parallelism. Layerwise progression further supports locality dependence (Figure 3): early layers (0–2) achieve MAP around 0.73–0.75, while later layers (8–15) achieve MAP above 0.90, with peak performance around layers 8–9 (0.93–0.94). This progression suggests that while later layers may capture more abstract patterns, the fundamental locality signal is present even in early layers. The dominance of distance-only performance suggests this signal is primarily structural rather than semantic. 
+
+Individual layers versus full-model configurations reveal distinct patterns. For narrative parallelism, individual layers (MAP 0.33–0.35) match all-layers performance (0.35), indi-cating information is accessible from single layers. For rhetorical parallelism, early layers achieve MAP around 0.73 while later layers exceed 0.90, with all-layers configuration (0.93) performing similarly to the best individual layers. Learned layer weights from ScalarMix show that narrative parallelism has relatively uniform weights across early layers with gradual increases in later layers For rhetorical parallelism, weights are lower in early layers with a sharp increase around layer 9 and sustained high weights through layer 15. These patterns align with the performance differences: narrative parallelism relies on distributed semantic representations accessible from multiple layers, while rhetorical parallelism depends primarily on structural locality, with distance-based features (MAP 0.98) dominating over embedding-based features (MAP 0.93). 
+
+## 6 Auxiliary Tasks 
+
+Although our primary focus is parallelism, we include a set of simpler auxiliary tasks as sanity checks for our probing framework. These tasks are well-studied, have estab-lished annotation standards, and operate over literary text, making them suitable controls for assessing whether our methodology can recover known linguistic and discourse-level distinctions. We consider four auxiliary tasks as an initial benchmark for validating our approach: (1) Event Detection, (2) Entity Detection, (3) Entity Coreference, (4) Quote Attri-bution. Each task is uniformly cast as a binary classification problem over spans or span pairs, allowing direct comparison across tasks and models. We describe the tasks’ datasets, experiments, and results in Appendix D. 6Preprint. Under review. 
+
+## 7 Probing vs. Prompting 
+
+7.1 Prompted Ranking Setup 
+
+We compare probing performance to prompted ranking from decoder-only LLMs, including open-source LLaMA3 models (both instruction-tuned and base variants) and closed-source models (GPT-5.2-2025-12-11 and Claude Opus 4.5-20251101). For prompting, we use a fixed set of 20 candidates per example, randomized to avoid spatial cues, and ask models to provide scalar scores between 0.0–10.0 for each candidate along with reasoning for the top-3 highest-scoring candidates. We enforce structured output using Pydantic models. For the rhetorical task, we provide 50 tokens of context and restrict examples to the first branch in each set to ensure the true answer is not included in the context. 
+
+7.2 Comparison Results                               
+
+> Task Model MAP MRR Pairwise Acc.
+> Narrative Claude Opus 0.8158 0.9127 0.8892 GPT-5.2 0.8181 0.9126 0.8921 Llama-1B-Instruct 0.3486 0.4487 0.4937 Llama-8B-Instruct 0.2987 0.3540 0.4512
+> Rhetorical Claude Opus 0.9084 0.9077 0.9558 GPT-5.2 0.9000 0.9009 0.9753 Llama-1B-Instruct 0.1779 0.1921 0.4658 Llama-8B-Instruct 0.1710 0.1819 0.4760
+
+Table 3: Prompting experiments on narrative and rhetorical parallelism tasks. Results show that closed-source models (Claude Opus, GPT-5.2) substantially outperform open-source LLaMA models on both tasks, with particularly large gaps on rhetorical parallelism.                    
+
+> Classifier MAP (mean ±std) ±
+> Cosine 0.8890 ±0.0088 Distance 0.9843 ±0.0061 Logreg 0.9149 ±0.0096 MLP 0.9278 ±0.0088 Full 0.9845 ±0.0036
+
+Table 4: MAP (mean ± std) for Rhetorical Task, Base Variant, 1B Model Our comparison reveals task-dependent patterns (Figure 4). For narrative parallelism, open-source probing and prompting converge (MAP ≈0.35), while closed-source models substantially outperform both (GPT-5.2 and Claude Opus: MAP ≈0.82). For rhetorical parallelism, the pattern diverges strikingly: open-source models achieve MAP of 0.93 when probed but only 0.17–0.18 when prompted, while closed-source models reach probing-level performance (GPT-5.2: 0.90, Claude Opus: 0.91). The distance-only baseline (MAP 0.98, Table 4) exceeds all other methods, reinforcing the importance of locality for rhetorical parallelism. We discuss the implications of these patterns in section 8. 
+
+## 8 Analysis and Discussion 
+
+8.1 Are Probes Relying on Linguistic Information? 
+
+To investigate this question, we applied eight non-LLM-based, linguistic/stylometric meth-ods to the ASP and ARN test sets. These include methods to estimate lexical similarity based on word and N-gram overlaps, syntactic similarity using part of speech (POS) tags, and semantic similarity using sentence embeddings. We find that these methods have varying success in identifying similar and dissimilar documents in the ARN and ASP datasets. We 7Preprint. Under review. observe better results with the ASP dataset, particularly in recognizing dissimilar docu-ments, though this may be due to the shorter average length of ASP spans, which allow for fewer possible sets of overlaps and POS combinations. Further details and pairplots for both datasets are presented in Appendix E. 
+
+8.2 What Does Probing vs. Prompting Reveal? 
+
+The most striking finding is a task-dependent dissociation between what models know 
+
+(probing) and what they can do (prompting). For rhetorical parallelism, LLaMA-3.2-1B-Instruct achieves MAP of 0.93 when probed but only 0.18 when prompted—a fivefold gap—indicating that rhetorical structure is linearly decodable yet inaccessible through instruction-following. That closed-source models achieve probing-level performance (GPT-5.2: 0.90, Claude Opus: 0.91) confirms this is not a task limitation but reflects how open-source models fail to recruit encoded knowledge. Narrative parallelism presents a different picture: information is both weakly encoded and weakly accessible. Probing and open-source prompting converge at MAP ≈0.35, while even closed-source models (MAP 0.82) fall well short of the near-perfect rhetorical scores, suggesting narrative analogy is genuinely harder—requiring abstraction beyond structural patterns. These patterns have methodological implications. The rhetorical results challenge the assumption that probing reflects usable model capabilities, while the narrative results, where probing and prompting agree, support probing’s validity. This task-dependent relationship suggests that probing and prompting should be evaluated together, with their agreement or disagreement providing diagnostic information about how knowledge is encoded and accessed. 
+
+## 9 Conclusion 
+
+We introduced NARB, a benchmark for analogical reasoning in literary texts, and used it to compare probing and prompting as windows into model capabilities. Our central finding is a task-dependent asymmetry: rhetorical parallelism is strongly encoded (MAP 0.93) yet largely inaccessible via prompting in open-source models (MAP 0.18), whereas narrative parallelism is both weakly encoded and weakly accessible (MAP ≈0.35). Neither method alone provides a complete picture—what is decodable from internal states is not always achievable through prompting, and vice versa. These results suggest that evaluation relying solely on prompting may underestimate model capabilities, and that probing and prompting should be used jointly when assessing how knowledge is represented and accessed. 
+
+## References 
+
+David Bamman, Sejal Popat, and Sheng Shen. An annotated dataset of literary entities. In 
+
+Proceedings of the 2019 Conference of the North , pp. 2138–2144, Minneapolis, Minnesota, 2019. Association for Computational Linguistics. doi: 10.18653/v1/N19-1220. David Bamman, Olivia Lewke, and Anya Mansoor. An Annotated Dataset of Coreference in English Literature, May 2020. Yonatan Belinkov. Probing Classifiers: Promises, Shortcomings, and Advances. Com-putational Linguistics , 48(1):207–219, April 2022. ISSN 0891-2017, 1530-9312. doi: 10.1162/coli_a_00422. Stephen Bothwell, Justin DeBenedetto, Theresa Crnkovich, Hildegund Müller, and David Chiang. Introducing Rhetorical Parallelism Detection: A New Task with Datasets, Metrics, and Baselines. In Houda Bouamor, Juan Pino, and Kalika Bali (eds.), Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing , pp. 5007–5039, Singapore, December 2023. Association for Computational Linguistics. doi: 10.18653/v1/ 2023.emnlp-main.305. 8Preprint. Under review. Jerome Bruner. Actual Minds, Possible Worlds . Actual Minds, Possible Worlds. Harvard University Press, Cambridge, MA, US, 1986. ISBN 978-0-674-00365-1. Kevin Dunbar and David Klahr. Scientific thinking and reasoning. The Oxford Handbook of Thinking and Reasoning , 11 2012. doi: 10.1093/oxfordhb/9780199734689.013.0035. David K. Elson. Detecting Story Analogies from Annotations of Time, Action and Agency. 2012. Dedre Gentner and Linsey A. Smith. Analogical learning and reasoning. , pp. 668–681. Oxford library of psychology. Oxford University Press, New York, NY, US, 2013. ISBN 0-19-537674-9 (Hardcover); 978-0-19-537674-6 (Hardcover). doi: 10.1093/oxfordhb/9780195376746. 001.0001. URL https://doi.org/10.1093/oxfordhb/9780195376746.001.0001 .Mor Geva, Roei Schuster, Jonathan Berant, and Omer Levy. Transformer Feed-Forward Layers Are Key-Value Memories, September 2021. Sayan Ghosh and Shashank Srivastava. ePiC: Employing Proverbs in Context as a Bench-mark for Abstract Language Understanding. In Smaranda Muresan, Preslav Nakov, and Aline Villavicencio (eds.), Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 3989–4004, Dublin, Ireland, May 2022. Association for Computational Linguistics. doi: 10.18653/v1/2022.acl-long.276. Sil Hamilton, Matthew Wilkens, and Andrew Piper. Narrabench: A comprehensive frame-work for narrative benchmarking, 2025. URL https://arxiv.org/abs/2510.09869 .Linyang He, Peili Chen, Ercong Nie, Yuanning Li, and Jonathan R. Brennan. Decoding Probing: Revealing Internal Linguistic Structures in Neural Language Models using Minimal Pairs, March 2024. John Hewitt and Percy Liang. Designing and Interpreting Probes with Control Tasks. In Kentaro Inui, Jing Jiang, Vincent Ng, and Xiaojun Wan (eds.), Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) , pp. 2733–2743, Hong Kong, China, November 2019. Association for Computational Linguistics. doi: 10.18653/v1/ D19-1275. Keith J. Holyoak. Analogy and relational reasoning. , pp. 234–259. Oxford library of psychology. Oxford University Press, New York, NY, US, 2012. ISBN 978-0-19-973468-9 (Hardcover). Marzena Karpinska, Katherine Thai, Kyle Lo, Tanya Goyal, and Mohit Iyyer. One thousand and one pairs: A "novel" challenge for long-context language models, 2024. URL https: //arxiv.org/abs/2406.16264 .Hyunwoo Kim, Melanie Sclar, Xuhui Zhou, Ronan Le Bras, Gunhee Kim, Yejin Choi, and Maarten Sap. Fantom: A benchmark for stress-testing machine theory of mind in interactions, 2023. URL https://arxiv.org/abs/2310.15421 .Kalpesh Krishna, John Wieting, and Mohit Iyyer. Reformulating Unsupervised Style Trans-fer as Paraphrase Generation. In Bonnie Webber, Trevor Cohn, Yulan He, and Yang Liu (eds.), Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pp. 737–762, Online, November 2020. Association for Computational Linguistics. doi: 10.18653/v1/2020.emnlp-main.55. Belinda Z. Li, Maxwell Nye, and Jacob Andreas. Implicit Representations of Meaning in Neural Language Models. In Chengqing Zong, Fei Xia, Wenjie Li, and Roberto Navigli (eds.), Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) , pp. 1813–1827, Online, August 2021. Association for Computational Linguistics. doi: 10.18653/v1/2021.acl-long.143. 9Preprint. Under review. Hope McGovern, Hale Sirin, Tom Lippincott, and Andrew Caines. Detecting narrative patterns in biblical Hebrew and Greek. In John Pavlopoulos, Thea Sommerschield, Yannis Assael, Shai Gordin, Kyunghyun Cho, Marco Passarotti, Rachele Sprugnoli, Yudong Liu, Bin Li, and Adam Anderson (eds.), Proceedings of the 1st Workshop on Machine Learning for Ancient Languages (ML4AL 2024) , pp. 269–279, Hybrid in Bangkok, Thailand and online, August 2024. Association for Computational Linguistics. doi: 10.18653/v1/2024.ml4al-1. 26. URL https://aclanthology.org/2024.ml4al-1.26/ .Hope McGovern, Hale Sirin, and Tom Lippincott. Computational discovery of chias-mus in ancient religious text. In Luis Chiruzzo, Alan Ritter, and Lu Wang (eds.), 
+
+Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Associ-ation for Computational Linguistics: Human Language Technologies (Volume 2: Short Pa-pers) , pp. 154–160, Albuquerque, New Mexico, April 2025. Association for Computa-tional Linguistics. ISBN 979-8-89176-190-2. doi: 10.18653/v1/2025.naacl-short.13. URL 
+
+https://aclanthology.org/2025.naacl-short.13/ .Kevin Meng, David Bau, Alex Andonian, and Yonatan Belinkov. Locating and Editing Factual Associations in GPT, January 2023. Jingcheng Niu, Wenjie Lu, and Gerald Penn. Does BERT Rediscover a Classical NLP Pipeline? In International Conference on Computational Linguistics , 2022. Matthew Sims and David Bamman. Measuring Information Propagation in Literary Social Networks, October 2020. Matthew Sims, Jong Ho Park, and David Bamman. Literary Event Detection. In Anna Korhonen, David Traum, and Lluís Màrquez (eds.), Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , pp. 3623–3634, Florence, Italy, July 2019. Association for Computational Linguistics. doi: 10.18653/v1/P19-1353. Zhivar Sourati, Filip Ilievski, Pia Sommerauer, and Yifan Jiang. ARN: Analogical Reasoning on Narratives. Transactions of the Association for Computational Linguistics , 12:1063–1086, 2024. doi: 10.1162/tacl_a_00688. Aarohi Srivastava, Abhinav Rastogi, Abhishek Rao, Abu Awal Md Shoeb, Abubakar Abid, Adam Fisch, Adam R. Brown, Adam Santoro, Aditya Gupta, Adrià Garriga-Alonso, Agnieszka Kluska, Aitor Lewkowycz, Akshat Agarwal, Alethea Power, Alex Ray, Alex Warstadt, Alexander W. Kocurek, Ali Safaya, Ali Tazarv, Alice Xiang, Alicia Parrish, Allen Nie, Aman Hussain, Amanda Askell, Amanda Dsouza, Ambrose Slone, Ameet Rahane, Anantharaman S. Iyer, Anders Andreassen, Andrea Madotto, Andrea Santilli, Andreas Stuhlmüller, Andrew Dai, Andrew La, Andrew Lampinen, Andy Zou, Angela Jiang, Angelica Chen, Anh Vuong, Animesh Gupta, Anna Gottardi, Antonio Norelli, Anu Venkatesh, Arash Gholamidavoodi, Arfa Tabassum, Arul Menezes, Arun Kirubara-jan, Asher Mullokandov, Ashish Sabharwal, Austin Herrick, Avia Efrat, Aykut Erdem, Ayla Karaka¸ s, B. Ryan Roberts, Bao Sheng Loe, Barret Zoph, Bartłomiej Bojanowski, Batuhan Özyurt, Behnam Hedayatnia, Behnam Neyshabur, Benjamin Inden, Benno Stein, Berk Ekmekci, Bill Yuchen Lin, Blake Howald, Bryan Orinion, Cameron Diao, Cameron Dour, Catherine Stinson, Cedrick Argueta, César Ferri Ramírez, Chandan Singh, Charles Rathkopf, Chenlin Meng, Chitta Baral, Chiyu Wu, Chris Callison-Burch, Chris Waites, Christian Voigt, Christopher D. Manning, Christopher Potts, Cindy Ramirez, Clara E. Rivera, Clemencia Siro, Colin Raffel, Courtney Ashcraft, Cristina Garbacea, Damien Sileo, Dan Garrette, Dan Hendrycks, Dan Kilman, Dan Roth, Daniel Freeman, Daniel Khashabi, Daniel Levy, Daniel Moseguí González, Danielle Perszyk, Danny Hernandez, Danqi Chen, Daphne Ippolito, Dar Gilboa, David Dohan, David Drakard, David Jurgens, Debajyoti Datta, Deep Ganguli, Denis Emelin, Denis Kleyko, Deniz Yuret, Derek Chen, Derek Tam, Dieuwke Hupkes, Diganta Misra, Dilyar Buzan, Dimitri Coelho Mollo, Diyi Yang, Dong-Ho Lee, Dylan Schrader, Ekaterina Shutova, Ekin Dogus Cubuk, Elad Segal, Eleanor Hagerman, Elizabeth Barnes, Elizabeth Donoway, Ellie Pavlick, Emanuele Rodola, Emma Lam, Eric Chu, Eric Tang, Erkut Erdem, Ernie Chang, Ethan A. Chi, Ethan Dyer, Ethan Jerzak, Ethan Kim, Eunice Engefu Manyasi, Evgenii Zheltonozhskii, Fanyue Xia, Fate-meh Siar, Fernando Martínez-Plumed, Francesca Happé, Francois Chollet, Frieda Rong, 10 Preprint. Under review. Gaurav Mishra, Genta Indra Winata, Gerard de Melo, Germán Kruszewski, Giambat-tista Parascandolo, Giorgio Mariani, Gloria Wang, Gonzalo Jaimovitch-López, Gregor Betz, Guy Gur-Ari, Hana Galijasevic, Hannah Kim, Hannah Rashkin, Hannaneh Ha-jishirzi, Harsh Mehta, Hayden Bogar, Henry Shevlin, Hinrich Schütze, Hiromu Yakura, Hongming Zhang, Hugh Mee Wong, Ian Ng, Isaac Noble, Jaap Jumelet, Jack Geissinger, Jackson Kernion, Jacob Hilton, Jaehoon Lee, Jaime Fernández Fisac, James B. Simon, James Koppel, James Zheng, James Zou, Jan Koco ´ n, Jana Thompson, Janelle Wingfield, Jared Kaplan, Jarema Radom, Jascha Sohl-Dickstein, Jason Phang, Jason Wei, Jason Yosin-ski, Jekaterina Novikova, Jelle Bosscher, Jennifer Marsh, Jeremy Kim, Jeroen Taal, Jesse Engel, Jesujoba Alabi, Jiacheng Xu, Jiaming Song, Jillian Tang, Joan Waweru, John Bur-den, John Miller, John U. Balis, Jonathan Batchelder, Jonathan Berant, Jörg Frohberg, Jos Rozen, Jose Hernandez-Orallo, Joseph Boudeman, Joseph Guerr, Joseph Jones, Joshua B. Tenenbaum, Joshua S. Rule, Joyce Chua, Kamil Kanclerz, Karen Livescu, Karl Krauth, Karthik Gopalakrishnan, Katerina Ignatyeva, Katja Markert, Kaustubh D. Dhole, Kevin Gimpel, Kevin Omondi, Kory Mathewson, Kristen Chiafullo, Ksenia Shkaruta, Kumar Shridhar, Kyle McDonell, Kyle Richardson, Laria Reynolds, Leo Gao, Li Zhang, Liam Dugan, Lianhui Qin, Lidia Contreras-Ochando, Louis-Philippe Morency, Luca Moschella, Lucas Lam, Lucy Noble, Ludwig Schmidt, Luheng He, Luis Oliveros Colón, Luke Metz, Lütfi Kerem ¸ Senel, Maarten Bosma, Maarten Sap, Maartje ter Hoeve, Maheen Farooqi, Manaal Faruqui, Mantas Mazeika, Marco Baturan, Marco Marelli, Marco Maru, Maria Jose Ramírez Quintana, Marie Tolkiehn, Mario Giulianelli, Martha Lewis, Martin Potthast, Matthew L. Leavitt, Matthias Hagen, Mátyás Schubert, Medina Orduna Baitemirova, Melody Arnaud, Melvin McElrath, Michael A. Yee, Michael Cohen, Michael Gu, Michael Ivanitskiy, Michael Starritt, Michael Strube, Michał Sw˛ edrowski, Michele Bevilacqua, Michihiro Yasunaga, Mihir Kale, Mike Cain, Mimee Xu, Mirac Suzgun, Mitch Walker, Mo Tiwari, Mohit Bansal, Moin Aminnaseri, Mor Geva, Mozhdeh Gheini, Mukund Varma T, Nanyun Peng, Nathan A. Chi, Nayeon Lee, Neta Gur-Ari Krakover, Nicholas Cameron, Nicholas Roberts, Nick Doiron, Nicole Martinez, Nikita Nangia, Niklas Deckers, Niklas Muennighoff, Nitish Shirish Keskar, Niveditha S. Iyer, Noah Constant, Noah Fiedel, Nuan Wen, Oliver Zhang, Omar Agha, Omar Elbaghdadi, Omer Levy, Owain Evans, Pablo Antonio Moreno Casares, Parth Doshi, Pascale Fung, Paul Pu Liang, Paul Vicol, Pegah Alipoormolabashi, Peiyuan Liao, Percy Liang, Peter Chang, Peter Eckersley, Phu Mon Htut, Pinyu Hwang, Piotr Miłkowski, Piyush Patil, Pouya Pezeshkpour, Priti Oli, Qiaozhu Mei, Qing Lyu, Qinlang Chen, Rabin Banjade, Rachel Etta Rudolph, Raefer Gabriel, Rahel Habacker, Ramon Risco, Raphaël Millière, Rhythm Garg, Richard Barnes, Rif A. Saurous, Riku Arakawa, Robbe Raymaekers, Robert Frank, Rohan Sikand, Roman Novak, Roman Sitelew, Ronan LeBras, Rosanne Liu, Rowan Jacobs, Rui Zhang, Ruslan Salakhutdinov, Ryan Chi, Ryan Lee, Ryan Stovall, Ryan Teehan, Rylan Yang, Sahib Singh, Saif M. Mo-hammad, Sajant Anand, Sam Dillavou, Sam Shleifer, Sam Wiseman, Samuel Gruetter, Samuel R. Bowman, Samuel S. Schoenholz, Sanghyun Han, Sanjeev Kwatra, Sarah A. Rous, Sarik Ghazarian, Sayan Ghosh, Sean Casey, Sebastian Bischoff, Sebastian Gehrmann, Sebastian Schuster, Sepideh Sadeghi, Shadi Hamdan, Sharon Zhou, Shashank Srivastava, Sherry Shi, Shikhar Singh, Shima Asaadi, Shixiang Shane Gu, Shubh Pachchigar, Shubham Toshniwal, Shyam Upadhyay, Shyamolima, Debnath, Siamak Shakeri, Simon Thormeyer, Simone Melzi, Siva Reddy, Sneha Priscilla Makini, Soo-Hwan Lee, Spencer Torene, Srihar-sha Hatwar, Stanislas Dehaene, Stefan Divic, Stefano Ermon, Stella Biderman, Stephanie Lin, Stephen Prasad, Steven T. Piantadosi, Stuart M. Shieber, Summer Misherghi, Svetlana Kiritchenko, Swaroop Mishra, Tal Linzen, Tal Schuster, Tao Li, Tao Yu, Tariq Ali, Tatsu Hashimoto, Te-Lin Wu, Théo Desbordes, Theodore Rothschild, Thomas Phan, Tianle Wang, Tiberius Nkinyili, Timo Schick, Timofei Kornev, Titus Tunduny, Tobias Gerstenberg, Trenton Chang, Trishala Neeraj, Tushar Khot, Tyler Shultz, Uri Shaham, Vedant Misra, Vera Demberg, Victoria Nyamai, Vikas Raunak, Vinay Ramasesh, Vinay Uday Prabhu, Vishakh Padmakumar, Vivek Srikumar, William Fedus, William Saunders, William Zhang, Wout Vossen, Xiang Ren, Xiaoyu Tong, Xinran Zhao, Xinyi Wu, Xudong Shen, Yadollah Yaghoobzadeh, Yair Lakretz, Yangqiu Song, Yasaman Bahri, Yejin Choi, Yichi Yang, Yid-ing Hao, Yifu Chen, Yonatan Belinkov, Yu Hou, Yufang Hou, Yuntao Bai, Zachary Seid, Zhuoye Zhao, Zijian Wang, Zijie J. Wang, Zirui Wang, and Ziyi Wu. Beyond the imitation game: Quantifying and extrapolating the capabilities of language models, 2023. URL 
+
+https://arxiv.org/abs/2206.04615 .11 Preprint. Under review. Ian Tenney, Dipanjan Das, and Ellie Pavlick. BERT Rediscovers the Classical NLP Pipeline. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , pp. 4593–4601, Florence, Italy, July 2019a. Association for Computational Linguistics. doi: 10.18653/v1/P19-1452. Ian Tenney, Patrick Xia, Berlin Chen, Alex Wang, Adam Poliak, R. Thomas McCoy, Na-joung Kim, Benjamin Van Durme, Samuel R. Bowman, Dipanjan Das, and Ellie Pavlick. What do you learn from context? Probing for sentence structure in contextualized word representations. In International Conference on Learning Representations , May 2019b. Philipp Wicke, Lea Hirlimann, and Joao Miguel Cunha. Using Analogical Reasoning to Prompt LLMs for their Intuitions of Abstract Spatial Schemas. The First Workshop on Analogical Abstraction in Cognition, Perception, and Language (Analogy-ANGLE) , August 2024. Michihiro Yasunaga, Xinyun Chen, Yujia Li, Panupong Pasupat, Jure Leskovec, Percy Liang, Ed H. Chi, and Denny Zhou. Large Language Models as Analogical Reasoners. In ICLR 2024 . arXiv, March 2024. doi: 10.48550/arXiv.2310.01714. 
+
+## A Dataset Details 
+
+We evaluate narrative and rhetorical parallelism using two complementary datasets that operationalize parallel structure at markedly different scales. 
+
+Analogical Reasoning over Narratives. To probe analogical reasoning at the document level, we adopt the Analogical Reasoning over Narratives (ARN) dataset introduced by Sourati et al. (2024). The underlying narratives are drawn from the ePiC stories dataset (Ghosh & Srivastava, 2022), which contains 2,500 short narratives written by crowdworkers to illustrate a given English proverb (e.g., Hindsight is 20/20 , Slow and steady wins the race ). The distribution of proverb sizes in shown in Figure 6. Sourati et al. (2024) apply a large language model to extract structured representations from each story, including characters, relations, actions, goals, and locations (collectively termed surface mappings ), as well as the associated proverb, which functions as a system mapping . Using these representations, they construct triplets consisting of an anchor story, an analogous story, and a distractor story. Analogous stories share the same system mapping (i.e., proverb) as the anchor, irrespective of overlap in surface mappings. The dataset further distinguishes between near and far cases. A near analogy exhibits substantial overlap in surface features with the anchor (e.g., similar character goals or settings), whereas a far analogy shares only the abstract system mapping. Distractor stories do not share the system mapping: near distractors may resemble the anchor at the surface level but convey a different underlying message, while far distractors differ in both surface features and proverb. The full dataset comprises 1,096 such triplets. 
+
+Augustinian Sermon Parallelism. To study rhetorical parallelism at a finer granularity, we use the Augustinian Sermon Parallelism (ASP) dataset introduced by Bothwell et al. (2023). This dataset consists of 80 Latin sermons by Augustine of Hippo, annotated by a domain expert for rhetorical structure. Annotations identify sets of parallel spans (referred to as branches ) that jointly instantiate a rhetorical pattern, either synchystic (parallel ordering) or chiastic (inverted ordering). Each set may comprise between two and five spans, often distributed across multiple clauses or sentences. Branch sizes are shown in Figure 5 These annotations capture stylistic symmetry at the level of syntax, semantics, and discourse organization, rather than lexical repetition alone. 
+
+## B Additional Result Figures 
+
+Additional results are shown in Table 5. 12 Preprint. Under review.                                                                                                                          
+
+> Task Variant Classifier MRR MAP Accuracy Narrative Base Cosine 0.4312 ±0.0182 0.3239 ±0.0100 0.2113 ±0.0051 Logreg 0.4537 ±0.0098 0.3467 ±0.0065 0.2114 ±0.0046 MLP 0.4620 ±0.0097 0.3506 ±0.0025 0.2401 ±0.0040 Narrative Instruct Cosine 0.4302 ±0.0181 0.3230 ±0.0102 0.2109 ±0.0048 Logreg 0.4518 ±0.0104 0.3447 ±0.0053 0.2111 ±0.0040 MLP 0.4560 ±0.0104 0.3493 ±0.0066 0.2830 ±0.0170 Rhetorical Base Cosine 0.9039 ±0.0099 0.8890 ±0.0088 0.9625 ±0.0050 Logreg 0.9279 ±0.0092 0.9149 ±0.0096 0.8729 ±0.0082 MLP 0.9398 ±0.0080 0.9278 ±0.0088 0.7088 ±0.0215 Rhetorical Instruct Cosine 0.8933 ±0.0073 0.8749 ±0.0060 0.9604 ±0.0033 Logreg 0.9277 ±0.0079 0.9129 ±0.0083 0.8787 ±0.0107 MLP 0.9382 ±0.0072 0.9255 ±0.0088 0.6938 ±0.0106
+
+Table 5: MRR, MAP, and Accuracy (mean ± std) for different classifiers 
+
+## C Additional Method Details 
+
+C.1 Noise in User-Generated Stories (ARN dataset) 
+
+We observe substantial variation in fluency and grammatical well-formedness across the narratives in ARN, which may introduce noise unrelated to analogical structure. To control for this, we filter narratives using a grammatical acceptability model trained on BliMP-style judgments (Krishna et al., 2020). We retain only narratives with an acceptability score of at least 0.9, removing ill-formed or degenerate generations (see section C for examples). 
+
+Document-level embedding strategy. For both tasks, we embed each entire document – a sermon or a narrative – using a decoder-only language model. Span representations are subsequently extracted from these document-level embeddings. This strategy substantially reduces storage and computation costs while preserving contextual information, and ensures that all span embeddings are derived from a consistent global context. 
+
+## D Auxiliary Tasks 
+
+D.1 Span Classification Framework 
+
+Let a document be represented as a sequence of contextual embeddings 
+
+E = [ e0, e1, . . . , en],extracted from a pretrained language model. A **span** is defined as a half-open interval 
+
+s = [ i, j),corresponding to the subsequence [ei, ei+1, . . . , ej−1].Following Tenney et al. (2019b), we compute fixed-length span representations by applying a learned linear projection to each ek within the span, followed by self-attention pooling across the span window. This yields a single vector representation hs per span. Each classification instance consists of either: 1. A single span ( s1) (event detection, entity detection) 2. A pair of spans (s1, s2) drawn from a shared discourse context (coreference and quote attribution). The classifier then predicts a binary label y ∈ 0, 1 indicating whether the span (or span pair) satisfies the task-specific criterion. Importantly, these tasks do not require ranking; they serve to verify that the same embeddings and lightweight probes can recover more conventional linguistic distinctions. 13 Preprint. Under review. 
+
+Illustrative Examples from Extremes of the Analogy Dataset 
+
+Category Example Content 
+
+Easiest Analogy (Close Analogy, Low Distractor Similarity) 
+
+Proverb: That which does not kill us makes us stronger 
+
+Anchor: When I remember the challenges I went through when I was starting my business, I break into tears. But I do not regret a thing. I think that the most precious gold goes through the hottest furnace. There are great and unforgettable lessons that I learned during that period that I will always cherish. It made me better. 
+
+Analogy: Once upon a time, in a small village, there lived a talented young presenter named Lily. She was faced with countless challenges, from technical difficulties and stage fright to harsh criticism and rejection. However, with each obstacle she overcame, Lily grew stronger, honing her skills, building resilience, and gaining the respect and admiration of her audience. Ultimately, her unwavering determination and ability to thrive in the face of adversity transformed her into a renowned and influential figure, inspiring others to embrace their own inner strength. 
+
+Distractor: I stained my cedar house this last summer in advance thinking about the consequences of not doing so. If I don’t, the sun fades and cracks the wood, and could let drafts in. 
+
+Hardest Analogy (Far Analogy, High Distractor Similarity) 
+
+Proverb: Hindsight is always twenty-twenty 
+
+Anchor: Mark was the new CEO of the company. Under adrenaline rush he decided to go after a small startup that he thought would be profitable for the company. However, months later, it was discovered that the startup would not benefit them much but instead it was costing them a fortune to make a bid for the startup. 
+
+Analogy: Looking at the past decisions, I put too much oil in the fryer and burned the turkey last year, and the year previous to that and also a couple of months ago. That’s also true that at those moments I didn’t know what I’m doing. 
+
+Distractor: After becoming the new CEO of the company John decided to change the microchip in the laptop being produced by his company. However he understood that they need to design an entirely new laptop instead of just changing the chip as the new chip won’t be compatible with the old hardware setup. 
+
+Table 6: Examples from the ARN dataset: Easies and hardest analogies 14 Preprint. Under review. 
+
+D.2 Dataset and Setup 
+
+We describe the provenance and preprocessing of the datasets used for each auxiliary task. Dataset statistics are summarized in Table 7.                     
+
+> Task Provenance # Unique Docs Task Type
+> Event Det. Lit-Bank 100 documents Span Classification Entity Det. Lit-Bank 100 documents Span Classification Entity Coref. Lit-Bank 100 documents Span Pair Classification Quote Attr. Lit-Bank 100 documents Span Pair Classification Rhetorical Sym. Augustinian Sermon Parallelism dataset 80 sermons Ranking Narrative Sym. Analogical Reasoning over Narratives dataset from ePiC stories 872 narratives Ranking
+
+Table 7: Dataset description by task. This table shows the provenance of each dataset alongside the number of unique source documents and task type. 
+
+D.2.1 Task 1: Event Detection 
+
+We use the event annotations introduced by Sims et al. (2019), drawn from the first 2,000 words (210,532 tokens) of 100 literary works in Lit-Bank (Bamman et al., 2019). The dataset contains 7,849 annotated events. Events include activities, accomplishments, achievements, and changes of state, restricted to asserted ( realis ) events involving a specific entity. Event triggers are single tokens (verbs, adjectives, or nominals). We extract the annotations and build the positive set of all extracted events. To build the negative set, we randomly sample token spans of length 1 (each event is 1 token) that are not labeled as events from the full document. 
+
+D.2.2 Task 2: Entity Detection 
+
+For entity detection, we use the entity annotations provided by Bamman et al. (2019), drawn from the same 210,532 first tokens of the 100 Lit-Bank literary works. The final dataset includes 13,912 entity annotations including people, natural locations, built facilities, geopolitical entities, organizations and vehicles. We extract annotations using the first annotator’s labels only, resulting in 11,989 annotations, which represent our positive samples. We randomly sample a set of equal length from the spans that include no entity annotations. The length of each negative sample is randomly chosen between 1 and twice the average length of a positive sample. 
+
+D.2.3 Task 3: Entity Coreference 
+
+For entity coreference, we use Bamman et al. (2020), who build on the entity annotations in Bamman et al. (2019) to annotate coreference mentions of these entities, excluding generic references such as the generic "you". We extract 2,164 coreference mentions and build a positive set by sampling all coreference combinations for the same entity and a negative set by sampling combinations from different entities in the same document. 
+
+D.2.4 Task 4: Quote Attribution 
+
+We derive quote attribution examples from the dataset introduced by Sims & Bamman (2020), who leverage the coreference annotations in Bamman et al. (2020) to attribute 1,765 quotations to their speaker(s), drawing from the same 210,532 first tokens across the Lit-Bank’s 100 literary works. We include all 1,765 in the positive set and build the negative samples by randomly pairing a quotation with a different speaker mentioned in the same document. 15 Preprint. Under review. 
+
+D.2.5 Class Balance and Splits 
+
+Due to the combinatorial nature of span-pair construction, negative examples substantially outnumber positives in all auxiliary tasks. To mitigate extreme class imbalance, we down-sample negative examples to match the number of positive examples, using a fixed random seed (seed=42) for reproducibility. During cross-fold validation (k=5) we use document-level splitting to prevent leakage. Full dataset statistics are reported in Table 7. 
+
+D.3 Models and Evaluation 
+
+For all auxiliary tasks, we use the same embedding extraction procedure as in the parallelism experiments. Span representations (or concatenated span-pair representations) are passed to either a logistic regression classifier or a shallow MLP. No ranking objective is used. We evaluate performance using F1, AUROC, and accuracy, reporting results averaged across cross-validation folds. We show F1 scores in Figures 7, 8, 9, 10. 
+
+D.4 Results 
+
+For the binary classification tasks, we observe best performance on entity detection followed by event detection, quote attribution, and entity coreference (in that order), with a significant gap between the performance of entity coreference and the other three tasks. The smallest model consistently shows the highest performance across all pooling and classification methods, with particular differentiation on quote attribution with mean pooling and MLP classifier. 
+
+## E Linguistic Analysis 
+
+For all methods, we first normalize the spans (ASP) and documents (ARN) by removing punctuation and lowercasing them. To estimate lexical similarity we calculate the jaccard distance between sets of tokens, lemmatized tokens, and 3-grams, and the BLEU score between sets of tokens. For syntactic similarity we extract POS sequences using stanza and then calculate the edit distance and jaccard distance between pairs of spans and documents. We also build dependency trees using Stanza and compute similarity using networkx’s graph edit distance (Latin) and a graph kernel implementation (GraKel) with Weisfeiler Lehman test for graph isomorphism for the longer English documents. Finally, for semantic similarity, we compute the cosine similarity between LaBSE embeddings. In the ARN dataset we find similar distributions of scores across both positive and negative ground truth labels, with a tendency toward either a right-skewed or a normal distribution (figure 11). In the ASP dataset we observe differentiation in the distributions of scores by label. Dissimilar spans have lower similarity scores across all metrics except the edit distance on dependency trees. Similar spans likewise have higher similarity scores except in the four lexical similarity metrics (jaccard distance on tokens, lemmas, 3-grams and BLEU score), where they show a more uniform distribution (Figure 12). 
+
+## F Scoring Models and Training Details 
+
+F.1 Span Embeddings 
+
+Let ha, hc ∈ Rd denote the embeddings of an anchor span a and a candidate span c, respec-tively. Span embeddings are obtained via mean pooling over token-level embeddings within each span. As an ablation, we also evaluate max pooling and observe qualitatively similar trends. For decoder-only models, we extract activations from the final token of each span, following standard probing practice and prior evidence that Transformer feed-forward layers encode salient textual patterns (Geva et al., 2021; Meng et al., 2023). 16 Preprint. Under review. 
+
+F.2 Feature Representations 
+
+We define a standard pairwise feature map for comparing spans: 
+
+ϕ(a, c) = [ ha; hc; |ha − hc|; ha ⊙ hc] ∈ R4d,where ⊙ denotes element-wise multiplication. 
+
+F.3 Scoring Functions Cosine similarity baseline. As a non-parametric baseline, we compute cosine similarity between span embeddings: 
+
+scos (a, c) = cos (ha, hc).
+
+Learned embedding rankers. We consider two low-capacity learned scorers over the pairwise feature representation. The first is a linear model, 
+
+slr (a, c) = w⊤ϕ(a, c),and the second is a shallow multilayer perceptron, 
+
+smlp (a, c) = MLP (ϕ(a, c)) .Model capacity is intentionally constrained following best practices in probe design (Hewitt & Liang, 2019). 
+
+Distance-based ablations (rhetorical task only). To control for positional confounds, we introduce distance-based baselines. Let ∆(a, c) denote the token distance between spans. The distance-only representation is defined as 
+
+xdist (a, c) = [ ∆(a, c), |∆(a, c)|].We additionally evaluate a combined embedding–distance representation, 
+
+ϕfull (a, c) = [ ϕ(a, c); ∆(a, c); |∆(a, c)|],which tests whether embeddings capture rhetorical structure beyond adjacency. 
+
+F.4 Training Objective 
+
+All learned scorers are trained using a pairwise ranking loss. Given an anchor a, a positive candidate p, and a negative candidate n, the objective is 
+
+L = − log σ s(a, p) − s(a, n),which encourages positive candidates to be assigned higher scores than negatives. We employ in-batch negatives throughout training and optimize all models using Adam with standard hyperparameters. 17 Preprint. Under review. 
+
+Figure 1: Analogical reasoning is a higher-order capability that requires a combination of lower-level tasks such as entity detection or coreference resolution. Task     
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MAP (Mean Average Precision)
+> NarrativeRhetorical
+> CosineLogregMlp
+> Classifier
+> CosineLogregMlp
+> Classifier
+> Base
+> Instruct
+> Variant
+
+Figure 2: MAP for narrative (left) and rhetorical (right) parallelism tasks across different classifier architectures and model variants on Llama-3.2-1B. Bars show MAP scores (mean ± standard deviation) for three classifier types: cosine similarity (Cosine), logistic regression (Logreg), and multi-layer perceptron (MLP), with separate bars for base and instruction-tuned (Instruct) model variants. 18 Preprint. Under review. 0.00                              
+
+> 0.05
+> 0.10
+> Layer Weight
+> 0123456789101112131415
+> Layer
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> MAP (Mean Average Precision)
+> Narrative
+> 0.00
+> 0.05
+> 0.10
+> Layer Weight
+> 0123456789101112131415
+> Layer
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MAP (Mean Average Precision)
+> Rhetorical
+
+Figure 3: Individual layer performance vs. all-layers configuration on Llama-3.2-1B base model with MLP classifiers. Top panels show learned layer weights from ScalarMix (av-eraged across cross-validation folds), indicating the relative contribution of each layer when all layers are combined. Bottom panels show mean average precision (MAP) for each individual layer (bars with error bars showing standard deviation) and the all-layers performance (red dashed horizontal line). Claude
+
+> GPT
+> Llama-1B-Instruct
+> Llama-8B-Instruct
+
+Model
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MAP (Mean Average Precision)
+
+Rhetorical
+
+> Claude
+> GPT
+> Llama-1B-Instruct
+> Llama-8B-Instruct
+
+Model
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MAP (Mean Average Precision)
+
+Narrative
+
+Figure 4: MAP on prompted ranking across different models 19 Preprint. Under review. 
+
+Figure 5: Distribution of branch sizes based on the number of spans per parallel set 
+
+Figure 6: Distribution of proverb sizes based on the number of narratives per proverb Entity Coref.
+
+> Entity Det.
+> Event Det.
+> Quote Attr.
+> task
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> f1
+> meta-llama-Llama-3.1-8B
+> meta-llama-Llama-3.2-1B
+> meta-llama-Llama-3.2-3B
+> Model
+
+Figure 7: 1/3/8B Llama F1 vs Lit-Bank Task (Pooling: Mean, Classifier: MLP) 20 Preprint. Under review. Entity Coref.
+
+> Entity Det.
+> Event Det.
+> Quote Attr.
+
+task
+
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+
+> f1
+
+meta-llama-Llama-3.1-8B
+
+meta-llama-Llama-3.2-1B
+
+meta-llama-Llama-3.2-3B
+
+Model
+
+Figure 8: 1/3/8B Llama F1 vs Lit-Bank Task (Pooling: Mean, Classifier: LogReg) Entity Coref.
+
+> Entity Det.
+> Event Det.
+> Quote Attr.
+
+task
+
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+
+> f1
+
+meta-llama-Llama-3.1-8B
+
+meta-llama-Llama-3.2-1B
+
+meta-llama-Llama-3.2-3B
+
+Model
+
+Figure 9: 1/3/8B Llama F1 vs Lit-Bank Task (Pooling: Max, Classifier: MLP) 21 Preprint. Under review. Entity Coref.
+
+> Entity Det.
+> Event Det.
+> Quote Attr.
+
+task
+
+0.0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1.0
+
+> f1
+
+meta-llama-Llama-3.1-8B
+
+meta-llama-Llama-3.2-1B
+
+meta-llama-Llama-3.2-3B
+
+Model
+
+Figure 10: 1/3/8B Llama F1 vs Lit-Bank Task (Pooling: Max, Classifier: LogReg) 0.0 
+
+0.5 
+
+1.0 
+
+jaccard_tokens 
+
+0.0 
+
+0.5 
+
+1.0 
+
+jaccard_lemmas 
+
+0.0 
+
+0.5 
+
+1.0 
+
+pos_edit_distance 
+
+0.0 
+
+0.5 
+
+1.0 
+
+pos_jaccard 
+
+0.0 
+
+0.5 
+
+1.0 
+
+bleu_score 
+
+0.0 
+
+0.5 
+
+1.0 
+
+char_3gram_overlap 
+
+0.0 
+
+0.5 
+
+1.0 
+
+labse_cosine 
+
+0 1
+
+jaccard_tokens 
+
+0.0 
+
+0.5 
+
+1.0 
+
+graph_similarity_score 
+
+0.0 0.5 1.0 
+
+jaccard_lemmas 
+
+0.0 0.5 1.0 
+
+pos_edit_distance 
+
+0 1
+
+pos_jaccard 
+
+0.0 0.5 1.0 
+
+bleu_score 
+
+0.0 0.5 1.0 
+
+char_3gram_overlap 
+
+0.0 0.5 1.0 
+
+labse_cosine 
+
+0.0 0.5 1.0 
+
+graph_similarity_score 
+
+ARN Feature Pairplots 
+
+Ground Truth Label 
+
+Similar 
+
+Dissimilar 
+
+Figure 11: Similarity Scores across 446 ARN Document Pairs (Normalized with Min-Max Scaling) Using Non-LLM-Based Methods 22 Preprint. Under review. 0.0 
+
+0.5 
+
+1.0 
+
+jaccard_tokens 
+
+0.0 
+
+0.5 
+
+1.0 
+
+jaccard_lemmas 
+
+0.0 
+
+0.5 
+
+1.0 
+
+pos_edit_distance 
+
+0.0 
+
+0.5 
+
+1.0 
+
+pos_jaccard 
+
+0.0 
+
+0.5 
+
+1.0 
+
+bleu_score 
+
+0.0 
+
+0.5 
+
+1.0 
+
+char_3gram_overlap 
+
+0.0 
+
+0.5 
+
+1.0 
+
+labse_cosine 
+
+0.0 0.5 1.0 
+
+jaccard_tokens 
+
+0.0 
+
+0.5 
+
+1.0 
+
+graph_similarity_score 
+
+0.0 0.5 1.0 
+
+jaccard_lemmas 
+
+0 1
+
+pos_edit_distance 
+
+0 1
+
+pos_jaccard 
+
+0 1
+
+bleu_score 
+
+0 1
+
+char_3gram_overlap 
+
+0.0 0.5 1.0 
+
+labse_cosine 
+
+0.0 0.5 1.0 
+
+graph_similarity_score 
+
+ASP Feature Pairplots 
+
+Ground Truth Label 
+
+Similar 
+
+Dissimilar 
+
+Figure 12: Similarity Scores across 564 ASP Span Pairs (Normalized with Min-Max Scaling) Using Non-LLM-Based Methods 23
