@@ -1,0 +1,2682 @@
+Title: Multilingual Language Models Encode Script Over Linguistic Structure
+
+URL Source: https://arxiv.org/pdf/2604.05090v1
+
+Published Time: Wed, 08 Apr 2026 00:06:08 GMT
+
+Number of Pages: 32
+
+Markdown Content:
+## Multilingual Language Models Encode Script Over Linguistic Structure 
+
+Aastha A K Verma † Anwoy Chatterjee † Mehak Gupta Tanmoy Chakraborty 
+
+Indian Institute of Technology Delhi 
+
+aastha.v1411@gmail.com anwoychatterjee@gmail.com aiz258464@scai.iitd.ac.in tanchak@iitd.ac.in 
+
+Abstract 
+
+Multilingual language models (LMs) organize representations for typologically and ortho-graphically diverse languages into a shared parameter space, yet the nature of this inter-nal organization remains elusive. In this work, we investigate which linguistic properties – ab-stract language identity or surface-form cues – shape multilingual representations. Focus-ing on compact, distilled models where repre-sentational trade-offs are explicit, we analyze language-associated units in Llama-3.2-1B and Gemma-2-2B using the Language Activation Probability Entropy (LAPE) metric, and fur-ther decompose activations with Sparse Autoen-coders. We find that these units are strongly conditioned on orthography: romanization in-duces near-disjoint representations that align with neither native-script inputs nor English, while word-order shuffling has limited effect on unit identity. Probing shows that typologi-cal structure becomes increasingly accessible in deeper layers, while causal interventions in-dicate that generation is most sensitive to units that are invariant to surface-form perturbations rather than to units identified by typological alignment alone. Overall, our results suggest that multilingual LMs organize representations around surface form, with linguistic abstraction emerging gradually without collapsing into a unified interlingua. 
+
+1 Introduction 
+
+Language is an amalgamation of historical acci-dents, cognitive constraints, and cultural evolu-tion. It is rarely a monolith; rather, it emerges as a layered outcome of interactions among peoples, geographies, and time (Thomason and Kaufman, 1988; Toscano et al., 2008; Smith and Kirby, 2008; Beckner et al., 2009; Evans and Levinson, 2009; 
+
+> †These two authors contributed equally to this work.
+> https://github.com/loadthecode0/ multilingual-interpretability
+
+Michaud, 2024). Modern English illustrates this clearly: while it is taxonomically a West Germanic language, sharing core syntactic and phonologi-cal structure with German and Dutch, its lexicon is heavily shaped by Romance influence through Latin and French (Baugh and Cable, 2002; Crys-tal, 2003; Wardhaugh and Fuller, 2014). When a sentence such as “the magnitude of liberty” is processed, Latinate vocabulary is embedded within a Germanic grammatical frame (Reppucci, 2017). This raises a fundamental question for modern auto-regressive language models (LMs): do they inter-nally preserve such linguistic distinctions, or do they abstract away surface variations into a shared, language-agnostic representation? This question becomes especially crucial in mul-tilingual settings. When a model processes typo-logically distant languages such as English, Hindi, and Chinese, does it rely on distinct internal repre-sentations for each language, or does it converge toward a shared interlingual latent space? Insights from bilingual cognition show that shared semantic representations can coexist with segregated surface-form processing (Costa and Sebastián-Gallés, 2014; Marian et al., 2003; Buchweitz et al., 2011; Miozzo et al., 2010). This distinction remains underex-plored in compact multilingual models, where lim-ited capacity makes trade-offs between surface-form processing and linguistic abstraction more explicit, providing a controlled setting to study how multilingual structure emerges. Recent work has begun to probe this question (Tang et al., 2024; Kojima et al., 2024; Deng et al., 2025; Andrylie et al., 2025). Specifically, Tang et al. (2024) introduced the Language Activation Probability Entropy (LAPE) metric to identify neu-rons that preferentially activate for specific lan-guages in multilingual LMs. They showed that a relatively small subset of neurons concentrated primarily in early and late layers has a strong in-fluence on language selection and can be causally 
+
+> arXiv:2604.05090v1 [cs.CL] 6 Apr 2026
+
+manipulated to steer the output language. Subse-quent work extended this approach using Sparse Autoencoders (SAEs), the method being referred to as SAE-LAPE (Andrylie et al., 2025), which decomposes dense activations into sparse latent fea-tures and performs selection of language-associated features in the latent space using LAPE. Related intervention-based analyses similarly suggest that language control can be induced by targeting care-fully selected units (Gurgurov et al., 2025; Rahman-isa et al., 2025). These studies show that language-associated units exist and can be causally manip-ulated, but they leave open a key question: what linguistic properties do these language-associated units encode? 
+
+In this work, we systematically investigate this question by analyzing language-associated units at two complementary levels: raw model neurons in the MLP sublayers that directly affect generation, and sparse latent features extracted with SAEs for interpretability. Rather than assuming these units encode abstract language identity, we test their sen-sitivity to orthography, word order, and deeper lin-guistic structure. We study both representations in Llama-3.2-1B and Gemma-2-2B – compact dis-tilled multilingual models where representational trade-offs are especially visible – across languages spanning Latin, Cyrillic, Devanagari, Perso-Arabic, and logographic scripts. Our analysis is guided by four research ques-tions: (i) Language vs. script : do language-associated units encode abstract language identity, or are they primarily tied to orthographic form? In particular, does romanizing a language (e.g., Hindi or Chinese written in Latin script) activate the same neurons as its native script? (ii) Robust-ness to structural perturbation : how stable are these units when word order is disrupted? (iii) Ty-pological alignment : do language-associated units correlate with known typological properties, such as genealogy, phonology, or syntax, as captured by 
+
+lang2vec (Littell et al., 2017)? (iv) Layer-wise organization : how does the accessibility of these properties vary across network depth, and how are they organized in deeper layers? To answer these questions, we combine sparse feature extraction with a series of controlled ex-periments. We analyze the behaviour of language-associated units under script romanization, struc-tural perturbations, typological probing, and causal intervention. Across these analyses, several consis-tent patterns emerge: • Language-associated units are largely script-bound : native and romanized variants of non-Latin languages activate almost disjoint sets of language-associated units, whereas shared scripts exhibit sig-nificant overlap. Notably, units associated with romanized non-Latin inputs align with neither their native counterparts nor English, indicating frag-mented representations within the LMs (c.f. Sec-tion 4). • Disrupting word order has only a minor effect on unit identity , suggesting reliance on lexical statistics or orthographic cues rather than syntactic structure (c.f. Section 5). • Units in deeper layers show stronger typolog-ical alignment , indicating increased representa-tional accessibility with depth (c.f. Section 6). Causal interventions further show that functional importance during generation is more closely asso-ciated with invariance to surface perturbations than with typological alignment alone (c.f. Section 7). Together, these findings distinguish representa-tional accessibility from functional necessity in multilingual LMs: language-associated units are closely tied to surface form, while deeper linguis-tic regularities become accessible with depth, and causal importance aligns more with invariance to surface perturbations than with representational alignment alone. 
+
+> Key Takeaway
+> Language-associated units primarily encode surface form, and units invariant to surface perturbations play a central role in generation.
+
+2 Related Work 
+
+Prior work has shown that multilingual language models do not form a fully language-agnostic in-terlingua, but instead organize representations in a partially shared space structured by language iden-tity and similarity (Johnson et al., 2017; Pires et al., 2019; Libovický et al., 2020). Neuron-level analy-ses further demonstrated that language control can be localized to specific internal units. In particu-lar, Tang et al. (2024) introduced the LAPE metric to identify language-selective neurons and showed that manipulating a small subset, often in early and late layers, can steer output language. Subsequent work confirmed that targeted interventions on such units enable controlled language switching (Kojima et al., 2024; Gurgurov et al., 2025; Rahmanisa et al., 2025). While these studies establish the functional relevance of language-associated units, they leave open what linguistic properties these units encode. In parallel, SAEs have been proposed to decom-pose dense transformer activations into more in-terpretable sparse features (Bau et al., 2017; Shi et al., 2025), and have recently been applied to identify language-associated features in multilin-gual models (Andrylie et al., 2025; Deng et al., 2025). Separately, work on typology and script effects shows that orthography and transliteration can strongly shape multilingual representations and cross-lingual alignment (Littell et al., 2017; Artetxe et al., 2020; Jauhiainen et al., 2019). Our work con-nects these threads by moving from identification to interpretation: we test whether language-associated units – both raw neurons and sparse features – en-code abstract linguistic structure or are primarily driven by surface-form cues. For a more detailed discussion of prior works, we refer the reader to Appendix B. 
+
+3 Analysis Framework 
+
+Identifying Language-Associated Units. Our analysis builds on the LAPE framework (Tang et al., 2024) and its sparse extension SAE-LAPE (Andrylie et al., 2025) to identify language-associated structure in multilingual LMs. For each transformer layer ℓ, we analyze both raw feed-forward (MLP) activations hℓ(x) and sparse la-tent representations obtained via pre-trained SAEs. Language association is quantified using LAPE: for each neuron or SAE feature f , we estimate its activation probability across languages and com-pute the entropy of this distribution. Units with low entropy and a dominant language are selected as 
+
+language-associated , yielding a set Nℓ,L for each layer and language. Details of the LAPE and SAE-LAPE procedures along with the hyperparameters used are provided in Appendix C. 
+
+Models and Representations. We conduct ex-periments on Llama-3.2-1B (Grattafiori et al., 2024) and Gemma-2-2B (Team et al., 2024), two compact, distilled multilingual models. Prior work has applied LAPE and SAE-based analyses to Llama-family and Gemma-family models (Tang et al., 2024; Andrylie et al., 2025; Deng et al., 2025), motivating our choice of architectures and sparse decompositions. Following this line of work, we use open-sourced Top-K SAEs 1 for Llama-3.2-1B and JumpReLU SAEs for Gemma-2-2B 
+
+> 1https://huggingface.co/EleutherAI/ sae-Llama-3.2-1B-131k
+
+(Lieberum et al., 2024), focusing on MLP sublay-ers. Due to space constraints, we present re-sults for Llama-3.2-1B in the main paper; cor-responding analyses for Gemma-2-2B are pro-vided in the Appendix. Experimental Design. We design a set of tar-geted experiments to probe what linguistic prop-erties language-associated units encode, including (i) controlled script perturbations via romanization, (ii) robustness tests under word-order shuffling, (iii) typological probing against lang2vec features, and (iv) targeted causal interventions. As each experi-ment involves distinct language sets, perturbations, and evaluation protocols, we describe the detailed setups in the corresponding sections. 
+
+4 Orthography as a Barrier to Latent Language Abstraction 
+
+A central question in multilingual representation learning is whether neurons or features identified as language-associated encode abstract linguistic identity or merely respond to orthographic surface form. To disentangle these factors, we conduct a controlled romanization experiment that isolates script variation while holding lexical content and sentence structure fixed. 
+
+Experimental Setup. We use sentence-aligned data from the dev split of FLORES+ 2, an extension of the FLORES-200 dataset (NLLB Team et al., 2024), covering a typologically and orthographi-cally diverse set of languages spanning Abugida, Abjad, Cyrillic, Logographic, and Syllabic scripts. For each non-Latin language, we construct a paral-lel Romanized corpus using the ICU Transliterator (The Unicode Consortium, 2024). Where applica-ble, we generate two Romanized variants: one pre-serving diacritics and one ASCII-only version with diacritics removed. Language-associated units are identified independently for native and Romanized inputs using the LAPE criterion for raw neurons and SAE-LAPE for sparse features, and overlap is quantified using Jaccard similarity. More detailed experimental details are provided in Appendix D. 
+
+Orthography Acts as a Barrier to Language Identity. If language-associated units encoded abstract linguistic identity, they would remain sta-ble under changes in script. Instead, Figure 1 shows near-complete fragmentation under romanization 
+
+> 2https://huggingface.co/datasets/ openlanguagedata/flores_plus Native
+> (n=206)
+> Romanized
+> (No Diacritics)
+> (n=120)
+> Romanized
+> (With Diacritics)
+> (n=244)
+
+(a) For Raw Neurons Native  
+
+> (n=134)
+> Romanized
+> (No Diacritics)
+> (n=144)
+> Romanized
+> (With Diacritics)
+> (n=265)
+
+(b) For SAE Features 
+
+Figure 1: Overlap of language-associated units for Hindi under script variation in Llama-3.2-1B. Euler diagrams show units shared among up to three languages for (a) raw neurons and (b) SAE features. Native, Romanized (with diacritics), and Romanized (without diacritics) in-puts activate largely disjoint sets in both representations. Corresponding results for all languages, for both raw neurons and SAE features, and for Gemma-2-2B are shown in Figures 10 and 9 in Appendix D.2. Bengali 
+
+> Bulgarian
+> Chinese
+> Hindi
+> Japanese
+> Korean
+> Marathi
+> Russian
+> Spanish
+> Urdu
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Jaccard Similarity
+> SAE Features (vs Native)
+> SAE Features (vs English)
+> Raw Neurons (vs Native)
+> Raw Neurons (vs English)
+
+Figure 2: Jaccard similarity between Romanized and native-script or English language-associated units ( raw neurons and SAE features ) in Llama-3.2-1B (see Fig-ure 8 for Gemma-2-2B). Romanized inputs exhibit low overlap with their native-script counterparts and near-zero overlap with English in both representations, in-dicating limited cross-script alignment without conver-gence to English. 
+
+for Hindi (similar observations are also made for other languages, as shown in the Figures 10 and 9). Across both raw neurons and SAE features, native-script Hindi, Romanized Hindi with diacritics, and its ASCII-only variant activate largely disjoint sets of language-associated units, even when allowing overlap across multiple languages. This fragmenta-tion persists despite identical lexical content, indi-cating that language association in these models is strongly conditioned on orthographic form rather than abstract language identity. 
+
+Takeaway 1 
+
+Language-associated units are tightly bound to orthog-raphy. Even minimal script changes induce near-disjoint unit sets in both raw neurons and sparse features. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+
+> Layer
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Jaccard Similarity
+> SAE Features
+> Raw Neurons
+
+Figure 3: Layer-wise alignment between language-associated units for Native and Romanized inputs in Llama-3.2-1B (see Figure 14 for Gemma-2-2B). The 
+
+red line denotes average Jaccard similarity for raw neurons , and the blue line for SAE features ; shaded re-gions indicate standard deviation across languages. Raw neurons show a modest mid-layer increase in overlap, while SAE features remain uniformly low across depth. In all cases, alignment remains far from convergence, indicating that representational separation persists be-yond input tokenization. 
+
+Romanization Induces an Isolated Latent Sub-space. Figure 2 examines whether Romanized inputs align with native-script or English represen-tations when considering all language-associated units. Across languages, overlap between Roman-ized and native-script representations remains con-sistently low (typically below 0.3) for both raw neu-rons and SAE features, with higher overlap only for Spanish, which already uses the Latin script. Cru-cially, overlap with English is near zero in all cases. Together, these results show that Romanization nei-ther recovers native-script representations nor in-duces convergence toward English. Instead, Ro-manized text occupies a distinct, script-conditioned subspace that remains isolated even when consid-ering shared language-associated units, effectively forming a third latent configuration that is neither native nor English. 
+
+Takeaway 2 
+
+Romanization does not lead to Anglicization . Roman-ized inputs form a distinct, script-conditioned latent sub-space, separate from both native-script and English repre-sentations. 
+
+Limited Intermediate Alignment and Persis-tent Separation. Figure 3 shows how language-associated units for Native and Romanized inputs align across layers in Llama-3.2-1B. While low overlap in early layers is expected due to disjoint token embeddings, this separation persists well beyond the input stage. Raw neurons exhibit a modest mid-layer increase in overlap, peaking around layer 9, but the alignment remains lim-ited (Jaccard ≈ 0.3) and never approaches con-vergence. In contrast, SAE features show consis-tently low and flat overlap across all layers, indicat-ing that sparse language-associated features remain strongly script-conditioned throughout the model. Together, these trends indicate that although dense activations briefly align surface-level statistics, the model ultimately maintains parallel, script-specific subspaces, revealing a limitation in abstraction rather than a trivial consequence of tokenization. 
+
+Implications for Model Capacity. The emer-gence of disjoint feature sets for native, Romanized, and even minor orthographic variants (e.g., diacritic vs. ASCII) points to fragmentation of representa-tional capacity. We refer to this phenomenon as 
+
+capacity fragmentation : the model allocates sepa-rate features to encode superficially different real-izations of the same language. Even highly shared features fail to fully unify these variants, suggesting that many purportedly language-agnostic represen-tations remain implicitly conditioned on script. 
+
+5 Robustness of Language-Associated Features to Structural Perturbations 
+
+Section 4 illustrates that language-associated fea-tures are highly sensitive to script, with minor or-thographic changes inducing substantial reorgani-zation. We complement this with a perturbation that preserves surface form but disrupts structure by applying controlled word-level shuffling. Unlike ro-manization, shuffling preserves token identity, fre-quency, and script while breaking local word order, allowing us to test whether language-associated features depend on syntactic structure or primarily reflect token-level and distributional cues. 
+
+Setup. For each language, we construct a shuf-fled version of the evaluation corpus by randomly permuting word order within sentences. Language-associated units are re-identified using the same SAE-LAPE procedure applied in earlier sections. Stability is measured via Jaccard similarity be-tween the unit sets obtained from original and shuf-fled text. Additional experimental details and anal-yses are reported in Appendix E. 
+
+Shuffling Reveals Selective Instability in Sparse Features. Figure 4 shows that many languages retain a substantial fraction of their language-associated units under shuffling, indicating lim-Japanese 
+
+> Chinese
+> Thai
+> Korean
+> Hindi
+> Turkish
+> Bulgarian
+> Russian
+> Portuguese
+> Vietnamese
+> Italian
+> German
+> Spanish
+> English
+> French
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Jaccard Similarity
+> SAE Features
+> Raw Neurons
+
+Figure 4: Jaccard similarity between language-associated units identified from original and word-shuffled text in Llama-3.2-1B (see Figure 23 for Gemma-2-2B). Raw neurons exhibit consistently moderate-to-high overlap across languages, indicating robustness to word-order perturbation. In contrast, SAE features show only selective instability : languages with distinctive scripts (e.g., Chinese, Japanese, Thai) remain highly stable, whereas several Latin-script languages ex-hibit somewhat reduced overlap, revealing sensitivity of sparse features to local distributional patterns disrupted by shuffling for these languages. 
+
+ited dependence on word order. However, this robustness varies across languages and represen-tations. Languages with distinctive scripts such as Chinese, Japanese, Thai, Korean, and Cyrillic languages remain highly stable, with overlap of-ten exceeding 0.7, suggesting dominance of token identity and orthographic cues. In contrast, several Latin-script languages exhibit relative reductions in overlap specifically in SAE features , indicating sensitivity of a subset of sparse features to local distributional or sequence-level statistics disrupted by shuffling. This selective instability is largely ab-sent in raw neurons , which maintain stable overlap across languages, highlighting that dense represen-tations encode language information redundantly, while sparse decompositions expose heterogeneity that is otherwise masked. 
+
+Activation Statistics Remain Stable. Although shuffling alters feature identity for some languages, it induces negligible changes in activation entropy or probability. Both language-level means and full distributions remain nearly identical before and af-ter shuffling, indicating that shuffling affects which 
+
+features are selected rather than overall activation behavior (see Figures 20, 21 and 22 in Appendix E for full distributional analyses and language-level means in case of both Llama and Gemma). 
+
+Implications. In contrast to the fragmentation in-duced by script changes (Section 4), word-order disruption leaves most language-associated repre-sentations intact. The limited instability that does occur is selective, appearing mainly in sparse fea-tures for languages that share script and subword statistics, and not in raw neurons.       
+
+> Takeaway 3
+> Language-associated units are largely insensitive to word order ,while sparse features expose limited, language-dependent reliance on local distributional cues.
+
+6 Typological Structure Revealed by Probing 
+
+Sections 4 and 5 show that language-associated units are strongly shaped by surface form: script changes induce near-complete reorganization, while word-order perturbations leave many units intact. We now ask whether, despite this surface sensitivity, model representations encode deeper linguistic structure in a linearly accessible form. Specifically, we use probing to characterize where 
+
+typological information is concentrated and when 
+
+it emerges across model depth. 
+
+Setup. We probe both raw MLP activations and SAE-based representations against typological fea-tures from lang2vec (Littell et al., 2017). For each layer, linear probes are trained with cross-validation over languages, and performance is sum-marized using the average of family-wise maxi-mum R2 scores. We report results across different neuron subsets induced by romanization and shuf-fling (e.g., condition-specific vs. overlap sets). Full probing details are provided in Appendix F. 
+
+Typological Structure Aligns with Invariance to Script. Figure 5 show probing results across neuron subsets, in Llama-3.2-1B, induced by ro-manization (see Figure 15 for SAE-features in Llama, and Figures 16 and 17 for Gemma-2-2B). Across both raw neurons and SAE features, a con-sistent pattern emerges: neurons preserved across native and romanized inputs exhibit the strongest typological alignment . Overlap subsets dominate across genealogical, syntactic, and phonological families, while script-specific subsets (native-only or romanized-only) encode substantially weaker typological signal. This directly connects to Sec-tion 4: the same units that are invariant to ortho-graphic change are those that preferentially encode deeper linguistic structure. Together, these results indicate that typological abstraction is not tied to language-specific or script-specific units, but in-stead concentrates in representations that are robust to script variation. Only Native Overlap Only Romanized Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Average  R2
+> Phonology Syntax Genealogy (Family)
+
+Figure 5: Average family-wise probing R2 scores across neuron subsets induced by romanization in Llama-3.2-1B (raw neurons). Neurons overlapping between native and romanized inputs exhibit the strongest typological alignment, while script-specific subsets encode weaker signal. Baseline denotes probing over the pooled set of all neurons that were selected for either native or romanized inputs (across all layers), serving as a non-selective reference. Corresponding results for Llama-3.2-1B (SAE features) and for Gemma-2-2B using both raw neurons and SAE features are shown in Figures 15, 16, and 17 in Appendix D.3. 
+
+Typological Structure Does Not Prefer Order-Invariant Units. In contrast, probing under word-order shuffling reveals a qualitatively different pat-tern. Figure 6 shows that typological alignment is comparable across normal-only, shuffled-only, and overlap subsets . This holds for both raw and sparse representations, although overall scores are lower for SAE features. Unlike romanization, in-variance to word order does not preferentially select typologically informative units. This observation aligns with Section 5: while shuffling leaves many language-associated units intact, this robustness does not correspond to a privileged locus of lin-guistic abstraction. 
+
+Depth-Dependent Emergence of Linguistic Ab-straction. While invariance determines where ty-pological information resides, model depth deter-mines when it becomes accessible. We illustrate this hierarchy using SAE features, where typolog-ical trends are most interpretable; raw activations show the same qualitative pattern (Appendix F). Figure 7 shows that genealogical properties are linearly decodable from early layers, whereas more abstract phonological features emerge only in the deepest layers. This hierarchy suggests that linguis-tic abstraction is constructed gradually with depth rather than encoded uniformly across the model. 
+
+From Representational Accessibility to Func-tional Testing. Probing shows that typological Only Original Overlap Only Shuffled Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Average  R2
+> Phonology Syntax Genealogy (Family)
+
+Figure 6: Average family-wise probing R2 scores across neuron subsets induced by word-order shuffling in Llama-3.2-1B (raw neurons). Neurons specific to origi-nal text, shuffled text, and their overlap exhibit compa-rable typological alignment, indicating that sensitivity to word order is largely decoupled from typological in-formation. Baseline denotes probing over the pooled set of all neurons selected for either condition, serving as a non-selective reference. Corresponding results for Llama-3.2-1B (SAE features) and for Gemma-2-2B us-ing both raw neurons and SAE features are shown in Figures 24, 25, and 26 in in Appendix E.2. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16   
+
+> Layer
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> Average  R2
+> Genealogy (Family) Phonology Syntax
+
+Figure 7: Average probing R2 scores across layers for SAE features in Llama-3.2-1B, grouped by typolog-ical family. Genealogical properties are accessible from early layers, while more abstract features such as phonology emerge mainly in deeper layers. Cor-responding results for raw neurons and Gemma-2-2B show the same hierarchy (Figures 27, 29). 
+
+information becomes increasingly linearly accessi-ble in deeper layers, particularly in script-invariant representations. However, probing alone does not establish functional necessity. In Section 7, we therefore test whether units identified by their in-variance properties play a causal role in generation. 
+
+Takeaway 4 
+
+Typological structure emerges with depth and is strongest in script-invariant representations . Abstrac-tion remains distributed across units. 
+
+7 Causal Roles of Script- and Structure-Invariant Units 
+
+Sections 4-6 show how language-associated units vary with script, word order, and typological struc-ture. We now test whether these distinctions reflect 
+
+functional necessity during generation by perform-ing targeted causal interventions on neuron sets defined solely by their invariance properties. Full experimental details, statistical tests, and qualita-tive analyses are provided in Appendix G. 
+
+Setup. All interventions are performed on raw MLP activations of Llama-3.2-1B. Neuron sets are defined by invariance to script or word-order pertur-bations (Sections 4, 5). For romanization-derived sets, we perform cross-language mean replacement; for shuffling-derived sets, we apply simultaneous zero ablation across all layers;. Effects are com-pared against matched random controls using per-plexity on FLORES+ dev examples. Statistical significance is assessed via paired t-tests; exact 
+
+p-values are reported in Appendix Tables 5 and 6. 
+
+Script-Invariant Neurons Support Stable Gen-eration Under Perturbation. Using neuron sets derived from the romanization analysis (Section 4), we perform cross-language mean ablations be-tween Hindi and English (Table 1). Overlap neu-rons , which remain active across native and roman-ized scripts, exhibit only mild and asymmetric per-plexity changes under cross-language replacement; while statistically significant ( p < 0.05 ; Table 6), these effects are small, indicating that these neu-rons occupy a largely script-invariant subspace. In contrast, only-native neurons show extreme sen-sitivity: replacing English-only-native activations with Hindi means causes severe degradation, while the reverse yields large apparent perplexity im-provements. Qualitative inspection reveals that the latter corresponds to language switching rather than improved modeling, with generations collapsing into fluent English (Appendix G). Together, these results causally validate Section 4, showing that script-specific neurons anchor surface realization and language identity, while script-invariant neu-rons support stable generation under orthographic perturbation. 
+
+Word-Order–Invariant Neurons Support Core Language Modeling. We next examine neuron sets derived from the shuffling analysis in Section 5 using simultaneous zero ablation (Table 2). Across Language Neuron set P P L target ratio P P L random ratio             
+
+> English overlap 0.95 0.99 English only-native 1.50 0.96 Hindi overlap 1.05 0.98 Hindi only-native 0.31 0.97
+
+Table 1: Cross-language mean ablations for romanization-derived neuron sets in Llama-3.2-1B (see Table 8 for Gemma-2-2B). P P L target ratio denotes perplexity relative to clean runs, and P P L random ratio reports the same for matched random controls. All target effects are statistically significant ( p < 0.05 ; Table 6). Ratios below 1 reflect language switching rather than improved modeling.                
+
+> Language Neuron set P P L target ratio P P L random ratio
+> English overlap 1.12 0.95 English only-unshuffled 0.96 1.04 Hindi overlap 2.79 1.06 Hindi only-unshuffled 1.08 0.95
+
+Table 2: Zero-ablation results for shuffling-derived neu-ron sets in Llama-3.2-1B (see Table 7 for Gemma-2-2B). 
+
+P P L target ratio reports perplexity relative to clean runs after ablating the specified neuron set, and P P L random ratio reports the same for matched random controls. All overlap-neuron effects differ significantly from random controls (p < 0.05 ; Table 5). 
+
+all languages, overlap neurons – those that re-main active under word-order shuffling – cause sub-stantially larger perplexity increases than matched random controls, with all effects statistically sig-nificant ( p < 0.05 ; Table 5). In contrast, only-unshuffled neurons produce much weaker effects and often reduce perplexity, indicating that order-sensitive signals are largely redundant for gener-ation. This causal dissociation mirrors the identi-fication results in Section 5: neurons invariant to structural perturbation are functionally necessary for stable language modeling, while order-sensitive neurons encode auxiliary or brittle patterns. Quali-tatively, only overlap-neuron ablations induce sys-tematic failures such as within-word script mix-ing and abrupt language switching (Appendix Fig-ure 32), further supporting their causal role. 
+
+Implications for Language Control and Abstrac-tion. Across both romanization- and shuffling-based interventions, causal importance consistently tracks invariance to surface perturbations. Neurons that remain stable under script or word-order varia-tion are more functionally necessary for generation, whereas surface-sensitive neurons primarily anchor realization. While probing in Section 6 shows that typological structure becomes increasingly decod-able with depth, our causal interventions do not isolate a small set of neurons whose manipulation selectively disrupts such structure. Instead, causal effects are associated with invariance properties, suggesting that language control in these models is mediated by robustness to surface variation rather than by a single, localized abstraction module.  
+
+> Takeaway 5
+> Causal importance aligns with invariance to surface perturbations. Neurons stable under script or word-order variation are necessary for generation, while probing re-flects representational structure rather than direct control.
+
+8 Discussion 
+
+Our results show that multilingual models do not converge to a fully abstract interlingua. Instead, representations are organized around surface-form cues, especially script, while deeper layers support abstraction without unifying script-conditioned subspaces. 
+
+Implications for Cross-Lingual Transfer. The strong dependence on orthography suggests that cross-lingual transfer is more fragile than often assumed. Romanized inputs neither recover native-script representations nor align with English, even when considering shared language-associated units. Instead, they occupy distinct latent subspaces, help-ing explain why transliteration or script normal-ization alone yields limited gains without explicit adaptation or supervision. 
+
+Orthography, Control, and Robustness. Our findings offer an alternative explanation for prior observations that changing the language or script of a prompt can alter model behavior, including safety-related responses (Deng et al., 2024; Yong et al., 2023). If language-associated units are tightly cou-pled to orthography, script changes may route in-puts through different internal subspaces, yield-ing divergent outputs. This suggests that some language-based control and jailbreak effects may stem from surface-form routing rather than seman-tic differences. 
+
+9 Conclusion 
+
+In this study, we show that language-associated units in multilingual LMs are dominated by surface-form cues, with script acting as a primary organiz-ing factor. While typological structure becomes in-creasingly accessible at deeper layers, causal anal-ysis shows that stable generation depends most strongly on units invariant to surface perturbations, rather than on a small set of typology-aligned con-trollers. Together, these results highlight a sepa-ration between representational accessibility and functional necessity. 
+
+Limitations 
+
+Our study focuses on compact, distilled multilin-gual language models, particularly Llama-3.2-1B and Gemma-2-2B, which enables fine-grained anal-ysis of internal representations and controlled inter-ventions but also bounds the scope of our claims. Our conclusions therefore characterize how multi-lingual structure is organized under limited repre-sentational capacity; larger models may exhibit dif-ferent trade-offs between surface-form routing and abstraction, an important direction for future work. In addition, our analysis centers on feed-forward (MLP) activations and their sparse decompositions, and does not examine other architectural compo-nents such as attention heads or embedding layers. Finally, while our interventions assess the causal role of identified units at inference time, we do not study the training dynamics through which these representations emerge. 
+
+Ethical Considerations 
+
+This work analyzes internal representations of mul-tilingual LMs using publicly available pretrained models and established linguistic resources. We do not introduce new datasets, deploy systems in user-facing contexts, or evaluate downstream so-cial applications. Our findings highlight how script and surface-form variation can influence internal processing, with potential implications for robust-ness and safety generalization across languages. We emphasize that our goal is interpretability and analysis rather than exploitation, and we do not propose methods for bypassing safeguards or in-ducing harmful behavior. Overall, this work aims to support safer and more transparent multilingual model development by clarifying how language-associated representations are organized internally. 
+
+References 
+
+Lyzander Marciano Andrylie, Inaya Rahmanisa, Ma-hardika Krisna Ihsani, Alfan Farizki Wicaksono, Haryo Akbarianto Wibowo, and Alham Fikri Aji. 2025. Sparse autoencoders can capture language-specific concepts across diverse languages. Preprint ,arXiv:2507.11230. Mikel Artetxe, Sebastian Ruder, and Dani Yogatama. 2020. On the cross-lingual transferability of mono-lingual representations. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics , pages 4623–4637, Online. Association for Computational Linguistics. David Bau, Bolei Zhou, Aditya Khosla, Aude Oliva, and Antonio Torralba. 2017. Network dissection: Quanti-fying interpretability of deep visual representations. In 2017 IEEE Conference on Computer Vision and Pattern Recognition, CVPR 2017, Honolulu, HI, USA, July 21-26, 2017 , pages 3319–3327. IEEE Computer Society. A.C. Baugh and T. Cable. 2002. A History of the English Language . Prentice Hall. Clay Beckner, Richard Blythe, Joan Bybee, Morten Christiansen, William Croft, Nick Ellis, John Hol-land, Jinyun Ke, Diane Larsen-Freeman, and Tom Schoenemann. 2009. Language is a complex adap-tive system: Position paper. Language Learning -LANG LEARN , 59:1–26. Yonatan Belinkov. 2022. Probing classifiers: Promises, shortcomings, and advances. Computational Linguis-tics , 48(1):207–219. Augusto Buchweitz, Svetlana V Shinkareva, Robert A Mason, Tom M Mitchell, and Marcel Adam Just. 2011. Identifying bilingual semantic neural represen-tations across languages. Brain Lang , 120(3):282– 289. Albert Costa and Núria Sebastián-Gallés. 2014. How does the bilingual experience sculpt the brain? Nat Rev Neurosci , 15(5):336–345. D. Crystal. 2003. English as a Global Language . Canto (Cambridge University Press). Cambridge University Press. Boyi Deng, Yu Wan, Baosong Yang, Yidan Zhang, and Fuli Feng. 2025. Unveiling language-specific fea-tures in large language models via sparse autoen-coders. In Proceedings of the 63rd Annual Meet-ing of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 4563–4608, Vienna, Austria. Association for Computational Linguistics. Yue Deng, Wenxuan Zhang, Sinno Jialin Pan, and Li-dong Bing. 2024. Multilingual jailbreak challenges in large language models. In The Twelfth Interna-tional Conference on Learning Representations .Nicholas Evans and Stephen C. Levinson. 2009. The myth of language universals: Language diversity and its importance for cognitive science. Behavioral and Brain Sciences , 32(5):429–448. Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schel-ten, Alex Vaughan, Amy Yang, Angela Fan, Anirudh Goyal, Anthony Hartshorn, Aobo Yang, Archi Mi-tra, Archie Sravankumar, Artem Korenev, Arthur Hinsvark, Arun Rao, Aston Zhang, Aurelien Ro-driguez, Austen Gregerson, Ava Spataru, Baptiste Roziere, Bethany Biron, Binh Tang, Bobbie Chern, Charlotte Caucheteux, Chaya Nayak, Chloe Bi, Chris Marra, Chris McConnell, Christian Keller, Christophe Touret, Chunyang Wu, Corinne Wong, Cristian Canton Ferrer, Cyrus Nikolaidis, et al. 2024. The llama 3 herd of models. Preprint ,arXiv:2407.21783. Daniil Gurgurov, Katharina Trinley, Yusser Al Ghussin, Tanja Baeumel, Josef van Genabith, and Simon Oster-mann. 2025. Language arithmetics: Towards system-atic language neuron identification and manipulation. 
+
+Preprint , arXiv:2507.22608. John Hewitt and Percy Liang. 2019. Designing and in-terpreting probes with control tasks. In Proceedings of the 2019 Conference on Empirical Methods in Nat-ural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) , pages 2733–2743, Hong Kong, China. Association for Computational Linguistics. Robert Huben, Hoagy Cunningham, Logan Riggs Smith, Aidan Ewart, and Lee Sharkey. 2024. Sparse autoen-coders find highly interpretable features in language models. In The Twelfth International Conference on Learning Representations .Tommi Jauhiainen, Heidi Jauhiainen, Tero Alstola, and Krister Lindén. 2019. Language and dialect identifi-cation of cuneiform texts. In Proceedings of the Sixth Workshop on NLP for Similar Languages, Varieties and Dialects , pages 89–98, Ann Arbor, Michigan. Association for Computational Linguistics. Melvin Johnson, Mike Schuster, Quoc V. Le, Maxim Krikun, Yonghui Wu, Zhifeng Chen, Nikhil Thorat, Fernanda Viégas, Martin Wattenberg, Greg Corrado, Macduff Hughes, and Jeffrey Dean. 2017. Google’s multilingual neural machine translation system: En-abling zero-shot translation. Transactions of the As-sociation for Computational Linguistics , 5:339–351. Takeshi Kojima, Itsuki Okimura, Yusuke Iwasawa, Hit-omi Yanaka, and Yutaka Matsuo. 2024. On the multi-lingual ability of decoder-based pre-trained language models: Finding and controlling language-specific neurons. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Tech-nologies (Volume 1: Long Papers) , pages 6919–6971, Mexico City, Mexico. Association for Computational Linguistics. Sneha Kudugunta, Ankur Bapna, Isaac Caswell, and Orhan Firat. 2019. Investigating multilingual NMT representations at scale. In Proceedings of the 2019 Conference on Empirical Methods in Natu-ral Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) , pages 1565–1575, Hong Kong, China. Association for Computational Linguistics. Jindˇ rich Libovický, Rudolf Rosa, and Alexander Fraser. 2020. On the language neutrality of pre-trained mul-tilingual representations. In Findings of the Associ-ation for Computational Linguistics: EMNLP 2020 ,pages 1663–1674, Online. Association for Computa-tional Linguistics. Jindˇ rich Libovický, Rudolf Rosa, and Alexander Fraser. 2019. How language-neutral is multilingual bert? 
+
+Preprint , arXiv:1911.03310. Tom Lieberum, Senthooran Rajamanoharan, Arthur Conmy, Lewis Smith, Nicolas Sonnerat, Vikrant Varma, János Kramár, Anca Dragan, Rohin Shah, and Neel Nanda. 2024. Gemma scope: Open sparse autoencoders everywhere all at once on gemma 2. 
+
+Preprint , arXiv:2408.05147. Patrick Littell, David R. Mortensen, Ke Lin, Katherine Kairis, Carlisle Turner, and Lori Levin. 2017. URIEL and lang2vec: Representing languages as typological, geographical, and phylogenetic vectors. In Proceed-ings of the 15th Conference of the European Chap-ter of the Association for Computational Linguistics: Volume 2, Short Papers , pages 8–14, Valencia, Spain. Association for Computational Linguistics. Meng Lu, Ruochen Zhang, Carsten Eickhoff, and El-lie Pavlick. 2025. Paths not taken: Understanding and mending the multilingual factual recall pipeline. In Proceedings of the 2025 Conference on Empiri-cal Methods in Natural Language Processing , pages 15077–15107, Suzhou, China. Association for Com-putational Linguistics. Viorica Marian, Michael Spivey, and Joy Hirsch. 2003. Shared and separate systems in bilingual language processing: Converging evidence from eyetracking and brain imaging. Brain and Language , 86(1):70– 82. Understanding Language. Samuel Marks, Can Rager, Eric J Michaud, Yonatan Be-linkov, David Bau, and Aaron Mueller. 2025. Sparse feature circuits: Discovering and editing interpretable causal graphs in language models. In The Thirteenth International Conference on Learning Representa-tions .Jérôme Michaud. 2024. A complex systems perspective on language evolution. In The Evolution of Language : Proceedings of the 15th International Conference (EVOLANG XV) , The Evolution of Language Confer-ences, pages 374–382. Michele Miozzo, Albert Costa, Mireia Hernández, and Brenda Rapp. 2010. Lexical processing in the bilingual brain: Evidence from grammati-cal/morphological deficits. Aphasiology , 24(2):262– 287. Ibraheem Muhammad Moosa, Mahmud Elahi Akhter, and Ashfia Binte Habib. 2023. Does transliteration help multilingual language modeling? In Findings of the Association for Computational Linguistics: EACL 2023 , pages 670–685, Dubrovnik, Croatia. As-sociation for Computational Linguistics. Benjamin Muller, Antonios Anastasopoulos, Benoît Sagot, and Djamé Seddah. 2021. When being un-seen from mBERT is just the beginning: Handling new languages with multilingual language models. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computa-tional Linguistics: Human Language Technologies ,pages 448–462, Online. Association for Computa-tional Linguistics. NLLB Team, Marta R. Costa-jussà, James Cross, Onur Çelebi, Maha Elbayad, Kenneth Heafield, Kevin Hef-fernan, Elahe Kalbassi, Janice Lam, Daniel Licht, Jean Maillard, Anna Sun, Skyler Wang, Guillaume Wenzek, Al Youngblood, Bapi Akula, Loic Bar-rault, Gabriel Mejia Gonzalez, Prangthip Hansanti, John Hoffman, Semarley Jarrett, Kaushik Ram Sadagopan, Dirk Rowe, Shannon Spruit, Chau Tran, Pierre Andrews, Necip Fazil Ayan, Shruti Bhosale, Sergey Edunov, Angela Fan, Cynthia Gao, Vedanuj Goswami, Francisco Guzmán, Philipp Koehn, Alexandre Mourachko, Christophe Ropers, Safiyyah Saleem, Holger Schwenk, and Jeff Wang. 2024. Scaling neural machine translation to 200 lan-guages. Nature , 630(8018):841–846. Telmo Pires, Eva Schlinger, and Dan Garrette. 2019. How multilingual is multilingual BERT? In Proceed-ings of the 57th Annual Meeting of the Association for Computational Linguistics , pages 4996–5001, Flo-rence, Italy. Association for Computational Linguis-tics. Inaya Rahmanisa, Lyzander Marciano Andrylie, Ma-hardika Krisna Ihsani, Alfan Farizki Wicaksono, Haryo Akbarianto Wibowo, and Alham Fikri Aji. 2025. Unveiling the influence of am-plifying language-specific neurons. Preprint ,arXiv:2507.22581. Taraka Rama, Lisa Beinborn, and Steffen Eger. 2020. Probing multilingual BERT for genetic and typo-logical signals. In Proceedings of the 28th Inter-national Conference on Computational Linguistics ,pages 1214–1228, Barcelona, Spain (Online). Inter-national Committee on Computational Linguistics. Leah Estel Reppucci. 2017. Speaking denglish: Explor-ing the impact of denglish and anglicisms in german culture and identity. Alan Saji, Jaavid Aktar Husain, Thanmay Jayakumar, Raj Dabre, Anoop Kunchukuttan, and Ratish Pudup-pully. 2025. RomanLens: The role of latent Roman-ization in multilinguality in LLMs. In Findings of the Association for Computational Linguistics: ACL 2025 , pages 26410–26429, Vienna, Austria. Associa-tion for Computational Linguistics. Wei Shi, Sihang Li, Tao Liang, Mingyang Wan, Guojun Ma, Xiang Wang, and Xiangnan He. 2025. Route sparse autoencoder to interpret large language mod-els. Preprint , arXiv:2503.08200. Kenny Smith and Simon Kirby. 2008. Cultural evo-lution: implications for understanding the human language faculty and its evolution. Philosophical Transactions of the Royal Society B: Biological Sci-ences , 363(1509):3591–3603. Tianyi Tang, Wenyang Luo, Haoyang Huang, Dong-dong Zhang, Xiaolei Wang, Xin Zhao, Furu Wei, and Ji-Rong Wen. 2024. Language-specific neurons: The key to multilingual capabilities in large language models. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Vol-ume 1: Long Papers) , pages 5701–5715, Bangkok, Thailand. Association for Computational Linguistics. Gemma Team et al. 2024. Gemma 2: Improving open language models at a practical size. Preprint ,arXiv:2408.00118. The Unicode Consortium. 2024. ICU: International components for unicode. Version 78.1. Sarah Grey Thomason and Terrence Kaufman. 1988. 
+
+Language Contact, Creolization, and Genetic Lin-guistics , 1 edition. University of California Press. Joseph C. Toscano, Lynn K. Perry, Kathryn L. Mueller, Allison F. Bean, Marcus E. Galle, and Larissa K. Samuelson. 2008. Language as shaped by the brain; the brain as shaped by development. Behavioral and Brain Sciences , 31(5):535–536. Katharina Trinley, Toshiki Nakai, Tatiana Anikina, and Tanja Baeumel. 2025. What language(s) does aya-23 think in? how multilinguality affects internal lan-guage representations. Preprint , arXiv:2507.20279. R. Wardhaugh and J.M. Fuller. 2014. An Introduction to Sociolinguistics . Blackwell Textbooks in Linguistics. Wiley. Shijie Wu and Mark Dredze. 2020. Are all languages created equal in multilingual BERT? In Proceedings of the 5th Workshop on Representation Learning for NLP , pages 120–130, Online. Association for Com-putational Linguistics. Zheng Xin Yong, Cristina Menghini, and Stephen Bach. 2023. Low-resource languages jailbreak GPT-4. In 
+
+Socially Responsible Language Modelling Research .Appendix Contents 
+
+Below we provide an overview of the appendix. Appendix sections are intended to support the core claims. • Appendix A: Frequently Asked Questions (FAQs) Addresses common questions regarding the paper. 
+
+• Appendix B: Extended Related Work Provides a detailed discussion of prior work on multilin-gual representations, language-associated units, sparse autoencoders, typology, and script effects. 
+
+• Appendix C: Identifying Language-Associated Units with LAPE and SAE-LAPE 
+
+Briefly explains the LAPE and SAE-LAPE frameworks and provides details of the hyperparameters used in our experiments. 
+
+• Appendix D: Script Perturbation Experiments (Romanization) Describes dataset construction, transliteration procedures, diacritic controls, and additional analyses supporting the script roman-ization experiments. 
+
+• Appendix E: Structural Perturbation Experi-ments (Word Shuffling) Reports supplementary results on shuffled inputs, overlap analyses, and contrasts between raw activations and SAE fea-tures. 
+
+• Appendix F: Probing Typological Structure Across Layers Details the probing setup and additional analyses related to typological align-ment. 
+
+• Appendix G: Causal Interventions on Invari-ant Neuron Sets Provides ablation strategies and extended causal analysis results. 
+
+A Frequently Asked Questions (FAQs) 
+
+1. Do language-associated units imply the exis-tence of a universal interlingua? No. While language-associated units are clearly identifi-able and can influence model behavior, our re-sults show that they are predominantly sensitive to surface-form cues such as script and token distribution. 2. Is the observed script sensitivity simply an ar-tifact of tokenization? Tokenization necessar-ily introduces distinct input embeddings across scripts, but our analysis goes beyond early-layer effects. We observe that alignment remains low even in intermediate layers, indicating that script sensitivity is not merely a tokenizer artifact but reflects persistent representational fragmenta-tion within the model. 3. Why focus on compact and distilled multi-lingual models? Compact models operate un-der tighter representational constraints, making trade-offs between surface-form processing and abstraction more explicit. This provides a con-trolled setting for studying how multilingual structure is organized, rather than relying on scale to amortize cross-lingual abstraction. 4. Do these findings generalize to larger mod-els? Our claims are qualitative and concern representational organization rather than task performance. While larger models may develop stronger cross-lingual alignment, our results highlight mechanisms that arise under limited capacity. Evaluating how these patterns evolve with scale is an important direction for future work. 5. Does strong probing performance imply func-tional importance? No. Probing reveals that typological properties become increasingly lin-early accessible in deeper layers, but causal interventions show that functional importance aligns with invariance to surface perturbations. This reinforces the view that linear decodability does not imply causal control. 6. Why analyze both raw neurons and SAE fea-tures? Raw neurons directly govern model behavior, while SAE features provide an inter-pretable decomposition of these activations. An-alyzing both allows us to separate functional relevance from interpretability and avoid over-attributing abstract meaning to sparse features alone. 7. What is the main takeaway for interpret-ing language-associated neurons ? Language-associated units exist and matter, but they pri-marily reflect surface-form processing rather than abstract language identity. B Extended Related Work 
+
+B.1 Language-Associated Units and Multilingual Representations 
+
+Understanding how multilingual LMs encode lan-guage identity has become a central question in interpretability and cross-lingual modeling. Early multilingual neural machine translation (NMT) sys-tems already suggested that jointly trained models do not form a fully language-agnostic interlingua, but instead organize representations in a partially shared space structured by language identity and similarity (Johnson et al., 2017; Kudugunta et al., 2019). Subsequent analyses showed that encoder representations cluster by genealogical and typo-logical proximity, with high-resource languages occupying more stable regions of the latent space (Pires et al., 2019; Libovický et al., 2020). More recently, investigation at the neuron level has provided evidence that language identity can be localized to specific internal units. Tang et al. (2024) introduced LAPE to identify neurons that preferentially activate for individual languages in multilingual LMs, showing that a small subset of neurons, often concentrated in early and late lay-ers, exerts disproportionate control over language selection. Contemporary works also showed that targeted interventions on such neurons can reliably steer output language, even without modifying in-put prompts (Kojima et al., 2024; Gurgurov et al., 2025; Rahmanisa et al., 2025). These observations establish that language control is not purely emer-gent at the output layer but is mediated by identifi-able internal mechanisms. Earlier representational studies, however, cau-tion against interpreting such units as encoding abstract language identity (Wu and Dredze, 2020; Libovický et al., 2019). Analyses of multilin-gual NMT and representation spaces show substan-tial mixing across languages, particularly in mid-dle layers, with language separation re-emerging closer to the output where lexical constraints dom-inate (Kudugunta et al., 2019). This layered orga-nization parallels findings in bilingual cognition, where shared semantic representations coexist with partially segregated lexical and orthographic pro-cessing streams (Marian et al., 2003; Costa and Sebastián-Gallés, 2014). Our work builds on this literature but departs in emphasis. Rather than asking whether language-associated units exist, we ask what linguistic prop-erties they encode. Specifically, we test whether such units reflect abstract language identity or are instead driven by surface-form cues such as script and token distributions, a distinction that remains underexplored in prior neuron-level studies. Also, the primary focus of our study is modern small auto-regressive models, which are trained through distillation from their larger counterparts and show impressive performance on multilingual tasks. 
+
+B.2 Sparse Autoencoders and Feature-Level Interpretability 
+
+SAEs have recently emerged as a promising tool for disentangling dense transformer activations into more interpretable, monosemantic latent fea-tures. The central idea – that sparsity can sepa-rate overlapping signals into distinct dimensions – has strong precedents in vision, where network dissection methods link individual units to human-interpretable concepts (Bau et al., 2017). In lan-guage models, sparse methods have been shown to isolate features corresponding to factual recall, for-matting, or syntactic regularities that are difficult to identify in dense representations (Huben et al., 2024; Marks et al., 2025). Several recent works extend SAEs to large lan-guage models at scale. For instance, recently Shi et al. (2025) proposed RouteSAE which in-troduces routing mechanisms that propagate sparse features across layers, improving interpretability while maintaining model performance. Open-source SAE frameworks further demonstrate that sparse latents can support causal interventions and mechanistic analyses in modern transformer mod-els (Lieberum et al., 2024). In multilingual settings, Andrylie et al. (2025) and Deng et al. (2025) show that SAE features can align with semantic concepts across languages, motivating the use of sparse rep-resentations for cross-lingual interpretability. Our work leverages this progress but reframes the goal. We first identify language-associated sparse features as well as raw model neurons, by us-ing SAE-LAPE (Andrylie et al., 2025) and LAPE (Tang et al., 2024) respectively. We then systemati-cally analyze their sensitivity to script, word order, and typological structure. Unlike prior studies that focus primarily on semantic or task-level concepts, we center our analysis on linguistic abstraction, ex-plicitly separating representational alignment (as revealed by probing) from functional necessity (as tested via causal intervention), echoing critiques of probing as a standalone interpretability tool (Hewitt and Liang, 2019; Belinkov, 2022). B.3 Typology, Script, and Romanization Effects 
+
+Linguistic typology has long been used to study cross-lingual similarity and transfer in multilingual models. The URIEL and lang2vec framework provides structured vectors encoding genealogical, geographical, phonological, and syntactic prop-erties for various languages (Littell et al., 2017). Subsequent work shows that typological informa-tion becomes increasingly linearly accessible in deeper layers of multilingual transformers, suggest-ing a gradual emergence of abstraction (Rama et al., 2020). Orthography and script introduce an additional, often confounding, dimension. Prior work in mul-tilingual language identification shows that script cues dominate early decisions, and that romanized or transliterated text can significantly degrade per-formance when script information is not explicitly modeled (Jauhiainen et al., 2019). In representa-tion learning, transliteration and script normaliza-tion have been shown to alter clustering structure in multilingual embedding spaces, sometimes improv-ing transfer but often creating mismatches between surface form and linguistic identity (Artetxe et al., 2020; Moosa et al., 2023). Recent interpretability studies suggest that these effects extend to internal model mechanisms. Anal-yses of bilingual and multilingual models show that changing script can reroute activations through dif-ferent internal pathways, even when lexical content is preserved (Saji et al., 2025; Trinley et al., 2025; Muller et al., 2021; Lu et al., 2025). Our work builds on these observations by systematically com-paring native-script and romanized inputs under a unified neuron- and feature-identification frame-work, revealing that script changes induce near-complete reorganization of language-associated units. Importantly, we show that this fragmentation persists even in deeper layers where typological information is linearly decodable, indicating that abstraction and control are distributed across paral-lel, script-bound subspaces rather than unified into a single interlingua. 
+
+C Identifying Language-Associated Units with LAPE and SAE-LAPE 
+
+This appendix summarizes the methods used to identify language-associated units in our analysis. 
+
+C.1 LAPE for Raw Neurons 
+
+Language Activation Probability Entropy (LAPE) quantifies how selectively an individual neuron re-sponds to different languages. Given a multilingual corpus, for each neuron j at layer ℓ and language 
+
+k, we compute the activation probability 
+
+P (ℓ) 
+
+> j,k
+
+= E
+
+h
+
+I a(ℓ) 
+
+> j
+
+> 0 language k
+
+i
+
+,
+
+where a(ℓ) 
+
+> j
+
+denotes the neuron activation and I(·)
+
+is the indicator function. The vector of activation probabilities across languages is ℓ1-normalized to form a distribution, and its entropy is computed as LAPE (ℓ) 
+
+> j
+
+= − X
+
+> k
+
+P ′(ℓ) 
+
+> j,k
+
+log P ′(ℓ) 
+
+> j,k
+
+.
+
+Low entropy indicates that a neuron activates pre-dominantly for a small subset of languages. Neu-rons with sufficiently low entropy and a dominant language are identified as language-associated .
+
+C.2 SAE-LAPE for Sparse Features 
+
+SAE-LAPE extends the LAPE criterion to sparse latent features obtained from Sparse Autoencoders (SAEs). SAEs are trained on feed-forward (MLP) activations to decompose dense representations into a sparse set of latent features. Each SAE feature is treated analogously to a neuron: we compute its ac-tivation probability per language based on whether the feature is active for a given token. The same entropy-based criterion is then applied to identify language-associated sparse features. To ensure robustness, we restrict attention to features that are active for a non-trivial fraction of tokens and examples within at least one language. This enables language association analysis at the level of sparse, interpretable features rather than individual neurons. 
+
+C.3 Hyperparameters and Implementation Details 
+
+All LAPE and SAE-LAPE analyses share a com-mon entropy-based framework for measuring lan-guage selectivity, differing primarily in their filter-ing criteria and membership assignment rules. 
+
+Activation statistics. For both methods, activa-tion probabilities are computed over a multilin-gual corpus by aggregating token-level activations within each language. A unit (raw neuron or SAE latent) is considered active for a token if its acti-vation exceeds zero. Activation probabilities are normalized across languages prior to entropy com-putation. 
+
+SAE-LAPE hyperparameters. SAE-LAPE op-erates on sparse latent features extracted from Sparse Autoencoders trained on MLP activations. To exclude noisy or overly idiosyncratic features, we apply two pre-selection thresholds: (i) an exam-ple rate of 0.98, requiring a latent to be active in at least 98% of examples within at least one language, and (ii) a high-frequency latent (HFL) rate of 0.1, requiring activation on at least 10% of tokens in that language. Latents failing either criterion have their entropy set to infinity and are excluded from selection. Language membership for SAE latents is deter-mined using a relative top-k criterion. A latent f
+
+is considered present in language l if its activation probability satisfies 
+
+P (f | l) ≥ 0.8 × max  
+
+> l′∈L
+
+P (f | l′),
+
+where the threshold ratio of 0.8 is fixed across all experiments. This relative criterion allows features to be shared across a small number of languages when desired. Depending on the configuration, we further restrict selection to la-tents that are either unique to a single language (lang_specific ) or shared by an exact number of languages ( lang_shared ). A caveat arises for Gemma. Since the origi-nal implementation of SAE-LAPE was intended for cardinally constrained TopK SAEs for llama, we had to add some filtering logic for Gemma JumpReLU SAEs as well. For this we have simply used the top-200 neurons by activation value. This adds some noise, but the final trends are still similar for model sets of SAEs. 
+
+LAPE hyperparameters for raw neurons. For raw model neurons, which are typically denser and more polysemantic, we adopt a more conservative, percentile-based filtering strategy. We compute the 95th percentile of activation probabilities across all neurons and languages, and discard neurons whose activation probability never exceeds this threshold in any language. Among the remaining candidates, we select the lowest-entropy neurons correspond-ing to the top 1% most language-selective units. Language assignment for these neurons uses an absolute activation criterion: a neuron is attributed to language l if its activation probability exceeds the same 95th-percentile threshold. This approach             
+
+> Parameter Value
+> Activation indicator Latent z > 0
+> Aggregation level Token + example Minimum example rate 0.98
+> Minimum HFL rate 0.10
+> Top-kthreshold ratio 0.80
+> Entropy for invalid features ∞
+> llama SAE: topK-value 32 Gemma JumpReLU SAE: enforced TopK 200
+
+Table 3: Hyperparameters used for SAE-LAPE iden-tification of language-associated sparse latent features. Rates are computed per layer over the multilingual cor-pus.           
+
+> Parameter Value
+> Activation indicator a > 0
+> Aggregation level Token-level Activation percentile (filter rate) 95 th percentile Entropy selection fraction Lowest 1% neurons Language assignment threshold 95 th percentile (global) Inactive neuron handling Discarded
+
+Table 4: Hyperparameters used for LAPE-based identi-fication of language-associated raw neurons. Activation percentiles are computed globally across all neurons and languages. 
+
+emphasizes globally salient, language-skewed neu-rons rather than fine-grained feature sharing. Both models share the same setup. 
+
+Outputs. Both methods export identified units with identified languages(s), activation probabili-ties, and entropy values. Overall, SAE-LAPE prioritizes consistent, inter-pretable sparsified features with controlled cross-lingual sharing, while LAPE for raw neurons fo-cuses on identifying the most strongly language-skewed units in dense representations. Table 3 and Table 4 summarize the thresholds and hyperparam-eters used for SAE-LAPE and LAPE respectively. 
+
+C.4 Usage in This Work 
+
+In this paper, LAPE and SAE-LAPE are used strictly as identification tools for selecting language-associated neurons and sparse features. All subsequent analyses – including romanization, shuffling, probing, and causal interventions – are conducted on these identified units. We do not assume that low entropy alone implies abstract lin-guistic control or causal importance. D Script Perturbation Experiments (Romanization) 
+
+D.1 Experimental Setup Datasets. We use the dev split of FLORES-Plus, which provides sentence-aligned multilingual data across typologically diverse languages. For South Asian languages, we additionally consider the Dak-shina dataset to assess the effects of context-aware romanization, noting that these corpora are not sentence-aligned and are therefore used only for supplementary analysis. 
+
+Language Selection. Our experiments cover Hindi (hi), Marathi (mr), Bengali (bn), Urdu (ur), Russian (ru), Bulgarian (bg), Japanese (ja), Chi-nese (zh), Korean (ko), English (en), and Spanish (es), spanning multiple writing systems and includ-ing both closely related and typologically distant language pairs. 
+
+Romanization Procedure and Diacritics. Ro-manized text is generated using the ICU Transliter-ator. For applicable languages, we construct both diacritic-preserving and ASCII-only variants by removing diacritics via Unicode normalization, en-abling controlled analysis of sub-phonemic ortho-graphic cues. The whole pipeline is run thrice: (a) with the native datasets, (b) with the diacritics-romanization datasets, (c) with the diacritics-free-romanization datasets. Then the resulting neuron sets are compared. 
+
+Metrics. Overlap between language-associated feature sets is quantified using Jaccard similar-ity. We additionally compute cross-language over-laps to assess whether Romanization induces in-creased sharing with English or other Latin-script languages. 
+
+D.2 Supplementary Romanization Analysis Across Models and Representations 
+
+This appendix extends Section 4 by documenting the full set of romanization diagnostics across all evaluated model and representation configurations. While the main text focuses on feature identity and overlap, here we examine (i) aggregate neuron-sharing structure across all languages, and (ii) dis-tributional effects of romanization on activation behavior of language-specific neurons. 
+
+Aggregate neuron sharing under orthographic variation. We begin by reporting aggregate Venn Bengali 
+
+> Bulgarian
+> Chinese
+> Hindi
+> Japanese
+> Korean
+> Marathi
+> Russian
+> Spanish
+> Urdu
+> 0.0
+> 0.5
+> Jaccard Similarity
+> SAE Features (vs Native)
+> SAE Features (vs English)
+> Raw Neurons (vs Native)
+> Raw Neurons (vs English)
+
+Figure 8: Jaccard similarity between language-associated units identified from Romanized inputs and those from Native-script or English inputs in Gemma-2-2B. Results are shown for both raw neurons and SAE features . Romanized inputs exhibit low overlap with their native-script counterparts and near-zero overlap with English in both representations, indicating limited cross-script alignment without convergence to English. 
+
+diagrams computed jointly over all languages, re-stricted to language-specific neurons identified in-dependently per input condition. For each config-uration, we plot Venn diagrams for units shared among at most three languages, comparing native-script inputs, romanized inputs with diacritics, and romanized inputs without diacritics. This repre-sentation captures all low-order sharing behavior, ensuring a fair balance between specificity and cov-erage. Figures 9 and 10 summarizes these results across Gemma and Llama, under both raw MLP and SAE representations. Across all available con-figurations, aggregate overlap between native and romanized variants remains low. Overlap between the two romanized variants is slightly higher but remains limited, indicating that even minor ortho-graphic perturbations such as diacritic removal in-duce substantial reassignment of language-specific neurons. Figure 8 shows these trends for Gemma, consistent with the trends for Llama from the main text. These aggregate results confirm that the ef-fects reported per-language in the main text persist at the multilingual level. 
+
+Distributional effects of romanization. 
+
+Overlap-based analyses describe neuron reuse , but do not capture how retained neurons behave. We therefore analyze activation statistics under native versus romanized inputs for both (i) the complete sets of neurons active in each condition, and (ii) the subset of neurons overlapping between native and romanized representations. Figures 11 and 12 report these distributions for Gemma and Llama across raw and SAE represen-tations. Across all available configurations, roman-ization induces clear distributional shifts in both Native 
+
+> (n=292)
+> Romanized
+> (with diacritics)
+> (n=302)
+> Romanized
+> (without diacritics)
+> (n=168)
+
+Bengali 
+
+> Native
+> (n=614)
+> Romanized
+> (with diacritics)
+> (n=278)
+> Romanized
+> (without diacritics)
+> (n=319)
+
+Bulgarian  
+
+> Native
+> (n=299) Romanized
+> (with diacritics)
+> (n=822)
+> Romanized
+> (without diacritics)
+> (n=799)
+
+Chinese  
+
+> Native
+> (n=241) Romanized
+> (with diacritics)
+> (n=269)
+> Romanized
+> (without diacritics)
+> (n=192)
+
+Hindi 
+
+> Native
+> (n=336)
+> Romanized
+> (with diacritics)
+> (n=357)
+> Romanized
+> (without diacritics)
+> (n=187)
+
+Japanese  
+
+> Native
+> (n=239) Romanized
+> (with diacritics)
+> (n=522)
+> Romanized
+> (without diacritics)
+> (n=587)
+
+Korean 
+
+> Native
+> (n=750)
+> Romanized
+> (with diacritics)
+> (n=350)
+> Romanized
+> (without diacritics)
+> (n=239)
+
+Marathi  
+
+> Native
+> (n=257) Romanized
+> (with diacritics)
+> (n=348)
+> Romanized
+> (without diacritics)
+> (n=411)
+
+Russian 
+
+> Native
+> (n=452)
+> Romanized
+> (with diacritics)
+> (n=315)
+> Romanized
+> (without diacritics)
+> (n=322)
+
+Spanish 
+
+> Native
+> (n=828)
+> Romanized
+> (with diacritics)
+> (n=215)
+> Romanized
+> (without diacritics)
+> (n=253)
+
+Urdu Native 
+
+> (n=375)
+> Romanized
+> (with diacritics)
+> (n=5)
+> Romanized
+> (without diacritics)
+> (n=10)
+
+Bengali  
+
+> Native
+> (n=1) Romanized
+> (with diacritics)
+> (n=3)
+> Romanized
+> (without diacritics)
+> (n=2)
+
+Bulgarian  
+
+> Native
+> (n=2) Romanized
+> (with diacritics)
+> (n=38)
+> Romanized
+> (without diacritics)
+> (n=71)
+
+Chinese 
+
+> Native
+> (n=208)
+> Romanized
+> (with diacritics)
+> (n=9)
+> Romanized
+> (without diacritics)
+> (n=6)
+
+Hindi  
+
+> Native
+> (n=2) Romanized
+> (with diacritics)
+> (n=13)
+> Romanized
+> (without diacritics)
+> (n=11)
+
+Japanese 
+
+> Native
+> (n=80)
+> Romanized
+> (with diacritics)
+> (n=10)
+> Romanized
+> (without diacritics)
+> (n=11)
+
+Korean 
+
+> Native
+> (n=66)
+> Romanized
+> (with diacritics)
+> (n=7)
+> Romanized
+> (without diacritics)
+> (n=2)
+
+Marathi 
+
+> Native
+> (n=5)
+> Romanized
+> (with diacritics)
+> (n=368)
+> Romanized
+> (without diacritics)
+> (n=383)
+
+Russian 
+
+> Native
+> (n=6)
+> Romanized
+> (with diacritics)
+> (n=761)
+> Romanized
+> (without diacritics)
+> (n=716)
+
+Spanish  
+
+> Native
+> (n=63) Romanized
+> (with diacritics)
+> (n=121)
+> Romanized
+> (without diacritics)
+> (n=36)
+
+Urdu Figure 9: Aggregate degree-3 Venn diagrams of language-specific neurons under orthographic variation for Gemma-2-2B . Degree-3 denotes the union of neurons shared by up to three languages. Panels correspond to raw MLP and SAE representations under diacritics-preserving and diacritics-removed romanization. 
+
+activation probability and entropy. These shifts are observed both when considering complete neuron sets and when restricting to overlapping neurons, indicating that the effects are not solely driven by changes in neuron identity. Moreover, the shifts are substantially larger than those observed under shuf-fling baselines, suggesting structured changes in activation dynamics rather than random variance. 
+
+Representation-specific distributional trends. 
+
+For raw MLP representations, romanization con-sistently shifts activation probability mass toward higher values while reducing entropy, indicating more concentrated and decisive neuron firing. This effect is pronounced for Gemma, whereas for Llama the entropy reduction is comparatively mild, despite similar probability shifts. For SAE representations, distributional shifts are again substantial, but the directionality is less con-sistent across configurations. In particular, both en-tropy and activation probability may increase or de-crease depending on the setup. However, the over-all magnitude of these shifts is larger for Gemma than for Llama, suggesting that sparse representa-tions in Gemma are more sensitive to orthographic perturbations. 
+
+Stability of mean activation statistics. Finally, we report mean activation statistics averaged across languages and neurons. Despite strong neuron-Native 
+
+(n=401) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=302) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=144) 
+
+Bengali 
+
+Native 
+
+(n=283) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=109) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=163) 
+
+Bulgarian 
+
+Native 
+
+(n=126) Romanized 
+
+(with diacritics) 
+
+(n=424) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=473) 
+
+Chinese 
+
+Native 
+
+(n=206) Romanized 
+
+(with diacritics) 
+
+(n=244) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=120) 
+
+Hindi 
+
+Native 
+
+(n=173) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=159) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=125) 
+
+Japanese 
+
+Native 
+
+(n=122) Romanized 
+
+(with diacritics) 
+
+(n=307) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=420) 
+
+Korean 
+
+Native 
+
+(n=476) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=356) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=185) 
+
+Marathi 
+
+Native 
+
+(n=124) Romanized 
+
+(with diacritics) 
+
+(n=140) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=177) 
+
+Russian 
+
+Native 
+
+(n=229) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=107) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=140) 
+
+Spanish 
+
+Native 
+
+(n=466) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=241) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=231) 
+
+Urdu Native 
+
+(n=381) 
+
+Romanized 
+
+(with diacritics) 
+
+(n=274) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=112) 
+
+Bengali 
+
+Native 
+
+(n=170) Romanized 
+
+(with diacritics) 
+
+(n=200) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=184) 
+
+Bulgarian 
+
+Native 
+
+(n=121) Romanized 
+
+(with diacritics) 
+
+(n=368) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=290) 
+
+Chinese 
+
+Native 
+
+(n=134) Romanized 
+
+(with diacritics) 
+
+(n=265) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=144) 
+
+Hindi 
+
+Native 
+
+(n=153) Romanized 
+
+(with diacritics) 
+
+(n=308) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=197) 
+
+Japanese 
+
+Native 
+
+(n=147) Romanized 
+
+(with diacritics) 
+
+(n=305) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=254) 
+
+Korean 
+
+Native 
+
+(n=200) Romanized 
+
+(with diacritics) 
+
+(n=250) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=108) 
+
+Marathi 
+
+Native 
+
+(n=129) Romanized 
+
+(with diacritics) 
+
+(n=198) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=173) 
+
+Russian 
+
+Native 
+
+(n=49) Romanized 
+
+(with diacritics) 
+
+(n=54) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=59) 
+
+Spanish 
+
+Native 
+
+(n=286) Romanized 
+
+(with diacritics) 
+
+(n=547) 
+
+Romanized 
+
+(without diacritics) 
+
+(n=409) 
+
+Urdu Figure 10: Aggregate degree-3 Venn diagrams of language-specific neurons under orthographic variation for 
+
+Llama-3.2-1B . Degree-3 denotes the union of neurons shared by up to three languages. Panels correspond to raw MLP and SAE representations under diacritics-preserving and diacritics-removed romanization. 
+
+level redistribution and distributional shifts, mean activation values remain largely stable across native and romanized inputs, indicating that romanization reallocates activation mass without substantially altering global magnitude. Figure 13 summarizes these values for the raw activations. 
+
+Summary. Together with Section 4, these results show that orthographic variation affects both the allocation and dynamics of language-specific neu-rons. Degree-3 analyses confirm that low-order sharing remains limited even when allowing pair-wise reuse, while distributional statistics reveal structured activation shifts under romanization that are not captured by identity-based overlap alone. 
+
+D.3 Probing–Romanization Interaction: Typological Alignment of Neuron Subsets 
+
+This subsection analyzes how typological struc-ture, as measured by lang2vec probing, distributes across neuron subsets induced by romanization. While earlier sections establish that romanization reorganizes language-specific features, here we ask whether this reorganization correlates with the de-gree to which neurons encode linguistic typology. 
+
+Setup. For each layer, model, and representation (raw MLP or SAE), neurons are partitioned into four disjoint subsets based on their activity un-der native and romanized inputs: (i) native-only 0.5 1.0 1.5 2.0                
+
+> Entropy (All)
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Density  Mean (Native): 1.81
+> Mean (Romanized): 1.76
+> Native
+> Romanized
+> 0.7 0.8 0.9 1.0
+> Activation Probability (All)
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> Density
+> Mean (Native): 0.80 Mean (Romanized): 0.86
+> Native
+> Romanized
+> 0.5 1.0 1.5 2.0
+> Entropy (Overlapping)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> Density
+> Mean (Native): 1.63
+> Mean (Romanized): 1.50
+> Native
+> Romanized
+> 0.7 0.8 0.9 1.0
+> Activation Probability (Overlapping)
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> Density
+> Mean (Native): 0.82
+> Mean (Romanized): 0.86
+> Native
+> Romanized 0.75 1.00 1.25 1.50 1.75 2.00 2.25
+
+Entropy (All)       
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Density
+> Mean (Native): 1.66 Mean (Romanized): 1.99
+> Native
+> Romanized
+> 0.1 0.2 0.3 0.4 0.5 0.6 0.7
+
+Activation Probability (All)       
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> Density
+> Mean (Native): 0.30 Mean (Romanized): 0.22
+> Native
+> Romanized
+> 0.75 1.00 1.25 1.50 1.75 2.00 2.25
+
+Entropy (Overlapping)       
+
+> 0
+> 2
+> 4
+> 6
+> 8
+> Density
+> Mean (Native): 2.14
+> Mean (Romanized): 1.97
+> Native
+> Romanized
+> 0.1 0.2 0.3 0.4 0.5 0.6 0.7
+
+Activation Probability (Overlapping) 
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> Density
+> Mean (Native): 0.19
+> Mean (Romanized): 0.22
+> Native
+> Romanized
+
+Figure 11: Activation probability and entropy distri-butions for language-specific neurons under native vs. romanized inputs (Gemma-2-2B). Top: raw MLP; Bot-tom: SAE. 
+
+neurons, (ii) romanized-only neurons, (iii) overlap 
+
+neurons active under both conditions, and (iv) a 
+
+baseline consisting of all neurons in the layer. For each subset, we compute the average family-wise maximum probing R2 score across neurons for the three typological feature families used in the fi-nal analysis: fam , syntax , and phonology . All plots in this section report these averages using the 
+
+specific_mean metric. 
+
+Consistency across models and representations. 
+
+Across all model and representation configurations, the qualitative behavior of these curves is remark-ably consistent. Baseline probing values are gener-ally lower than those obtained from more selective neuron subsets. An exception arises for Gemma, where neurons active only for native inputs some-times fall below the baseline. In the Gemma raw setting, probing values are comparatively similar across subsets, indicating weaker separation be-tween neuron groups. 
+
+Overlap neurons encode stronger typological structure. The most robust result is that the over-lap subset consistently exhibits substantially higher probing R2 scores than all other subsets. This pat-0.5 1.0 1.5 2.0            
+
+> Entropy (All)
+> 0
+> 1
+> 2
+> 3
+> 4
+> Density  Mean (Native): 2.10
+> Mean (Romanized): 2.10
+> Native
+> Romanized
+> 0.8 0.9 1.0
+> Activation Probability (All)
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> 12
+> Density
+> Mean (Native): 0.84
+> Mean (Romanized): 0.93
+> Native
+> Romanized
+> 0.5 1.0 1.5 2.0
+> Entropy (Overlapping)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> Density
+> Mean (Native): 1.85
+> Mean (Romanized): 1.81
+> Native
+> Romanized
+> 0.8 0.9 1.0
+> Activation Probability (Overlapping)
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> 12
+> Density
+> Mean (Native): 0.86
+> Mean (Romanized): 0.94
+> Native
+> Romanized 0.0 0.5 1.0 1.5 2.0
+
+Entropy (All)     
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> Density
+> Mean (Native): 0.75
+> Mean (Romanized): 1.03
+> Native
+> Romanized
+> 0.2 0.4 0.6 0.8 1.0
+
+Activation Probability (All)     
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> Density  Mean (Native): 0.29
+> Mean (Romanized): 0.26
+> Native
+> Romanized
+> 0.0 0.5 1.0 1.5 2.0
+
+Entropy (Overlapping)     
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Density
+> Mean (Native): 0.81
+> Mean (Romanized): 0.77
+> Native
+> Romanized
+> 0.2 0.4 0.6 0.8 1.0
+
+Activation Probability (Overlapping) 
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> Density
+> Mean (Native): 0.34
+> Mean (Romanized): 0.27
+> Native
+> Romanized
+
+Figure 12: Activation probability and entropy distri-butions for language-specific neurons under native vs. romanized inputs (Llama-3.2-1B). Top: raw MLP; Bot-tom: SAE. 
+
+tern holds across all models, representations, fea-ture families, and romanization conditions. Neu-rons that remain active across both native and ro-manized inputs are therefore not only orthography-invariant, but also more strongly aligned with lin-guistic typology than neurons that respond selec-tively to a single script variant. 
+
+Model- and representation-level effects. Con-sistent with prior probing analyses, Gemma achieves higher absolute probing scores than Llama across all neuron subsets. Within Llama, SAE rep-resentations exhibit markedly lower R2 values than raw MLP activations, often by a large margin. Cru-cially, however, the dominance of the overlap sub-set persists even in these lower-signal regimes, in-dicating that the relationship between orthographic stability and typological alignment is robust to over-all representational strength. 
+
+Preservation of typological hierarchy. Across all neuron subsets and configurations, the relative ordering of feature families remains unchanged: 
+
+fam > syntax > phonology .
+
+Romanization-induced partitioning thus modulates the magnitude of typological alignment, but not its Bengali     
+
+> Bulgarian
+> Chinese
+> English
+> Hindi
+> Japanese
+> Korean
+> Marathi
+> Russian
+> Spanish
+> Urdu 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Mean Entropy
+> Native Romanized
+> Bengali
+> Bulgarian
+> Chinese
+> English
+> Hindi
+> Japanese
+> Korean
+> Marathi
+> Russian
+> Spanish
+> Urdu 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Mean Activation Probability  Native Romanized Bengali
+> Bulgarian
+> Chinese
+> English
+> Hindi
+> Japanese
+> Korean
+> Marathi
+> Russian
+> Spanish
+> Urdu 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Mean Entropy
+> Native Romanized
+> Bengali
+> Bulgarian
+> Chinese
+> English
+> Hindi
+> Japanese
+> Korean
+> Marathi
+> Russian
+> Spanish
+> Urdu 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Mean Activation Probability  Native Romanized
+
+Figure 13: Mean activation statistics across languages for native and romanized inputs, for the raw MLP LAPE-identified features. Top: Gemma-2-2B; Bottom: Llama-3.2-1B. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+
+> Layer
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Jaccard Similarity
+> SAE Features
+> Raw Neurons
+
+Figure 14: Layer-wise alignment between language-associated units for Native and Romanized inputs in Gemma-2-2B. The red line denotes average Jaccard similarity for raw neurons , and the blue line for SAE features ; shaded regions indicate standard deviation across languages. Both raw neurons and SAE features show a mid-layer increase in overlap. However, in all cases, alignment remains far from convergence, indi-cating that representational separation persists beyond input tokenization. 
+
+hierarchical structure. 
+
+Representative results. Figures 5–17 show rep-resentative results for Llama and Gemma under both raw and SAE representations with diacritics-preserving romanization. Analogous trends are observed for the diacritics-removed setting. Only Native Overlap Only Romanized Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Avg. Mean Probing Score ( R2)
+> Phonology Syntax Genealogy (Family)
+
+Figure 15: Average family-wise maximum probing R2
+
+scores across neuron subsets induced by romanization (Llama-3.2-1B, SAE). Overall probing scores are lower, but overlap neurons remain dominant. 
+
+Summary. Together, these results establish a sys-tematic association between orthographic robust-ness and linguistic abstraction. Neurons that are preserved across romanization transformations con-sistently encode stronger typological structure than neurons that are sensitive to script variation. Ro-manization thus serves as a diagnostic tool that re-veals not only representational fragmentation, but also the locus of stable linguistic abstraction within multilingual models. Only Native Overlap Only Romanized Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Avg. Mean Probing Score ( R2)
+> Phonology Syntax Genealogy (Family)
+
+Figure 16: Average family-wise maximum probing R2
+
+scores across neuron subsets induced by romanization (Gemma-2-2B, raw MLP). Scores are closer across sub-sets, with native-only neurons occasionally falling be-low baseline. Only Native Overlap Only Romanized Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Avg. Mean Probing Score ( R2)
+> Phonology Syntax Genealogy (Family)
+
+Figure 17: Average family-wise maximum probing R2
+
+scores across neuron subsets induced by romanization (Gemma-2-2B, SAE). Overlap neurons continue to show stronger typological alignment despite increased spar-sity. 
+
+E Structural Perturbation Experiments (Word Shuffling) 
+
+Datasets. Following the original setup, we use a combination of three datasets. • XNLI: 1,000 examples from the train split (en, de, fr, hi, es, th, bg, ru, tr, vi). • PAWS-X: 1,000 examples from the train 
+
+split (en, de, fr, es, ja, ko, zh). • FLORES+: 997 examples from the dev split (15+ languages). 
+
+Procedure. For each dataset, we apply the LAPE and SAE-LAPE pipelines twice: (s) on sentences in their natural word order, (b) on sentences where words within each prompt are randomly permuted. All other parameters are held fixed. The resulting neuron sets are compared. 
+
+E.1 Supplementary Shuffling Analyses Across Models and Representations 
+
+This appendix provides additional analyses for the shuffling experiments reported in Section 5. While the main text focuses on language-level stability and aggregate trends, here we document neuron-level overlap structure and distributional behavior across all model and representation configurations. 
+
+Aggregate neuron overlap under shuffling. We first examine neuron overlap between features iden-tified from original and word-shuffled inputs, aggre-gated across all languages. Figure 18 and Figure 19 show degree-based Venn diagrams for Llama and Gemma, respectively, under raw and SAE represen-tations. Across all configurations, overlap between orig-inal and shuffled feature sets remains high, indi-cating that shuffling preserves feature identity at the neuron level. This confirms that the stability observed at the language level in the main text also holds when aggregating across neurons. For Gemma SAE, the absolute number of identi-fied neurons is small for certain languages, making low-degree overlap estimates unstable. In this case, we report overlap up to degree 5 rather than de-gree 3. When restricting attention to settings with sufficient numbers of identified neurons, high over-lap is consistently recovered, in line with other configurations. 
+
+Distributional stability of activation statistics. 
+
+Beyond feature identity, we analyze whether shuf-fling induces shifts in activation behavior. Fig-ures 20 and 21 compare distributions of activation entropy and selection probability for original ver-sus shuffled inputs, aggregated across languages. Across all models and representations, the dis-tributions are nearly overlapping, with only minor shifts in their means. This remains true when re-stricting the analysis to overlapping features (re-sults omitted for brevity), indicating that neurons preserved under shuffling also maintain stable acti-vation profiles. 
+
+Mean activation statistics. Finally, we report mean activation statistics aggregated across lan-guages. As shown in Figure 22, mean entropy and selection probability change only marginally un-der shuffling, reiterating that syntactic perturbation does not significantly reweight feature activity. 348 288                              
+
+> Bulgarian
+> 128 120
+> Chinese
+> 48 80
+> English
+> 246 213
+> French
+> 270 248
+> German
+> 254 253
+> Hindi
+> 279 228
+> Italian
+> 189 169
+> Japanese
+> 133 119
+> Korean
+> 253 216
+> Portuguese
+> 138 155
+> Russian
+> 191 165
+> Spanish
+> 180 171
+> Thai
+> 282 258
+> Turkish
+> 130 187
+> Vietnamese
+> Original
+> Shuffled 148 154
+> Bulgarian
+> 85 87
+> Chinese
+> 10 16
+> English
+> 13 13
+> French
+> 14 21
+> German
+> 179 192
+> Hindi
+> 24 35
+> Italian
+> 112 106
+> Japanese
+> 112 111
+> Korean
+> 61 66
+> Portuguese
+> 102 114
+> Russian
+> 14 21
+> Spanish
+> 167 158
+> Thai
+> 91 96
+> Turkish
+> 94 113
+> Vietnamese
+> Original
+> Shuffled
+
+Figure 18: Aggregate degree-based Venn diagrams com-paring features from original and shuffled inputs in Llama-3.2-1B. Top: raw MLP; Bottom: SAE. High overlap indicates stability of neuron identity under word-order perturbation. 
+
+Summary. Together, these supplementary anal-yses reinforce the robustness conclusions in Sec-tion 5. Word-order shuffling preserves both neu-ron identity and activation statistics across models and representations. Differences observed in low-neuron regimes (e.g., Gemma SAE) are attributable to feature sparsity rather than systematic sensitivity to syntactic structure, further supporting the view that language-associated features primarily reflect token-level and distributional regularities. 
+
+E.2 Probing-Shuffling Interaction: Typological Alignment Under Syntactic Perturbation 
+
+This subsection analyzes how sensitivity to word-order shuffling correlates with typological structure, as measured by lang2vec probing. In contrast to romanization, shuffling preserves surface form and token identity while disrupting local syntactic order. We therefore examine how typological alignment 568 527                            
+
+> Bulgarian
+> 262 216
+> Chinese
+> 58 50
+> English
+> 323 286
+> French
+> 345 330
+> German
+> 307 280
+> Hindi
+> 425 398
+> Italian
+> 321 294
+> Japanese
+> 254 194
+> Korean
+> 323 283
+> Portuguese
+> 219 207
+> Russian
+> 234 191
+> Spanish
+> 276 250
+> Thai
+> 518 494
+> Turkish
+> 307 403
+> Vietnamese
+> Original
+> Shuffled 293 141
+> Bulgarian
+> 72
+> Chinese
+> 45
+> English
+> 16
+> French
+> 1
+> German
+> 566 341
+> Hindi
+> 32
+> Italian
+> 84
+> Japanese
+> 481 251
+> Korean
+> 21
+> Portuguese
+> 820
+> Russian
+> 2
+> Spanish
+> 572 345
+> Thai
+> 54
+> Turkish
+> 60 15
+> Vietnamese
+> Original
+> Shuffled
+
+Figure 19: Aggregate degree-based Venn diagrams com-paring features from original and shuffled inputs in Gemma-2-2B. Top: raw MLP (degree 3); Bottom: SAE (degree 5). When sufficient neurons are identified, high overlap is preserved under shuffling. 
+
+distributes across neuron subsets that differ in their stability under shuffling. 
+
+Setup. For each layer, model, and representation (raw MLP or SAE), neurons are partitioned into four disjoint subsets based on their activity under original and shuffled inputs: (i) normal-only neu-rons (active only for original text), (ii) shuffled-only 
+
+neurons, (iii) overlap neurons active under both conditions, and (iv) a baseline consisting of all neu-rons in the layer. For each subset, we compute the average family-wise maximum probing R2 score across neurons for the three typological feature families used throughout the paper: fam , syntax ,and phonology . All plots report mean values ag-gregated across layers; we use degree3_mean for all configurations, except for Gemma SAE where 
+
+degree5_mean is used due to low neuron counts in some languages. 0.5 1.0 1.5 2.0 2.5 
+
+Entropy (All)    
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> Density
+> Mean (Original): 2.36
+> Mean (Shuffled): 2.33
+> Original
+> Shuffled
+> 0.7 0.8 0.9 1.0
+
+Activation Probability (All)     
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> Density  Mean (Original): 0.85
+> Mean (Shuffled): 0.87
+> Original
+> Shuffled
+> 0.5 1.0 1.5 2.0 2.5
+
+Entropy (Overlapping)    
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Density
+> Mean (Original): 2.31
+> Mean (Shuffled): 2.28
+> Original
+> Shuffled
+> 0.7 0.8 0.9 1.0
+
+Activation Probability (Overlapping)      
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> Density
+> Mean (Original): 0.86
+> Mean (Shuffled): 0.87
+> Original
+> Shuffled 0.0 0.5 1.0 1.5 2.0 2.5
+
+Entropy (All)     
+
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Density
+> Mean (Original): 0.71
+> Mean (Shuffled): 0.73
+> Original
+> Shuffled
+> 0.2 0.4 0.6 0.8 1.0
+
+Activation Probability (All)      
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Density
+> Mean (Original): 0.40
+> Mean (Shuffled): 0.41
+> Original
+> Shuffled
+> 0.0 0.5 1.0 1.5 2.0 2.5
+
+Entropy (Overlapping)     
+
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Density
+> Mean (Original): 0.69
+> Mean (Shuffled): 0.66
+> Original
+> Shuffled
+> 0.2 0.4 0.6 0.8 1.0
+
+Activation Probability (Overlapping) 
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Density
+> Mean (Original): 0.40
+> Mean (Shuffled): 0.41
+> Original
+> Shuffled
+
+Figure 20: Activation entropy and selection proba-bility distributions for original and shuffled inputs in Llama-3.2-1B. Top: raw MLP; Bottom: SAE. The near-identical distributions indicate minimal distributional shift under shuffling. 
+
+Raw representations show uniform typological alignment. Figures 6 and 25 show results for raw MLP representations in Llama and Gemma. In both models, probing scores are remarkably similar across the normal-only , shuffled-only , and overlap 
+
+subsets. This indicates that, at the level of dis-tributed raw activations, sensitivity to word-order perturbation is largely decoupled from typologi-cal alignment. Neurons that respond selectively to shuffled inputs are no less typologically informa-tive than those that respond to original inputs. 
+
+SAE representations expose a structured hier-archy. A different pattern emerges for SAE rep-resentations (Figures 24 and 26). For both Llama and Gemma, we observe a consistent ordering: 
+
+normal-only ≈ shuffled-only > overlap .
+
+That is, neurons selective to a single condition – whether original or shuffled – exhibit stronger typo-logical alignment than neurons that remain active across both. This contrasts sharply with the ro-manization setting, where overlap neurons were 0.5 1.0 1.5 2.0 
+
+Entropy (All)     
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Density  Mean (Original): 2.06
+> Mean (Shuffled): 2.07
+> Original
+> Shuffled
+> 0.6 0.7 0.8 0.9 1.0
+
+Activation Probability (All)    
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> Density  Mean (Original): 0.80
+> Mean (Shuffled): 0.82
+> Original
+> Shuffled
+> 0.5 1.0 1.5 2.0
+
+Entropy (Overlapping)     
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Density
+> Mean (Original): 2.03
+> Mean (Shuffled): 1.99
+> Original
+> Shuffled
+> 0.6 0.7 0.8 0.9 1.0
+
+Activation Probability (Overlapping)      
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> Density
+> Mean (Original): 0.80
+> Mean (Shuffled): 0.82
+> Original
+> Shuffled 0.0 0.5 1.0 1.5 2.0 2.5
+
+Entropy (All)      
+
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> 0.30
+> Density  Mean (Original): 1.23
+> Mean (Shuffled): 1.30
+> Original
+> Shuffled
+> 0.1 0.2 0.3 0.4 0.5 0.6
+
+Activation Probability (All)      
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Density  Mean (Original): 0.28
+> Mean (Shuffled): 0.27
+> Original
+> Shuffled
+> 0.0 0.5 1.0 1.5 2.0 2.5
+
+Entropy (Overlapping)      
+
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> 0.30
+> Density
+> Mean (Original): 1.23
+> Mean (Shuffled): 1.22
+> Original
+> Shuffled
+> 0.1 0.2 0.3 0.4 0.5 0.6
+
+Activation Probability (Overlapping) 
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Density
+> Mean (Original): 0.28
+> Mean (Shuffled): 0.28
+> Original
+> Shuffled
+
+Figure 21: Activation entropy and selection probability distributions for original and shuffled inputs in Gemma-2-2B. Top: raw MLP; Bottom: SAE. Distributional shifts remain small across representations. 
+
+most informative, and suggests that invariance to word-order perturbation does not preferentially se-lect for typologically informative features in sparse representations. 
+
+Baseline effects in Llama. In Llama, baseline probing scores are substantially lower than those of any condition-specific subset, for both raw and SAE representations. This gap is less pronounced in Gemma. The result suggests that in Llama, typo-logical information is concentrated in a relatively small subset of neurons, and is diluted when aver-aging across the full layer. 
+
+Preservation of typological hierarchy. Across all models, representations, and neuron subsets, the relative ordering of feature families remains unchanged: 
+
+fam > syntax > phonology .
+
+Thus, while shuffling-sensitive partitioning modu-lates the strength of typological alignment, it does not alter the underlying hierarchy of linguistic in-formation. Bulgarian     
+
+> Chinese
+> English
+> French
+> German
+> Hindi
+> Italian
+> Japanese
+> Korean
+> Portuguese
+> Russian
+> Spanish
+> Thai
+> Turkish
+> Vietnamese 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Mean Entropy
+> Original Shuffled
+> Bulgarian
+> Chinese
+> English
+> French
+> German
+> Hindi
+> Italian
+> Japanese
+> Korean
+> Portuguese
+> Russian
+> Spanish
+> Thai
+> Turkish
+> Vietnamese 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Mean Activation Probability  Original Shuffled Bulgarian
+> Chinese
+> English
+> French
+> German
+> Hindi
+> Italian
+> Japanese
+> Korean
+> Portuguese
+> Russian
+> Spanish
+> Thai
+> Turkish
+> Vietnamese 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> Mean Entropy
+> Original Shuffled
+> Bulgarian
+> Chinese
+> English
+> French
+> German
+> Hindi
+> Italian
+> Japanese
+> Korean
+> Portuguese
+> Russian
+> Spanish
+> Thai
+> Turkish
+> Vietnamese 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> Mean Activation Probability  Original Shuffled
+
+Figure 22: Mean activation entropy and selection probability across languages before and after shuffling. Top: Llama-3.2-1B; Bottom: Gemma-2-2B (raw MLP). Mean-level changes are small, consistent with distribution-level stability. Russian 
+
+> Bulgarian
+> Thai
+> Italian
+> Portuguese
+> Japanese
+> Chinese
+> Turkish
+> Hindi
+> Korean
+> French
+> Spanish
+> German
+> Vietnamese
+> English
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Jaccard Similarity
+> SAE Features
+> Raw Neurons
+
+Figure 23: Jaccard similarity between language-associated units identified from original and word-shuffled text in Gemma-2-2B. Raw neurons exhibit consistently moderate-to-high overlap across languages, indicating robustness to word-order perturbation. SAE features also show high overlap, revealing robustness of sparse features to local distributional patterns disrupted by shuffling. 
+
+Representative results. Figures 6–26 show the full set of results for all configurations. 
+
+Summary. Together, these results indicate that robustness to syntactic perturbation is not a reliable indicator of typological abstraction. In raw repre-sentations, typological information is broadly dis-tributed and largely insensitive to shuffling-based partitioning. In contrast, sparse representations Only Normal Overlap Only Shuffled Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Avg. Mean Probing Score ( R2)
+> Phonology Syntax Genealogy (Family)
+
+Figure 24: Average family-wise maximum probing R2
+
+scores across neuron subsets under shuffling (Llama-3.2-1B, SAE). Condition-specific subsets dominate overlap neurons; baseline scores remain lowest. 
+
+reveal that neurons invariant to shuffling are not necessarily those most aligned with linguistic ty-pology, highlighting a clear qualitative difference between orthographic and syntactic perturbations. 
+
+F Probing Typological Structure Across Layers 
+
+F.1 Experimental Setup 
+
+This section describes the probing framework used to relate neuron- and SAE-feature activations to typological properties of languages. Only Normal Overlap Only Shuffled Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Avg. Mean Probing Score ( R2)
+> Phonology Syntax Genealogy (Family)
+
+Figure 25: Average family-wise maximum probing R2
+
+scores across neuron subsets under shuffling (Gemma-2-2B, raw MLP). Typological alignment is similar across normal-only, shuffled-only, and overlap subsets. Only Normal Overlap Only Shuffled Baseline   
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> Avg. Mean Probing Score ( R2)
+> Phonology Syntax Genealogy (Family)
+
+Figure 26: Average family-wise maximum probing R2
+
+scores across neuron subsets under shuffling (Gemma-2-2B, SAE). Results use degree-5 aggregation due to low neuron counts. As in llama, condition-specific sub-sets show stronger typological alignment than overlap neurons. 
+
+Activation Extraction For each language and layer, we extract mean activations corresponding to either raw model hidden states or SAE latents, depending on the probing condition. Given a model layer ℓ and a selected set of neu-rons or SAE features Nℓ, we collect activations over a multilingual dataset as follows. For each minibatch, we extract the hidden states at layer ℓ (or the corresponding SAE latent activations) and aver-age over both batch and token dimensions. These per-batch means are then aggregated across batches to obtain a single activation vector per language and layer: 
+
+x(k) 
+
+> ℓ
+
+∈ R|N ℓ|,
+
+where k indexes languages. Activations are collected from the FLORES+ dataset using the train split, with batch size 16. 
+
+Typological Features Typological targets are loaded from lang2vec features. Each feature set corresponds to a matrix 
+
+Y ∈ RL×F ,
+
+where L is the number of languages and F the number of typological dimensions. Feature sets include syntactic, phonological, and inventory-based features, as well as genealogical family and geographic coordinates. Prior to prob-ing, feature dimensions with zero variance across the selected languages are removed to ensure well-defined regression targets. 
+
+Regression Setup Probing is formulated as a set of univariate regression problems. For each neuron or feature n ∈ N ℓ and each typological dimension 
+
+f , we fit a linear model across languages: 
+
+y(k) 
+
+> f
+
+= βn,f x(k) 
+
+> n
+
++ ϵ(k),
+
+where x(k) 
+
+> n
+
+denotes the mean activation of neuron 
+
+n for language k.To stabilize estimation under small sample sizes, we use ridge regression with regularization coeffi-cient λ = 1 .0. Importantly, each neuron is probed independently, i.e., regressions are single-predictor models rather than multivariate probes. 
+
+Cross-Validation and Evaluation Probe quality is assessed using 5-fold cross-validation over lan-guages. In each fold, regression coefficients are estimated on the training languages and evaluated on held-out languages. The coefficient of determi-nation ( R2) is computed for each neuron–feature pair on the test split. For numerical stability and efficiency, regression is implemented in closed form and evaluated in blocks over both neuron and feature dimensions. For each neuron n and feature f , the final probe score is obtained by averaging R2 across folds: 
+
+R2 
+
+> n,f
+
+= 1
+
+K
+
+> K
+
+X
+
+> k=1
+
+R2
+
+> n,f
+> (k)
+
+.
+
+Neuron–feature pairs with undefined R2 values (e.g., due to zero variance in the target) are ex-cluded. 
+
+F.2 Detailed Layerwise Probing Comparisons 
+
+This appendix provides a detailed layerwise anal-ysis of probing results for the three typological feature families used in the final experiments: fam ,syntax , and phonology . We focus on (i) differ-ences between raw MLP activations and SAE rep-resentations, and (ii) cross-model differences be-tween Llama-3.2-1B and Gemma-2-2B. All plots report layerwise averages of maximum R2 scores per feature family. 
+
+Raw vs. SAE representations in Llama. Fig-ure 27 shows the layerwise probing trends for Llama raw and SAE representations, while Fig-ure 28 visualizes their differences directly. In early layers, SAE features are more informa-tive than raw MLP activations for all three feature families, resulting in negative raw–SAE differences. This indicates that SAE training amplifies weak but structured typological signals that are only dif-fusely present in shallow raw activations. As depth increases, this advantage steadily diminishes, and the difference approaches positive values, indicat-ing that raw representations become more linearly informative in deeper layers. This transition reflects a shift from early sparse amplification to richer dis-tributed encoding in later layers. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16                    
+
+> Layer
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Average Max  R2
+> LLaMA-3.2-1B (Raw)
+> Genealogy (Family) Syntax Phonology 12345678910 11 12 13 14 15 16
+> Layer
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Average Max  R2
+> LLaMA-3.2-1B (SAE)
+> Genealogy (Family) Syntax Phonology
+
+Figure 27: Layerwise probing performance in Llama-3.2-1B. Top: Raw MLP activations. Bottom: SAE fea-tures. SAE representations are comparatively stronger in early layers, while raw activations dominate in later layers. 
+
+Raw vs. SAE representations in Gemma. The corresponding Gemma plots are shown in Fig-ures 29 and 30. Unlike llama, Gemma exhibits a more stable relationship between raw and SAE 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16   
+
+> Layer
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> Difference in Average Max  R2
+> LLaMA-3.2-1B (Raw - SAE)
+> Genealogy (Family) Syntax Phonology
+
+Figure 28: Raw minus SAE probing score differences for Llama-3.2-1B. Negative values in shallow layers indicate higher SAE informativeness, while the gradual shift toward positive values reflects increasing raw dom-inance with depth. 
+
+representations across layers. For fam and syntax , raw activations are consis-tently more informative than SAE features, yield-ing positive differences across depth. In con-trast, phonology shows consistently negative dif-ferences, indicating that Gemma SAEs preferen-tially preserve phonological structure relative to raw MLP activations. This feature-specific asym-metry suggests that sparse factorization interacts differently with lower-level sound-related abstrac-tions than with genealogical or syntactic structure. 1 3 5 7 9 11 13 15 17 19 21 23 25                 
+
+> Layer
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Average Max  R2
+> Gemma-2-2B (Raw)
+> Genealogy (Family) Syntax Phonology 1357911 13 15 17 19 21 23 25
+> Layer
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Average Max  R2
+> Gemma-2-2B (SAE)
+> Genealogy (Family) Syntax Phonology
+
+Figure 29: Layerwise probing performance in Gemma-2-2B. Top: Raw MLP activations. Bottom: SAE features. Raw representations dominate for fam and 
+
+syntax , while SAE features retain stronger phonologi-cal signals across layers. 1 3 5 7 9 11 13 15 17 19 21 23 25   
+
+> Layer
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> Difference in Average Max  R2
+> Gemma-2-2B (Raw - SAE)
+> Genealogy (Family) Syntax Phonology
+
+Figure 30: Raw minus SAE probing score differ-ences for Gemma-2-2B. Differences are stable across depth: positive for fam and syntax , and negative for 
+
+phonology .
+
+Cross-model comparison: Llama vs. Gemma. 
+
+Figure 31 presents direct comparisons between Llama and Gemma under matched representational settings. Raw MLP activations exhibit stark cross-model differences in shallow layers for all three fea-ture families, with phonology showing substan-tially larger gaps than fam or syntax . Moreover, raw cross-model differences decrease sharply with depth, producing a pronounced downward trend across all feature families. This suggests that early typological representations are strongly shaped by architectural and tokenizer-specific factors, while deeper layers converge toward more similar abstrac-tions. In contrast, SAE representations substantially attenuate these differences. Although phonology remains the most discriminative feature family, the overall magnitude and depth-dependence of cross-model differences are reduced, indicating that sparse representations emphasize later-stage, shared abstractions over model-specific surface variation. 
+
+Summary. These detailed comparisons show that sparse autoencoding reshapes typological structure in a depth-, model-, and feature-dependent man-ner. Llama SAEs transiently enhance early-layer typological accessibility, Gemma SAEs selectively favor phonological structure, and phonology consis-tently emerges as the most sensitive axis for cross-model differences – particularly in shallow raw representations. 
+
+G Causal Interventions on Neuron Sets Defined by Invariance 
+
+This appendix reports causal intervention experi-ments designed to assess whether neuron subsets 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16                    
+
+> Layer
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> Difference in Average Max  R2
+> Gemma-2-2B - LLaMA-3.2-1B (Raw)
+> Genealogy (Family) Syntax Phonology 12345678910 11 12 13 14 15 16
+> Layer
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> Difference in Average Max  R2
+> Gemma-2-2B - LLaMA-3.2-1B (SAE)
+> Genealogy (Family) Syntax Phonology
+
+Figure 31: Cross-model comparison of probing perfor-mance. Top: Raw MLP activations. Bottom: SAE features. Raw representations show large early-layer differences, especially for phonology, followed by sharp convergence with depth, while SAE representations compress these disparities. 
+
+identified via invariance-based analyses are func-tionally necessary for multilingual language mod-eling. We intervene on neuron sets defined by their stability under controlled input perturbations: word-order shuffling and script romanization, done in sections 5 and 4 respectively. All experiments are conducted on the first 100 examples per lan-guage from the FLORES+ dataset. 
+
+G.1 Neuron Selection via Shuffling and Romanization 
+
+Neuron subsets are derived from earlier analyses that characterize neuron behavior under targeted surface perturbations. 
+
+Shuffling-based neuron sets. Using word-level shuffling experiments, neurons are categorized into: • Overlap neurons: Neurons consistently iden-tified under both normal and shuffled inputs. These neurons are invariant to word-order per-turbations and are hypothesized to encode structurally necessary representations. • Only-unshuffled neurons: Neurons identi-fied only under normal inputs and absent un-der shuffled conditions. These neurons are sensitive to surface word order and local syn-tactic structure. 
+
+Romanization-based neuron sets. Using native-script versus romanized inputs, neurons are grouped into: • Overlap neurons: Neurons shared across na-tive and romanized scripts, hypothesized to encode script-invariant representations. • Only-native neurons: Neurons active only for native-script inputs and whose functional signature disappears under romanization, in-dicating sensitivity to surface orthography. Across both regimes, overlap neurons are de-fined by invariance to the corresponding perturba-tion, while non-overlap neurons capture sensitivity to surface form. For all experiments, matched ran-dom control sets are constructed by sampling an equal number of neurons uniformly from the over-all neuron pool of the model. 
+
+G.2 Intervention Protocol 
+
+All experiments are conducted on raw model acti-vations. 
+
+Ablation scope. To avoid layer-local confounds, we apply simultaneous ablation across all layers .For each layer ℓ, activations of the selected neuron set are modified during the forward pass. 
+
+Ablation types. We consider: • Zero ablation for shuffling-based neuron sets: Activations are set to zero. • Cross-language mean ablation for romanization-based neuron sets: Activa-tions are replaced by mean activation vectors computed from another language. Mean vectors are computed over the correspond-ing FLORES+ split of the source language. 
+
+G.3 Evaluation Metrics and Statistical Testing 
+
+For each example, we compute clean and patched perplexities ( P P L clean , P P L patch ), perplexity ra-tios, and perplexity deltas ( ∆P P L ). Paired-sample 
+
+t-tests compare targeted ablations against matched random controls over the 100 examples, with sig-nificance assessed at p < 0.05 .
+
+G.4 Causal Results: Llama-3.2-1B G.4.1 Shuffling-Based Zero Ablation 
+
+Table 5 reports results for shuffling-derived neuron sets. Across languages, ablation of overlap neurons 
+
+induces the largest and most consistent degrada-tions. Hindi exhibits the strongest effect, with 
+
+P P L ratios approaching 2.8 and ∆P P L exceed-ing +1900 . Chinese shows similarly pronounced degradation, while English and French exhibit smaller but still significant effects. In all cases, overlap ablations degrade performance substan-tially more than matched random controls. In contrast, only-unshuffled neurons yield weaker and sometimes inverted effects. For English and French, ablation leads to reductions in perplex-ity relative to clean runs. Hindi shows a small in-crease, but far weaker than overlap ablations, while Chinese exhibits negative ∆P P L despite statisti-cal significance. These patterns indicate that only-unshuffled neurons encode order-sensitive surface regularities that are largely redundant for language modeling. 
+
+Qualitative effects under shuffling. As shown in Figure 32, ablation of overlap neurons induces systematic qualitative failures in Hindi. Most no-tably, we observe within-word script mixing , where individual lexical items combine Devanagari and Latin characters (e.g., mixed-script morphemes). This phenomenon is not observed under random or Only-unshuffled ablations, where script switch-ing—if present—occurs only at word boundaries. These qualitative failures align with the large per-plexity degradation and indicate that overlap neu-rons play a role in maintaining subword-level or-thographic coherence. 
+
+G.4.2 Romanization-Based Cross-Language Mean Ablation 
+
+Table 6 summarizes results for cross-language ab-lations between Hindi and English. Replacing overlap neuron activations across lan-guages yields relatively mild effects. English shows a slight decrease in perplexity, while Hindi shows a modest increase. The small magnitude of these effects suggests that overlap neurons encode representations that are largely invariant to script and language identity. In contrast, replacing only-native neuron activa-tions leads to extreme effects. English-only-native neurons replaced with Hindi means cause severe Lang Category P P L target                                                                
+
+> ratio P P L ctrl
+> ratio p(ratio) ∆P P L target ∆P P L ctrl p(∆)en overlap 1.116 0.954 1.5×10 −50 +272.3 −108.6 2.2×10 −35
+> en only-unshuffled 0.963 1.044 3.0×10 −48 −87.1 +99.6 1.9×10 −34
+> hi overlap 2.786 1.055 2.2×10 −19 +1914.0 +204.9 1.6×10 −12
+> hi only-unshuffled 1.083 0.947 4.1×10 −40 +228.6 −133.3 4.6×10 −10
+> fr overlap 1.118 1.030 5.4×10 −6+114.6 +74.6 0.145 fr only-unshuffled 0.935 0.957 2.8×10 −10 −130.7 −85.8 5.5×10 −7
+> zh overlap 1.217 0.960 2.4×10 −17 +952.6 −523.2 2.4×10 −24
+> zh only-unshuffled 0.936 0.982 5.7×10 −17 −695.3 −210.4 4.1×10 −16
+
+Table 5: Causal zero-ablation results for shuffling-derived neuron sets (Llama-3.2-1B, raw). Values report means over the first 100 FLORES+ examples per language. Control sets consist of matched random neurons with identical cardinality.                                      
+
+> Lang Category P P L target
+> ratio P P L ctrl
+> ratio p(ratio) ∆P P L target ∆P P L ctrl p(∆)en overlap 0.947 0.991 6.9×10 −45 −127.1 −21.1 9.7×10 −28
+> en only-native 1.498 0.955 5.0×10 −89 +1176.9 −104.9 3.1×10 −40
+> hi overlap 1.047 0.982 9.5×10 −34 +79.1 −53.8 1.7×10 −7
+> hi only-native 0.312 0.970 1.2×10 −38 −1800.5 −92.5 7.7×10 −11
+
+Table 6: Cross-language mean ablation results for romanization-derived neuron sets (LLaMA-3.2-1B, raw). Rows indicate forward-pass language; mean activations are taken from the opposite language. Results are averaged over the first 100 FLORES+ examples. 
+
+degradation, while Hindi-only-native neurons re-placed with English means yield large perplexity reductions. Qualitative inspection reveals that these reductions arise from language switching rather than improved Hindi modeling: many generations abandon Hindi entirely and continue fluently in En-glish, which has higher likelihood under the model. 
+
+G.5 Causal Results: Gemma-2-2B 
+
+We repeat the same analyses on Gemma-2-2B to assess cross-model consistency. 
+
+G.5.1 Shuffling-Based Zero Ablation 
+
+Table 7 reports shuffling-based interventions for Gemma. As in Llama, ablation of overlap neurons pro-duces the strongest disruptions across languages. English, French, and Chinese show large increases in perplexity relative to random controls, while Hindi exhibits weaker but directionally consistent effects. Paired tests confirm that these differences are statistically significant in nearly all cases. Only-unshuffled neurons again yield weaker and more variable effects. In several languages, abla-tion produces smaller changes than random con-trols or even reduces perplexity, reinforcing the conclusion that these neurons encode word-order-level regularities rather than load-bearing structure, and that the robust shuffling-overlap neuron sets are more correlated with orthographic and subword-level structures. 
+
+Qualitative effects under shuffling. Figure 33 presents representative Hindi and Chinese genera-tions. Similar to Llama, overlap-neuron ablation induces script changes within words , including par-tial Latin insertions and mixed-script morphemes. Crucially, such intra-word script violations do not appear under random or Only-unshuffled ablations, indicating that overlap neurons support low-level orthographic coordination during decoding. More importantly, fluency is not lost while ablating the overlapping neurons, indicating that this neurons are not responsible for syntactic behaviour. 
+
+G.5.2 Romanization-Based Cross-Language Mean Ablation 
+
+Table 8 summarizes romanization-based interven-tions. Only-native neurons exhibit the largest sensi-tivity: English-to-Hindi replacement causes large perplexity increases, while Hindi-to-English re-placement often yields perplexity reductions. As in Llama, inspection of generations reveals frequent language switching in the latter case, explaining the apparent improvement. Overlap neurons again show smaller and more symmetric effects, consistent with a script-invariant functional role. Lang Category P P L target                                                                
+
+> ratio P P L ctrl
+> ratio p(ratio) ∆P P L target ∆P P L ctrl p(∆)en overlap 3.045 0.312 3.5×10 −81 +588.9 −191.2 2.5×10 −39
+> en only-unshuffled 0.799 0.312 2.8×10 −130 −56.5 −191.2 1.1×10 −47
+> hi overlap 1.109 0.953 0.173 −34.2 −7.6 1.0×10 −3
+> hi only-unshuffled 0.397 2.557 8.1×10 −50 −102.7 +289.9 3.6×10 −22
+> fr overlap 1.547 0.952 1.2×10 −89 +116.1 −10.0 4.4×10 −36
+> fr only-unshuffled 1.260 1.403 3.1×10 −40 +56.3 +90.4 4.4×10 −24
+> zh overlap 0.842 0.150 2.0×10 −52 −58.8 −241.5 1.3×10 −56
+> zh only-unshuffled 0.082 3.152 6.0×10 −76 −259.8 +645.7 8.5×10 −38
+
+Table 7: Causal zero-ablation results for shuffling-derived neuron sets (Gemma-2-2B, raw). Values report means over the first 100 FLORES+ examples per language. Control sets consist of matched random neurons with identical cardinality. 
+
+G.6 Summary 
+
+Across both models and perturbation regimes, a consistent causal pattern emerges: • Shuffling-Overlap neurons —defined by in-variance to shuffling—form a causally nec-essary backbone supporting stable, script-consistent generation. They are not causally related to fluency, rather script and subword-level regularity. Hence, the features tied strongly to script are more causally important for generation. • Romanization-Overlap neurons —defined by invariance to romanization—are largely script insensitive. This suggests that repre-sentations that are not tied to script, are not causally important in generation. • Only-unshuffled neurons encode order-sensitive surface regularities that are largely redundant for orthographic structure. • Only-native neurons anchor script-specific realization, and their disruption induces lan-guage switching rather than structured degra-dation. Again, this reinforces the hypothesis that script-related neurons are most causally important. The convergence of quantitative metrics and qualitative failure modes across Llama and Gemma indicates that invariance-based neuron identifica-tion isolates functionally meaningful components of multilingual language models. Lang Category P P L target 
+
+ratio P P L ctrl 
+
+ratio p (ratio) ∆P P L target ∆P P L ctrl p (∆)en only-native 5.208 1.405 2.2×10 −65 +1222.6 +114.6 8.2×10 −35 
+
+en overlap 0.899 0.822 6.2×10 −96 −28.3 −50.0 3.6×10 −43 
+
+hi only-native 0.684 1.136 1.2×10 −54 −55.9 +24.1 2.4×10 −24 
+
+hi overlap 2.228 1.036 5.8×10 −45 +228.0 +6.5 7.1×10 −21 
+
+Table 8: Cross-language mean ablation results for romanization-derived neuron sets (Gemma-2-2B, raw). Rows indicate forward-pass language; mean activations are taken from the opposite language. Results are averaged over the first 100 FLORES+ examples. idx  Prefix (prompt context)  Clean 
+
+continuation 
+
+Patched continuation 
+
+(overlap-set ablation) 
+
+Inference 
+
+68  लॉकवुड गा ड  न के   क रायेदारों का मानना है   क  अन् य 40 प र वार या उससे  ज़् यादा बेदखली का सामना कर सकते हैं , चूँ  क  उन् हें पता चला है   क  ओएचए 
+
+पु  ल स ऑकलैंड में अन् य सा व  ज न क आवास संप    यों की जाँच कर रही है जो 
+
+आवास घोटाले में पक ड़े जा सकत 
+
+◌े  हैं। लॉकवुड गा ड  न के 
+
+ क रायेदारों न
+
+◌े  हैं। लockwood Garden के 
+
+ क राय edar ◌ों  का मानना 
+
+Within-word script 
+
+mixing: Devanagari 
+
+tokens corrupted by 
+
+Latin (sometimes 
+
+Arabic) characters 
+
+inside a single word. 73  कुछ सप् ताह पहले , पत्र कार माकीस   त्र  नताफेलोपोस  द् वारा अपने लोक  प्र  य
+
+टेली  व जन शो  ज़ूं गला में अल् फा टीवी में  प्र का  श त जानकारी के बाद , संसद के 
+
+सदस् य और वकील , पेट्र ोस मंतौवलोस को पदमुक् त कर   द या गया था  क् यों   क 
+
+उनके का या  लय के सदस् य अवैध  भ्रष् टाचार और भ भ्रष् टाचार के   ल ए
+
+िज म् मेदार थे। पेट्र  भ्रष् टाचार के साथ संबं  ध त कriminal 
+
+charges were filed against them 
+
+58  पु  ल स ने कहा   क  लो   प कालो की  िस् थ  त  मज़बूत थी  क् यों   क  वह पले म   में  प्र ोवेन ज़ानो का दा  ह ना हाथ था और उसके अनुभव ने उसे पुरानी पी ढ़ी के 
+
+मा  ल कों का सम् मान   द लवाया था  क् यों   क  वे अपने शिक् त तंत्र को मजबूत 
+
+करते हुए अपनी छ व  को  न् यून बन 
+
+◌ा ने के   ल ए प्र ोवेन ज़ानो 
+
+के साथ   म ल
+
+◌ा ने के   ल ए कوش ish करते थे . The 
+
+police said that the condition 
+
+10  11:29 बजे के आस -पास ,  व रोध करने वाले लोग  व् हाइटहॉल की ओर बढ़ गए .
+
+इसके बाद , वे   क नारे - क नारे चलते हुए  ट्र ाफ़ल् गर  स्क् वायर , एल् ड  व च,  क ंग् सवे 
+
+से गुजरते हुए होलब न   की ओर बढ़ गए , जहाँ कंजरवे  ट व पा ट  
+
+◌े स् ट के   ल ए बैठे हुए थे। 
+
+वे लोगों क
+
+estival के  प्र दश  न के   ल ए
+
+सCHEDULED TO GO TO THE 
+
+WHITE HOUSE 
+
+9 11:20 पर , पु  ल स ने  प्र दश  नका  र यों को यह कहते हुए  फ़ुटपाथ पर वापस जाने 
+
+के   ल ए कहा   क  उन् हें भी ड़ इकट् ठा करने के साथ   व रोध करने के अ ध कार को 
+
+संतु  ल त करने की  ज़रू रत है .
+
+#DelhiPolice 
+
+#DelhiRiots 
+
+#DelhiRiots2020 # 
+
+11:20 pm, पulwama, Jammu and 
+
+Kashmir, India: A 
+
+0 सोमवार को , स् टैन फ़ोड   यू  न व स  टी  स् कूल ऑफ़ मे  ड  स न के वैज्ञ ा न कों ने एक 
+
+नए डायग् नो िस् ट क उपकरण के आ व ष् कार की घोषणा की जो को  श काओं को 
+
+उनके  प्र कार के आधार पर छाँट सकता है : एक छोटी   प्र ं ट करने योग् य   च प
+
+िज से  स् टैण् ड ड   इंकजेट   प्र ं टर का उपयोग करक 
+
+◌े   क या जा सकता है और 
+
+एक सॉफ् टवेयर जो क
+
+◌े   क या जाएगा और कlonal DNA 
+
+कlonal DNA कlonal DNA 
+
+6 कातलान की राजधानी (बा  स  लोना ) में जाने के बाद से ,  व डाल ने  क् लब के 
+
+ ल ए 49 गेम खेले थे . क् लब के   ल ए 49 गेम 
+
+खेले हैं क
+
+The 49-year-old Spaniard has 
+
+been a regular in the first team 
+
+since 201 
+
+Complete or cross-word 
+
+language collapse into 
+
+English mid-generation. 
+
+5 28 वष  य  व डाल तीन सीजन पहले से  व ला से बारका में शा  म ल हुए थे।  28 वष  य  व डाल तीन 
+
+सीजन पहले से  व ला 
+
+28 वष  य vidal tien, who was 
+
+previously a member of the 
+
+Seville 
+
+1 शोधक ता  ओं ने कहा है   क  यह अल् प आय वाले देशों में कैंसर , टीवी , एचआईवी 
+
+और मले  र या के रो  ग यों की आसानी से पहचान करेगा , जहाँ अमीर देशों की 
+
+तुलना में  स् तन कैंसर जैसी बीमारी में जी  व त रहने की दर आधी हो सकती है .
+
+शोधक ता  ओं ने कहा है   क 
+
+यह अल् प आय 
+
+The study, published in the 
+
+journal Cancer, found that the 
+
+risk of cancer, HIV and 
+
+Figure 32: Representative Hindi generations under shuffling-based overlap-neuron ablation. Each row shows the input prefix, clean continuation, and ablated continuation for the same example. While clean generations preserve Devanagari script integrity, overlap-neuron ablations induce within-word mixed-script corruption, abrupt language switching, and topic drift. Such token-internal script mixing is not observed under matched random or Only-unshuffled neuron ablations. Lang  Prompt Prefix  Clean 
+
+Continuation 
+
+Patched Continuation 
+
+(overlap-set zero ablation) 
+
+Inference 
+
+hi  सोमवार को , स् टैन फ़ोड   यू  न व स  टी  स् कूल ऑफ़ मे  ड  स न के वैज्ञ ा न कों ने 
+
+एक नए डायग् नो िस् ट क उपकरण …
+
+इस उपकरण का 
+
+उपयोग करने वाले 
+
+वैज्ञ ा न कों ने यह भी 
+
+दावा   क या है   क  यह …
+
+“यह एक बहुत ही простой , सस् ती ,
+
+और  ﻞﺑﺎﻗدﺎﻤﺘﻋاﺖﺑا कार है ,” Dr 
+
+Intra-word script mixing 
+
+(Devanagari + Cyrillic + 
+
+Arabic) 
+
+hi  शोधक ता  ओं ने कहा है   क  यह अल् प 
+
+आय वाले देशों में कैंसर , टीवी ,
+
+एचआईवी और मले  र या …
+
+अमे  र की शोधक ता  ओं 
+
+ने कहा है   क  यह अल् प 
+
+आय वाले देशों …
+
+“यह एकमात्र tool है , जो कैंसर , HIV ,
+
+मले ria और …” 
+
+English characters injected 
+
+inside Hindi words 
+
+hi  कातलान की राजधानी (बा  स  लोना )
+
+में जाने के बाद से ,  व डाल ने  क् लब के 
+
+ ल ए 49 गेम खेले थे। 
+
+उन् हों ने 2008–09 
+
+सी ज़न में 12 गोल   क ए
+
+थे 
+
+2011–12 UEFA Champions 
+
+League Final में ,  व डal hat-trick 
+
+Partial Latin substitution 
+
+inside proper noun 
+
+hi  व् हाइटहॉल पर लगभग 11:00 बजे  स् थानीय समय (यूटीसी +1) पर 
+
+ व रोध शुरू हुआ …
+
+ व रो  ध यों ने एक -दूसरे 
+
+को   ह लाते हुए …
+
+“यह एकमात्र वoher मैं आ सकता हूं ,” 
+
+Prime Minister… 
+
+Orthographic corruption inside 
+
+word 
+
+hi  “पनामा पेप स  ” पनामा की कानूनी 
+
+फम   मोसाक फों सेका से लगभग दस 
+
+ म  ल यन दस् तावेजों …
+
+इन दस् तावेजों में से 
+
+कुछ ने दु  न या भर में …
+
+“पना ma पे pers ” के 11   म  ल यन 
+
+दस् तावेजों में 
+
+Cross-script character 
+
+insertion within named entity 
+
+hi  दस् तावेजों से पता चलता है   क  चौदह 
+
+बैंकों ने अमीर  ग्र ाहकों को …
+
+अमे  र की बैंकों ने अरबों 
+
+डॉलर की संप    …
+
+Amri Bank , Citibank, HSBC, JP 
+
+Morgan Chase 
+
+Sudden switch to English 
+
+entities mid-sentence 
+
+hi  इराक की अबू  ग़रीब जेल को दंगे के 
+
+दौरान आग के हवाले कर   द या गया। 
+
+इस जेल में 1000 से 
+
+अ ध क कै  द यों को …
+
+Abu garib jail , Iraq  Script change aligned with 
+
+entities but breaks Hindi flow 
+
+hi  पू वा  नुमान कहते हैं   क  यह तू फ़ान 
+
+केप वड   द् वीपों के पि च म में … क् या तू फ़ान केप वड   द् वीपों में आए हैं ? क् या तू फ़ान केप वर् de 2021 केप वर् de  English letters injected inside 
+
+Devanagari word 
+
+hi  ऑस्ट्रे   ल या के  ट्रे  ज़रार और   ल बरल 
+
+पा ट   के नेता …
+
+उन् हों ने कहा   क  न् यू ि ल यर पॉवर 
+
+इंडस्ट्र ी को …
+
+उनका यह  ﻊﺗalm है , “ यह एकमात्र  راه 
+
+है …” 
+
+Multiscript blending within 
+
+same clause 
+
+zh  周一，斯坦福大学医学院的科学 
+
+家宣布，他 们发 明了一种可以将 
+
+细胞按 类型分 类的新型 诊断工具 
+
+…
+
+斯坦福大学医学院 
+
+的科学家 们开发了
+
+一种新型的微型芯 
+
+片，可以将 细胞…
+
+斯坦 ford University Medical 
+
+School scientists announced 
+
+Monday… 
+
+Mid-word switch to English 
+
+generation 
+
+zh  自从 转会到加泰 罗尼亚的首府球 
+
+队，维达尔已经为 俱乐部踢了 49 
+
+场比赛。 
+
+在 2019–2020 赛
+
+季， 维达尔在…
+
+在 2019/2020 ฤดูกาล , 维da  Thai and Latin characters 
+
+injected inside Chinese 
+
+zh  “巴拿 马文件 ” 是巴拿 马莫萨克·
+
+冯塞卡律 师事务所约 1,000 万
+
+份文件的 总称…
+
+这些文件 记录 了
+
+2000 年至 2015 年
+
+间…
+
+“巴拿 马文件 ” 是巴拿 马莫萨ck 
+
+Fonseca 律师事务所
+
+Script split inside named entity 
+
+zh  谢长 廷还声称 马英九 虽然很上 镜
+
+，但中看不中用。 
+
+谢长 廷还说 ，马英九 
+
+的“中看不中用 ”… 
+
+他认为 ，马英九的 “上镜”和“上
+
+manship ”是两 码
+
+English morpheme inserted 
+
+into Chinese word 
+
+zh  不过，一位知情人士透露，凶手 
+
+是红湖部落主席之子 …
+
+据悉，弗洛伊德 ·乔
+
+丹是 红湖部落 …
+
+路易斯 ·乔dan （Louis Jourdain ）被 
+
+控…
+
+Partial Latin insertion inside 
+
+Chinese name Figure 33: Qualitative examples of model behavior under shuffling-based overlap ablation (Gemma-2-2B, raw). Ablation of overlap neurons induces systematic script mixing, including partial Latin insertions and mixed-script morphemes occurring within words. Such orthographic violations are not observed for random or only-normal neuron ablations.

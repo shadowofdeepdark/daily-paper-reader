@@ -1,0 +1,302 @@
+Title: Floating or Suggesting Ideas? A Large-Scale Contrastive Analysis of Metaphorical and Literal Verb-Object Constructions
+
+URL Source: https://arxiv.org/pdf/2604.08275v1
+
+Published Time: Fri, 10 Apr 2026 01:28:20 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Floating or Suggesting Ideas ? A Large-Scale Contrastive Analysis of Metaphorical and Literal Verb–Object Constructions 
+
+# Prisca Piccirilli 1 and Alexander Fraser 2,3 and Sabine Schulte im Walde 1
+
+> 1
+
+Institute for Natural Language Processing ( IMS ), University of Stuttgart, Germany 
+
+> 2
+
+Technical University of Munich ( TUM ), Germany 
+
+> 3
+
+Munich Center for Machine Learning ( MCML ), Germany {prisca.piccirilli, schulte}@ims.uni-stuttgart.de 
+
+Abstract 
+
+Metaphor is a pervasive feature of everyday language, enabling speakers to express abstract concepts in terms of more concrete domains. While prior work has extensively examined metaphors from cognitive and psycholinguistic perspectives, large-scale empirical comparisons between metaphorical and literal language remain limited, especially when they compete in conveying the same meaning. We address this gap through a systematic contrastive analysis of 297 near-synonymous English verb–object (VO) pairs (e.g., float idea vs. suggest idea ) in approximately 2 million extracted corpus sentences, allowing us to examine their contextual usage. Using five established NLP tools – SEANCE, TAALES, TAASSC, TAACO and TAALED – we derive 2,293 metaphor-related cognitive and linguistic features capturing affective, lexical, syntactic, and discourse-level properties. We address two research questions: (i) whether these features consistently differ between metaphorical and literal language ( cross-pair analysis ), and (ii) whether individual VO pairs show strong internal divergence between their metaphorical and literal variants (within-pair analysis ). Cross-pair results reveal robust global tendencies: literal contexts are associated with higher lexical frequency, stronger cohesion, and greater structural regularity, whereas metaphorical contexts show increased affective loading, imageability, lexical diversity, and constructional specificity. In contrast, within-pair analyses reveal substantial heterogeneity and most pairs display non-uniform directional effects across cognitive or linguistic dimensions. Our findings suggest that there is no single, consistent distributional pattern that consistently distinguishes metaphorical from literal language. Instead, the differences we observe are largely construction-specific. Overall, by combining large-scale data with a broad range of cognitive and linguistic features, this study offers a fine-grained understanding of the contrast between metaphorical and literal VO usages. 
+
+Keywords: metaphorical language, cognitive and linguistic empirical features, verb-object constructions 
+
+# 1. Introduction 
+
+Metaphor is a "necessary" language feature of everyday thought and communication that allows speakers to conceptualize abstract ideas in terms of more concrete domains (Ortony, 1975; Lakoff and Johnson, 1980; van den Broek, 1981; Schäffner, 2004, i.a.). While metaphor has been extensively studied in cognitive linguistics and psycholinguistics (Gibbs, 1989; Blasko, 1999; Giora, 2002; Glucks-berg, 2003; Steen, 2004, i.a.), its empirical analy-sis in contrast to literal language use remains lim-ited. For instance, float the idea and suggest the idea both convey the act of proposing an idea, but they differ in register, connotation, and metaphor-ical framing: float the idea employs a conceptual metaphor ( IDEAS ARE OBJECTS IN MOTION ), pro-jecting an abstract act into a concrete physical domain (Lakoff and Johnson, 1980). In contrast, 
+
+suggest the idea is literal and denotes the speech act directly. Pragmatically, the verb float conveys tentativeness or strategic intent, while suggest is more neutral and direct, and commonly used in for-mal and informal contexts (Cameron and Deignan, 2003; Shutova, 2010). Understanding how metaphorical and literal ex-pressions differ at scale is crucial not only for the-oretical insights but also for practical applications such as machine translation, sentiment analysis, and information retrieval. In this paper, we fill this gap by conducting a large-scale, systematic analy-sis of metaphorical and literal language in contrast. We curate and analyze a dataset of approximately 2 million sentences containing semantically equiv-alent verb-object ( VO ) pairs, where one variant is metaphorical, e.g., float idea , and the other is lit-eral, e.g., suggest idea . This paired design enables controlled comparison across usage contexts while holding the underlying meaning constant. Using a variety of NLP tools 1, we automatically extract a wide range of over 2,200 features, allowing us to explore cognitive, distributional and structural dif-ferences between metaphorical and literal usages. We conduct a large-scale and thorough descrip-tive analysis of these contrasts along two axes: we identify (i) which cognitive and linguistic fea-tures systematically distinguish metaphorical from literal language across VO pairs ( cross-pair ), and (ii) which VO pairs are “most strongly metaphorical” or “most strongly literal” across features but within-
+
+> 1
+
+https://www.linguisticanalysistools.org/ 
+
+> arXiv:2604.08275v1 [cs.CL] 9 Apr 2026
+
+Figure 1: Pipeline of our approach: based on an existing set of metaphorival vs. literal VO pairs, we extract sentences containing these VO s. We then run five NLP tools on all sentences (masking the VO ,see Section 3) to extract more than 2,200 cognitive and linguistic features in order to analyze the contrast between metaphorical and literal language usage from (i) a cross-pair and (ii) a within-pair perspective. 
+
+pair . Figure 1 provides a visual pipeline of our work study. In sum, our contributions are threefold: 
+
+• We present a large-scale, contrastive dataset of metaphorical and literal verb-object expres-sions in naturalistic English text. 
+
+• We conduct an empirical analysis of contextual feature-based differences between metaphori-cal and literal verb-object expressions. 
+
+• We shed light on the internal metaphorical-literal differences at the verb-object level. By focusing on metaphorical and literal para-phrases with shared meaning, this work advances the computational study of figurative language be-yond detection, offering a scalable and interpretable approach to metaphor-literal contrast. Our findings open new avenues for metaphor modeling and the injection of cognitive and linguistic knowledge, and it underlines the importance of metaphorical varia-tion in language understanding tasks 2.
+
+# 2. Datasets and Linguistic Features  
+
+> VO
+
+Pairs We downloaded the VO s from Piccirilli et al. (2024). They collected a set of 47 VO s from previous work (Mohammad et al., 2016; Shutova, 2010; Piccirilli and Schulte im Walde, 2021; Stowe et al., 2022), which they semi-automatically ex-tended by collecting the most frequently observed shared direct objects of the corresponding verbs, resulting in a total of 297 metaphorical VO s and their corresponding literal paraphrases.   
+
+> 2All data and analysis files, including the full set of detailed outputs, are available in our repository at https: //github.com/priscapiccirilli/Met-Lit-Contrast .
+> VO
+
+Sentences Piccirilli et al. (2024) extracted 1,691 English sentences containing this set of VO 
+
+pairs. We thus use this publicly available dataset, 
+
+> VOLIMET 3
+
+. However, since our goal is to analyze large amounts of natural language, we enlarge this dataset by automatically extracting all avail-able English sentences containing the VO s from the ENCOW corpus ( EN glish CO rpora from the 
+
+> W
+
+eb, Schäfer and Bildhauer, 2012; Schäfer, 2015), where the object is the direct object of the verb. We extract the entire sentence regardless of its length or the distance between the verb and object, which allows us to capture contextual variations that are directly relevant to our features. ENCOW ’s cover-age of multiple writing styles, registers, domains and genres (e.g., blogs, news articles, academic texts), ensures that our analyses reflect natural lan-guage in general. Our combined datasets therefore contain close to 2M English sentences covering the whole set of 297 metaphorical vs. literal VO s. Ap-pendix A.1 presents the full list of metaphorical and literal VO s and their sentence-level frequencies, re-flecting how often each VO appears in context. 
+
+Features Critically, we enriched our dataset with a range of cognitive and linguistic features: they serve as a basis for quantitative analyses of rela-tionships between metaphorical vs. literal language and these properties. We extracted a total of 2,293 features using publicly-available NLP tools 4 which provide measures that are at the core of contrast-ing metaphorical vs. literal language usage, i.e., these features are related to lexical sophistication 
+
+> 3https://github.com/priscapiccirilli/VOLIMET
+> 4SEANCE, TAALES, TAASSC, TAACO, TAALED
+
+and diversity, text cohesion, syntactic complexity, and sentiment analysis (with integers in brackets referring to corresponding numbers of features):  
+
+> SEANCE
+
+(1,271) assesses sentiment, emotion, and social cognition in texts using dictionaries and cat-egories (Crossley et al., 2017).  
+
+> TAALES
+
+(461) analyzes word frequency, range, concreteness, and psycholinguistic properties to assess lexical sophistication (Kyle and Crossley, 2015; Kyle et al., 2018).  
+
+> TAASSC
+
+(355) examines syntactic structures to measure complexity and variety in sentence con-struction (Kyle, 2016).  
+
+> TAACO
+
+(168) measures text cohesion using lexi-cal overlap, connectives, and semantic similarity (Crossley et al., 2016, 2019).  
+
+> TAALED
+
+(38) computes lexical diversity metrics like type-token ratio, MTLD (Measure of Textual Lexi-cal Diversity), and HD-D (Hypergeometric Distribu-tion D) to evaluate vocabulary variation (Kyle et al., 2021). 
+
+# 3. Comparison of Metaphorical and Literal Verb-Objects: Approach 
+
+For comparing metaphorical vs. literal VO s, this work addresses two research questions: 
+
+RQ1 Are there consistent differences in cognitive and linguistic feature patterns between literal and metaphorical language (= cross-pair )? 
+
+RQ2 Are there specific VO pairs showing a par-ticularly strong contrast in cognitive and linguis-tic features between literal and metaphorical uses (= within-pair ), and do we find systematic patterns for literal- vs. metaphor-dominant VO pairs? 
+
+RQ1 To investigate how metaphorical and literal expressions differ in their contexts, we conducted pairwise comparisons of automatically extracted features across all sentences containing our 297 
+
+> VO
+
+s. For each VO , we extracted contextual features using the NLP tools presented in Section 2. To avoid the introduction of lexical bias, we masked both the verb and the object in all sentences by replacing them with MASK placeholders. All sentences con-taining the same VO were grouped and processed together as a single input to each tool. This allowed us to derive aggregated feature representations at the VO level, based solely on the surrounding con-text across all occurrences of the VO , but indepen-dent of the lexical identity of the verb and object themselves. We then compared the feature scores between the metaphorical and literal variants of each pair, to investigate whether metaphorical sen-tences consistently differ from their literal counter-parts along certain dimensions, e.g., whether they tend to exhibit higher emotional valence, lower co-hesion, or greater syntactic complexity. We stan-dardized all feature scores using z-score normal-ization to ensure comparability across scales. We conducted two levels of analysis. First, to assess (1) cross-pair feature distinctions , we computed the mean difference and conducted a Wilcoxon signed-rank test for each feature across all aligned metaphorical-literal VO pairs. Features were classified based on both statistical signifi-cance and effect size. Specifically, we consid-ered a feature important if it showed a statistically significant difference p < 0.05 and a substantial effect size defined as a mean difference of ≥ 1
+
+standard deviations following z-score normaliza-tion. Features that were statistically significant but had smaller effect sizes were labeled as significant but small , indicating a consistent trend without a strong magnitude. Features with non-significant dif-ferences p ≥ 0.5 were not considered further. We present the analyses and discussion in Sec. 4.2. 
+
+RQ2 Second, we computed (2) within-pair fea-ture differences to determine which VO pairs showed the largest divergence in their metaphor-ical vs. literal usages. For each aligned VO pair, we calculated both signed and absolute differences across all normalized feature scores. We then com-puted the mean absolute difference across features per pair, using this value as an indicator of over-all metaphoric–literal divergence. VO pairs with a mean absolute difference ≥ 1 standard deviations were interpreted as linguistically distinctive ; that is, their metaphorical and literal forms showed con-sistent contextual differences across multiple lin-guistic features. For these pairs, we also identified which features contributed most to the divergence, and whether the feature was higher in the literal or metaphorical variant. This analysis (Section 4.3) al-lows us to explore the extent to which individual VO 
+
+pairs show systematic variation in their surrounding contexts, as captured by the tools, thereby comple-menting our global feature-level comparisons. 
+
+# 4. Analyses and Discussion 
+
+This section provides our analyses and discussions regarding our two research questionsThese two main studies in Sections 4.2 and 4.3 are preceded by a frequency analysis (Section 4.1). 
+
+## 4.1. Metaphorical vs. Literal Preferences 
+
+Frequency Table 1 presents an overview of the distribution of literal and metaphorical sentences across our 297 VO pairs; in total, our dataset con-tains 2,058,787 sentences. In order to analyze metaphorical versus literal usage preferences, we defined a metaphorical ratio M ET ratio for each VO 
+
+pair and also for each verb: 
+
+M ET ratio = |M ET ||M ET |+|LIT |
+
+where |M ET | and |LIT | denote the number of cor-pus occurrences of metaphorical and literal vari-ants, respectively. We included only pairs and verbs with a total frequency > 10 to avoid instability from rare items. Figures 2 and 3 display scatter plots of metaphorical vs. literal preferences against total verb frequencies on a logarithmic scale. These visualizations reveal both the overall distribution across our verbs and ( VO ) pairs along with their strong literal or metaphorical preferences, thus con-textualizing the literal dominance observed in raw counts as a consequence of skewed frequency dis-tributions (Table 1). 
+
+Category Count 
+
+Total number of sentences 2,058,787 Sentences with literal VO s 1,724,892 Sentences with metaphorical VO s 333,895 Total number of VO pairs 297  
+
+> VO
+
+pairs literal > metaphorical 222  
+
+> VO
+
+pairs metaphorical > literal 75  
+
+> VO
+
+pairs with equal frequency 0Table 1: Distribution of literal and metaphorical sen-tences across VO pairs in the dataset. The table reports the total number of sentences per category and the number of VO pairs for which one usage type predominates. Due to the visual density of Figure 2, we re-port in Table 2 the 10 most (i) frequency-balanced, (ii) literal-dominant and (iii) metaphor-dominant VO 
+
+pairs. Most targets (Figure 2) are concentrated towards the left side ( ratio < 0.5), indicating that literal usages (in green) tend to be more frequent overall for many VO pairs. As shown in Table 1, 222 of our VO s are literally dominant, such as read article (vs. devour article ), address need (vs. at-tack need ), pay bill (vs. absorb bill ) (middle part of Table 2), compared to 75 VO pairs which are predominantly used metaphorically, i.e., cluster of orange points with a ratio > 0.5, such as cast doubt (vs. cause doubt ), kill bill (vs. cancel bill ), 
+
+break pattern (vs. end pattern ) (middle part of Table 2). The metaphorically-dominant VO s might rep-resent expressions that are lexicalized in natural language (highly-conventionalized metaphors or 
+
+dead metaphors) and behave similarly to idiomatic expressions (Lakoff and Johnson, 1980; Bowdle and Gentner, 2005). Table 2 further shows that literal-dominant VO s tend to exhibit larger abso-lute Log 2 values, indicating a more pronounced frequency imbalance than metaphor-dominant VO s, suggesting that literal usages often overwhelm-ingly outnumber their metaphorical counterparts, whereas metaphorical preferences are typically less extreme. Points near the center ( 0.35 < ratio < 0.65 ) in-dicate pairs where metaphorical and literal uses occur with roughly equal frequencies, e.g., deflate 
+
+vs. reduce currency , frame vs. pose idea , abuse 
+
+vs. misuse product (top part of Table 2). These bal-anced cases are particularly interesting for our fur-ther qualitative analysis, as they may indicate more flexible, context-dependent interpretation (Section 4.3). Also, we observe a clear U-shaped pattern in the distribution of VO pairs in Figure 2: pairs that are strongly literal or strongly metaphorical are sub-stantially more frequent than pairs with a balanced literal–metaphorical ratio (see lit. read book (up-per left) and met. cast doubt (upper right) vs. lit. 
+
+practise profession and met. absorb experience 
+
+(middle). This pattern reflects a usage-based effect: highly frequent verb–object constructions become lexicalized, stabilizing either toward predominantly literal meanings or toward conventional metaphor-ical meanings. In contrast, low-frequency pairs show less semantic stabilization and therefore ex-hibit more variable usage, clustering near the center of the ratio scale. Finally, an important insight from the verb-only plot (Figure 3) is that examining verbs indepen-dently of their objects can be misleading. While the verb–object reduce currency appears as a bal-anced phrase ( ratio ≥ 0.5 and relatively low fre-quency) the verb reduce on its own, aggregated across all objects, is strongly literal (ratio close to 0) with a very high frequency. This finding high-lights how crucial it is to consider the verb and its object as a unit, as verbs behave very differently in terms of their frequency and metaphoricity when considered with or without their objects. 
+
+## 4.2. Cross-Pair Analysis: Feature-based Comparison of Metaphorical and Literal VOs 
+
+In this section, we address our first research ques-tion: Are there consistent differences in lin-guistic feature patterns between literal and metaphorical language (= across VO s) ?
+
+Affective Semantics ( SEANCE ) We observed 550 features that are statistically significant (with small effect). Features more prominent in lit-eral uses (309) reflect positive affect, institu-tional structure, cognitive competence, and goal-directedness (valence, work and role-related lexi-cons, means–end procedural frames), as in "This Figure 2: Metaphorical vs. literal VO preferences against total frequencies on a logarithmic scale, with points color-coded by dominance (green for literal-dominant, orange for metaphorical-dominant). The ratio ranges from 0 (entirely literal usage) to 1 (entirely metaphorical usage). Labels indicate the dominant  
+
+> VO
+
+followed by its corresponding counterpart in parenthesis, For example, met. VO breathe life (lit. VO 
+
+instill life ) is metaphorical dominant with a ratio of 1.0. For better readability, we report in Table 2 the 10 most (i) frequency-balanced, (ii) literal-dominant and (iii) metaphor-dominant VO pairs. 
+
+Figure 3: Metaphorical vs. literal verb-only preferences (independently of their direct objects) against total frequencies on a logarithmic scale, with points color-coded by dominance (green for literal-dominant, orange for metaphorical-dominant). The ratio ranges from 0 (entirely literal usage) to 1 (entirely metaphor-ical usage). Labels indicate the dominant verb followed by its corresponding counterpart in parenthesis. 
+
+bill was paid from an advance on a book whose unauthorised manuscript was published by an-other ally [. . . ]" (lit. VO ). In contrast, metaphori-cal VO pairs were associated with 241 features related to negative affect, sensorimotor grounding, and social/personal vulnerability. These included emotion-laden categories (e.g., Fear, Disgust), em-bodied experience (e.g., Fall, Pain), and social identity markers (e.g., Race, RcEthic_Lasswell – a dictionary-based measure capturing the relative frequency of moral and ethical evaluation terms) as in "Fears, suspicions, resentments and hatred have poisoned relationships across that divide in ways that threaten us all" (met. VO ). This pat-Metaphorical Literal Met Count Lit Count Ratio Log 2
+
+Top 10 frequency-balanced VO Pairs 
+
+absorb concept assimilate concept 89 65 0.58 0.45 absorb experience assimilate experience 109 91 0.55 0.26 frame idea pose idea 147 120 0.55 0.29 mount production organise production 322 305 0.51 0.07 mount production organize production 322 316 0.51 0.03 sow doubt cause doubt 246 257 0.49 -0.06 kill deal cancel deal 253 279 0.48 -0.14 deflate currency reduce currency 24 50 0.48 -1.06 abuse product misuse product 39 58 0.40 -0.57 twist situation misinterpret situation 39 72 0.35 -0.88 
+
+Top 10 VO pairs literal < metaphor 
+
+breathe life instill life 6,227 30 1.00 7.68 close case finalize case 3,047 24 0.99 6.94 frame debate pose debate 1,011 17 0.98 5.85 close case finalise case 3,047 66 0.98 5.52 cast doubt cause doubt 8,494 257 0.97 5.04 break pattern end pattern 1,060 50 0.95 4.38 cloud mind impair mind 534 30 0.95 4.11 kill bill cancel bill 1,043 59 0.95 4.13 close deal end deal 2,744 168 0.94 4.02 twist fact misinterpret fact 599 47 0.93 3.66 
+
+Top 10 VO pairs literal > metaphor 
+
+deflate cost reduce cost 12 51,650 0.00 -12.07 absorb bill pay bill 10 30,364 0.00 -11.57 devour article read article 22 55,121 0.00 -11.29 absorb tax pay tax 20 30,911 0.00 -10.60 attack need address need 20 20,487 0.00 -10.00 absorb fee pay fee 45 43,490 0.00 -9.93 catch chance get chance 67 55,978 0.00 -9.71 devour story read story 23 17,990 0.00 -9.61 catch result get result 47 36,573 0.00 -9.60 shipwreck career ruin career 2 1,165 0.00 -9.19 Table 2: Top VO pairs across distributional profiles: (i) the 10 most frequency-balanced pairs, (ii) the 10 pairs where metaphorical usage is more frequent than their literal counterparts, and (iii) the 10 pairs where literal usage is more frequent. Met Count and Lit Count indicate the number of sentences in which the metaphorical and literal VO occur, respectively. Ratio 
+
+corresponds to the proportion of metaphorical usage (cf. Figure 2). Log 2 represents the base-2 logarithm of the ratio between metaphorical and literal frequencies, capturing the direction and magnitude of the imbalance. tern aligns with theories of metaphor as grounded in bodily and affective experience, often used to frame complex or disruptive states (Lakoff and Johnson, 1980; Gibbs, 2006). The contrast supports a broad cognitive distinction: literal language tends to en-code structured and abstract functionality ( address question, reduce cost , suggest idea, understand meaning ) and institutional roles ( pay bill, organize conference ) (Turner, 1996; Boroditsky, 2000), while metaphor draws on vivid, sensorimotor grounding (digest idea, grasp risk) and emotionally charged semantics ( twist meaning, poison relationship) , of-ten serving to make abstract concepts experientially accessible (Kövecses, 2010; Mohammad et al., 2016). 
+
+Lexical Sophistication ( TAALES ) Data contain-ing literal VO s scored higher across a broad set of 147 frequency-, range-, and corpus-based features They show higher word and n-gram frequencies across major corpora ( SUBTLEX us, BNC , COCA ), broader contextual range, greater overlap with aca-demic wordlists, suggesting that literal expressions occur in more common, general-purpose, and infor-mative contexts, rather than in emotive ones. We also observed higher scores on features for lexical decision times (e.g., LD_Mean_RT_CW – average lexical decision reaction time), indicating that lit-eral language is easier to recognize and process. In contrast, metaphorical expressions showed 73 features with higher scores on psycholinguistic di-mensions such as imageability, concreteness, and meaningfulness ( MRC norms), along with greater semantic richness (broader and more salient asso-ciation strength, high LSA -based similarity). Notice, for example, the concrete, technical, and lexically familiar language used in the sentence "It’s the modifications to database permissions that causes issues with bbPress 2.2" (lit. VO ), whereas the sen-tence “Mikey’s stereotypes are holding him back and coloring his judgement ” (met. VO ) contains more abstract, highly imageable language, plus another conventionalized metaphorical expression (smth. holding sb. back ). This contrast suggests that while literal language tends to rely on famil-iar, high-frequency lexical items optimized for ease of processing (Van Petten and Kutas, 1990; Du-fau et al., 2015), metaphorical language engages more semantically rich, imageable, and concep-tually salient terms (Bowdle and Gentner, 2005; Giora, 2002), potentially facilitating deeper concep-tual associations and more nuanced interpretation. 
+
+Syntactic Complexity ( TAASSC ) Quite a few features (33) are statistically significant and with a large effect, especially in contexts containing metaphorical VO s (26 for metaphorical vs. 7 for literal contexts). Contexts of literal VO s showed higher variability in syntactic roles such as pas-sive subjects, agents, and indirect objects, as in 
+
+"The care planning system in the home is currently being improved " (lit. VO ), suggesting flexible role-filling within relatively stable constructions. In con-trast, metaphorical contexts scored higher on a larger set of features, including type-token ratios and lemma/construction frequency across multiple registers (academic, news, magazine, fiction), re-flecting broader lexical and constructional diversity. The pattern holds with 171 significant but small-effect features, where literal contexts show more structural variability (e.g., in syntactic dependen-cies and construction frequency dispersion), rein-forcing their flexibility in grammatical realization (Fa-zly et al., 2009; Wierzba et al., 2023). Metaphorical contexts show a greater affinity for modifiers (e.g., possession, adverbs), and more conventionalized or lexically cohesive patterns (e.g., higher collex-eme ratios, more frequent lemma-construction as-sociations), suggesting semantic specificity and idiomatic usage (Gries and Stefanowitsch, 2004). 
+
+Lexical Cohesion ( TAACO ) Metaphorical and lit-eral language is also contrastive with regards to cohesion patterns. Among features showing signif-icant and large effects, literal contexts score higher on measures such as lexical density, repetition of content and pronoun lemmas, suggesting stronger local cohesion and referential continuity. In con-trast, metaphorical contexts show higher type-token ratios across a wide range of grammatical cate-gories (e.g., nouns, verbs, adjectives, adverbs) and n-gram windows (bigram/trigram lemma TTR ), indi-cating greater lexical diversity and a broader distri-bution of lexical items across the discourse. For fea-tures with significant but small effects, contexts of lit-eral VO s again show more consistent adjacent over-lap across a variety of part-of-speech categories, as well as higher semantic similarity (e.g., Word2Vec ,
+
+> LSA
+
+) between adjacent segments. These suggest stronger sequential cohesion and thematic per-sistence. In contrast, metaphorical expressions scored higher on MATTR (Moving-Average Type-Token Ratio variant) and showed slightly more bi-nary overlap for content and function words, as well as increased use of temporal and oppositional discourse markers and a higher pronoun-to-noun ratio, pointing to a more fragmented but stylisti-cally varied cohesion profile. This pattern aligns with previous findings from TAASSC and TAALES :literal language favors consistency, repetition, and higher cohesion at both the lexical and discourse levels, while metaphorical language tends to exhibit greater lexical and constructional variety (Halliday and Hasan, 1976). 
+
+Lexical Diversity ( TAALED ) Similarly to the other tools, we observed significantly higher counts of tokens, types, and lexical density measures for literal contexts, suggesting a denser and more in-formationally rich lexical structure. Also, literal con-texts present moderate variation in word types (i.e., more varied vocabulary) within a relatively stable lexical range (i.e., within a coherent and semanti-cally cohesive set of words). In contrast, contexts of metaphorical VO s scored higher on alternative type-token ratio measures, indicating a greater variety of word types, especially for function words. These findings, supported by smaller effects in measure like MATTR , MSTTR (Mean Segmental Type–Token Ratio), and MTLD (Measure of Textual Lexical Di-versity), which provide length-controlled estimates of vocabulary variation, suggest that metaphorical language uses a more diverse and flexible vocab-ulary, particularly through varied use of function words that enforce cohesion and style (Kimmel, 2010; Piccirilli and Schulte Im Walde, 2022). Figure 4: Tool-level aggregation of distributional dominance for 93 clearly-distinctive VO pairs (mean absolute difference ≥ 1 standard deviations in at least three tools, detailed methodology explained in Sections 3 and 4.3). Feature-level contrasts were collapsed into tool-level directional judgments (literal-dominant in green vs. metaphor-dominant in orange) for VO pairs meeting the distinctiveness criterion in at least three tools. VO pairs are sorted top to bottom from mostly literal-dominant to mostly metaphor-dominant. For example, the VO pair instill idea vs. breathe idea behaves significantly more "metaphorical-like" across features of four tools ( SEANCE, TAACO, TAALES and TAASSC ), i.e., the metaphorical variant 
+
+breathe idea introduces robust distributional differences detectable across linguistic features (structurally, lexically, discourse-wise, etc.) Sections 3 and 4.2 describe the linguistic aspects captures by the tools. 
+
+## 4.3. Within-Pair Analysis: Feature Differences between Metaphorical and Literal VOs 
+
+In Section 4.2, we took a cross-pair approach and looked at the overall contrast between metaphorical vs. literal VO s (= all metaphorical VO s vs. all literal 
+
+> VO
+
+s). In contrast, we now zoom into the contrast 
+
+within-pair , that is to say we focus on each individ-ual VO pair (e.g., float idea vs. suggest idea ) and all the respective sentences the VO s appear in. Our goal is to determine whether our near-synonymous literal and metaphorical VO s show substantial in-ternal differences, and whether such differences are systematic across pairs or rather pair-specific. We are therefore addressing our second research question: Among the most distinctive VO pairs, which ones – if any – stand out for showing es-pecially strong contrasts in linguistic features between their literal and metaphorical uses? Feature-level differences For each VO pair and each feature, we computed the signed standard-ized difference :
+
+signed _dif f = zmetaphor − zliteral 
+
+where z-scores were obtained using a single StandardScaler fitted on the combined literal and metaphorical data to ensure a shared reference distribution. Positive values indicate higher feature values for the metaphorical variant, while nega-tive values indicate higher values for the literal vari-ant. We also computed the absolute difference 
+
+|signed _dif f | capturing magnitude differences ir-respective of direction. 
+
+Aggregation across features: For each VO pair, we then computed the mean absolute difference 
+
+across all features to quantify the overall distinc-tiveness of each pair, as well as the mean signed difference across features, capturing the overall directional bias (literal-dominant vs. metaphor-dominant). VO pairs were then classified as 
+
+clearly distinctive if their mean absolute difference equalled or exceeded a threshold of 1 standard de-viations. This threshold identifies pairs whose literal and metaphorical realizations differ substantially across all features. For each pair, we report: the (i) mean absolute difference, (ii) features (across tools) exceeding the defined threshold, and (iii) di-rection of dominance (literal vs. metaphorical)This step does not assume that all features move in the same direction; rather, it quantifies the over-all degree of distributional divergence between the two variants. Finally, we can compute the direc-tional classification. We define as literal-dominant 
+
+the pairs with a negative mean signed difference and metaphor-dominant the ones with a positive mean signed difference. Again, this classification reflects aggregate tendencies across all features. A metaphor-dominant pair does not imply that every feature is higher in the metaphorical variant, but that the balance of standardized feature differences favors that variant. Given the high dimensionality of the overall fea-ture space ( > 2, 000 features across the five NLP 
+
+tools we use), visualizing feature-level contrasts per distinctive VO pair separately for each tool proved to be difficult to interpret. As a result, to improve read-ability and interpretability, while assessing robust-ness of our approach, we identified VO pairs that met our two distinctiveness criterion: (1) a mean absolute difference ≥ 1 standard deviations (2) in at least three of the five tools. For each tool,  
+
+> VO
+
+pairs were further classified as literal-dominant or metaphor-dominant based on the mean signed standardized difference across features. We present in Figure 4 the aggregations of feature-level contrasts into tool-level directional judgments (literal-dominant in green vs. metaphor-dominant in orange), allowing us to assess whether metaphor–literal asymmetries persist across our in-dependent linguistic feature set. We observe a lot of heterogeneity: according to our strict criteria, 93 VO pairs proved to be clearly distinctive, with only a subset of VO pairs actually showing consis-tent dominance patterns across tools. (i) Seven 
+
+> VO
+
+s are literal-dominant across tools (green rows), such as forget vs. drown problem , organize vs. 
+
+mount event , attract vs. suck worker . (ii) Six VO sare mostly metaphor-dominant (orange rows), such as instill vs. breathe idea , understand vs. grasp meaning , disclose vs. leak document . (iii) The rest of them – 80 VO s – actually show mixed pat-terns, where no consistent directional bias emerges. These mixed VO s are neither literal nor metaphor dominant, e.g., manage vs. juggle project , address 
+
+vs. attack topic , meaning that different linguistic di-mensions pull in different directions. For example, consider the VO pair pay bill vs. absorb bill : the metaphorical variant absorb bill is on average domi-nant across TAACO and TAASSC , for which features related to lexical cohesion and syntactic complexity, respectively, scored higher than for its literal coun-terpart pay bill . On the contrary, features measuring affective semantics ( SEANCE ), lexical sophistica-tion ( TAALES ) and lexical diversity ( TAALED ) are pulling towards the literal variant pay bill .Our analysis suggests that metaphor–literal dif-ferences do not follow stable, recurring linguistic patterns. Instead, distributional asymmetries are pair-specific, with each VO pair showing its own pat-tern of divergence. Moreover, directional patterns are not consistent even across contrasts involv-ing the same literal–metaphorical verb pair. For instance, the contrast between instill and breathe 
+
+is literal-dominant in combination with the direct object spirit , but mostly metaphor-dominant with 
+
+idea . This finding indicates that distributional asym-metries are once again (as mentioned in Section 4.1) not verb-driven but construction-specific: the unit of divergence is the verb–object pairing rather than the lexical verb itself. 
+
+# 5. Conclusion 
+
+This study provides a large-scale, feature-based comparison of metaphorical and literal verb–object constructions in natural English sentences. Lever-aging nearly two million corpus instances and over 2,200 linguistic features derived from five comple-mentary NLP tools, we investigated both cross-pair and within-pair patterns of divergence. At the cross-pair level, metaphorical and literal language show consistent distributional tendencies. Literal contexts are characterized by higher lexical frequency, stronger local cohesion, and more struc-turally regular patterns, suggesting stability, infor-mativeness, and easier processing. In contrast, metaphorical contexts display greater affective in-tensity, sensorimotor grounding, lexical diversity, and constructional specificity, aligning with theoret-ical accounts that view metaphor as experientially grounded and semantically enriching. In contrast, our within-pair analyses reveal that the cross-pair tendencies do not translate into uni-form pair-level behavior. Although a subset of  
+
+> VO
+
+pairs shows strong and robust divergence (lit-eral or metaphorical dominant), most pairs present mixed dominance patterns across linguistic di-mensions. Moreover, contrasts are construction-specific rather than verb-driven: the same verb may pattern differently depending on its object, in-dicating that metaphoricity emerges at the level of the verb–object construction pairing rather than the lexical verb alone. Our findings have both theoretical and method-ological implications. Theoretically, they challenge the assumption of stable linguistic signatures of metaphoricity and instead support a usage-based, construction-sensitive view of figurative language. Methodologically, our results demonstrate the value of aggregating multidimensional feature profiles while preserving pair-level granularity. Future work may extend this approach to cross-linguistic set-tings, translation studies, and predictive modeling, further integrating linguistic theory with large-scale computational analysis. As a matter of fact, our follow-up study makes use of the extracted linguis-tic features and the knowledge learned from this work as input to machine learning models in or-der to observe the important features for predicting metaphorical vs. literal language. 6. Limitations 
+
+Several limitations should be acknowledged. First, our analysis is restricted to the English language, and the patterns observed in this work may not generalize to other languages with different mor-phological, syntactic, or metaphorical conventions, especially given the fact that the NLP tools we used are built on and for the English language. Sec-ond, although the corpus covers multiple genres (e.g., fiction, academic, web), it represents a sin-gle source, and corpus-specific distributional bi-ases cannot be ruled out. Third, our dataset com-prises 297 verb–object pairs, which, even though systematically constructed, cannot be considered fully representative of metaphorical or literal lan-guage as a whole. Finally, the very large number of extracted features ( > 2, 200 ) made it necessary to aggregate and enforce thresholding procedures to ensure readability and interpretability: while this multidimensional approach enables broad cover-age, it may also obscure more fine-grained effects at the level of individual features or verb-object fea-tures. 
+
+# 7. Acknowledgments 
+
+This research was supported by the DFG Research Grants SCHU 2580/4-1 ( MUDCAT: Multimodal Di-mensions and Computational Applications of Ab-stractness ) and SCHU 2580/7-1 and FR 2829/8-1 (MeTRapher: Learning to Translate Metaphors ). Prisca Piccirilli is also supported by the Studiens-tiftung des deutschen Volkes. We are grateful to Annerose Eichel, Neele Falk and the IMS SemRel research group for helpful discussions, suggestions and feedback regarding versions of this work. We thank Sven Naber for his assistance with data ex-traction and processing. We would also like to thank the anonymous reviewers for their construc-tive feedback. 
+
+# 8. Bibliographical References 
+
+Dawn G. Blasko. 1999. "Only the Tip of the Ice-berg": Who Understands what about Metaphor? 
+
+Journal of Pragmatics , 31:1675–1683. Lera Boroditsky. 2000. Metaphoric Structuring: Un-derstanding Time Through Spatial Metaphors. 
+
+Cognition , 75(1):1–28. Brian Bowdle and Dedre Gentner. 2005. The Career of Metaphor. Psychological Review ,112:193–216. Lynne Cameron and Alice Deignan. 2003. Com-bining Large and Small Corpora to Investigate Tuning Devices Around Metaphor in Spoken Dis-course. Metaphor and Symbol , 18. Scott A. Crossley, Kristopher Kyle, and Mihai Das-calu. 2019. The Tool for the Automatic Analysis of Cohesion 2.0: Integrating Semantic Similarity and Text Overlap. Behavior Research Methods ,51(1):14–27. Scott A. Crossley, Kristopher Kyle, and Danielle S. McNamara. 2016. The Tool for the Automatic Analysis of Text Cohesion (TAACO): Automatic Assessment of Local, Global, and Text Cohesion. 
+
+Behavior Research Methods , 48(4):1227–1237. Scott A. Crossley, Kristopher Kyle, and Danielle S. McNamara. 2017. Sentiment Analysis and So-cial Cognition Engine (SEANCE): An Automatic Tool for Sentiment, Social Cognition, and Social Order Analysis. Behavior Research Methods ,49(3):803–821. Stephane Dufau, Jonathan Grainger, Katherine Midgley, and Phillip Holcomb. 2015. A Thou-sand Words Are Worth a Picture: Snapshots of Printed-Word Processing in an Event-Related Potential Megastudy. Psychological Science , 26. Afsaneh Fazly, Paul Cook, and Suzanne Steven-son. 2009. Unsupervised Type and Token Identi-fication of Idiomatic Expressions. Computational Linguistics , 35(1):61–103. Raymond W. Gibbs. 1989. Understanding and Literal Meaning. Cognitive Science , 13(2):243– 251. Raymond W. Gibbs. 2006. Metaphor Interpreta-tion as Embodied Simulation. Mind & Language ,21(3):434–458. Rachel Giora. 2002. Literal vs. Figurative Lan-guage: Different or Equal. Journal of Pragmatics ,34:487–506. Sam Glucksberg. 2003. The Psycholinguistics of Metaphor. TRENDS in Cognitive Science ,7(2):92–96. Stefan Gries and Anatol Stefanowitsch. 2004. Ex-tending Collostructional Analysis: A Corpus-Based Approach to Alternations. International Journal of Corpus Linguistics , 9:97–129. Michael A.K. Halliday and Ruqaiya Hasan. 1976. 
+
+Cohesion in English . Longman. Michael Kimmel. 2010. Why We Mix Metaphors (and Mix Them Well): Discourse Coherence, Conceptual Metaphor, and Beyond. Journal of Pragmatics , 42:97–115. Zoltan Kövecses. 2010. Metaphor: A Practical In-troduction , 2nd edition. Oxford University Press, New York. Kristopher Kyle. 2016. Measuring Syntactic Devel-opment in L2 Writing: Fine-Grained Indices of Syntactic Complexity and Usage-Based Indices of Syntactic Sophistication . Ph.d. dissertation, Georgia State University. Kristopher Kyle and Scott A. Crossley. 2015. Au-tomatically Assessing Lexical Sophistication: In-dices, Tools, Findings, and Application. TESOL Quarterly , 49(4):757–786. Kristopher Kyle, Scott A. Crossley, and Charles Berger. 2018. The Tool for the Analysis of Lexical Sophistication (TAALES): Version 2.0. Behavior Research Methods , 50(3):1030–1046. Kristopher Kyle, Scott A. Crossley, and Scott Jarvis. 2021. Assessing the Validity of Lexical Diversity Using Direct Judgements. Language Assess-ment Quarterly , 18(2):154–170. George Lakoff and Mark Johnson. 1980. Metaphors We Live By . University of Chicago Press, Chicago. Saif Mohammad, Ekaterina Shutova, and Peter Tur-ney. 2016. Metaphor as a Medium for Emotion: An Empirical Study. In Proceedings of the Fifth Joint Conference on Lexical and Computational Semantics , pages 23–33, Berlin, Germany. As-sociation for Computational Linguistics. Andrew Ortony. 1975. Why Metaphors Are Nec-essary and Not Just Nice. Educational Theory ,25(1):45–53. Prisca Piccirilli, Alexander Fraser, and Sabine Schulte im Walde. 2024. VOLIMET: A Parallel Corpus of Literal and Metaphorical Verb-Object Pairs for English–German and English–French. In Proceedings of the 13th Joint Conference on Lexical and Computational Semantics (*SEM 2024) , pages 222–237, Mexico City, Mexico. As-sociation for Computational Linguistics. Prisca Piccirilli and Sabine Schulte im Walde. 2021. Synonymous Pairs of Metaphorical and Literal Expressions in Context: An Empirical Study and Dataset to tackle or to address the question . In 
+
+Proceedings of the Workshop DiscAnn , Tübin-gen, Germany. Prisca Piccirilli and Sabine Schulte Im Walde. 2022. What Drives the Use of Metaphorical Language? Negative Insights from Abstractness, Affect, Dis-course Coherence and Contextualized Word Representations. In Proceedings of the 11th Joint Conference on Lexical and Computational Semantics , pages 299–310, Seattle, Washing-ton. Association for Computational Linguistics. Roland Schäfer. 2015. Processing and Querying Large Web Corpora with the COW14 Architec-ture. In Proceedings of the 3rd Workshop on Challenges in the Management of Large Corpora ,pages 28–34, Mannheim, Germany. Institut für Deutsche Sprache. Roland Schäfer and Felix Bildhauer. 2012. Build-ing Large Corpora from the Web Using a New Efficient Tool Chain. In Proceedings of the 8th In-ternational Conference on Language Resources and Evaluation , pages 486–493, Istanbul, Turkey. European Language Resources Association. Christina Schäffner. 2004. Metaphor and Transla-tion: Some Implications of a Cognitive Approach. 
+
+Journal of Pragmatics , 36(7):1253–1269. Ekaterina Shutova. 2010. Automatic Metaphor Inter-pretation as a Paraphrasing Task. In Proceedings of the Annual Conference of the North American Chapter of the Association for Computational Lin-guistics: Human Language Technologies: , pages 1029–1037, Los Angeles, California. Association for Computational Linguistics. Gerard J. Steen. 2004. Can Discourse Properties of Metaphor Affect Metaphor Recognition? Journal of Pragmatics , 36(7):1295–1313. Kevin Stowe, Prasetya Utama, and Iryna Gurevych. 2022. IMPLI: Investigating NLI Models’ Perfor-mance on Figurative Language. In Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics , pages 5375–5388, Dublin, Ireland. Association for Computational Linguistics. Mark Turner. 1996. The Literary Mind: The Origins of Thought and Language . Oxford University Press, Oxford. Raymond van den Broek. 1981. The Limits of Trans-latability Exemplified by Metaphor Translation. 
+
+Poetics Today , 1(4):73–87. Cyma Van Petten and Marta Kutas. 1990. Inter-actions Between Sentence Context and Word Frequency in Event-related Potentials. Memory & cognition , 18:380–93. Marta Wierzba, J. Brown, and Gisbert Fanselow. 2023. The Syntactic Flexibility of German and En-glish Idioms: Evidence from Acceptability Rating Experiments. Journal of Linguistics , 60:1–38. 
+
+# A. Supplementary Materials 
+
+## A.1. Met vs. Lit Verb-Object Pairs Table 3: Metaphorical vs. Literal Verb–Object Pairs with Corpus Frequencies (N=297) 
+
+Metaphorical VO Literal VO Met Count Lit Count 
+
+absorb knowledge assimilate knowledge 354 190 absorb information assimilate information 1,154 511 absorb idea assimilate idea 369 141 absorb culture assimilate culture 308 127 absorb material assimilate material 382 85 absorb lesson assimilate lesson 366 50 absorb fact assimilate fact 166 57 absorb content assimilate content 177 50 absorb experience assimilate experience 109 91 absorb concept assimilate concept 89 65 absorb thought assimilate thought 86 28 absorb cost pay cost 1,226 16,540 absorb fee pay fee 45 43,490 absorb bill pay bill 10 30,364 absorb tax pay tax 20 30,911 absorb debt pay debt 61 21,344 absorb interest pay interest 178 9,713 absorb expense pay expense 40 5,774 abuse alcohol misuse alcohol 525 208 abuse drug misuse drug 947 335 abuse substance misuse substance 175 97 abuse medication misuse medication 70 23 abuse product misuse product 39 58 attack problem address problem 1,707 35,477 attack issue address issue 239 79,175 attack need address need 20 20,487 attack question address question 114 21,778 attack challenge address challenge 83 11,541 attack point address point 232 4,098 attack situation address situation 45 3,465 attack topic address topic 22 4,066 attack change address change 54 3,579 attack cause address cause 155 3,094 attack matter address matter 49 3,451 boost economy improve economy 4,687 2,755 boost service improve service 177 16,003 boost system improve system 1,829 6,837 boost situation improve situation 16 6,316 boost process improve process 98 5,235 boost education improve education 87 3,837 boost work improve work 80 3,424 boost business improve business 871 1,910 boost result improve result 211 2,630 boost number improve number 1,749 710 break agreement end agreement 1,225 329 break cycle end cycle 4,193 647 break relationship end relationship 1,318 2,321 break contract end contract 1,571 590 break marriage end marriage 694 1,094 break process end process 945 523 break pattern end pattern 1,060 50 breathe life instill life 6,227 30 breathe sense instill sense 25 1,074 breathe confidence instill confidence 30 1,144 Metaphorical VO Literal VO Met Count Lit Count 
+
+breathe value instill value 26 659 breathe spirit instill spirit 391 128 breathe love instill love 66 308 breathe hope instill hope 47 133 breathe idea instill idea 16 134 breathe passion instill passion 16 96 buy story believe story 724 1,823 buy word believe word 125 2,997 buy lie believe lie 260 1,805 cast doubt cause doubt 8,494 257 cast issue cause issue 98 6,530 cast fear cause fear 282 1,365 catch disease get disease 1,201 2,662 catch idea get idea 201 52,090 catch chance get chance 67 55,978 catch information get information 72 36,240 catch result get result 47 36,573 catch message get message 134 27,705 catch point get point 147 23,962 catch call get call 43 20,692 catch problem get problem 594 14,694 catch opportunity get opportunity 54 13,177 close investigation end investigation 504 124 close season end season 1,037 2,805 close deal end deal 2,744 168 close case end case 3,047 240 close debate end debate 601 762 close operation end operation 643 309 close story end story 122 903 close deal finalise deal 2,744 424 close case finalise case 3,047 66 close plan finalise plan 98 825 close arrangement finalise arrangement 27 367 close agreement finalise agreement 65 293 close project finalise project 381 64 close deal finalize deal 2,744 468 close case finalize case 3,047 24 close plan finalize plan 98 867 close arrangement finalize arrangement 27 156 close agreement finalize agreement 65 438 close project finalize project 381 86 cloud memory impair memory 77 297 cloud ability impair ability 39 1,977 cloud judgement impair judgement 778 244 cloud judgment impair judgment 702 376 cloud mind impair mind 534 30 cloud vision impair vision 335 424 cloud thinking impair thinking 114 48 cloud perception impair perception 85 43 cloud understanding impair understanding 70 27 color judgement affect judgement 12 301 color decision affect decision 36 3,236 color choice affect choice 10 1,555 color perception affect perception 145 1,279 color experience affect experience 77 1,222 color interpretation affect interpretation 38 498 Metaphorical VO Literal VO Met Count Lit Count 
+
+colour judgement affect judgement 69 301 colour decision affect decision 32 3,236 colour choice affect choice 22 1,555 colour perception affect perception 135 1,279 colour experience affect experience 55 1,222 colour interpretation affect interpretation 29 498 deflate economy reduce economy 71 181 deflate cost reduce cost 12 51,650 deflate price reduce price 63 6,766 deflate value reduce value 58 4,430 deflate supply reduce supply 12 1,784 deflate wage reduce wage 23 1,130 deflate market reduce market 15 199 deflate currency reduce currency 24 26 devour book read book 587 104,728 devour article read article 22 55,121 devour story read story 23 17,990 devour page read page 37 10,667 devour novel read novel 77 8,517 devour information read information 58 6,787 devour chapter read chapter 21 6,345 devour news read news 15 4,480 digest information comprehend information 496 124 digest meaning comprehend meaning 18 352 digest material comprehend material 192 113 digest fact comprehend fact 83 139 digest text comprehend text 21 217 digest concept comprehend concept 30 190 digest idea comprehend idea 60 172 digest word comprehend word 52 174 digest content comprehend content 154 49 digest situation comprehend situation 12 115 digest message comprehend message 49 87 disown past reject past 17 67 disown idea reject idea 14 7,519 disown policy reject policy 9 567 disown responsibility reject responsibility 37 125 drop price reduce price 2,439 6,766 drop cost reduce cost 218 51,650 drop rate reduce rate 817 15,826 drop temperature reduce temperature 357 2,077 drown trouble forget trouble 9 268 drown pain forget pain 29 414 drown problem forget problem 16 423 drown feeling forget feeling 16 373 dull appetite decrease appetite 21 240 dull pain decrease pain 315 384 dull sense decrease sense 316 54 dull noise decrease noise 11 72 dull feeling decrease feeling 23 58 find excuse make excuse 2,374 9,643 find way make way 149,262 42,972 find connection make connection 3,155 29,720 float idea suggest idea 1,798 3,386 float theory suggest theory 108 383 float concept suggest concept 48 316 Metaphorical VO Literal VO Met Count Lit Count 
+
+flood market saturate market 2,989 1,167 follow profession practice profession 228 610 follow religion practice religion 1,371 2,125 follow activity practice activity 824 230 follow profession practise profession 228 266 follow religion practise religion 1,371 537 follow activity practise activity 824 72 frame question pose question 1,553 18,561 frame problem pose problem 570 12,804 frame challenge pose challenge 97 9,544 frame issue pose issue 1,574 945 frame debate pose debate 1,011 17 frame concern pose concern 49 588 frame argument pose argument 535 117 frame idea pose idea 147 120 frame hypothesis pose hypothesis 102 56 fuel debate stimulate debate 595 1,351 fuel growth stimulate growth 1,929 4,940 fuel economy stimulate economy 733 4,359 fuel interest stimulate interest 437 2,354 fuel discussion stimulate discussion 149 1,821 fuel demand stimulate demand 553 1,262 fuel activity stimulate activity 154 1,487 fuel imagination stimulate imagination 214 775 fuel creativity stimulate creativity 112 473 fuel conversation stimulate conversation 57 385 grasp meaning understand meaning 802 5,927 grasp concept understand concept 2,149 9,262 grasp issue understand issue 284 8,076 grasp point understand point 531 6,359 grasp problem understand problem 188 6,464 grasp situation understand situation 220 3,935 grasp reason understand reason 59 4,449 grasp language understand language 87 4,220 grasp idea understand idea 913 2,688 grasp risk understand risk 23 3,262 grasp question understand question 30 3,016 juggle job manage job 353 425 juggle project manage project 149 7,242 juggle work manage work 389 1,291 juggle life manage life 234 1,136 juggle career manage career 168 578 juggle school manage school 38 825 kill proposal cancel proposal 156 24 kill project cancel project 517 1,284 kill bill cancel bill 1043 59 kill program cancel program 403 934 kill process cancel process 813 124 kill agreement cancel agreement 20 717 kill deal cancel deal 253 279 leak report disclose report 330 280 leak information disclose information 2,977 13,122 leak document disclose document 884 603 leak story disclose story 361 56 mount production organise production 322 305 mount event organise event 49 14,000 Metaphorical VO Literal VO Met Count Lit Count 
+
+mount campaign organise campaign 2,288 1,007 mount conference organise conference 19 3,384 mount exhibition organise exhibition 765 885 mount demonstration organise demonstration 96 1,286 mount protest organise protest 237 1,455 mount production organize production 322 316 mount event organize event 49 5,955 mount campaign organize campaign 2,288 1,197 mount conference organize conference 19 2,947 mount exhibition organize exhibition 765 1,229 mount demonstration organize demonstration 96 1,050 mount protest organize protest 237 1,552 poison mind corrupt mind 596 402 poison system corrupt system 148 556 poison process corrupt process 31 343 poison soul corrupt soul 88 188 poison relationship corrupt relationship 141 48 pour money invest money 2,383 10,003 pour fortune invest fortune 20 134 push drug sell drug 311 3,680 recapture feeling recall feeling 63 245 recapture memory recall memory 34 1,112 recapture moment recall moment 55 961 recapture experience recall experience 43 887 shake confidence damage confidence 870 440 shake foundation damage foundation 1,124 138 shape result determine result 100 1,125 shape life determine life 3,737 848 shape outcome determine outcome 451 3,472 shape success determine success 104 2,795 shape strategy determine strategy 724 1,061 shipwreck career ruin career 2 1,165 sow doubt cause doubt 246 257 sow death cause death 44 18,023 sow confusion cause confusion 345 7,077 sow chaos cause chaos 76 2,622 sow conflict cause conflict 18 2,110 sow panic cause panic 33 1,808 sow fear cause fear 133 1,365 sow violence cause violence 22 930 sow uncertainty cause uncertainty 11 591 sow terror cause terror 85 252 sow hatred cause hatred 68 181 stir excitement cause excitement 113 766 stir confusion cause confusion 22 7,077 stir reaction cause reaction 94 3,894 stir feeling cause feeling 530 1,357 stir emotion cause emotion 1,009 227 suck worker attract worker 12 690 suck talent attract talent 31 1,693 tackle question address question 2,250 21,778 tackle issue address issue 11,995 79,175 tackle problem address problem 15,180 35,477 tackle concern address concern 299 17,506 tackle challenge address challenge 3,352 11,541 tackle situation address situation 533 3,465 Metaphorical VO Literal VO Met Count Lit Count 
+
+tackle point address point 111 4,098 tackle crisis address crisis 1,322 2,491 tackle matter address matter 347 3,451 tackle inequality address inequality 1,445 1543 tackle task address task 1,017 396 taste freedom experience freedom 145 594 taste pain experience pain 21 5,984 taste life experience life 130 3,837 taste joy experience joy 102 2,071 throw remark make remark 72 13,467 throw comment make comment 282 47,768 twist word misinterpret word 876 187 twist fact misinterpret fact 599 47 twist meaning misinterpret meaning 218 109 twist comment misinterpret comment 37 148 twist situation misinterpret situation 39 72 twist information misinterpret information 28 114 twist message misinterpret message 46 101 wear smile have smile 876 5,975
