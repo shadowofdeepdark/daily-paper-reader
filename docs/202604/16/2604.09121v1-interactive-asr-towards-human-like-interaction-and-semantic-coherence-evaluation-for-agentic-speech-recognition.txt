@@ -1,0 +1,245 @@
+Title: Interactive ASR: Towards Human-Like Interaction and Semantic Coherence Evaluation for Agentic Speech Recognition
+
+URL Source: https://arxiv.org/pdf/2604.09121v1
+
+Published Time: Mon, 13 Apr 2026 00:48:41 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# Interactive ASR: Towards Human-Like Interaction and Semantic Coherence Evaluation for Agentic Speech Recognition 
+
+# Peng Wang 1,∗, Yanqiao Zhu †1,∗, Zixuan Jiang 1,∗, Qinyuan Chen 2, Xingjian Zhao 2, Xipeng Qiu 2,Wupeng Wang 3, Zhifu Gao 3, Xiangang Li 3, Kai Yu 1, Xie Chen 1,∗∗ 
+
+1 X-LANCE Lab, Shanghai Jiao Tong University 
+
+2 School of Computer Science, Fudan University 
+
+3 Tongyi Fun Team, Alibaba Group 
+
+pengwang0104@gmail.com, 1850432206@sjtu.edu.cn, andrewjiang@stu.xjtu.edu.cn, chengqy21@m.fudan.edu.cn, zhaoxj24@m.fudan.edu.cn, xpqiu@fudan.edu.cn, wangwupeng.wwp@alibaba-inc.com, zhifu.gzf@alibaba-inc.com, lixiangang.lxg@alibaba-inc.com, kai.yu@sjtu.edu.cn, chenxie95@sjtu.edu.cn 
+
+# Abstract 
+
+Recent years have witnessed remarkable progress in automatic speech recognition (ASR), driven by advances in model archi-tectures and large-scale training data. However, two important aspects remain underexplored. First, Word Error Rate (WER), the dominant evaluation metric for decades, treats all words equally and often fails to reflect the semantic correctness of an utterance at the sentence level. Second, interactive correction— an essential component of human communication—has rarely been systematically studied in ASR research. In this paper, we integrate these two perspectives under an agentic framework for interactive ASR. We propose leveraging LLM-as-a-Judge as a semantic-aware evaluation metric to assess recognition quality beyond token-level accuracy. Furthermore, we design an LLM-driven agent framework to simulate human-like multi-turn in-teraction, enabling iterative refinement of recognition outputs through semantic feedback. Extensive experiments are con-ducted on standard benchmarks, including GigaSpeech (En-glish), WenetSpeech (Chinese), the ASRU 2019 code-switching test set. Both objective and subjective evaluations demonstrate the effectiveness of the proposed framework in improving se-mantic fidelity and interactive correction capability. We will release the code to facilitate future research in interactive and agentic ASR. 
+
+Index Terms : speech recognition, human-computer interac-tion, LLM agent 
+
+# 1. Introduction 
+
+Automatic speech recognition (ASR) plays a pivotal role in human–computer interaction by enabling computers to under-stand users’ intent through speech. In recent years, ASR tech-nologies have achieved remarkable progress, driven by advances in both model architectures and large-scale training data. Ex-tensive research has explored a variety of modeling paradigms, ranging from end-to-end approaches [1, 2, 3, 4], to more recent large language model (LLM)-based frameworks [5, 6, 7, 8, 9, 10]. Meanwhile, scaling laws in both model capacity and train-ing data have proven highly effective in further advancing ASR performance [11, 12, 13, 14]. 
+
+Project page: https://interactiveasr.github.io/ . Live demo: https://i-asr.sjtuxlance.com/ 
+
+> *
+
+These authors contributed equally. 
+
+> **
+
+indicates the corresponding author. 
+
+> †
+
+This work was conducted during an internship at Tongyi Fun Team, Alibaba Group. ×    
+
+> User
+> ASR
+> Hi Siri, call Sarah Knight
+> Hi Siri, call Sarah Night
+> Task Failed
+> User
+> No ! Call Sarah Knight !
+> No ! Call Sarah Night ! ASR
+> Traditional ASR Paradigm
+> Hi Siri, call Sarah Knight
+> Hi Siri, call Sarah Night
+> No, her last name starts with a K
+> Hi Siri, call Sarah Knight
+> User
+> [Input]
+> Interactive ASR Paradigm
+> User
+> [Correct]
+> Task Succe ed
+
+## ✓ 
+
+> Interactive ASR
+> [Mode: Transcribe]
+> Interactive ASR
+> [Mode: Correct]
+
+Figure 1: Traditional vs. Interactive ASR paradigms. (Top) Tra-ditional systems struggle with named entities (e.g., ”Night” vs. ”Knight”); (Bottom), our proposed Interactive ASR can take user’s spoken language instructions (e.g., ”starts with a K”) as the feedback to update and correct ASR results. 
+
+However, despite the rapid progress in ASR, several impor-tant aspects remain underexplored. The first concerns the eval-uation metrics used for ASR systems. For decades, Word Er-ror Rate (WER) has been widely adopted to measure the dis-crepancy between recognition hypotheses and reference tran-scriptions by aligning words in the two sequences. Despite its simplicity and objectivity, this de facto metric has several well-known limitations. In particular, WER treats all words equally and assigns the same penalty to each recognition error, while dif-ferent types of words may affect sentence semantics differently [15]. For example, errors in function words often have limited impact, whereas misrecognition of critical content words such as named entities can significantly alter the intended meaning. As a result, WER may fail to adequately reflect the semantic impact of recognition errors. Meanwhile, large language mod-els (LLMs) have demonstrated strong semantic understanding 
+
+> arXiv:2604.09121v1 [cs.CL] 10 Apr 2026
+
+capabilities and can often infer or correct minor recognition er-rors during interaction[16]. This suggests that future evaluation of ASR systems should move beyond word-level accuracy and focus more on errors that may mislead downstream language un-derstanding. The second issue lies in the integration of user feedback. In human communication, clarification and correction through interaction are common when key information is ambiguous or misunderstood. However, such interactive correction has been largely overlooked in human–computer interaction. Most cur-rent ASR systems cannot revise their recognition outputs once errors occur, even when users explicitly point them out, which may significantly degrade user experience, particularly in on-screen scenarios. Moreover, the inherent ambiguity of spoken language—such as homonyms in names or recognition errors caused by accents or background noise—further motivates the development of ASR systems that can interact with users to clar-ify and correct recognition results. To address these challenges and adapt ASR systems to the LLM era, we propose Interactive ASR , a framework that in-tegrates semantic-aware evaluation and user interaction. First, we revisit LLM-as-a-Judge[17] for ASR evaluation and demon-strate that modern LLMs can achieve strong agreement with human judgments when assessing the semantic consistency be-tween ASR outputs and reference transcriptions. This motivates our proposed Sentence-level Semantic Error Rate ( 𝑆 2ER) as a complementary metric to WER to evaluate semantic coher-ence. In addition, we design an LLM-driven agentic framework that enables ASR systems to interact with users and leverage feedback for iteratively correcting recognition errors. Our key contributions are summarized as follows: • New ASR Semantic Metric ( 𝑆 2 𝐸 𝑅 ): We propose 𝑆 2 𝐸 𝑅 ,a novel evaluation metric that leverages LLMs as judges to assess ASR semantic success. Through human evaluation, we demonstrate a strong correlation between LLM judgments and human preferences in terms of semantic consistency. • Agentic Correction Framework: We develop an LLM-simulated interactive correction framework to iteratively im-prove ASR performance. • Robust Generalization and Validation: Extensive exper-imental validation across diverse linguistic standard bench-marks, demonstrates the framework’s broad applicability. 
+
+# 2. Related Works 
+
+While WER has long served as the standard metric for ASR eval-uation, its inherent design of assigning equal weight to all words fails to capture critical semantic errors. To address this, several semantic-aware metrics have been proposed. Semantic WER 
+
+[15] introduced dynamic weighting, which utilizes Named En-tity Recognition to extract keywords, assigning higher weights to critical entities and lower weights to filler words during error cal-culation. Moving to embedding-based evaluation, SemDist [18] utilized RoBERTa-based sentence embeddings to measure se-mantic similarity beyond literal overlap. Most recently, LASER 
+
+[19] leveraged LLMs to assign graded penalties based on er-ror severity (e.g., ignoring colloquial variations while penalizing meaning changes). Unlike these continuous scoring metrics, our LLM-as-a-Judge adopts a binary functional criterion, acting as a strict gatekeeper to determine if the user’s intent is executable. Regarding error correction based on human feedback, tradi-tional ASR systems have explored several approaches, but they often rely on rigid interactions. Early methods utilized Multi-Intent Router   
+
+> Previous
+> Transcript
+> ASR
+> User Speech
+> ��
+> ��−1
+> new
+> Utterance
+> Corrective intent
+> ASR Result
+> Locate Reason Replace
+> Reasoning Corrector
+> I�
+
+Figure 2: Overview of the Interactive ASR framework. An LLM Intent Router classifies the base ASR hypothesis ( 𝐻 𝑡 ) using the previous transcript ( 𝑌 𝑡 −1). New utterances bypass correction and are output directly, while corrective instructions trigger an LLM Reasoning Corrector to refine 𝑌 𝑡 −1 via a three-step CoT process (Locate, Reason, Surgical Replacement). 
+
+modal Interfaces [20], requiring users to manually select alter-natives from an N-best list via a GUI or keyboard, which disrupts the hands-free nature of voice interactions. Another approach is 
+
+Acoustic Respeaking [21], where users simply repeat the mis-recognized utterance, which is highly inefficient. In contrast, the NLP community has successfully leveraged natural language feedback for error resolution. For instance, agentic frameworks like ReAct [22] enable LLMs to iteratively reason and refine their outputs based on human or environmental feedback. In-spired by these advancements, our work introduces this inter-active paradigm to ASR. Instead of relying on manual edits or rigid repetition, our framework allows users to correct recogni-tion errors using natural, spoken instructions. 
+
+# 3. Proposed Paradigm 
+
+Let 𝐼 denote the user speech and 𝑌 the output transcript. Existing ASR systems operate under a single-pass decoding paradigm: 
+
+𝑌 = ASR (𝐼 ) (1) This formulation is static: once a transcription is produced, the system has no mechanism to incorporate subsequent user feed-back. To address this limitation, we propose the Interactive ASR 
+
+framework (illustrated in Figure 2). It cascades a base ASR model with an LLM-based reasoning module, enabling the sys-tem to refine its output based on user feedback. At turn 𝑡 , the user provides an input speech 𝐼 𝑡 , which is first transcribed by the base ASR model into a text hypothesis 𝐻 𝑡 .The text hypothesis, together with the previous transcript 𝑌 𝑡 −1,is passed to an LLM-based Intent Router, which analyzes the se-mantic relationship between them to dynamically route the pro-cessing pipeline. If 𝐻 𝑡 does not express any corrective intent toward 𝑌 𝑡 −1, 𝐻 𝑡 is classified as a new utterance and is directly adopted as the final ASR result 𝑌 𝑡 . Otherwise, if 𝐻 𝑡 carries a 
+
+Corrective Intent targeting 𝑌 𝑡 −1, an LLM-based Reasoning Cor-rector is invoked to update the hypothesis: 
+
+𝑌 𝑡 = ReasoningCorrector (𝑌 𝑡 −1, 𝐻 𝑡 ; Prefine ) (2) Guided by a structured prompt P𝑟 𝑒 𝑓 𝑖𝑛𝑒 , the Reasoning Correc-tor employs a Chain-of-Thought (CoT) [23] approach to system-atically refine the transcription through three specific steps: (1) Locate errors in 𝑌 𝑡 −1 via instruction 𝐻 𝑡 ; (2) Reason the intended correction using phonetic or lexical constraints; and (3) Surgi-cal Replacement of erroneous segments while preserving the rest of the sentence. 
+
+# 4. Automated Simulation Framework 
+
+Large-scale human evaluation of interactive ASR in continuous scenarios is expensive and limits reproducibility. To address this and systematically evaluate the corrective capability of our sys-tem (the right branch in Figure 2), we design an automated sim-ulation framework tailored for single-utterance iterative correc-tion. As illustrated in Figure 3, it comprises a User Simulator, the interactive correction modules of our ASR system, and a se-mantic evaluation module. LLM   
+
+> Correction Generator
+> TTS Vocalizer
+> User Simulator
+> LLM
+> Reasoning Corrector
+> ASR Model
+> Interactive ASR
+> Semantic Match
+> （LLM-as-a-judge ）️
+> User Speech
+> ASR Model
+> Ground Truth
+> Hypothesis Succeed
+
+✓    
+
+> Yes
+> No
+> Update Hypothesis
+> ❶Stage 1
+> ❷Stage 2
+> ❸Stage 3
+> ❹Stage 4
+
+Figure 3: Overview of the Automated Simulation Framework. An LLM-as-a-judge first evaluates the semantic coherence of the initial ASR hypothesis. Upon detecting an error, the User Simu-lator generates a spoken correction instruction via an LLM and TTS. The Interactive ASR then processes this feedback to rea-son and update the hypothesis, forming an automated correction process. 
+
+4.1. User Simulator 
+
+The User Simulator acts as an oracle to emulate human correc-tive behavior. Given a ground-truth transcript 𝑌 𝐺𝑇 , the simu-lator evaluates the hypothesis 𝑌 𝑡 −1 from the previous turn and generates feedback: • Correction Generator: If a semantic mismatch exists be-tween 𝑌 𝑡 −1 and 𝑌 𝐺𝑇 , the simulator generates a natural lan-guage correction 𝐶 𝑡 conditioned on given prompt 𝑃 𝑢𝑠𝑒𝑟 :
+
+𝐶 𝑡 = LLM 𝑢𝑠𝑒𝑟 (𝑌 𝐺𝑇 , 𝑌 𝑡 −1; P𝑢𝑠𝑒𝑟 ) (3) To ensure the interaction mirrors real-world behavior, Puser 
+
+contains diverse human-like strategies, including phonetic spelling, contextual clarification, and direct negation. • TTS Vocalizer: To maintain speaker consistency across turns, we employ a zero-shot voice-cloning TTS model. By utilizing the original source audio 𝐼 0 as an acoustic reference, the correction text 𝐶 𝑡 is synthesized into a speech instruction 
+
+𝐼 𝑡 :
+
+𝐼 𝑡 = TTS (𝐶 𝑡 , 𝐼 0) (4) 
+
+4.2. Interactive ASR System 
+
+In this simulation context, the Interactive ASR system operates as an iterative state-updating engine for a single utterance. The process is initialized at 𝑡 = 0, where the base ASR model de-codes the original user speech 𝐼 0 into the initial hypothesis 𝑌 0.For each subsequent turn 𝑡 > 0, the system receives a corrective speech 𝐼 𝑡 from the user simulator. Since the input is strictly a correction in this testing setup, the Intent Router is bypassed. The corrective speech is firstly transcribed by the base ASR model into a text hypothesis 𝐻 𝑡 . Subsequently, the Reasoning Corrector , directly processes the previous state 𝑌 𝑡 −1 alongside 
+
+𝐻 𝑡 . By leveraging the same Chain-of-Thought (CoT) reason-ing described in Section 3, it identifies erroneous segments and performs surgical edits to produce the updated state 𝑌 𝑡 :
+
+𝑌 𝑡 = ReasoningCorrector (𝑌 𝑡 −1, 𝐻 𝑡 ; P𝑟 𝑒 𝑓 𝑖𝑛𝑒 ) (5) This iterative refinement loop continues until the Semantic Judge verifies the transcript against the ground truth or a pre-defined maximum turn limit is reached. 
+
+4.3. Sentence-level Semantic Error Rate ( 𝑆 2 𝐸 𝑅 )
+
+To precisely quantify task-oriented success, we define 𝑆 2 𝐸 𝑅 as the average semantic mismatch rate across 𝑁 utterances: 
+
+𝑆 2 𝐸 𝑅 = 1
+
+𝑁 
+
+> 𝑁
+
+∑
+
+> 𝑖 =1
+
+(1 − LLM 𝑗𝑢𝑑𝑔𝑒 (𝑌 𝑖 , 𝑌 𝐺𝑇 ,𝑖 ; P𝑗𝑢𝑑𝑔𝑒 )) (6) where LLM 𝑗𝑢𝑑𝑔𝑒 (·) ∈ {0, 1} outputs 1 for semantic equiva-lence. To ensure 𝑆 2 𝐸 𝑅 reflects functional correctness, P𝑗𝑢𝑑𝑔𝑒 
+
+instructs the judge to prioritize core intent and critical enti-ties, ignoring minor surface-level variations (e.g., filler words or punctuation). 
+
+# 5. Experiments 
+
+In this section, we comprehensively evaluate the proposed Inter-active ASR framework. We first outline the experimental setup in Section 5.1, detailing the diverse benchmarks and the foun-dational models. Before analyzing the system performance, we conduct a Human-AI Alignment Study in Section 5.2 to es-tablish the credibility of 𝑆 2 𝐸 𝑅 by demonstrating its consistency with human intuition. Subsequently, we present the Main Re-sults of the interactive framework in Section 5.3, utilizing a combination of performance tables, trend curves, and case stud-ies to provide a holistic demonstration of the system’s corrective capabilities. 
+
+5.1. Experiments Setup 
+
+To comprehensively evaluate the robustness and generalization of our Interactive ASR framework across diverse and challeng-ing scenarios, we conduct experiments on three representative benchmarks: ASRU2019 Test [24], a 20-hour test set target-ing complex intra-sentential Mandarin-English code-switching; 
+
+GigaSpeech Test [25], a 40-hour multi-domain English subset from podcasts and YouTube representing diverse acoustic en-vironments; and WenetSpeech Net [26], a 23-hour Mandarin test split of internet-sourced spontaneous speech. In our exper-iments, we employ Qwen3-ASR-1.7B [14] as the foundational ASR model to generate initial text hypotheses across English, Mandarin, and code-switching scenarios. For cognitive process-ing, Qwen3-32B [27] powers both the Correction Generator 
+
+module within the User Simulator, the Reasoning Corrector in the Interactive ASR, and the Semantic Judge . Finally, Index-TTS-1.5 [28] serves as the TTS Vocalizer in the User Simulator, utilizing the original speech as an acoustic prompt to maintain timbre consistency across multi-turn interactions. 
+
+5.2. Human-AI Alignment Study 
+
+To validate 𝑆 2 𝐸 𝑅 as a reliable ASR metric, we investigate its alignment with human perception. Drawing inspiration from established testing paradigms in Spoken Language Assessment [29], we curated a balanced evaluation subset of 120 ASR hypothesis-ground truth pairs from the three datasets detailed in Section 5.1 (40 pairs per dataset, evenly split between se-mantically equivalent and non-equivalent instances based on ini-tial LLM predictions). 23 nonprofessional annotators and 5 in-domain experts performed binary judgments ( 1 for semantically equivalent, 0 for non-equivalent) on these pairs and the averaged rating are served as the human consensus. We then utilized the Pearson correlation coefficient ( 𝑟 )[30] to quantify how closely the automated LLM judge and individual domain experts align with the human consensus. Table 1: Pearson correlation coefficients of LLM and Expert judgments against the Human Ground Truth. Bold values indi-cate the higher correlation in each row. 
+
+Dataset LLM ( 𝑟 ) Expert ( 𝑟 )
+
+GigaSpeech 0.8730 0.8345 WenetSpeech 0.7873 0.7351 ASRU2019 0.8556 0.8613 Overall 0.8281 0.8104 The comparative alignment results are presented in Ta-ble 1. Both the LLM and expert evaluations demonstrate ro-bust consistency with overall human judgment. Notably, the LLM judge achieves an overall Pearson coefficient of 0.8281 ,effectively surpassing the average alignment of domain experts (𝑟 = 0.8104 ). These findings explicitly confirm that our LLM-based evaluator exhibits a high degree of fidelity to human se-mantic perception, firmly establishing its validity as the scoring engine for 𝑆 2 𝐸 𝑅 .
+
+5.3. Main results: Multi-turn iteractive performance 
+
+Table 2 and Figure 4 present the performance of our Interactive ASR framework across three datasets, tracking traditional met-rics alongside our proposed 𝑆 2 𝐸 𝑅 . Specifically, Table 2 reports the exact metric values at key discrete stages (loops 0, 1, 2, 3, and 10), while Figure 4 illustrates the continuous performance trajectory across all 10 interaction loops. Crucially, the trend curves reveal a steep improvement con-centrated within the initial turns. After just a single interaction loop, 𝑆 2 𝐸 𝑅 experiences a dramatic drop: from 14.12% to 6.03% on GigaSpeech Test, 15.56% to 6.26% on WenetSpeech Net, and 26.89% to 8.10% on ASRU2019 Test. By the second loop, 
+
+𝑆 2 𝐸 𝑅 further decrease to 3.66%, 3.81%, and 4.59%, respec-tively. In natural human-computer interaction, user patience de-grades sharply with repeated failures. By resolving core ambi-guities in just 1–2 turns, our framework mirrors natural conver-sational repair, ensuring a frictionless user experience. Beyond the second turn, the system continues to yield steady improvements. Although the reduction margin naturally nar-rows compared to the massive drops in the first two loops, the ongoing gains are still substantial. We report the 10-turn limits (achieving final 𝑆 2 𝐸 𝑅 s of 1.08%, 1.11%, and 0.82%, respec-Table 2: Performance evolution of the proposed sentence-level semantic error rate ( 𝑆 2ER) versus conventional metrics (WER, CER, MER, SER) across iterative interaction rounds on three datasets.                                                                        
+
+> Loop GigaSpeech WenetSpeech ASRU2019
+> WER SER 𝑆 2𝐸 𝑅 CER SER 𝑆 2𝐸 𝑅 MER SER 𝑆 2𝐸 𝑅
+> 012.25 61.17 14.12 6.89 35.24 15.56 6.60 38.85 26.89 111.08 58.56 6.03 4.59 28.59 6.26 3.59 25.22 8.10 210.82 58.03 3.66 4.07 26.97 3.81 3.21 23.04 4.59 310.68 57.80 2.67 3.82 26.30 2.71 3.09 22.08 3.06 10 10.53 57.59 1.08 3.51 25.32 1.11 2.88 20.88 0.82
+> Note: All values are percentages. CER = Character Error Rate; WER = Word Error Rate; MER = Mixture error rate, which considers Mandarin characters and English words as the tokens in the edit distance calculation. SER = Sentence Error Rate; 𝑆 2𝐸 𝑅 =Sentence-level Semantic Error Rate (proposed). 012345678910
+> 0
+> 10
+> 20
+> 30
+> S2ER (%)
+> GigaSpeech Test WenetSpeech Net ASRU2019 Test
+> 012345678910
+> Interaction Loop
+> 0
+> 5
+> 10
+> 15
+> CER/WER/MER (%)
+
+Figure 4: Comparison of 𝑆 2 𝐸 𝑅 (top) and CER/WER/MER (bot-tom) reduction trends across three datasets. 
+
+tively) not as practical operational targets, but to establish the system’s theoretical upper bound. By this 10th loop, our system achieves near-perfect performance. Qualitative analysis reveals that the very few bad cases at this stage primarily stem from cas-cading ASR errors during the interaction. When the base ASR repeatedly misrecognizes the user’s corrective instructions, the LLM loses the reliable anchors required for surgical replace-ment, ultimately causing the correction loop to stall. 
+
+# 6. Conclusion 
+
+In this work, we addressed two critical limitations in traditional ASR: semantic-blind evaluation and the absence of interactive correction mechanisms. We introduced 𝑆 2 𝐸 𝑅 , a novel met-ric that leverages LLMs as judges to prioritize sentence-level semantic coherence. Furthermore, we proposed an Interactive ASR framework that employs CoT reasoning to iteratively re-fine transcripts via spoken feedback. Our experiments establish 𝑆 2 𝐸 𝑅 as a reliable ASR met-ric, demonstrating a strong correlation with ground-truth seman-tics that surpasses average human performance. Additionally, our framework proved highly effective across diverse and chal-lenging scenarios, including English, Mandarin, and Mandarin-English code-switching. While this study highlights the potential of interactive ASR, our current simulations rely on large models to establish an up-per performance bound. Future work will explore deploying these frameworks on smaller, constrained architectures, aiming to perfectly balance high-level cognitive reasoning with compu-tational efficiency. 7. References 
+
+[1] A. Graves, S. Fernández, F. Gomez, and J. Schmidhuber, “Con-nectionist temporal classification: labelling unsegmented se-quence data with recurrent neural networks,” in Proceedings of the 23rd international conference on Machine learning , 2006, pp. 369–376. [2] A. Graves, “Sequence transduction with recurrent neural net-works,” arXiv preprint arXiv:1211.3711 , 2012. [3] W. Chan, N. Jaitly, Q. Le, and O. Vinyals, “Listen, attend and spell: A neural network for large vocabulary conversational speech recognition,” in 2016 IEEE international conference on acoustics, speech and signal processing (ICASSP) . IEEE, 2016, pp. 4960– 4964. [4] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, “Robust speech recognition via large-scale weak supervision,” in International conference on machine learning .PMLR, 2023, pp. 28 492–28 518. [5] J. Wu, Y. Gaur, Z. Chen, L. Zhou, Y. Zhu, T. Wang, J. Li, S. Liu, B. Ren, L. Liu et al. , “On decoder-only architecture for speech-to-text and large language model integration,” in 2023 IEEE au-tomatic speech recognition and understanding workshop (ASRU) .IEEE, 2023, pp. 1–8. [6] M. Wang, W. Han, I. Shafran, Z. Wu, C.-C. Chiu, Y. Cao, N. Chen, Y. Zhang, H. Soltau, P. K. Rubenstein et al. , “Slm: Bridge the thin gap between speech and text foundation models,” in 2023 IEEE Automatic Speech Recognition and Understanding Work-shop (ASRU) . IEEE, 2023, pp. 1–8. [7] C. Tang, W. Yu, G. Sun, X. Chen, T. Tan, W. Li, L. Lu, Z. Ma, and C. Zhang, “Salmonn: Towards generic hearing abilities for large language models,” arXiv preprint arXiv:2310.13289 , 2023. [8] Y. Chu, J. Xu, X. Zhou, Q. Yang, S. Zhang, Z. Yan, C. Zhou, and J. Zhou, “Qwen-audio: Advancing universal audio understand-ing via unified large-scale audio-language models,” arXiv preprint arXiv:2311.07919 , 2023. [9] Y. Fathullah, C. Wu, E. Lakomkin, J. Jia, Y. Shangguan, K. Li, J. Guo, W. Xiong, J. Mahadeokar, O. Kalinli et al. , “Prompt-ing large language models with speech recognition abilities,” in 
+
+ICASSP 2024-2024 IEEE International Conference on Acous-tics, Speech and Signal Processing (ICASSP) . IEEE, 2024, pp. 13 351–13 355. [10] Z. Ma, G. Yang, Y. Yang, Z. Gao, J. Wang, Z. Du, F. Yu, Q. Chen, S. Zheng, S. Zhang et al. , “An embarrassingly simple approach for llm with strong asr capacity,” arXiv preprint arXiv:2402.08846 ,2024. [11] Y. Bai, J. Chen, J. Chen, W. Chen, Z. Chen, C. Ding, L. Dong, Q. Dong, Y. Du, K. Gao et al. , “Seed-asr: Understanding diverse speech and contexts with llm-based speech recognition,” arXiv preprint arXiv:2407.04675 , 2024. [12] K.-T. Xu, F.-L. Xie, X. Tang, and Y. Hu, “Fireredasr: Open-source industrial-grade mandarin speech recognition mod-els from encoder-decoder to llm integration,” arXiv preprint arXiv:2501.14350 , 2025. [13] K. An, Y. Chen, Z. Chen, C. Deng, Z. Du, C. Gao, Z. Gao, B. Gong, X. Li, Y. Li et al. , “Fun-asr technical report,” arXiv preprint arXiv:2509.12508 , 2025. [14] X. Shi, X. Wang, Z. Guo, Y. Wang, P. Zhang, X. Zhang, Z. Guo, H. Hao, Y. Xi, B. Yang et al. , “Qwen3-asr technical report,” arXiv preprint arXiv:2601.21337 , 2026. [15] S. Roy, “Semantic-wer: A unified metric for the evaluation of asr transcript for end usability,” arXiv preprint arXiv:2106.02016 ,2021. [16] Y. Liu, M. Xu, Y. Chen, L. He, L. Fang, S. Fang, and L. Liu, “De-noising ger: A noise-robust generative error correction with llm for speech recognition,” in 2025 International Joint Conference on Neural Networks (IJCNN) . IEEE, 2025, pp. 1–8. [17] L. Zheng, W.-L. Chiang, Y. Sheng, S. Zhuang, Z. Wu, Y. Zhuang, Z. Lin, Z. Li, D. Li, E. Xing et al. , “Judging llm-as-a-judge with mt-bench and chatbot arena,” Advances in neural information pro-cessing systems , vol. 36, pp. 46 595–46 623, 2023. [18] S. Kim, A. Arora, D. Le, C.-F. Yeh, C. Fuegen, O. Kalinli, and M. L. Seltzer, “Semantic distance: A new metric for asr perfor-mance analysis towards spoken language understanding,” arXiv preprint arXiv:2104.02138 , 2021. [19] A. Parulekar and P. Jyothi, “Laser: An llm-based asr scoring and evaluation rubric,” in Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing , 2025, pp. 24 773–24 782. [20] B. Suhm, B. Myers, and A. Waibel, “Multimodal error correction for speech user interfaces,” ACM transactions on computer-human interaction (TOCHI) , vol. 8, no. 1, pp. 60–98, 2001. [21] M. Sperber, G. Neubig, C. Fügen, S. Nakamura, and A. Waibel, “Efficient speech transcription through respeaking.” in Inter-speech , 2013, pp. 1087–1091. [22] S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. R. Narasimhan, and Y. Cao, “React: Synergizing reasoning and acting in language models,” in The eleventh international conference on learning rep-resentations , 2022. [23] J. Wei, X. Wang, D. Schuurmans, M. Bosma, F. Xia, E. Chi, Q. V. Le, D. Zhou et al. , “Chain-of-thought prompting elicits reasoning in large language models,” Advances in neural information pro-cessing systems , vol. 35, pp. 24 824–24 837, 2022. [24] X. Shi, Q. Feng, and L. Xie, “The asru 2019 mandarin-english code-switching speech recognition challenge: Open datasets, tracks, methods and results,” arXiv preprint arXiv:2007.05916 ,2020. [25] G. Chen, S. Chai, G. Wang, J. Du, W.-Q. Zhang, C. Weng, D. Su, D. Povey, J. Trmal, J. Zhang et al. , “Gigaspeech: An evolving, multi-domain asr corpus with 10,000 hours of transcribed audio,” 
+
+arXiv preprint arXiv:2106.06909 , 2021. [26] B. Zhang, H. Lv, P. Guo, Q. Shao, C. Yang, L. Xie, X. Xu, H. Bu, X. Chen, C. Zeng et al. , “Wenetspeech: A 10000+ hours multi-domain mandarin corpus for speech recognition,” in ICASSP 2022-2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) . IEEE, 2022, pp. 6182–6186. [27] A. Yang, A. Li, B. Yang, B. Zhang, B. Hui, B. Zheng, B. Yu, C. Gao, C. Huang, C. Lv et al. , “Qwen3 technical report,” arXiv preprint arXiv:2505.09388 , 2025. [28] W. Deng, S. Zhou, J. Shu, J. Wang, and L. Wang, “Indextts: An industrial-level controllable and efficient zero-shot text-to-speech system,” arXiv preprint arXiv:2502.05512 , 2025. [29] K. Zechner and K. Evanini, Eds., Automated Speaking As-sessment: Using Language Technologies to Score Spontaneous Speech , 1st ed. Routledge, 2019. [30] K. Pearson, “Vii. note on regression and inheritance in the case of two parents,” Proceedings of the Royal Society of London ,vol. 58, no. 347-352, pp. 240–242, 12 1895. [Online]. Available: https://doi.org/10.1098/rspl.1895.0041

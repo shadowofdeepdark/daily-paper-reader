@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10627v1/fig-001.webp",
+      "caption": "Fig. 3 Disrupting core language regions in multilingual LLMs alters internal representations and reduces neural predictivity. (a), Cross-linguistic representational shift after core language lesion. UMAP visualizations of finallayer token embeddings from Qwen2.5–7B show distinct representational clusters for Chinese, English, and French in the intact model (light colors). After ablating the core language region (uniform 1% parameter removal across layers and components), the embeddings of all three languages become compressed and partially overlapping (solid colors), indicating a systematic loss of representational structure. (b), Parameter localization of the core language lesion. Heatmaps illustrate the disrupted parameters within the final transformer layer (layer 27), highlighting the distribution of ablated weights across both self-attention (key and value projections) and MLP (up- and down-projection) components. (c), Impaired linguistic competence following core language disruption. Across four probing tasks (sentence length, tree depth, top constituents, and coordination inversion), performance decreases consistently in all three languages, demonstrating that the ablation selectively disrupts features closely tied to syntactic and hierarchical linguistic structure. (d), Neural encoding consequences of core language lesion across languages. Voxel-wise neural encoding analyses reveal substantial decreases in predictive performance when using embeddings from core-language–ablated LLMs. Bar plots show cross-participant mean encoding correlations for intact models (blue), random ablated model (purple) and core-language-region ablated models (orange) across six LLMs, with grey dots representing individual participants. Across English, French, and Chinese, intact models consistently outperform their ablated counterparts. Below each bar chart, whole-brain t-maps visualize voxel-wise differences between intact and ablated model predictions, with larger t-values indicating stronger reductions in neural predictivity following ablation. Reduced encoding performance is most prominent within bilateral temporal cortices and inferior frontal regions, demonstrating that the ablated parameters correspond to neural computations that are critical for supporting native language processing across languages.",
+      "page": 7,
+      "index": 1,
+      "width": 688,
+      "height": 555
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10627v1/fig-002.webp",
+      "caption": "Fig. 1 Overview of the multilingual neural encoding framework with computationally lesioned large language models (a), Multilingual neural encoding pipeline. Native speakers of English (EN), Chinese (CN), and French (FR) listened to audiobook narratives while undergoing fMRI scanning. Textual stimuli were processed by large language models (LLMs) to extract contextualized embeddings from the final hidden layer, which were then used in voxel-wise encoding models to account for neural responses during native-language comprehension. (b), Multilingual LLMs and lesion conditions. For each model family, we evaluated an intact multilingual LLM together with computationally lesioned variants, including a core-language–ablated model and language-specific–ablated models corresponding to English, Chinese, and French. These models were used to dissociate shared versus language-specific contributions to neural encoding. (c), Gradient-guided computational lesioning. Core and language-specific parameter subsets within each multilingual LLM were identified using gradient-based importance estimates derived from language-specific full-parameter fine-tuning. During backpropagation, parameter gradients were accumulated and combined with their corresponding weights (gradient × weight) to quantify functional importance. Parameters ranking in the top 1% of importance within each subset were then selectively ablated (zeroed) to induce targeted computational lesions, yielding core-lesioned and language-specific-lesioned models for downstream neural encoding analyses.",
+      "page": 4,
+      "index": 2,
+      "width": 606,
+      "height": 555
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10627v1/fig-003.webp",
+      "caption": "Table 1 Architectural comparison of multilingual LLMs used in this study.",
+      "page": 17,
+      "index": 3,
+      "width": 775,
+      "height": 186
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10627v1/fig-004.webp",
+      "caption": "Fig. 4 Language-specific lesions selectively disrupt language-matched cortical encoding while preserving cross-language representational structure. a, Language-specific representational separation is preserved but reorganized after lesioning. UMAP visualizations of final-layer token embeddings across English, French, and Chinese show wellseparated clusters in the intact model (light colors). Following lesioning of each language-specific parameter subset, embeddings from the corresponding language (solid colors) shift to reorganized manifolds without collapsing onto other languages. This indicates that language-specific circuits support within-language representational structure rather than global cross-language separability. b, Distribution of languagespecific parameters across transformer components. Heatmaps from the final transformer layer (layer 27) illustrate the spatial distribution of lesioned parameters for English-, French-, and Chinesespecific models. Language-specific parameters appear concentrated in structured rows within self-attention projections, whereas MLP components exhibit more spatially diffuse but systematic patterns, consistent with complementary roles in information routing versus representational transformation. c, Languagematched neural encoding disruption following language-specific lesioning. Voxel-wise paired t-tests comparing intact and lesioned models (Mistral-8B) were projected onto the cortical surface. Lesioning English-specific parameters selectively reduced neural predictivity in English participants, with analogous matched-language effects observed for French and Chinese. Disruptions localize to canonical languageselective regions, including anterior and posterior temporal cortex and inferior frontal gyrus. d, Convergent encoding impairment across models. For each language, T-maps from language-matched lesions were averaged across all six models and summarized using a Language Processing Index. Group-level cortical maps reveal robust, left-lateralized reductions in neural predictivity, demonstrating that language-specific parameter subsets disproportionately support alignment with native-language brain responses.",
+      "page": 9,
+      "index": 4,
+      "width": 614,
+      "height": 623
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10627v1/fig-005.webp",
+      "caption": "Fig. 2 Neural encoding accuracy across multilingual large language models a–c, Cross-linguistically robust cortical encoding maps across multilingual language models. Cortical maps of voxel-wise encoding correlation for six large language models across English (EN), Chinese (CN), and French (FR) native listeners. For each model, we first computed voxel-wise neural encoding accuracy as the Pearson correlation between predicted and observed BOLD time series, averaged across all participants within each language. Voxels exceeding a significance threshold of p < 0.01 were retained, and the intersection of significant voxels across the three languages was computed. The resulting shared voxel mask was then averaged across languages to generate a cross-linguistically robust cortical encoding map for each model. d, Region-of-interest neural encoding performance across languages and models. Model-wise neural encoding performance within functionally defined language regions of interest. Using the language network parcellation defined by Fedorenko and colleagues, each scatter point represents the mean encoding correlation of a single model within a given region and language, while bar plots indicate the across-model average performance. Across inferior frontal, middle frontal, anterior temporal, mid-temporal, and posterior temporal ROIs, all six models exhibited reliable predictive power, with broadly comparable performance across English, French, and Chinese. These results demonstrate that despite architectural and training differences, multilingual LLMs capture cortical representations that generalize across languages and align with established human language networks.",
+      "page": 5,
+      "index": 5,
+      "width": 609,
+      "height": 474
+    }
+  ]
+}

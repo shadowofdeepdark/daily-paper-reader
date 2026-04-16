@@ -1,0 +1,430 @@
+Title: URMF: Uncertainty-aware Robust Multimodal Fusion for Multimodal Sarcasm Detection
+
+URL Source: https://arxiv.org/pdf/2604.06728v1
+
+Published Time: Thu, 09 Apr 2026 00:35:40 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# URMF: U NCERTAINTY -AWARE ROBUST MULTIMODAL FUSION FOR MULTIMODAL SARCASM DETECTION 
+
+Zhenyu Wang, Weichen Cheng, Weijia Li, Junjie Mou, Zongyou Zhao, Guoying Zhang ∗
+
+School of Artificial Intelligence, China University of Mining and Technology, Beijing 
+
+{2310640139, 2310410210, 2310410120, 2310410319, 2310410234}@student.cumtb.edu.cn zgy@cumtb.edu.cn 
+
+## ABSTRACT 
+
+Multimodal sarcasm detection (MSD) aims to identify sarcastic intent arising from semantic incon-gruity between text and image. Although recent advances in cross-modal interaction and incongruity reasoning have substantially improved MSD performance, most existing methods implicitly assume that different modalities are equally reliable. This assumption, however, is often violated in real-world social media scenarios, where textual content may be ambiguous or lack crucial context, while visual content may be weakly relevant or even irrelevant. Under such conditions, deterministic fusion tends to inject noisy evidence into the joint representation, dilute key conflict cues, and ultimately under-mine the robustness of cross-modal reasoning. To address this issue, we propose Uncertainty-aware 
+
+Robust Multimodal Fusion (URMF), a unified framework that explicitly models modality reliability during multimodal interaction and fusion. URMF first employs a cross-modal interaction module, where multi-head cross-attention injects visual evidence into textual representations, followed by multi-head self-attention in the fused semantic space to strengthen incongruity-aware reasoning. On this basis, we perform unified unimodal aleatoric uncertainty modeling over the text modality, image modality, and interaction-aware latent modality by parameterizing each representation as a learnable Gaussian posterior, thereby explicitly capturing modality-specific noise and reliability differences. The estimated uncertainty is then used to dynamically regulate modality contributions during fusion, allowing the model to suppress unreliable modalities and produce a more robust joint representation. Furthermore, we introduce a joint training objective consisting of an information-bottleneck-style task loss, modality prior regularization, cross-modal distribution alignment, and uncertainty-driven self-sampling contrastive learning, which together enhance compactness, consistency, and robustness in latent representation learning. Extensive experiments on public MSD benchmark demonstrate that URMF consistently outperforms strong unimodal, multimodal, and MLLM-based baselines. The results verify that explicitly modeling unimodal uncertainty and incorporating it into cross-modal fusion is an effective way to improve both accuracy and robustness in multimodal sarcasm detection. 
+
+Keywords Multimodal sarcasm detection · Cross-modal interaction · Aleatoric uncertainty · Dynamic fusion ·
+
+Contrastive learning 
+
+## 1 Introduction 
+
+Sarcasm often conveys stance and emotion through a discrepancy between literal expression and underlying intent, making its recognition heavily dependent on the joint understanding of semantic incongruity and pragmatic context. With the prevalence of image-text posts on social media, multimodal sarcasm detection (MSD) has emerged as an important yet challenging cross-modal understanding task. A reliable MSD model must not only capture textual and visual semantics individually, but also identify the implicit conflicts and fine-grained correspondences between them in order to infer sarcastic intent accurately. 
+
+> ∗
+
+Corresponding author 
+
+> arXiv:2604.06728v1 [cs.CV] 8 Apr 2026
+
+Running Title for Header To address the central challenge of cross-modal incongruity modeling, prior studies have proposed a variety of effective approaches. Early work mainly relied on feature concatenation or shallow fusion strategies, which are simple but limited in capturing the implicit contradictions and contextual dependencies that sarcasm often requires. Subsequent research has shifted toward stronger cross-modal interaction and explicit reasoning paradigms, including graph-based relational modeling, interaction-driven attention mechanisms, and selective interaction strategies built upon Transformer architectures. These methods improve multimodal representation learning by strengthening cross-modal alignment and incongruity reasoning. Despite their progress, most existing MSD methods implicitly assume that multimodal inputs are deterministic and equally reliable. This assumption is often unrealistic in real-world social media data. Text may be ambiguous, rhetorical, metaphorical, or missing essential context, while images may merely provide decoration, emotional atmosphere, or even irrelevant content. When modality quality and relevance are inherently unstable, deterministic fusion can mistakenly treat noisy modalities as reliable evidence, amplify misleading signals, and dilute key conflict cues, thereby harming robustness and generalization under noisy, missing, or weakly related modalities. Therefore, explicitly modeling modality reliability is crucial for robust multimodal sarcasm understanding. Uncertainty estimation offers a natural way to address this issue. In deep learning, uncertainty is commonly categorized into epistemic uncertainty and aleatoric uncertainty, where the latter captures inherent noise and irreducible ambiguity in observations. For multimodal learning, aleatoric uncertainty is particularly important because different modalities often exhibit different noise levels and reliability. If such uncertainty can be explicitly estimated at the representation level and incorporated into multimodal fusion, the model may adaptively suppress unreliable modalities and thereby produce more stable cross-modal reasoning under challenging conditions. Motivated by these observations, we propose Uncertainty-aware Robust Mul-timodal Fusion (URMF), a unified framework for robust multimodal sarcasm detection. URMF first adopts a single-layer Transformer-based cross-modal interaction module, where multi-head cross-attention injects semantically relevant visual evidence into textual representations, followed by multi-head self-attention to refine token dependencies in the fused semantic space and strengthen conflict-aware reasoning. We then perform unified Gaussian modeling over the text modality, image modality, and interaction-aware latent modality, where both the mean and variance are learned to explicitly characterize modality-specific semantics and aleatoric uncertainty. Based on the estimated uncertainty, URMF dynamically adjusts modality contributions during fusion, allowing low-uncertainty modalities to contribute more to the final decision. In addition, we introduce an uncertainty-driven self-sampling contrastive learning strategy, in which stochastic perturbations induced by posterior distributions are used to construct contrastive views, further improving the robustness of latent representations. The entire framework is trained end-to-end with a unified objective that combines task supervision, information bottleneck regularization, modality prior regularization, cross-modal distribution alignment, and uncertainty-aware contrastive learning. Our main contributions are summarized as follows: • We propose URMF, a unified framework that combines cross-modal interaction with unimodal aleatoric uncertainty modeling to explicitly characterize modality reliability in multimodal sarcasm detection. • We design an uncertainty-guided dynamic fusion mechanism together with a joint optimization objective, including information bottleneck regularization, modality prior regularization, cross-modal distribution align-ment, and uncertainty-driven contrastive learning, to improve representation consistency and robustness. • Extensive experiments on public MSD benchmark demonstrate that URMF consistently outperforms strong unimodal, multimodal, and MLLM-based baselines, validating the effectiveness of uncertainty modeling for robust multimodal sarcasm detection. 
+
+## 2 Related Work 
+
+2.1 Multimodal Sarcasm Detection 
+
+Multimodal sarcasm detection (MSD) aims to identify sarcastic intent by modeling the semantic incongruity between textual expression and visual content. Early MSD studies mainly relied on direct multimodal fusion strategies, where visual and textual features extracted by pre-trained encoders were concatenated and then fed into a classifier [ 1]. Al-though simple and effective in controlled scenarios, such methods usually struggle to capture the implicit contradictions and contextual dependencies underlying sarcastic expression. To overcome these limitations, subsequent work has focused on strengthening cross-modal interaction modeling. Graph-based methods and interaction-driven frameworks have been widely adopted to capture fine-grained associations across modalities. RCLMuFN [ 2], for instance, constructs a heterogeneous relation graph and employs multi-route 2Running Title for Header fusion to explicitly model contextual dependencies between textual tokens and visual objects. Similarly, Dynamic Routing Transformer Network [ 3 ] introduces a routing mechanism into the Transformer architecture, enabling the model to adaptively select more informative cross-modal representations while suppressing irrelevant information. These approaches substantially improve multimodal representation learning by enhancing modality interaction. Beyond interaction modeling, recent studies have increasingly emphasized explicit incongruity reasoning, which is widely regarded as a core characteristic of sarcasm understanding. Incongruity-aware Tension Field Network [ 4]introduces a physically inspired tension-field representation to quantify the intensity of semantic conflict across modalities. Other work has explored incongruity-aware learning from different perspectives. MuMu [ 5] explicitly aligns conflicting semantic cues to improve sarcasm detection; MICL [ 6] models complementary incongruity from multiple semantic views; SemIRNet [7] enhances sarcasm recognition through semantic-level interaction modeling. More recently, higher-level reasoning paradigms have also been introduced into MSD. LDGNet [ 8 ] incorporates large language models (LLMs) into a debate-guided framework and exploits structured reasoning processes to uncover implicit sarcastic intent. These advances indicate that progressively stronger interaction and reasoning mechanisms can significantly improve sarcasm detection performance. Despite these encouraging results, most existing MSD methods implicitly assume that multimodal inputs are determinis-tic and equally reliable. In real-world social media scenarios, textual descriptions may be ambiguous, while images may be weakly related or even irrelevant to the sarcastic intent. Under such conditions, deterministic fusion may amplify noisy modalities and impair reasoning performance. Therefore, explicitly modeling modality reliability is particularly important for robust multimodal sarcasm understanding. 
+
+2.2 Uncertainty in Multimodal Learning 
+
+Uncertainty estimation has become an important technique for improving the robustness of deep learning systems. Existing studies commonly categorize uncertainty into epistemic uncertainty and aleatoric uncertainty, where aleatoric uncertainty characterizes inherent noise in observed data [ 9 ]. In multimodal learning, aleatoric uncertainty is particularly valuable because different modalities often exhibit different reliability levels and noise characteristics. Recent work on robust multimodal fusion has proposed uncertainty estimation as an adaptive weighting mechanism. Instead of treating all modalities equally, these methods first estimate unimodal uncertainty and then dynamically adjust modality contributions during fusion. For example, uncertainty-aware fusion has been shown to significantly improve performance when one modality is corrupted or partially missing [10]. Inspired by these studies, we argue that uncertainty modeling is particularly suitable for multimodal sarcasm detection, where modality relevance is inherently unstable. Accordingly, we incorporate uncertainty estimation into both the cross-modal interaction and fusion stages, enabling the model to perform more reliable sarcasm reasoning under noisy or ambiguous multimodal inputs. 
+
+## 3 Method 
+
+3.1 Overall Framework 
+
+Given an image-text pair (I, T ), the goal is to predict its sarcasm label y. The proposed URMF framework consists of four stages: cross-modal interaction, unimodal uncertainty modeling, uncertainty-guided fusion, and joint objective optimization. (1) We first feed deterministic text and image representations into a cross-modal interaction module to obtain an interaction-aware latent modality representation Xf .(2) We then perform unimodal aleatoric uncertainty modeling by learning distribution parameters for each modality-specific latent representation and sampling latent variables via reparameterization. (3) Based on the estimated uncertainty, we apply dynamic modality fusion to adaptively combine modality representations and produce a joint representation for prediction. (4) Finally, the entire framework is optimized end-to-end with an information-bottleneck-style task loss, modality prior regularization, cross-modal distribution alignment, and self-sampling contrastive learning. 3Running Title for Header Input Layer 
+
+Image 
+
+Input 
+
+Image 
+
+Encoder 
+
+Cross-Modal 
+
+Interaction Module 
+
+Text 
+
+Input 
+
+Text 
+
+Encoder 
+
+Transformer 
+
+Block 
+
+> pooling
+
+Unimodal Uncertainty 
+
+Modeling Module 
+
+> Mean Head
+> Image Branch
+> Log-Variance Head
+> Interactive Branch
+> Text Branch
+> Gaussian Posterior
+> & Reparameterization
+> Latent
+> Representation
+> Latent
+> Representation
+> Latent
+> Representation
+
+Uncertainty-Guided 
+
+Dynamic Fusion           
+
+> Image
+> Representation
+> Text
+> Representation
+> Interavtive
+> Implicit
+> Modality
+> 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> (𝐀 𝐀 ,𝐀 𝐀 2)
+> (𝐀 𝐀 ,𝐀 𝐀 2)
+> (𝐀 𝐀 ,𝐀 𝐀 2)
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> (𝐀 𝐀 ,𝐀 𝐀 2)
+> (𝐀 𝐀 ,𝐀 𝐀 2)
+> Dynamic Weight
+> Dynamic
+> Weight
+> Computation
+> 𝐀 𝐀 2,𝐀 𝐀 2
+> Dynamic Weight
+> 𝐀 𝐀 𝐀 𝐀 𝐀 𝐀 𝐀 𝐀
+> Concatenated
+> 𝐀 𝐀 𝐀 𝐀
+> Joint Network 𝐀 (⋅)
+> Joint Uncertainty Modeling
+> Mean/Var Heads
+> Gaussian Posterior
+> Reparameterization
+> Joint
+> Latent
+> 𝐀 ℎ
+> Classifier  Prediction
+> 𝐀
+
+Joint 
+
+Optimization 
+
+Objectives 
+
+ℒ𝐀🀀 
+
+Information Bottleneck 
+
+ℒ𝐀𧰀𝐀 
+
+Modal Regularization 
+
+ℒ𝐀𣠀𝐀𝐀𝐀 
+
+Multimodal Alignment 
+
+ℒ𝐀𢀀𝐀 
+
+Uncertainty Contrastive Learning 
+
+Total Loss 
+
+ℒ                
+
+> 𝐀 ℎ𝐀 𝐀 𝐀 ,𝐀 𝐀 ,𝐀 𝐀 𝐀 𝐀 ,𝐀 𝐀 ,𝐀 𝐀 𝐀 𝐀 ,𝐀 𝐀 ,𝐀 𝐀
+
+Figure 1: Given an image-text pair (I, T ), URMF performs cross-modal interaction, modality uncertainty modeling, and uncertainty-guided dynamic fusion to learn a joint latent representation for sarcasm prediction. The model is trained end-to-end with information bottleneck, modality regularization, multimodal alignment, and uncertainty contrastive learning losses. 
+
+3.2 Cross-modal Interaction Module 
+
+Different from standard multimodal Transformer layers, which usually adopt the information flow of “self-attention first, then cross-attention” [ 3], we instead use a “cross-modal alignment first, intra-modal reasoning later” design. Specifically, we first inject image-context evidence into textual representations through cross-attention, and then apply self-attention in the fused semantic space to model token dependencies, followed by a feed-forward network (FFN) for nonlinear transformation. Each sub-module is equipped with residual connections and layer normalization (LN). Let Xt ∈ Rn×dt and Xi ∈ Rm×di denote the initial text and image representations extracted by the text and image encoders, respectively. A single-layer cross-modal interaction module is formulated as 
+
+Xct = LN(MHCA( Xt, X i) + Xt) , (1) 
+
+Xst = LN(MHSA( Xct ) + Xct ) , (2) 
+
+X′
+
+t = LN(FFN( Xst ) + Xst ) , (3) where X′
+
+t denotes the output of the single-layer cross-modal interaction module, and Xct and Xst are the outputs of the MHCA and MHSA modules, respectively. For the multi-head cross-attention (MHCA) module, we define 
+
+MHCA( Xt, X i) = concat(head 1, . . . , head H ) W O , (4) where concat( ·) denotes concatenation, H is the number of heads, and W O ∈ Rd×d is the output projection matrix. Let d = dt = di and dh = d/H . For the h-th head, we have 
+
+head h = softmax 
+
+ QhK⊤
+
+h
+
+√dh
+
+
+
+Vh (5) 
+
+Qh = XtW Qh , Kh = XiW Kh , Vh = XiW Vh (6) where W Qh , W Kh , W Vh ∈ Rd×dh are learnable projection matrices. 4Running Title for Header For the multi-head self-attention (MHSA) module, after obtaining the cross-modally enhanced text sequence Xct , we perform self-attention in the same semantic space: 
+
+MHSA( Xct ) = concat  head ′
+
+> 1
+
+, . . . , head ′
+
+> H
+
+ ˜W O , (7) where 
+
+head ′ 
+
+> h
+
+= softmax ˜Qh ˜K⊤
+
+> h
+
+√dh
+
+!
+
+˜Vh, (8) 
+
+˜Qh = Xct ˜W Qh , ˜Kh = Xct ˜W Kh , ˜Vh = Xct ˜W Vh , (9) with ˜W Qh , ˜W Kh , ˜W Vh ∈ Rd×dh and ˜W O ∈ Rd×d is the learnable parameters of multi-head self-attention. This module models token dependencies on top of representations already injected with visual context, thus strengthening structured reasoning over cross-modal conflict semantics. Finally, we pool the output cross-modal representation X′ 
+
+> t
+
+to obtain a global interaction representation: 
+
+Xf = Pool( X′
+
+> t
+
+), (10) where Xf fuses both textual and visual information while emphasizing cross-modal semantic conflict, and can thus be regarded as an interaction-aware latent modality representation. 
+
+3.3 Unimodal Aleatoric Uncertainty Modeling 
+
+After cross-modal interaction, we obtain an interaction-aware latent representation Xf . We then represent the text modality, image modality, and interaction-aware latent modality of the k-th sample as xkt , xki , and xkf , respectively. For convenience, we use xkm as a unified notation, where m ∈ { t, i, f }.Following unimodal aleatoric uncertainty modeling [ 10 ], we model the latent representation under modality m as a multivariate Gaussian random variable zkm. The mean μkm represents the semantic center of the k-th sample under modality m, while the standard deviation σkm characterizes its aleatoric uncertainty. We quantify modality-internal aleatoric uncertainty by learning both the mean and variance. Specifically, we use two lightweight fully connected heads to predict the mean vector and the log-variance vector, respectively: 
+
+μkm = f mθ,μ (xkm), log σk 2 
+
+> m
+
+= f mθ,σ (xkm), (11) where f mθ,μ (·) and f mθ,σ (·) have independent parameters. The latent representation zkm is then modeled by the Gaussian posterior 
+
+p(zkm | xkm) = N  μkm, σk 2 
+
+> m
+
+I , (12) where I denotes the identity matrix. And sampled via the reparameterization: 
+
+zkm = μkm + σkmϵ, ϵ ∼ N (0 , I). (13) In this way, the latent space jointly encodes modality semantics and aleatoric uncertainty, providing a learnable confidence signal for subsequent dynamic fusion. 
+
+3.4 Uncertainty-guided Dynamic Fusion 
+
+After obtaining the latent representations zkm of the interaction-aware latent modality Xf and the image modality Xi,we further assume that the contribution of each modality to the final prediction is related to its uncertainty: lower uncertainty indicates higher confidence, and thus the modality should contribute more to the joint representation. Since the textual semantics have already been injected into the interaction-aware latent modality Xf through cross-modal interaction, we perform final uncertainty-guided fusion over Xf and Xi only, so as to avoid redundant reuse of textual evidence. To this end, we first aggregate the dimension-wise variance into a scalar uncertainty measure using the average variance: 
+
+¯σk 2 
+
+> m
+
+= 1
+
+D
+
+> D
+
+X
+
+> d=1
+
+σk 2
+
+> m,d
+
+, (14) where D is the dimensionality of zkm, and m ∈ { f, i }.5Running Title for Header We then map lower uncertainty to higher weights via an exponential transformation and normalize the weights to obtain dynamic fusion coefficients: 
+
+akm = exp 
+
+ 1¯σk 2 
+
+> m
+
++ ε
+
+
+
+, (15) 
+
+αkm = akm
+
+P
+
+> s∈{ f,i }
+
+aks
+
+, (16) where ε is a numerical stability term. The modality-specific contribution representation is then computed by dynamically weighting the mean vector: 
+
+ˆxkm = αkm μkm. (17) This fusion strategy adaptively suppresses noise from high-uncertainty modalities, thereby improving the robustness and discriminability of the joint representation. On top of this, we further use a joint network ϕ(·) to fuse the modality-specific contribution representations ˆxkm into a joint representation: 
+
+hk = ϕ([ˆ xkf , ˆxki ]) . (18) Following the same unimodal aleatoric uncertainty modeling strategy, we model the joint modality as 
+
+μkh = f hθ,μ (hk), log σk 2 
+
+> h
+
+= f hθ,σ (hk), (19) and apply the reparameterization to obtain the latent representation zkh of the joint modality. Finally, the joint latent representation of the k-th sample, denoted by zkh, is fed into a classifier to obtain the prediction probability: 
+
+ˆyk = softmax( W zkh + b). (20) 
+
+3.5 Training Objective 
+
+To jointly account for task discrimination, latent compression, modality distribution regularization, cross-modal consistency, and uncertainty-driven augmentation, we decompose the overall training objective into four complementary loss terms: 
+
+L = LIB + λ1Lreg + λ2Lalign + λ3LUCL . (21) We use classification cross-entropy as the main task loss and impose KL regularization on the latent representation of the final joint modality (see Sec. 3.4) to encourage the model to learn task-sufficient but non-redundant representations, i.e., an information bottleneck constraint [11]: 
+
+LIB = Ltask (y, ˆy) + λIB KL  p(zkh | hk) ∥ N (0 , I) , (22) where Ltask denotes the cross-entropy loss. Furthermore, to explicitly characterize and regularize unimodal aleatoric uncertainty while stabilizing training and improving generalization, we regularize the latent representations of the text modality, image modality, and interaction-aware latent modality (see Sec. 3.3) toward the standard Gaussian prior: 
+
+Lreg = X 
+
+> m∈{ t,i,f }
+
+KL  p(zkm | xkm) ∥ N (0 , I) . (23) Here, m = t, m = i, and m = f correspond to the text modality, image modality, and interaction-aware latent modality, respectively. This term enforces consistent scale and distributional form across different modality-specific latent spaces, thereby providing a stable basis for uncertainty-guided dynamic fusion (see Sec. 3.4) and subsequent cross-modal distribution alignment. Under the constraint of Lreg , the latent spaces of different modalities become better regularized. On this basis, to align modality-specific representations in the latent space and better exploit the cross-modal interaction module (see Sec. 3.2) for semantic conflict modeling while reducing statistical shift across modalities, we introduce a cross-modal KL alignment term that encourages the text modality and interaction-aware latent modality to approach the image modality in the distributional sense: 
+
+Lalign = KL  p(zkt | xkt ) ∥ p(zki | xki ) + KL  p(zkf | xkf ) ∥ p(zki | xki ) . (24) 6Running Title for Header                       
+
+> Symbol Value Description
+> n100 maximum length of text tokens
+> m49 number of image patches
+> dt768 dimension of text embeddings
+> di768 dimension of image embeddings
+> λIB 10 −3weight of the KL regularization term in LIB
+> λ110 −3weight of Lreg
+> λ210 −5weight of Lalign
+> λ310 −3weight of LUCL
+
+Table 1: Hyperparameter settings used in our experiments. This term aligns cross-modal representations at the distribution level rather than the point-representation level, which helps alleviate representation drift caused by noise and uncertainty. Finally, aleatoric uncertainty also increases the diversity of modality-specific data. Therefore, we exploit the uncertainty-aware latent representations learned in Sec. 3.3 to perform self-sampling data augmentation. For each modality m ∈ { t, i, f }, we independently sample twice from p(zkm | xkm) to obtain an anchor ˜zkm and an augmented positive sample zkm. In addition, we randomly sample a set of negative instances from other latent distributions of the same modality and adopt the following contrastive learning objective: 
+
+Lm 
+
+> UCL
+
+= − log exp  sim  ˜zkm, zkm
+
+ /τ P  
+
+> k̸=k′
+
+(exp(sim(˜ zkm, zkm) /τ ) + exp(sim(˜ zkm, zk′
+
+> m
+
+) /τ )) , (25) 
+
+LUCL = X 
+
+> m∈{ t,i,f }
+
+Lm
+
+> UCL
+
+, (26) where τ is a temperature coefficient. Since the sampling noise is controlled by σm, this loss explicitly leverages uncertainty-induced stochastic perturbations to construct contrastive views, thereby improving noise robustness in learned representations. 
+
+## 4 Experiments 
+
+4.1 Dataset and Evaluation Metrics 
+
+We conduct experiments on the public Multimodal Sarcasm Detection (MSD) dataset [ 1 ]. We follow the official train/validation/test split and adopt the same preprocessing procedure as the original dataset. We report Accuracy, Precision, Recall, and F1-score as evaluation metrics. 
+
+4.2 Implementation Details 
+
+Table 1 summarizes the hyperparameter settings used in our experiments. For modality-specific representation learning, we employ publicly available pre-trained encoders obtained. Specifically, the text encoder is RoBERTa, while the image encoder is ViT. Unless otherwise specified, all experiments are performed on a single NVIDIA GeForce RTX 4090 GPU. 
+
+4.3 Baseline Models 
+
+To evaluate the performance of URMF, we compare it with a wide range of competitive baselines, which can be grouped into image-only, text-only, and multimodal methods. 
+
+Image-only methods : ResNet [1], ViT [12]. 
+
+Text-only methods : Bi-LSTM [13], SIARN [14], SMSD [15], BERT [16], Ro-BERTa [17]. 
+
+Multimodal methods : HFM [ 1 ], D&R Net [ 18 ], Bridge [ 19 ], InCrossMGs [ 20 ], CMGCN [ 21 ], HKE-model [ 22 ], Att-BERT [ 23 ], DIP [ 24 ], KnowleNet [ 25 ], DMSD-CL [ 26 ], AMIF [ 27 ], G2SAM [ 28 ], FSICN [ 29 ], Multi-view CLIP [ 17 ], MuMu [ 5], MIL-Net [ 30 ], MICL [ 6 ], DynRT-Net [ 3 ], DCPNet [ 31 ], InterARM [ 32 ], KFGC-Net [ 33 ], CIRM [34], SCI-GDFN [35]. In addition, we include MLLM-based models [36], namely LLaVA1.5 and LLaVA1.5-VIDR, which are fine-tuned on the MSD training set using LoRA-based parameter-efficient adaptation. 7Running Title for Header 
+
+Modality Model Acc(%) P(%) R(%) F1(%) 
+
+Image ResNet [1] 64.76 54.51 70.80 61.53 ViT [12] 67.83 57.93 70.07 63.43 Text Bi-LSTM [13] 81.90 76.66 78.42 77.53 SIARN [14] 80.57 75.55 75.70 75.63 SMSD [15] 80.90 76.46 75.18 75.82 BERT [16] 83.85 78.72 82.27 80.22 RoBERTa [17] 93.97 90.39 94.59 92.45 Multimodal HFM [1] 86.63 83.84 84.18 84.01 D&R Net [18] 84.02 77.97 83.42 80.60 Bridge [19] 88.51 82.95 89.39 86.05 InCrossMGs [20] 86.10 81.38 84.36 82.84 CMGCN [21] 87.55 83.63 84.69 84.16 HKE-model [22] 87.36 81.84 86.48 84.09 Att-BERT [23] 86.05 78.63 83.31 80.90 DIP [24] 89.59 87.76 86.58 87.17 KnowleNet [25] 88.87 88.59 84.18 86.33 DMSD-CL [26] 88.95 84.89 87.90 86.37 AMIF [27] 90.10 86.55 89.68 88.09 G2SAM [28] 90.48 87.95 89.02 88.48 FSICN [29] 90.55 89.93 89.51 89.72 Multi-view CLIP [17] 88.33 82.66 88.65 85.55 MuMu [5] 90.73 88.81 88.44 88.62 MIL-Net [30] 89.50 85.16 89.16 87.11 MICL [6] 92.08 90.05 90.61 90.33 DynRT-Net [3] 93.59 93.06 93.60 93.31 LLaVA1.5 [36] 93.67 93.70 93.14 93.40 LLaVA1.5-VIDR [36] 89.97 89.26 89.58 89.42 DCPNet [31] 89.48 87.46 88.73 88.10 InterARM [32] 92.28 91.79 92.23 92.01 KFGC-Net [33] 90.97 88.28 89.56 88.91 CIRM [34] 94.02 93.46 94.14 93.76 SCI-GDFN [35] 94.06 93.50 94.17 93.80 
+
+URMF (Ours) 95.02 94.69 95.19 94.91           
+
+> Table 2: Main results on the MSD dataset. Best results are shown in bold and second-best results are underlined.
+> 4.4 Main Results
+> Table 2 presents the overall comparison on the MSD dataset. URMF achieves the best performance on all four evaluation metrics, reaching 95.02% Accuracy, 94.69% Precision, 95.19% Recall, and 94.91% F1-score. These results consistently outperform all unimodal, multimodal, and MLLM-based baselines, demonstrating the effectiveness of uncertainty-aware robust fusion for multimodal sarcasm detection. Compared with unimodal methods, URMF shows clear advantages over both text-only and image-only models. Although the RoBERTa-based text model already achieves strong performance, it still falls behind URMF by a noticeable margin, suggesting that textual cues alone are insufficient to fully capture sarcasm triggered by image-text incongruity. Meanwhile, image-only methods perform substantially worse, indicating that visual information alone is 8
+
+Running Title for Header                                     
+
+> Variant Acc(%) P(%) R(%) F1(%)
+> w/o Lalign 94.60 94.24 94.88 94.49 w/o LIB 94.85 94.51 95.06 94.74 w/o Lreg 94.44 94.07 94.69 94.32 w/o LUCL 94.27 93.90 94.25 94.15 w/o Dynamic Fusion 94.65 94.32 94.78 94.52 standard Transformer 92.61 92.27 92.66 92.44
+> URMF (full) 95.02 94.69 95.19 94.91
+
+Table 3: Ablation results of URMF on the MSD dataset. Removing any key component consistently degrades performance, verifying the effectiveness of each module. 
+
+Figure 2: t-SNE visualization of joint latent representations on the MSD test set for major ablation variants and the full URMF. usually not sufficiently discriminative and is most useful when jointly modeled with text. These observations confirm that effective MSD requires not only strong textual understanding but also explicit modeling of cross-modal semantic conflict. URMF also establishes a new state of the art among strong multimodal baselines. For example, compared with DynRT-Net, URMF improves Accuracy and F1 by 1.43 and 1.60 percentage points, respectively. It also consistently outperforms recent competitive approaches such as CIRM and SCI-GDFN across all evaluation metrics. This superiority is particularly meaningful because most existing methods focus mainly on cross-modal interaction or incongruity reasoning, while still implicitly assuming comparable reliability across modalities. In contrast, URMF explicitly models unimodal aleatoric uncertainty and dynamically regulates modality contributions during fusion, thereby reducing the interference of noisy or weakly related modalities and yielding more robust discriminative representations. Moreover, URMF achieves the best Precision and Recall simultaneously. The higher Recall indicates that the model is better able to preserve sarcasm-related conflict cues, while the higher Precision suggests that uncertainty-aware fusion effectively suppresses misleading information introduced by unreliable modalities. Their joint improvement ultimately leads to the best F1-score, showing that URMF achieves a better balance between recognition performance and robustness. It is also worth noting that URMF surpasses MLLM-based models such as LLaVA1.5 and LLaVA1.5-VIDR. This result suggests that, for MSD tasks requiring fine-grained modeling of image-text conflict, a task-specific framework that explicitly combines cross-modal interaction with uncertainty estimation can be more effective than directly adapting general-purpose multimodal foundation models. 
+
+4.5 Ablation Study 
+
+To systematically assess the contribution of each key component in URMF, we conduct ablation studies on the MSD dataset. Specifically, starting from the full model, we construct six variants by removing one component at a time, including the four training objectives ( Lalign , LIB , Lreg , and LUCL ), the uncertainty-guided dynamic fusion mechanism, and the proposed cross-modal interaction order. Unless otherwise specified, each variant differs from the full model by the removal of only one component. The results are reported in Table 3. 9Running Title for Header Overall, all ablated variants perform worse than the full URMF, indicating that each component contributes positively to the final performance. Among them, replacing the proposed interaction order with a standard Transformer leads to the largest performance drop, suggesting that performing cross-modal alignment before intra-modal semantic reasoning is more suitable for modeling image-text incongruity in MSD. Removing Dynamic Fusion also results in clear degradation, indicating that static fusion is insufficient for handling sample-level variation in modality reliability. In addition, removing Lreg weakens the overall performance, showing that latent-space regularization plays an important role in stabilizing modality-specific representation distributions, improving uncertainty estimation, and supporting robust downstream fusion. To further provide an intuitive view of how different components affect the learned representation space, we visualize the joint latent representations of several major ablation variants in Fig. 2. From left to right, the four panels correspond to standard Transformer, w/o Dynamic Fusion, w/o Lreg , and URMF (full), respectively. The standard Transformer variant exhibits the weakest class separability, while removing Dynamic Fusion or Lreg leads to relatively more mixed samples around the boundary between sarcastic and non-sarcastic instances. By contrast, the full URMF forms clearer inter-class separation and more compact class-wise distributions. This qualitative evidence is consistent with the quantitative results in Table 3, and further supports the effectiveness of the proposed interaction design, uncertainty-guided fusion mechanism, and latent-space regularization strategy. 
+
+## 5 Conclusion 
+
+In this paper, we propose URMF, an uncertainty-aware robust multimodal fusion framework for multimodal sarcasm detection. URMF explicitly models image-text semantic conflict through a cross-modal interaction module, performs aleatoric uncertainty modeling over the text modality, image modality, and interaction-aware latent modality, and dynamically regulates modality contributions during fusion based on the estimated uncertainty. To further improve representation quality, we introduce a unified training objective that combines task supervision, information bottleneck regularization, modality prior regularization, cross-modal distribution alignment, and uncertainty-driven self-sampling contrastive learning. Extensive experiments on the MSD dataset show that URMF consistently outperforms strong unimodal, multimodal, and MLLM-based baselines across Accuracy, Precision, Recall, and F1-score. Further ablation studies confirm the effectiveness of each key component and demonstrate that explicitly modeling unimodal aleatoric uncertainty can effectively alleviate the interference caused by noisy or weakly related modalities, thereby improving both accuracy and robustness in multimodal sarcasm detection. Overall, our findings suggest that uncertainty is valuable not only as a measure of modality reliability, but also as an active signal for cross-modal representation learning and robust optimization. In future work, we plan to explore the transferability of this framework to larger-scale multimodal datasets and multimodal foundation models, as well as finer-grained uncertainty decomposition and reasoning mechanisms for more complex open-world multimodal understanding scenarios. 
+
+## References 
+
+[1] Yitao Cai, Huiyu Cai, and Xiaojun Wan. Multi-modal sarcasm detection in twitter with hierarchical fusion model. In Proceedings of the 57th annual meeting of the association for computational linguistics , pages 2506–2515, 2019. [2] Tongguan Wang, Junkai Li, Guixin Su, Yongcheng Zhang, Dongyu Su, Yuxue Hu, and Ying Sha. Rclmufn: Relational context learning and multiplex fusion network for multimodal sarcasm detection. Knowledge-Based Systems , 319:113614, 2025. [3] Yuan Tian, Nan Xu, Ruike Zhang, and Wenji Mao. Dynamic routing transformer network for multimodal sarcasm detection. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 2468–2480, 2023. [4] Jiecheng Zhang, CL Philip Chen, Shuzhen Li, and Tong Zhang. Incongruity-aware tension field network for multi-modal sarcasm detection. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 14499–14508, 2025. [5] Jie Wang, Yan Yang, Yongquan Jiang, Minbo Ma, Zhuyang Xie, and Tianrui Li. Cross-modal incongruity aligning and collaborating for multi-modal sarcasm detection. Information Fusion , 103:102132, 2024. 10 Running Title for Header [6] Diandian Guo, Cong Cao, Fangfang Yuan, Yanbing Liu, Guangjie Zeng, Xiaoyan Yu, Hao Peng, and Philip S Yu. Multi-view incongruity learning for multimodal sarcasm detection. In Proceedings of the 31st International Conference on Computational Linguistics , pages 1754–1766, 2025. [7] Jingxuan Zhou, Yuehao Wu, Yibo Zhang, Yeyubei Zhang, Yunchong Liu, Bolin Huang, and Chunhong Yuan. Semirnet: A semantic irony recognition network for multimodal sarcasm detection. In 2025 10th International Conference on Information and Network Technologies (ICINT) , pages 158–162. IEEE, 2025. [8] Hengyang Zhou, Jinwu Yan, Yaqing Chen, Rongman Hong, Wenbo Zuo, and Keyan Jin. Ldgnet: Llms debate-guided network for multimodal sarcasm detection. In ICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , pages 1–5. IEEE, 2025. [9] Alex Kendall and Yarin Gal. What uncertainties do we need in bayesian deep learning for computer vision? 
+
+Advances in neural information processing systems , 30, 2017. [10] Zixian Gao, Xun Jiang, Xing Xu, Fumin Shen, Yujie Li, and Heng Tao Shen. Embracing unimodal aleatoric uncertainty for robust multimodal fusion. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 26876–26885, 2024. [11] Alexander A Alemi, Ian Fischer, Joshua V Dillon, and Kevin Murphy. Deep variational information bottleneck. 
+
+arXiv preprint arXiv:1612.00410 , 2016. [12] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, et al. An image is worth 16x16 words: Transformers for image recognition at scale. arXiv preprint arXiv:2010.11929 , 2020. [13] Alex Graves and Jürgen Schmidhuber. Framewise phoneme classification with bidirectional lstm and other neural network architectures. Neural networks , 18(5-6):602–610, 2005. [14] Yi Tay, Luu Anh Tuan, Siu Cheung Hui, and Jian Su. Reasoning with sarcasm by reading in-between. In 
+
+Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 1010–1020, 2018. [15] Tao Xiong, Peiran Zhang, Hongbo Zhu, and Yihui Yang. Sarcasm detection with self-matching networks and low-rank bilinear pooling. In The world wide web conference , pages 2115–2124, 2019. [16] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transformers for language understanding. In Proceedings of the 2019 conference of the North American chapter of the association for computational linguistics: human language technologies, volume 1 (long and short papers) ,pages 4171–4186, 2019. [17] Libo Qin, Shijue Huang, Qiguang Chen, Chenran Cai, Yudi Zhang, Bin Liang, Wanxiang Che, and Ruifeng Xu. Mmsd2. 0: Towards a reliable multi-modal sarcasm detection system. In Findings of the association for computational linguistics: ACL 2023 , pages 10834–10845, 2023. [18] Nan Xu, Zhixiong Zeng, and Wenji Mao. Reasoning with multimodal sarcastic tweets via modeling cross-modality contrast and semantic association. In Proceedings of the 58th annual meeting of the association for computational linguistics , pages 3777–3786, 2020. [19] Xinyu Wang, Xiaowen Sun, Tan Yang, and Hongbo Wang. Building a bridge: a method for image-text sarcasm detection without pretraining on image-text data. In Proceedings of the first international workshop on natural language processing beyond text , pages 19–29, 2020. [20] Bin Liang, Chenwei Lou, Xiang Li, Lin Gui, Min Yang, and Ruifeng Xu. Multi-modal sarcasm detection with interactive in-modal and cross-modal graphs. In Proceedings of the 29th ACM international conference on multimedia , pages 4707–4715, 2021. [21] Bin Liang, Chenwei Lou, Xiang Li, Min Yang, Lin Gui, Yulan He, Wenjie Pei, and Ruifeng Xu. Multi-modal sarcasm detection via cross-modal graph convolutional network. In Proceedings of the 60th annual meeting of the association for computational linguistics (volume 1: Long papers) , pages 1767–1777, 2022. [22] Hui Liu, Wenya Wang, and Haoliang Li. Towards multi-modal sarcasm detection via hierarchical congruity modeling with knowledge enhancement. In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing , pages 4995–5006, 2022. [23] Hongliang Pan, Zheng Lin, Peng Fu, Yatao Qi, and Weiping Wang. Modeling intra and inter-modality incongruity for multi-modal sarcasm detection. In Findings of the Association for Computational Linguistics: EMNLP 2020 ,pages 1383–1392, 2020. [24] Changsong Wen, Guoli Jia, and Jufeng Yang. Dip: Dual incongruity perceiving network for sarcasm detection. In 
+
+Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 2540–2550, 2023. 11 Running Title for Header [25] Tan Yue, Rui Mao, Heng Wang, Zonghai Hu, and Erik Cambria. Knowlenet: Knowledge fusion network for multimodal sarcasm detection. Information Fusion , 100:101921, 2023. [26] Mengzhao Jia, Can Xie, and Liqiang Jing. Debiasing multimodal sarcasm detection with contrastive learning. In 
+
+Proceedings of the AAAI conference on artificial intelligence , volume 38, pages 18354–18362, 2024. [27] Kuntao Li, Yifan Chen, Qiaofeng Wu, Weixing Mai, Fenghuan Li, and Yun Xue. Ambiguity-aware multi-level incongruity fusion network for multi-modal sarcasm detection. In Proceedings of the 31st International Conference on Computational Linguistics , pages 380–391, 2025. [28] Yiwei Wei, Shaozu Yuan, Hengyang Zhou, Longbiao Wang, Zhiling Yan, Ruosong Yang, and Meng Chen. Gˆ 2sam: graph-based global semantic awareness method for multimodal sarcasm detection. In Proceedings of the AAAI conference on artificial intelligence , volume 38, pages 9151–9159, 2024. [29] Qiang Lu, Yunfei Long, Xia Sun, Jun Feng, and Hao Zhang. Fact-sentiment incongruity combination network for multimodal sarcasm detection. Information Fusion , 104:102203, 2024. [30] Yang Qiao, Liqiang Jing, Xuemeng Song, Xiaolin Chen, Lei Zhu, and Liqiang Nie. Mutual-enhanced incongruity learning network for multi-modal sarcasm detection. In Proceedings of the AAAI conference on artificial intelligence , volume 37, pages 9507–9515, 2023. [31] Youjiang Fang, Liang Zhang, Shihao Wang, Wenyuan Zhang, Yuxin Wang, Yuanyuan Liu, Xiaopeng Wei, and Xin Yang. Dcpnet: a comprehensive framework for multimodal sarcasm detection via graph topology extraction and multi-scale feature fusion. Frontiers of Computer Science , 20(7):2007336, 2026. [32] Tan Yue, Rui Mao, Xuzhao Shi, and Erik Cambria. Interarm: Interpretable affective reasoning model for multimodal sarcasm detection. IEEE Transactions on Affective Computing , 2026. [33] Xingjie Zhuang, Fengling Zhou, and Zhixin Li. Multi-modal sarcasm detection via knowledge-aware focused graph convolutional networks. ACM Transactions on Multimedia Computing, Communications and Applications ,21(5):1–22, 2025. [34] Haochen Zhao, Yuyao Kong, Yongxiu Xu, Gaopeng Gou, Hongbo Xu, Yubin Wang, and Haoliang Zhang. Mmsd3. 0: A multi-image benchmark for real-world multimodal sarcasm detection. arXiv preprint arXiv:2510.23299 ,2025. [35] Zhonghao Xi, Bengong Yu, and Haoyu Wang. Multimodal sarcasm detection based on sentiment-clue inconsistency global detection fusion network. Expert Systems with Applications , 275:127020, 2025. [36] Binghao Tang, Boda Lin, Haolong Yan, and Si Li. Leveraging generative large language models with visual instruction and demonstration retrieval for multimodal sarcasm detection. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , pages 1732–1742, 2024. 12
