@@ -1,0 +1,491 @@
+Title: GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification
+
+URL Source: https://arxiv.org/pdf/2604.08879v1
+
+Published Time: Mon, 13 Apr 2026 00:22:03 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+# Faxian Wan 
+
+School of Computer Science and Engineering, Northeastern University Shenyang, China wanfaxian@mails.neu.edu.cn 
+
+# Xiaocui Yang ∗
+
+School of Computer Science and Engineering, Northeastern University Shenyang, China yangxiaocui@cse.neu.edu.cn 
+
+# Yifan Cao 
+
+School of Computer Science and Engineering, Northeastern University Shenyang, China caoyifan@mails.neu.edu.cn 
+
+# Shi Feng 
+
+School of Computer Science and Engineering, Northeastern University Shenyang, China fengshi@cse.neu.edu.cn 
+
+# Daling Wang 
+
+School of Computer Science and Engineering, Northeastern University Shenyang, China wangdaling@cse.neu.edu.cn 
+
+# Yifei Zhang 
+
+School of Computer Science and Engineering, Northeastern University Shenyang, China zhangyifei@cse.neu.edu.cn 
+
+## Abstract 
+
+Moving beyond the traditional binary classification paradigm of Multimodal Sarcasm Detection, Multimodal Sarcasm Target Identi-fication (MSTI) presents a significantly more formidable challenge. It necessitates the precise localization of fine-grained targets, such as specific textual phrases and visual regions, to achieve a nuanced understanding of cross-modal sarcasm. Existing approaches pre-dominantly rely on implicit cross-modal alignment, suffering from a lack of interpretability and yielding suboptimal performance in fine-grained target localization. To address these limitations, we propose GRASP , Grounded Chain-of-Thought ReAsoning with Dual-Stage Optimization for Multimodal Sarcasm Prediction and Target Identification, a novel framework that pioneers the inte-gration of visual grounding and explicit Chain-of-Thought (CoT) reasoning to move beyond black-box MSTI. Specifically, we cu-rate MSTI-MAX , a refined dataset that mitigates class imbalance and enriches multimodal sarcasm cues. To endow GRASP with human-like intent decomposition, we introduce Grounded CoT reasoning , which explicitly anchors sarcasm-related visual regions within the text reasoning trajectory. It prompts the model to explic-itly articulate the rationale behind the sarcastic intent, grounded in multimodal perception and reasoning, prior to predicting the final classification labels and sarcasm targets. Furthermore, the dual-stage outcome-supervised joint optimization strategy combining Supervised Fine-Tuning with coordinate-aware weighted loss, and Fine-Grained Target Policy Optimization is employed to solidify the robust reasoning capabilities of the model. Extensive experiments demonstrate that GRASP outperforms existing baselines in fine-grained sarcasm target identification across different modalities. Notably, beyond traditional metrics that merely assess predictive correctness, we introduce an LLM-as-a-Judge evaluation to quanti-tatively measure the quality of the internal reasoning chains. Our work paves the way for explicit grounding reasoning in complex, fine-grained multimodal tasks. Our built dataset and source code will be released on GitHub. 
+
+> ∗Corresponding author.
+
+## CCS Concepts 
+
+• Information systems → Sentiment analysis ; Multimedia in-formation systems; • Computing methodologies → Natural language processing ; Reinforcement learning .
+
+## Keywords 
+
+Multimodal Sarcasm Target Identification, Multimodal Sarcasm Detection, Grounded CoT Reasoning, Fine-Grained Target Policy Optimization 
+
+## 1 Introduction 
+
+Despite progress in Multimodal Sarcasm Detection (MSD), existing studies primarily formulate it as a macroscopic binary classification task, predicting merely whether a given image-text pair is sarcas-tic [ 5, 6 , 13 , 25 , 40 ]. However, this coarse-grained paradigm falls fundamentally short in scenarios that demand deep interpretability and fine-grained localization. To bridge this gap, the Multimodal Sarcasm Target Identification (MSTI) [ 31 ] task is introduced. MSTI requires models to explicitly ground the specific targets that trig-ger sarcasm, such as precise textual spans and their corresponding visual bounding boxes. As illustrated in Figure 1, beyond merely detecting the presence of sarcasm, a model must accurately local-ize the fine-grained triggers, such as the sarcastic textual cue, i.e., 
+
+“soooo expected. not” , and the specific image region containing the abnormally low-flying plane . The paradigm shift from holistic de-tection to fine-grained identification poses formidable challenges to multimodal understanding, reasoning, and alignment. Existing research on MSD and MSTI remains constrained by crit-ical challenges. First, the lack of explicit reasoning and inter-pretability due to black-box perception paradigms. Although recent models for MSTI [ 8 , 20 ] attempt to incorporate fine-grained visual bounding boxes to localize sarcastic targets, they predomi-nantly rely on the task-specific trained architecture or cumbersome multi-stage pipeline. These approaches typically produce classifi-cation labels and spatial coordinates directly via implicit feature fusion and large-scale pre-training, failing to capture the logical reasoning trajectory from multimodal perception and reasoning to the final detection, as shown in Figure 1. Consequently, even when predictions are accurate, it remains ambiguous whether the model has genuinely comprehended the underlying cross-modal 
+
+> arXiv:2604.08879v1 [cs.CL] 10 Apr 2026 Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang
+
+Figure 1: An illustrative example of MSTI. The sarcasm arises from the contradiction between the specific textual span “soooo expected. not” and the localized visual region (de-picting a perilously low-flying airplane), which collectively conveys the sarcastic intent. Our GRASP framework not only outputs fine-grained multimodal targets directly but also yields explicit grounding chain-of-thought reasoning. 
+
+incongruity or merely overfitted to spurious correlations in the dataset. Second, the inadequacy of general-purpose models in tackling the complex, fine-grained grounding task. While re-cent Multimodal Large Language Models (MLLMs), e.g., GPT-4o [ 1 ], Qwen-VL [ 2], exhibit remarkable reasoning capabilities, empirical evaluations [ 8 , 35 ] reveal their sub-optimal performance on the fine-grained sarcasm detection task. The phenomenon stems from the fact that sarcasm heavily relies on implicit cultural nuances and pragmatic reversals, which evade general pre-training. Further-more, most existing research relegates MLLMs to the role of an auxiliary knowledge generator [ 8 , 36 , 38 ]. During the reasoning process, they typically compress complex multimodal signals into discrete textual representations, such as image captions or text tags, thereby degrading fine-grained visual details. Consequently, they fail to synergistically integrate the cognitive rationale ( why it is sarcastic ) with fine-grained visual grounding ( where the sarcasm lies ) within a unified, end-to-end generative framework. To address these challenges, a high-quality fine-grained sarcasm target identification dataset is needed. However, we reveal that the fine-grained sarcasm dataset, MSTI 2.0 [ 8], is hindered by data imbalance and the lack of annotations for salient visual sarcasm targets. To bridge this gap, we reconstruct and refine MSTI 2.0 to build the new dataset, MSTI-MAX , with grounded multimodal reasoning. MSTI-MAX not only provides bounding boxes for vi-sual targets and key textual spans for fine-grained sarcasm target identification but also achieves balanced data distribution, laying the robust foundation. To address the aforementioned challenges, we propose GRASP , Grounded Chain-of-Thought Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Prediction and Target Identification. Specifically, GRASP enforces structured CoT instructions, where within a dedicated Think module, the model first extracts salient visual anchors via bounding boxes and core text spans for fine-grained perception, and then explicitly aligns them to mitigate cross-modal incongruities. By directly referencing visual regions during reasoning, rather than compressing them into textual representations, GRASP effectively achieves “Thinking with Images” [ 17 , 27 ]. It preserves fine-grained spatial details and fosters cooperation between visual grounding and abstract cogni-tive reasoning. Following this explicit reasoning process, the model yields the classification label, textual targets, and precise bounding box coordinates within a final Answer module. To endow GRASP with robust reasoning capabilities, we devise the novel dual-stage outcome-supervised joint optimization strategy. In the first stage, Supervised Fine-Tuning (SFT) is employed to distill high-quality CoT trajectories from a powerful MLLM. Concurrently, we introduce a coordinate-aware weighted loss to amplify gradi-ents on bounding box tokens, thereby enhancing visual grounding performance. In the second stage, we propose Fine-Grained Tar-get Policy Optimization (FTPO) to further refine the reasoning chains. FTPO leverages multi-dimensional rewards that encompass formatting, classification accuracy, visual grounding IoU, and tex-tual target matching. Our optimization empowers the model to autonomously self-improve its cross-modal incongruity perception and target localization precision. Furthermore, traditional outcome-oriented metrics, e.g., Accu-racy, F1-score, fail to capture the nuanced cognitive processes underlying sarcasm comprehension. We introduce the LLM-as-a-Judge [ 39 ] to evaluate the quality of reasoning for MSTI. The advanced model is leveraged to quantify intermediate reasoning trajectories across three dimensions, including Visual Perception , In-congruity Reasoning , and Logical Consistency . Extensive experiments demonstrate that our framework achieves state-of-the-art (SOTA) performance on MSTI and exhibits competitive performance in sarcasm detection. Our contributions are summarized as follows: (1) We introduce MSTI-MAX , a reconstructed and balanced fine-grained dataset tailored for Multimodal Sarcasm Target Identifi-cation (MSTI). By incorporating detailed reasoning rationales, it establishes a valuable benchmark for the community. (2) We propose GRASP , a novel end-to-end framework driven by visual Grounded Chain-of-Thought (CoT) reasoning. It seam-lessly unifies explicit reasoning, fine-grained visual localization, and cross-modal incongruity resolution. (3) To endow GRASP with robust reasoning capabilities, we devise a novel dual-stage outcome-supervised optimization strat-egy , which integrates SFT with a coordinate-aware weighted loss, followed by FTPO with multiple fine-grained rewards. (4) We conduct comprehensive experiments and pioneer the LLM-as-a-Judge evaluation to quantitatively evaluate the intermedi-ate reasoning trajectories. 
+
+## 2 Related Works 2.1 MLLMs for Multimodal Sarcasm 
+
+The emergence of Multimodal Large Language Models (MLLMs), such as InternVL [ 9] and Qwen-VL [ 2], has opened new avenues for multimodal sarcasm. Several recent works have explored the potential of MLLMs in zero-shot or few-shot sarcasm tasks [ 28 ]. For instance, Chen et al. [ 7 ] evaluate multimodal sarcasm perception across 12 MLLMs, highlighting the profound challenges posed by GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+sarcastic ambiguity. Similarly, Wang et al. [ 35 ] evaluate MLLMs on sarcasm detection and explanation, identifying core limitations such as insufficient visual comprehension and a lack of conceptual knowl-edge. It is primarily because sarcasm necessitates a fine-grained understanding of cultural contexts, emotional inconsistencies, and implicit communicative intentions, nuances that are difficult to capture through general pre-training alone [ 4 ]. To bridge this gap, fine-tuning approaches have shown greater potential. For example, Emotion-EilMoB [ 38 ] integrates MLLM-generated textual knowl-edge into the model to enhance comprehension. Furthermore, CoT reasoning [34] has been introduced to facilitate structured textual deductions. Recently, Su et al. [ 27 ] proposed the “Thinking with Im-ages” paradigm, which enables models to utilize visual information as intermediate reasoning steps, thereby transforming vision from a passive input into a dynamic, actionable cognitive workspace [ 3, 12 ]. Departing from previous works that evaluate them in constrained zero-shot settings [ 14 , 33 ] or merely utilize MLLMs as external knowledge generators, we propose GRASP . It performs end-to-end training on MLLMs using our curated MSTI-MAX dataset, tailored for MSD and MSTI. 
+
+## 2.2 Multimodal Sarcasm Target Identification 
+
+Multimodal Sarcasm Detection (MSD) [ 25 ] aims to determine whether a given image-text pair conveys sarcastic intent. Pioneering this field, Cai et al. [ 5] introduce MMSD, the large-scale multimodal sarcasm dataset sourced from Twitter. Subsequently, Qin et al. [ 23 ]refine this benchmark into MMSD 2.0 by eliminating spurious cues and correcting erroneous labels. Despite these advancements, MSD remains confined to coarse-grained binary classification. It fails to localize the specific textual or visual elements that trigger the sarcasm, a capability indispensable for achieving a nuanced and in-terpretable understanding of sarcastic expressions. To address this limitation, Multimodal Sarcasm Target Identification (MSTI) [ 31 ] is introduced to pinpoint the exact sarcastic entities across modalities. The effort yields the MSTI dataset, which provides fine-grained an-notations including textual target spans and visual bounding boxes. Building upon this foundation, Chen et al. [ 8] develop MSTI 2.0 and propose CofiPara, employing a coarse-to-fine training para-digm guided by contrastive rationales generated by MLLMs, like Qwen-VL [ 2]. More recently, Lv et al. [ 20 ] construct the MSTI-Plus benchmark by incorporating fine-grained non-sarcastic aspect annotations and propose the Semantic-aware Sarcasm Target Iden-tification (SaSTI) module. However, current MSTI research still faces two critical bottle-necks. First, MSTI 2.0 suffers from suboptimal annotation qual-ity and imbalanced data distributions. Second, existing MSTI ap-proaches predominantly operate as black boxes. While they can classify whether specific textual spans or image regions are sarcas-tic, they fail to articulate the underlying reasoning process, lack-ing interpretability. To overcome these limitations, we curate the 
+
+MSTI-MAX dataset, mitigating long-tailed distributions. More im-portantly, to break the prevailing black-box paradigm, we propose 
+
+GRASP , which introduces Grounded CoT reasoning that leverages the structured text reasoning and preserves visual coordinates for target localization. It could effectively break the black-box nature of multimodal sarcasm, achieving advancements in both target identification accuracy and interpretability. 
+
+Table 1: Statistics of MSTI 2.0 and MSTI-MAX datasets. Dataset Split Sarcasm Non-sarcasm Total MSTI 2.0 
+
+Train 3,500 46 3,546 Val 711 16 727 Test 729 13 742 Total 4,940 75 5,015 
+
+MSTI-MAX 
+
+Train 3,500 3,046 6,546 Val 711 516 1,227 Test 729 513 1,242 Total 4,940 4,075 9,015 1.5% 
+
+> 72.2%
+> 17.9%
+> 8.4%
+> Sample Distribution of MSTI2.0
+> 45.2%
+> 40.2%
+> 9.9%
+> 4.7%
+> Sample Distribution of MSTI-MAX
+> Non-Sarcastic
+> Text-only Sarcasm
+> Visual-only Sarcasm
+> Text & Visual Sarcasm
+
+Figure 2: Comparison of the fine-grained distribution of sar-casm targets across different modalities in the MSTI-MAX and MSTI 2.0 datasets. To reflect the diverse nature of real-world sarcastic expressions, the targets within each instance are categorized into three types: exclusively in the text (Text-only), exclusively in the visual modality (Visual-only), and present in both modalities (Text & Visual). 
+
+## 3 MSTI-MAX Dataset 
+
+To mitigate data imbalance and enhance overall annotation quality, we construct the refined MSTI-MAX benchmark, building upon the original MSTI 2.0 dataset [ 8]. The construction process addresses three critical aspects. First, we observe a pronounced class imbalance in MSTI 2.0, as shown in Table 1. The overrepresentation of sarcastic samples not only inherently biases model training but also deviates from real-world communication scenarios, where non-sarcastic expres-sions naturally form the overwhelming majority of multimodal interactions. Training on such a skewed distribution leads to high false-positive rates in practical applications. To mitigate this dis-crepancy, we augment our dataset with high-quality, non-sarcastic image-text pairs sourced from established benchmarks for MSD, including a subset of data from training datasets of MMSD [ 5 ] and MMSD 2.0 [ 23 ]. The crucial augmentation aligns the data distribu-tion more closely with the real world, thereby fostering training stability, reducing inductive bias, and ensuring robust generaliza-tion for practical deployments. Second, the original dataset lacks bounding box annotations for key visual sarcasm targets in cer-tain samples, which hinders fine-grained grounded reasoning. To address this, we manually review the samples labeled as sarcastic in MSTI 2.0 and supplement the missing visual annotations. To ensure the accuracy and standardization of the annotated data, we invite three domain experts in computer science to conduct inde-pendent annotations. All annotators possess solid analytical skills and extensive experience in data annotation. Prior to the formal annotation phase, they underwent unified training to align their Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang 
+
+Figure 3: Overview of the GRASP training pipeline. The framework consists of two stages: (1) Supervised Fine-Tuning (SFT) with coordinate-aware weighted loss employing structured grounded CoT reasoning; (2) Fine-Grained Target Policy Optimization (FTPO) with multidimensional rewards, which further strengthens reasoning quality and visual grounding precision. 
+
+understanding of the annotation guidelines and task requirements. Furthermore, to ensure numerical stability and scale invariance during coordinate prediction, we standardize the geometric anno-tations by mapping all absolute pixel-level bounding boxes into a unified relative coordinate space of [0, 1000 ].Ultimately, MSTI-MAX is constructed to provide a balanced data distribution and high-quality, fine-grained annotations, establish-ing the solid foundation for explicit Grounded CoT reasoning in multimodal sarcasm target identification. The detailed statistics of both datasets are presented in Table 1, and the fine-grained sarcasm modality distribution is visualized in Figure 2. 
+
+## 4 Method 
+
+In this section, we present the proposed GRASP framework for MSTI, and the complete training pipeline is shown in Figure 3. 
+
+## 4.1 Task Formulation 
+
+Given a multimodal sarcasm dataset, 𝐷 = {( 𝑉 𝑖 ,𝑇 𝑖 ; 𝑙 𝑖 , 𝑏 𝑖 , 𝑘 𝑖 )} 𝑁 𝑖 =1, for the 𝑖 -th sample, 𝑉 denotes the input image and 𝑇 denotes the input text. 𝑙 ∈ { 0, 1} indicates whether the image-text pair is sarcastic. If 𝑙 = 1, 𝑏 𝑖 denotes the set of relative bounding boxes for visual anomalies that trigger sarcasm, and 𝑘 denotes the textual trigger keywords. Our goal is to generate the explicit reasoning 𝑟 , the sarcasm label ˆ𝑙 , and the multimodal sarcasm targets ˆ𝑏, ˆ𝑘 .
+
+M ( 𝑉 𝑖 ,𝑇 𝑖 | T 𝑠𝑡𝑟𝑢 ) ⇒ 𝑌, where 𝑌 = (𝑟 𝑖 , 𝑎 𝑖 ), (1) where T𝑠𝑡𝑟𝑢 is the designed prompt template, 𝑟 is the explicitly generated chain-of-thought rationale in <Think> tags, and 𝑎 =
+
+(ˆ𝑙, ˆ𝑏, ˆ𝑘 ) is the standardized final output in <Answer> tags. 
+
+## 4.2 Grounded Chain-of-Thought Reasoning 
+
+To achieve precise and interpretable multimodal sarcasm target identification, we introduce Grounded Chain-of-Thought (CoT) Rea-soning . Specifically, we employ an advanced Multimodal Large Lan-guage Model (MLLM), namely Qwen3.5-Plus [ 29 ], as the teacher model to synthesize high-quality reasoning data. Rather than di-rectly jumping to conclusions, the model is mandated to first con-duct a comprehensive analysis of the multimodal context. Building upon this holistic understanding, it performs grounded reasoning by explicitly “Thinking with Images”. Given an image-text pair 
+
+(𝑉 ,𝑇 ) and its corresponding ground-truth labels (𝑙, 𝑘, 𝑏 ) in the training phase, we prompt the teacher model to generate structured reasoning paths via progressive multi-stage instructions: (1) Reasoning Stage : The prompt guides the model to articulate its reasoning process within <Think>...</Think> tags, following three steps: (i) Visual Description , which extracts key objects and outputs their normalized coordinates; (ii) Text Analysis ,which decodes the underlying meaning and tone of the textual modality; (iii) Consistency Check , which explicitly compares the visual and textual elements to evaluate semantic consistency. (2) Decision Stage : Following the reasoning process, the model outputs the final predictions within <Answer>...</Answer> 
+
+tags. It includes the predicted label ˆ𝑙 , the textual target ˆ𝑘 , and the visual target ˆ𝑏 formatted as [ ˆ𝑥 min , ˆ𝑦 min , ˆ𝑥 max , ˆ𝑦 max ].To ensure the quality and validity of the synthesized reasoning data, we invite three master’s students in computer science with professional annotation training to manually verify all samples. Guided by the ground-truth annotations, the generated reasoning of each sample is reviewed to ensure that the reasoning trajectories GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+strictly adhered to our designed templates and logically entailed the correct standard answers. By deriving final predictions through this structured reasoning trajectory, our approach not only provides explicit rationales for enhanced interpretability but also establishes a seamless interface for reward computation in the subsequent reinforcement learning phase. Detailed prompt templates can be found in the supplementary file. 
+
+## 4.3 Dual-Stage Outcome-supervised Joint Optimization 
+
+Inspired by the remarkable success of reinforcement learning from human feedback (RLHF) in aligning large language models [ 11 , 22 ,24 ], we propose a dual-stage outcome-supervised joint optimization strategy tailored for our task. In the first stage, we conduct Super-vised Fine-Tuning (SFT) augmented with a customized weighted cross-entropy loss specifically designed for visual grounding. This stage equips the model with the fundamental capabilities required for the Multimodal Sarcasm Target Identification (MSTI) task, in-cluding adherence to the task paradigm, fine-grained target local-ization, and foundational cross-modal alignment. Subsequently, to achieve more precise sarcasm target localization and deeper cross-modal understanding, Fine-Grained Target Policy Opti-mization (FTPO) is further introduced in the second stage. By leveraging multiple rewards optimization, FTPO can strengthen the model’s target identification precision and its ability to perceive subtle cross-modal incongruence. 
+
+4.3.1 Stage 1: SFT for MSTI. During the first phase of training, our primary objective is to endow the model with fine-grained sarcasm target localization capabilities, activate cross-modal alignment, and elicit logical chain-of-thought reasoning. Standard MLLM instruc-tion tuning typically applies an equal weight to all autoregressively generated tokens within the cross-entropy loss. Crucially, in multi-modal sarcasm target identification, the precision of bounding box generation directly dictates the quality of visual grounding, which is paramount for comprehending complex multimodal semantics. Even if a sarcastic instance is correctly classified, inaccurate spatial coordinates indicate that the model fails to capture the true root cause of the visual sarcasm. To allocate more optimization resources to spatial coordinate regression during backpropagation, we reformulate the training ob-jective by introducing a Coordinate-aware Weighted Loss tailored for visual grounding, as the left part of Figure 3 shows. The asymmet-ric gradient feedback prevents the model from adopting spurious inference shortcuts that rely excessively on textual cues. Conse-quently, it not only improves localization accuracy but also im-plicitly encourages the model to focus on fine-grained visual de-tails through context-based reasoning during the explicit “ Think ”stage. Given a multimodal input 𝑋 = (𝑉 ,𝑇 ) and target sequence 
+
+𝑌 = {𝑦 1, 𝑦 2, . . . , 𝑦 𝑁 }, the refined autoregressive loss is: 
+
+LSFT = −
+
+> 𝑁
+
+∑︁ 
+
+> 𝑡 =1
+
+𝜔 𝑡 log 𝑃 𝜃 (𝑦 𝑡 | 𝑋, 𝑌 <𝑡 ), (2) where 𝜔 𝑡 is a dynamic weight factor. 
+
+𝜔 𝑡 =
+
+(
+
+𝜆 coord , if 𝑦 𝑡 ∈ [ 𝑥 min , 𝑦 min , 𝑥 max , 𝑦 max ]
+
+1, otherwise , (3) where 𝜆 coord serves as a scaling hyperparameter. For standard to-kens, such as those constituting the reasoning rationales, general vocabulary, and classification labels, we maintain a base weight of 
+
+𝜔 𝑡 = 1. Conversely, to explicitly emphasize the importance of pre-cise visual grounding, tokens denoting relative spatial coordinates are assigned an amplified weight 𝜔 𝑡 = 𝜆 coord and 𝜆 coord > 1.
+
+4.3.2 Stage 2: Fine-Grained Target Policy Optimization (FTPO). While the model acquires foundational capabilities for MSTI following the SFT stage, it often still struggles with imprecise target local-ization and reasoning-output misalignment when confronted with complex cross-modal incongruities. To further elevate the accuracy of sarcasm identification and the precision of visual grounding, we introduce an outcome-supervised reinforcement learning para-digm [ 16 ]. Building upon GRPO [ 26 ] and tailoring it to the unique characteristics of fine-grained target localization, we propose Fine-Grained Target Policy Optimization (FTPO). During training, for each image-text input pair (𝑉 ,𝑇 ), FTPO circumvents the need for an external critic network. Instead, it samples a group of 𝐺 can-didate outputs O = {𝑜 1, . . . , 𝑜 𝑗 , . . . , 𝑜 𝐺 } directly from the current policy model 𝜋 𝜃 . For each output 𝑜 𝑗 , which comprises both the grounded Chain-of-Thought (CoT) rationale and the final answer, we compute an absolute reward 𝑅 (𝑜 𝑗 ). To ensure the fidelity and efficacy of the grounded Chain-of-Thought (CoT) reasoning for MSTI, we formulate a multi-dimensional reward mechanism. By imposing these comprehensive constraints, FTPO empowers the model to accurately discern subtle cross-modal incongruities within complex contexts, mitigate information redundancy, and achieve precise, traceable reasoning. 
+
+• Format Compliance Reward ( 𝑅 fmt ): Verifying whether the generated outputs strictly adhere to the predefined format in reasoning, specifically checking for valid <Think> and <Answer> 
+
+tags. This reward is granted exclusively when all required struc-tural components are intact. 
+
+• Semantic Accuracy Reward ( 𝑅 acc ): Evaluating the correctness of the sarcasm classification. This reward is assigned if the pre-dicted label ˆ𝑙 matches the ground truth 𝑙 .
+
+• Visual Grounding Reward ( 𝑅 box ): Quantifying the spatial alignment by calculating the Intersection over Union (IoU) be-tween the predicted bounding boxes ˆ𝑏 and the ground truth 𝑏 .This explicitly compels the model to ground its visual attention on specific regions exhibiting cross-modal incongruity during the <Think> stage. 
+
+• Text Exact Match Reward ( 𝑅 txt ): Employing an Exact Match (EM) metric to quantify the alignment between the predicted textual trigger spans ˆ𝑘 and the ground truth 𝑘 gt .
+
+• Redundant Generation Penalty ( 𝑃 over ): Imposing the penalty on the generation of excessive bounding boxes, overly verbose reasoning texts, or trivial full-sentence copying. This regular-ization effectively prevents the model from adopting spurious reward-hacking behaviors. The total reward for any generated sequence 𝑜 𝑗 is: 
+
+𝑅 total = 𝛽 1𝑅 fmt + 𝛽 2𝑅 acc + 𝛽 3𝑅 box + 𝛽 4𝑅 txt − 𝛽 5𝑃 over , (4) where {𝛽 𝑘 }5 
+
+> 𝑘 =1
+
+are hyperparameters to balance different rewards. Subsequently, we calculate the group means and standard devia-tion of R𝑡𝑜𝑡𝑎𝑙 = {𝑅 𝑡𝑜𝑡𝑎𝑙  
+
+> 1
+
+, . . . , 𝑅 𝑡𝑜𝑡𝑎𝑙 𝐺 }, deriving the relative advantage Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang 
+
+for policy gradient updating. 
+
+e𝑅 𝑡𝑜𝑡𝑎𝑙 𝑗 = 𝑅 𝑡𝑜𝑡𝑎𝑙 (𝑜 𝑗 ) − 𝑚𝑒𝑎𝑛 (R𝑡𝑜𝑡𝑎𝑙 )
+
+𝑠𝑡𝑑 (R𝑡𝑜𝑡𝑎𝑙 ) . (5) Using this relative advantage ˆ𝐴 𝑡𝑜𝑡𝑎𝑙 𝑗,𝑡 = e𝑅 𝑡𝑜𝑡𝑎𝑙 𝑗 , the model updates policy parameters 𝜃 via clipped importance sampling and KL di-vergence constraints, driving convergence toward high-reward reasoning paths. 
+
+JFTPO (𝜃 ) = E 𝑞 ∼ 𝑃 (𝑄 ), {𝑜 𝑗 }𝐺 𝑗 =1 ∼ 𝜋 𝜃 old (𝑂 |𝑞 )
+
+1
+
+𝐺 
+
+> 𝐺
+
+∑︁ 
+
+> 𝑗 =1
+
+1
+
+|𝑜 𝑗 |  
+
+> |𝑜 𝑗 |
+
+∑︁ 
+
+> 𝑡 =1
+
+(
+
+min 
+
+" 𝜋 𝜃 (𝑜 𝑗,𝑡 |𝑞, 𝑜 𝑗, <𝑡 )
+
+𝜋 𝜃 old (𝑜 𝑗,𝑡 |𝑞, 𝑜 𝑗, <𝑡 ) ˆ𝐴 𝑡𝑜𝑡𝑎𝑙 𝑗,𝑡 ,
+
+clip 𝜋 𝜃 (𝑜 𝑗,𝑡 |𝑞, 𝑜 𝑗, <𝑡 )
+
+𝜋 𝜃 old (𝑜 𝑗,𝑡 |𝑞, 𝑜 𝑗, <𝑡 ) , 1 − 𝜀, 1 + 𝜀 
+
+!
+
+ˆ𝐴 𝑡𝑜𝑡𝑎𝑙 𝑗,𝑡 
+
+#
+
+− 𝛽 DKL [𝜋 𝜃 || 𝜋 ref ]
+
+)
+
+(6) 
+
+## 5 Experiments 
+
+To evaluate the effectiveness and interpretability of the proposed GRASP framework on Multimodal Sarcasm Target Identification (MSTI) and Multimodal Sarcasm Detection (MSD), we conduct comprehensive experiments on our newly constructed MSTI-MAX dataset. This section details the experimental setup and addresses the following core Research Questions (RQs): 
+
+• RQ1 (Superiority) : How does GRASP perform on sarcasm de-tection and fine-grained target identification compared to state-of-the-art task-specific models and general-purpose Multimodal Large Language Models (MLLMs)? 
+
+• RQ2 (Interpretability) : Does the explicit Chain-of-Thought (CoT) reasoning generated by GRASP align with human cognitive logic, and how does it facilitate accurate MSTI? 
+
+• RQ3 (Ablation & Generalization) : What are the individual contributions of the core components within GRASP, and how well does GRASP generalize across diverse foundational MLLMs? 
+
+## 5.1 Experimental Setup 
+
+Dataset and Evaluation Metrics. Experiments are conducted on our newly curated MSTI-MAX dataset. For MSD, we adopt Accu-racy (Acc), Macro-F1, Precision, and Recall as metrics. For MSTI, following [ 8 ], the evaluation is divided into two modalities: (1) For the identification of the textual target, we utilize the precision of the exact match (EM) [ 15 ] and the F1 score [ 21 ]; (2) For visual target identification, we employ standard COCO-style Average Pre-cision (AP) metrics [ 18 ], specifically AP, AP50, and AP75. Details of metrics can be found in the supplementary file. 
+
+Baselines. To comprehensively evaluate our method, we select a diverse set of baselines spanning three categories: (1) text-only mod-els (e.g., BERT [ 10 ]); (2) the state-of-the-art (SOTA) task-specific multimodal model, CofiPara [ 8]; and (3) a range of prominent Mul-timodal Large Language Models (MLLMs), including Gemini-3-Pro, as well as the Qwen3-VL [ 30 ], Qwen3.5 [ 29 ], and InternVL3.5 [ 32 ] se-ries. For CofiPara [ 8 ], we reproduce the results using their officially released source code. Since the “contrastive rationales” required by their method were not publicly available, we utilize Qwen2.5-VL [ 2 ]to regenerate them. Our reproduce results on the original MSTI 2.0 dataset align consistently with the performance reported in their paper, ensuring a fair and rigorous comparison. 
+
+Implementation Details. By default, GRASP adopts the QwenVL series as the foundation. During SFT, we use Low-Rank Adaptation (LoRA) with 𝑟 = 4 and set the bounding box coordinate weight 
+
+𝜆 coord in Eq. 3 to 10, and our experimental search shows this bal-ances precise visual grounding and reasoning text fluency. For FTPO, the reinforcement learning sampling group size is G=4, and hyperparameters, including 𝛽 1, 𝛽 2, 𝛽 3, 𝛽 4, 𝛽 5 in Eq. 4, are set to 0.05, 0.15, 0.4, 0.4, 0.3. This uneven distribution prioritizes core abilities, while small weights for format 𝛽 1 suffice to maintain structural con-straints learned in SFT. Details can be found in the supplementary. 
+
+## 5.2 Main Results 
+
+To answer RQ1, we conduct comprehensive experiments across diverse MLLMs with varying parameter scales, as shown in Table 2. (1) Superior Performance in Both MSD and MSTI : The re-sults demonstrate that GRASP significantly outperforms current State-of-the-Art (SOTA) models in visual sarcasm target local-ization, while achieving highly competitive performance in both MSD and textual target identification. It confirms that GRASP’s integration of fine-grained visual grounding with structured CoT reasoning effectively tackles the MSTI task by fostering deeper cross-modal semantic alignment. The reproduced CofiPara ex-periences a substantial performance degradation on MSTI-MAX. We attribute this primarily to the significant class distribution shift, transitioning from the highly imbalanced MSTI 2.0 to MSTI-MAX (from 1.5% to 45.2% no-sarcasm samples). (2) Necessity of Task-Specific Fine-Tuning : While massive pro-prietary models, like the Gemini-3-Pro and Qwen3.5-Plus, achieve outstanding performance on simple MSD tasks by leveraging their strong general capabilities, they struggle significantly with fine-grained target localization in the zero-shot setting. These general-purpose models often fail to capture the subtle multi-modal nuances of sarcasm, frequently generating inaccurate visual bounding boxes. In contrast, our GRASP framework, de-spite utilizing parameter-efficient fine-tuning on much smaller base models, achieves profound task alignment. It outperforms these massive general-purpose models by a significant margin, underscoring the effectiveness of GRASP in MSTI. (3) Key Empirical Observations : During our evaluation, we ob-serve several notable findings. First, while scaling up model parameters generally benefits the relatively simpler binary MSD task, this scaling law does not strictly apply to the more com-plex, fine-grained MSTI task. For instance, despite its massive scale, the Gemini-3-Pro model exhibits suboptimal performance in target localization compared to the lightweight Qwen3-VL-4B. Second, newer model iterations do not universally guar-antee performance gains on specific multimodal tasks. In our experiments, the Qwen3-VL series significantly outperforms the newer Qwen3.5 series. We attribute this discrepancy to the focus of their respective pre-training phases. Qwen3-VL underwent extensive visual-centric enhancements, e.g., upgraded visual encoding and fine-grained recognition, whereas Qwen3.5 pri-oritized optimization in other domains, inadvertently leading GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+Table 2: Main results on the MSTI-MAX dataset. The best results in each column are highlighted in bold, and the second-best are underlined. “–” indicates the metric is not applicable. “*” means the reproduced result. Methods Sarcasm Detection Text Target Visual Target Acc Precision Recall F1 EM F1 AP AP50 AP75 
+
+Text-only Baselines 
+
+BERT-base 80.99 87.86 78.46 82.89 17.23 39.20 – – –BERT-large 81.59 85.98 79.97 82.87 21.74 42.53 – – –
+
+Task-specific Multimodal Model 
+
+CofiPara ∗ 48.23 14.28 0.48 0.92 49.52 0.31 9.79 23.18 8.00 
+
+Zero-shot Results of MLLMs with Large-scale Parameters 
+
+Gemini-3-Pro 86.39 90.69 85.95 88.07 1.61 11.92 7.28 13.06 6.35 Qwen3.5-Plus 84.54 83.52 91.76 87.45 3.62 12.73 9.34 13.68 8.70 Qwen3.5-27B 84.78 87.09 86.97 87.03 4.59 14.69 27.29 32.27 26.97 Qwen3-VL-32B 72.22 75.07 78.88 76.92 11.19 10.51 23.10 27.64 22.57 
+
+Zero-shot Results of Lightweight MLLMs 
+
+Qwen3.5-4B 67.71 72.97 71.47 72.21 10.63 10.96 15.38 18.86 14.98 Qwen3.5-9B 69.48 80.28 63.64 71.00 36.88 10.62 8.37 11.20 8.21 Qwen3-VL-4B 71.26 68.13 95.88 79.66 25.85 7.71 31.05 35.59 30.57 Qwen3-VL-8B 71.50 68.81 94.10 79.49 4.43 10.63 29.57 34.08 29.07 
+
+Fine-tuned (Ours) 
+
+GRASP (Qwen3.5-4B) 81.48 85.39 82.58 83.96 48.15 35.58 30.29 33.85 29.97 
+
+GRASP (Qwen3.5-9B) 83.74 89.74 81.62 85.49 52.25 37.62 42.51 46.98 41.78 
+
+GRASP (Qwen3-VL-4B) 78.50 77.11 90.12 83.11 43.16 35.04 41.31 45.84 40.74 
+
+GRASP (Qwen3-VL-8B) 84.06 85.73 87.38 86.55 49.92 41.14 46.71 51.30 46.08 
+
+to catastrophic forgetting of certain fine-grained visual capa-bilities. Nevertheless, despite the inherently weak zero-shot performance of Qwen3.5 on the MSTI task, integrating it into the GRASP framework yields substantial performance improve-ments. This effectively mitigates the catastrophic forgetting and further validates the robustness and efficacy of our approach. 
+
+## 5.3 Evaluation of Reasoning Quality 
+
+Figure 4: LLM-as-a-Judge evaluation results. Higher values indicate better performance on a 1–5 scale. 
+
+To address RQ2, we move beyond standard outcome-oriented metrics and adopt the LLM-as-a-Judge paradigm [ 19 , 39 ]. It allows us to evaluate whether the model genuinely acquires the cognitive capacity to comprehend cross-modal sarcasm, rather than merely overfitting to surface-level dataset biases. Specifically, we employ Qwen3.5-Plus as the evaluator to conduct blind, quantitative scor-ing (on a scale of 1 to 5) on the reasoning rationales generated by various models. The evaluation spans three core dimensions, including Visual Perception (V), Reasoning Ability (R), and Logical Consistency (C). As illustrated in Figure 4, GRASP (Qwen3-VL-8B) achieves comparable, if not superior, results relative to the mas-sive Gemini-3-Pro model. Notably, it excels in Visual Perception and Logical Consistency, underscoring the high quality and inter-pretability of its explicit chain-of-thought reasoning. Details of the evaluation can be found in the supplementary. 
+
+## 5.4 Ablation Study 
+
+To answer RQ3, we conduct ablation experiments on the key com-ponents of the GRASP framework, as shown in the upper part of Table 3. Without Supervised Fine-Tuning (w/o SFT) : By-passing SFT and directly applying FTPO severely hinders conver-gence. The model produces frequent formatting errors that trigger heavy penalties in RL, drastically reducing classification and lo-calization accuracy. It confirms that SFT is indispensable, that is, it provides task-specific heuristics and high-quality policy initial-ization, which are critical for effective subsequent reinforcement learning. Without Fine-Grained Target Policy Optimization (w/o FTPO) : Removing the reward-guided RL stage and using only SFT causes significant performance degradation. Although the SFT-only model learns the CoT structure, it often generates flawed reasoning inconsistent with final predictions. It demonstrates the necessity of FTPO. The multi-dimensional rewards encourage ro-bust cross-modal alignment, moving beyond format imitation to real multimodal reasoning. Without Bounding Box Weighted Loss (w/o Bbox-Weight) : Using standard unweighted cross-entropy loss 𝜆 𝑏𝑜𝑥 = 1 degrades performance across all MSTI metrics. It Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang 
+
+Table 3: Ablation study of the proposed components based on Qwen3-VL-4B and generalization performance across various foundational MLLMs on the MSTI-MAX dataset. The best results within each group are highlighted in bold. Variants Sarcasm Detection Text Target Visual Target Acc Precision Recall F1 EM F1 AP AP50 AP75 
+
+Ablation Study of GRASP Based on Qwen3-VL-4B 
+
+GRASP (Qwen3-VL-4B) 78.50 77.11 90.12 83.11 43.16 35.04 41.31 45.84 40.74 
+
+w/o FTPO (SFT only) 73.26 83.02 68.44 75.03 46.45 28.88 34.21 38.25 33.70 w/o SFT (FTPO only) 72.71 77.69 75.03 76.34 45.11 7.62 12.94 17.24 12.58 w/o Bbox-Weight 72.79 75.16 80.11 77.56 41.14 29.39 30.03 33.70 29.38 
+
+Generalization of GRASP on Various Foundation MLLMs 
+
+InternVL3.5-4B (zero-shot) 65.38 74.07 63.10 68.15 21.01 8.93 5.19 7.72 4.50 InternVL3.5-8B (zero-shot) 68.84 75.91 68.72 72.14 11.59 11.32 17.86 21.22 16.87 
+
+GRASP (InternVL3.5-4B) 80.68 83.72 83.26 83.49 49.19 38.99 41.05 45.81 40.44 
+
+GRASP (InternVL3.5-8B) 81.80 83.22 86.42 84.79 50.24 34.88 42.95 47.40 42.22 
+
+GRASP (Qwen3-VL-8B) 84.06 85.73 87.38 86.55 49.92 41.14 46.71 51.30 46.08 Table 4: Generalization results on the MMSD 2.0 benchmark. Results of baselines are taken from GDCNet [37]. Method Acc Precision Recall F1 
+
+LLaVA (Zero-Shot) 51.06 40.09 46.40 43.02 Qwen-VL (Zero-Shot) 40.63 32.44 35.53 33.63 GPT-4o (Zero-Shot) 71.07 79.52 71.07 70.24 LLaVA (CoT) 48.69 40.93 65.17 50.28 Qwen-VL (CoT) 58.86 56.82 58.67 57.26 GPT-4o (CoT) 74.26 65.81 72.68 68.92 Qwen3-VL-8B(Zero-Shot) 62.72 54.05 89.49 67.39 
+
+GRASP (Qwen3-VL-8B) 78.33 73.09 78.59 75.74 
+
+shows that without emphasizing coordinate tokens, the model can-not prioritize fine-grained visual grounding, weakening its ability to locate fine-grained sarcasm targets accurately. 
+
+## 5.5 Generalization of GRASP 
+
+To assess the out-of-domain generalization capabilities of our ap-proach, we directly test the GRASP model, trained exclusively on MSTI-MAX, on MMSD 2.0 [ 23 ], a standard benchmark for bi-nary multimodal sarcasm detection. As detailed in Table 4, despite MMSD 2.0 requiring only coarse-grained binary labels, GRASP consistently outperforms existing baselines. The remarkable perfor-mance underscores the robust transferability and broad applicability of our method. Furthermore, to validate the architectural robust-ness of GRASP, we substitute the default Qwen-VL backbone with InternVL [ 32 ], another advanced MLLM. As shown in the lower section of Table 3, the InternVL-equipped GRASP achieves excellent MSTI performance, on par with its Qwen-VL counterpart across all metrics. It confirms that GRASP serves as the generalizable framework, seamlessly adaptable to diverse MLLMs. 
+
+## 5.6 Case Study 
+
+To qualitatively illustrate how GRASP performs fine-grained sar-casm target identification, we present a representative example in Figure 5. Given a multimodal input, GRASP executes its Grounded CoT reasoning within the <Think> </Think> tags, which encom-passes three key phases: visual description, textual analysis, and cross-modal consistency check. Guided by this structured rationale, 
+
+Figure 5: A case study of GRASP on the MSTI task. 
+
+GRASP first localizes the visual sarcasm target using precise bound-ing box coordinates and identifies the text sarcasm target words. Subsequently, it detects the core cross-modal contradiction by ex-plicitly aligning the semantic cues from both modalities, ultimately yielding the final prediction within the <Answer> </Answer> tags. The case study demonstrates that GRASP can precisely pinpoint fine-grained sarcasm targets across both visual and textual modali-ties, further validating its practical effectiveness on MSTI. 
+
+## 6 Ethics Statement 
+
+All datasets utilized and reconstructed in this research for MSTI-MAX are derived from publicly available sources and strictly in-tended for academic purposes. We ensure that all instances are anonymized, with no personally identifiable information or social media user metadata included. Given the inherent nature of sar-casm, some data samples may contain cynical or mocking tones. However, we have taken measures to exclude severe hate speech, explicit toxicity, and discriminatory content. GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+## 7 Conclusion 
+
+In this paper, we present GRASP , a novel framework designed to address the challenges of fine-grained target localization and inadequate explainability for MSTI. To facilitate this research, we first introduce MSTI-MAX, a meticulously reconstructed bench-mark featuring balanced distributions, fine-grained target anno-tations, i.e., visual bounding boxes and textual target words, and detailed reasoning rationales. Building upon this, GRASP leverages Grounded CoT reasoning to explicitly articulate the multimodal rationale behind sarcastic intents. Furthermore, we propose an innovative dual-stage optimization strategy. It begins with SFT utilizing a customized coordinate-aware weighted loss for initial task alignment, followed by FTPO with multiple rewards to iter-atively refine both target localization and multimodal reasoning. Extensive experiments demonstrate that GRASP achieves superior performance in both sarcasm detection and fine-grained target lo-calization, while exhibiting strong generalization and robustness. Notably, our pioneering LLM-as-a-Judge evaluation confirms that GRASP effectively captures the complex cross-modal incongruities inherent in sarcasm. Ultimately, this work establishes that inte-grating explicit visual grounding with structured CoT reasoning is the effective paradigm for complex multimodal tasks. We will explore more efficient training paradigms and broader contextual modeling to further advance multimodal sarcasm understanding and reasoning in future work. 
+
+## References 
+
+[1] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Floren-cia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al . 2023. Gpt-4 technical report. arXiv preprint arXiv:2303.08774 
+
+(2023). [2] Shuai Bai, Keqin Chen, Xuejing Liu, Jialin Wang, Wenbin Ge, Sibo Song, Kai Dang, Peng Wang, Shijie Wang, Jun Tang, Humen Zhong, Yuanzhi Zhu, Mingkun Yang, Zhaohai Li, Jianqiang Wan, Pengfei Wang, Wei Ding, Zheren Fu, Yiheng Xu, Jiabo Ye, Xi Zhang, Tianbao Xie, Zesen Cheng, Hang Zhang, Zhibo Yang, Haiyang Xu, and Junyang Lin. 2025. Qwen2.5-VL Technical Report. arXiv:2502.13923 [cs.CV] https://arxiv.org/abs/2502.13923 [3] Sule Bai, Mingxing Li, Yong Liu, Jing Tang, Haoji Zhang, Lei Sun, Xiangxiang Chu, and Yansong Tang. 2025. UniVG-R1: Reasoning Guided Universal Visual Grounding with Reinforcement Learning. arXiv:2505.14231 [cs.CV] https://arxiv. org/abs/2505.14231 [4] Saroj Basnet, Shafkat Farabi, Tharindu Ranasinghe, Diptesh Kanojia, and Marcos Zampieri. 2025. Evaluating Open-Source Vision-Language Models for Multi-modal Sarcasm Detection. In 2025 IEEE International Conference on Data Mining Workshops (ICDMW) . 1442–1447. doi:10.1109/ICDMW69685.2025.00172 [5] Yitao Cai, Huiyu Cai, and Xiaojun Wan. 2019. Multi-Modal Sarcasm Detection in Twitter with Hierarchical Fusion Model. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , Anna Korhonen, David Traum, and Lluís Màrquez (Eds.). Association for Computational Linguistics, Florence, Italy, 2506–2515. doi:10.18653/v1/P19-1239 [6] Santiago Castro, Devamanyu Hazarika, Verónica Pérez-Rosas, Roger Zimmer-mann, Rada Mihalcea, and Soujanya Poria. 2019. Towards Multimodal Sarcasm Detection (An _Obviously_ Perfect Paper). In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , Anna Korhonen, David Traum, and Lluís Màrquez (Eds.). Association for Computational Linguistics, Florence, Italy, 4619–4629. doi:10.18653/v1/P19-1455 [7] Junjie Chen, Xuyang Liu, Subin Huang, Linfeng Zhang, and Hang Yu. 2025. Seeing Sarcasm Through Different Eyes: Analyzing Multimodal Sarcasm Perception in Large Vision-Language Models. IEEE Transactions on Computational Social Systems (2025), 1–18. doi:10.1109/TCSS.2025.3608484 [8] Zixin Chen, Hongzhan Lin, Ziyang Luo, Mingfei Cheng, Jing Ma, and Guang Chen. 2024. CofiPara: A Coarse-to-fine Paradigm for Multimodal Sarcasm Target Identification with Large Multimodal Models. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) ,Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.). Association for Compu-tational Linguistics, Bangkok, Thailand, 9663–9687. doi:10.18653/v1/2024.acl-long.522 [9] Zhe Chen, Jiannan Wu, Wenhai Wang, Weijie Su, Guo Chen, Sen Xing, Muyan Zhong, Qinglong Zhang, Xizhou Zhu, Lewei Lu, Bin Li, Ping Luo, Tong Lu, Yu Qiao, and Jifeng Dai. 2024. Intern VL: Scaling up Vision Foundation Models and Aligning for Generic Visual-Linguistic Tasks. In 2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) . 24185–24198. doi:10.1109/ CVPR52733.2024.02283 [10] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. In 
+
+Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) , Jill Burstein, Christy Doran, and Thamar Solorio (Eds.). Association for Computational Linguistics, Minneapolis, Minnesota, 4171–4186. doi:10.18653/ v1/N19-1423 [11] Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Peiyi Wang, Qihao Zhu, Runxin Xu, Ruoyu Zhang, Shirong Ma, Xiao Bi, et al . 2025. DeepSeek-R1 incen-tivizes reasoning in LLMs through reinforcement learning. Nature 645, 8081 (2025), 633–638. [12] Wenxuan Huang, Bohan Jia, Zijie Zhai, Shaosheng Cao, Zheyu Ye, Fei Zhao, Zhe Xu, Xu Tang, Yao Hu, and Shaohui Lin. 2026. Vision-R1: Incentivizing Reasoning Capability in Multimodal Large Language Models. arXiv:2503.06749 [cs.CV] https://arxiv.org/abs/2503.06749 [13] Michael Iskandardinata, William Christian, and Derwin Suhartono. 2025. Context-Aware Pragmatic Metacognitive Prompting for Sarcasm Detection. arXiv:2511.21066 [cs.CL] https://arxiv.org/abs/2511.21066 [14] Soumyadeep Jana, Abhrajyoti Kundu, and Sanasam Ranbir Singh. 2025. Think Twice Before You Judge: Mixture of Dual Reasoning Experts for Multimodal Sarcasm Detection. arXiv:2507.04458 [cs.CL] https://arxiv.org/abs/2507.04458 [15] Aditya Joshi, Pranav Goel, Pushpak Bhattacharyya, and Mark Carman. 2018. Sarcasm Target Identification: Dataset and An Introductory Approach. In Pro-ceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018) , Nicoletta Calzolari, Khalid Choukri, Christopher Cieri, Thierry Declerck, Sara Goggi, Koiti Hasida, Hitoshi Isahara, Bente Maegaard, Joseph Mariani, Hélène Mazo, Asuncion Moreno, Jan Odijk, Stelios Piperidis, and Takenobu Tokunaga (Eds.). European Language Resources Association (ELRA), Miyazaki, Japan. https://aclanthology.org/L18-1424/ [16] Harrison Lee, Samrat Phatale, Hassan Mansoor, Thomas Mesnard, Johan Ferret, Kellie Lu, Colton Bishop, Ethan Hall, Victor Carbune, Abhinav Rastogi, and Sushant Prakash. 2024. RLAIF vs. RLHF: Scaling Reinforcement Learning from Human Feedback with AI Feedback. arXiv:2309.00267 [cs.CL] https://arxiv.org/ abs/2309.00267 [17] Bangzheng Li, Ximeng Sun, Jiang Liu, Ze Wang, Jialian Wu, Xiaodong Yu, Hao Chen, Emad Barsoum, Muhao Chen, and Zicheng Liu. 2025. Latent Visual Reasoning. arXiv:2509.24251 [cs.CV] https://arxiv.org/abs/2509.24251 [18] Tsung-Yi Lin, Michael Maire, Serge Belongie, James Hays, Pietro Perona, Deva Ramanan, Piotr Dollár, and C. Lawrence Zitnick. 2014. Microsoft COCO: Common Objects in Context. In Computer Vision – ECCV 2014 , David Fleet, Tomas Pajdla, Bernt Schiele, and Tinne Tuytelaars (Eds.). Springer International Publishing, Cham, 740–755. [19] Yang Liu, Dan Iter, Yichong Xu, Shuohang Wang, Ruochen Xu, and Chenguang Zhu. 2023. G-Eval: NLG Evaluation using Gpt-4 with Better Human Alignment. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing , Houda Bouamor, Juan Pino, and Kalika Bali (Eds.). Association for Computational Linguistics, Singapore, 2511–2522. doi:10.18653/v1/2023.emnlp-main.153 [20] Fengmao Lv, Mengting Xiong, Junlin Fang, Lingli Zhang, Tianze Luo, Weichao Liang, and Tianrui Li. 2025. MSTI-Plus: Introducing Non-Sarcasm Reference Materials to Enhance Multimodal Sarcasm Target Identification. In Proceed-ings of the ACM on Web Conference 2025 (Sydney NSW, Australia) (WWW ’25) . Association for Computing Machinery, New York, NY, USA, 614–624. doi:10.1145/3696410.3714570 [21] Diego Molla and Aditya Joshi. 2019. Overview of the 2019 ALTA Shared Task: Sarcasm Target Identification. In Proceedings of the 17th Annual Workshop of the Australasian Language Technology Association , Meladel Mistica, Massimo Piccardi, and Andrew MacKinlay (Eds.). Australasian Language Technology Association, Sydney, Australia, 192–196. https://aclanthology.org/U19-1026/ [22] Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et al . 2022. Training language models to follow instructions with human feedback. Advances in neural information processing systems 35 (2022), 27730–27744. [23] Libo Qin, Shijue Huang, Qiguang Chen, Chenran Cai, Yudi Zhang, Bin Liang, Wanxiang Che, and Ruifeng Xu. 2023. MMSD2.0: Towards a Reliable Multi-modal Sarcasm Detection System. In Findings of the Association for Computational Linguistics: ACL 2023 , Anna Rogers, Jordan Boyd-Graber, and Naoaki Okazaki (Eds.). Association for Computational Linguistics, Toronto, Canada, 10834–10845. doi:10.18653/v1/2023.findings-acl.689 [24] Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Ste-fano Ermon, and Chelsea Finn. 2023. Direct Preference Optimization: Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang 
+
+Your Language Model is Secretly a Reward Model. In Advances in Neu-ral Information Processing Systems , A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt, and S. Levine (Eds.), Vol. 36. Curran Associates, Inc., 53728–53741. https://proceedings.neurips.cc/paper_files/paper/2023/file/ a85b405ed65c6477a4fe8302b5e06ce7-Paper-Conference.pdf [25] Rossano Schifanella, Paloma de Juan, Joel Tetreault, and LiangLiang Cao. 2016. Detecting Sarcasm in Multimodal Social Platforms. In Proceedings of the 24th ACM International Conference on Multimedia (Amsterdam, The Netherlands) 
+
+(MM ’16) . Association for Computing Machinery, New York, NY, USA, 1136–1145. doi:10.1145/2964284.2964321 [26] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, and Daya Guo. 2024. DeepSeek-Math: Pushing the Limits of Mathematical Reasoning in Open Language Models. arXiv:2402.03300 [cs.CL] https://arxiv.org/abs/2402.03300 [27] Zhaochen Su, Peng Xia, Hangyu Guo, Zhenhua Liu, Yan Ma, Xiaoye Qu, Jiaqi Liu, Yanshu Li, Kaide Zeng, Zhengyuan Yang, Linjie Li, Yu Cheng, Heng Ji, Junxian He, and Yi R. Fung. 2025. Thinking with Images for Multimodal Reasoning: Foundations, Methods, and Future Frontiers. arXiv:2506.23918 [cs.CV] https: //arxiv.org/abs/2506.23918 [28] Binghao Tang, Boda Lin, Haolong Yan, and Si Li. 2024. Leveraging Generative Large Language Models with Visual Instruction and Demonstration Retrieval for Multimodal Sarcasm Detection. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , Kevin Duh, Helena Gomez, and Steven Bethard (Eds.). Association for Computational Linguistics, Mexico City, Mexico, 1732–1742. doi:10.18653/v1/2024.naacl-long.97 [29] Qwen Team. 2026. Qwen3.5: Accelerating Productivity with Native Multimodal Agents. https://qwen.ai/blog?id=qwen3.5 [30] Qwen Teams. 2025. Qwen3 Technical Report. arXiv:2505.09388 [cs.CL] https: //arxiv.org/abs/2505.09388 [31] Jiquan Wang, Lin Sun, Yi Liu, Meizhi Shao, and Zengwei Zheng. 2022. Multimodal Sarcasm Target Identification in Tweets. In Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , Smaranda Muresan, Preslav Nakov, and Aline Villavicencio (Eds.). Association for Computa-tional Linguistics, Dublin, Ireland, 8164–8175. doi:10.18653/v1/2022.acl-long.562 [32] Weiyun Wang, Zhangwei Gao, Lixin Gu, Hengjun Pu, Long Cui, Xingguang Wei, Zhaoyang Liu, Linglin Jing, Shenglong Ye, Jie Shao, et al . 2025. Internvl3. 5: Advancing open-source multimodal models in versatility, reasoning, and efficiency. arXiv preprint arXiv:2508.18265 (2025). [33] Xiaobao Wang, Yujing Wang, Dongxiao He, Zhe Yu, Yawen Li, Longbiao Wang, Jianwu Dang, and Di Jin. 2025. Elevating Knowledge-Enhanced Entity and Rela-tionship Understanding for Sarcasm Detection. IEEE Transactions on Knowledge and Data Engineering 37, 6 (2025), 3356–3371. doi:10.1109/TKDE.2025.3547055 [34] Xuezhi Wang, Jason Wei, Dale Schuurmans, Quoc Le, Ed Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. 2023. Self-Consistency Improves Chain of Thought Reasoning in Language Models. arXiv:2203.11171 [cs.CL] https://arxiv.org/abs/2203.11171 [35] Xinyu Wang, Yue Zhang, and Liqiang Jing. 2025. Can Large Vision-Language Models Understand Multimodal Sarcasm? arXiv:2508.03654 [cs.CL] https://arxiv. org/abs/2508.03654 [36] Yiwei Wei, Hengyang Zhou, Shaozu Yuan, Meng Chen, Haitao Shi, Zhiyang Jia, Longbiao Wang, and Xiaodong He. 2025. DeepMSD: Advancing Multimodal Sarcasm Detection Through Knowledge-Augmented Graph Reasoning. IEEE Transactions on Circuits and Systems for Video Technology 35, 7 (2025), 6413–6423. doi:10.1109/TCSVT.2025.3530436 [37] Shuguang Zhang, Junhong Lian, Guoxin Yu, Baoxun Xu, and Xiang Ao. 2026. GDCNet: Generative Discrepancy Comparison Network for Multimodal Sarcasm Detection. arXiv:2601.20618 [cs.CV] https://arxiv.org/abs/2601.20618 [38] Haochen Zhao, Yongxiu Xu, Xinkui Lin, Jiarui Lu, Hongbo Xu, and Yubin Wang. 2025. EilMoB: Emotion-aware Incongruity Learning and Modality Bridg-ing Network for Multi-modal Sarcasm Detection. In Proceedings of the 2025 International Conference on Multimedia Retrieval (Chicago, IL, USA) (ICMR ’25) . Association for Computing Machinery, New York, NY, USA, 1868–1876. doi:10.1145/3731715.3733321 [39] Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhang-hao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, Hao Zhang, Joseph E Gonzalez, and Ion Stoica. 2023. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. In Advances in Neu-ral Information Processing Systems , A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt, and S. Levine (Eds.), Vol. 36. Curran Associates, Inc., 46595–46623. https://proceedings.neurips.cc/paper_files/paper/2023/file/ 91f18a1287b398d378ef22505bf41832-Paper-Datasets_and_Benchmarks.pdf [40] Ziyang Zhou, Ziqi Liu, Yan Wang, Yiming Lin, and Yangbin Chen. 2026. RAM-SD: Retrieval-Augmented Multi-agent framework for Sarcasm Detection. arXiv:2601.17002 [cs.CL] https://arxiv.org/abs/2601.17002 
+
+## A Prompt Templates 
+
+The prompts used in this study are designed to guide the model through various reasoning and generation stages. The following is a detailed description of their roles: 
+
+• Figure 6 shows the prompt used to distill high-quality CoT trajectories from a powerful teacher model during the Supervised Fine-Tuning (SFT) stage. It standardizes the data generation process, ensuring that the reasoning chains explicitly anchor visual regions and strictly align with the ground-truth targets. 
+
+• Figure 7 presents the inference prompt designed to guide the model’s Grounding CoT reasoning. It prompts the model to extract visual anchors and analyze cross-modal incon-gruities within the <Think></Think> module, before pre-dicting the final classification label and localizing fine-grained targets in the <Answer></Answer> module. 
+
+• Figure 8 illustrates the prompt used for the LLM-as-a-Judge evaluation. It is designed to quantitatively measure the qual-ity of the generated reasoning chains across three specific dimensions: Visual Perception , Incongruity Reasoning , and 
+
+Logical Consistency .
+
+## B Implementation Details B.1 Training Hyperparameters 
+
+Table 5 summarizes the key hyperparameters for both the SFT and FTPO (Fine-Grained Target Policy Optimization) training stages. 
+
+Table 5: Training hyperparameters for SFT and FTPO stages. Hyperparameter SFT FTPO 
+
+LoRA Rank / Alpha 4 / 16 8 / 32 Learning Rate 3.0e-5 1.0e-5 Warmup 80 steps 5% ratio Num Epochs 2 1Effective Batch Size 8 16 Max Sequence Length 2048 2048 Coordinate Weight 𝜆 coord 10 –Precision bf16 bf16 
+
+## C Detailed Evaluation Metrics 
+
+Our evaluation framework covers two tasks: Multimodal Sarcasm Detection (MSD) and Multimodal Sarcasm Target Identification (MSTI). We detail each metric below. 
+
+## C.1 MSD Metrics 
+
+For the binary sarcasm detection task, we adopt four standard classification metrics: 
+
+• Accuracy (Acc) : The proportion of correctly classified sam-ples over the total number of samples: Acc = 𝑇 𝑃 + 𝑇 𝑁 𝑇 𝑃 + 𝑇 𝑁 + 𝐹 𝑃 + 𝐹 𝑁 (7) GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+• Precision : The fraction of predicted sarcastic samples that are truly sarcastic: Precision = 𝑇 𝑃 𝑇 𝑃 + 𝐹 𝑃 (8) 
+
+• Recall : The fraction of truly sarcastic samples that are correctly identified: Recall = 𝑇 𝑃 𝑇 𝑃 + 𝐹 𝑁 (9) 
+
+• Macro-F1 : The unweighted average of the F1 scores com-puted independently for each class (sarcastic and not sar-castic), which accounts for class imbalance: Macro-F1 = 1
+
+|𝐶 |∑︁ 𝑐 ∈𝐶 
+
+2 · Precision 𝑐 · Recall 𝑐 
+
+Precision 𝑐 + Recall 𝑐 
+
+(10) 
+
+## C.2 MSTI Metrics – Textual Target Identification 
+
+We evaluate textual target identification with two token-level met-rics: 
+
+• Exact Match (EM) Accuracy : A strict metric that counts a prediction as correct only if the predicted text target exactly 
+
+matches the ground-truth string. For a dataset of 𝑁 samples: EM = 1
+
+𝑁 
+
+> 𝑁
+
+∑︁ 
+
+> 𝑖 =1
+
+𝐴 𝑖 , where 𝐴 𝑖 =
+
+(
+
+1, if ˆ𝑘 𝑖 = 𝑘 𝑖 
+
+0, otherwise (11) where ˆ𝑘 𝑖 is the predicted text target and 𝑘 𝑖 is the ground-truth target for sample 𝑖 .
+
+• F1 Score : A token-level overlap metric. The predicted and ground-truth text targets are tokenized into sets of tokens. Precision and recall are computed based on the overlap, and F1 is their harmonic mean. This relaxes the strict EM criterion by giving partial credit for partially correct pre-dictions: 
+
+𝑃 = | ˆ𝑇 ∩ 𝑇 ∗ || ˆ𝑇 | , 𝑅 = | ˆ𝑇 ∩ 𝑇 ∗ ||𝑇 ∗ | , F1 = 2𝑃𝑅 𝑃 + 𝑅 (12) where ˆ𝑇 and 𝑇 ∗ denote the predicted and ground-truth token sets, respectively. 
+
+## C.3 MSTI Metrics – Visual Target Identification 
+
+For visual target identification, we adopt the standard COCO-style Average Precision (AP) metrics. A predicted bounding box ˆ𝑏 is matched to a ground-truth box 𝑏 using Intersection over Union (IoU): IoU ( ˆ𝑏, 𝑏 ) = | ˆ𝑏 ∩ 𝑏 || ˆ𝑏 ∪ 𝑏 | (13) We report three AP variants: 
+
+• AP : The primary COCO metric, computed as the mean AP averaged over 10 IoU thresholds from 0.50 to 0.95 with a step size of 0.05. This provides a comprehensive assessment across different localization strictness levels. 
+
+• AP50 : AP at IoU threshold 0.50. A predicted box is consid-ered correct if IoU ≥ 0.50 , offering a more lenient localiza-tion criterion. 
+
+• AP75 : AP at IoU threshold 0.75. This stricter threshold demands more precise spatial localization of the sarcasm target. The precision-recall curve is computed by ranking all detections by confidence score and sweeping across recall levels. AP is then calculated as the area under the interpolated precision-recall curve. 
+
+## D Hyperparameter Selection 
+
+To better justify the final hyperparameter configuration adopted in GRASP, we provide additional comparative analyses for the key hyperparameters used in the SFT and FTPO stages. We focus on two design choices: the coordinate-token weight 𝜆 coord in the weighted SFT loss and the reward coefficients (𝛽 1, 𝛽 2, 𝛽 3, 𝛽 4, 𝛽 5) in FTPO. 
+
+## D.1 Effect of Coordinate Weight 𝜆 coord 
+
+In the main paper, we report the comparison between 𝜆 coord = 1 (i.e., w/o Bbox-Weight, standard unweighted loss) and 𝜆 coord = 10 (the selected setting used in the main experiments). Here, we extend that comparison to a wider range of weights by additionally including 
+
+𝜆 coord = 5 and 𝜆 coord = 15 , as shown in Table 6. 
+
+Table 6: Effect of the coordinate weight 𝜆 coord in the SFT stage on GRASP (Qwen3-VL-4B). Results for 𝜆 coord ∈ { 1, 10 } are reported in the main paper; the additional settings 𝜆 coord ∈{5, 15 } are supplemented here.                                               
+
+> 𝜆 coord
+> Sarcasm Detection Text Target Visual Target Acc Prec. Rec. F1 EM F1 AP AP50 AP75
+> 172.79 75.16 80.11 77.56 41.14 29.39 30.03 33.70 29.38 577.54 82.61 78.19 80.34 46.14 30.06 37.62 41.82 37.06
+> 10 78.50 77.11 90.12 83.11 43.16 35.04 41.31 45.84 40.74
+> 15 69.00 67.77 89.99 77.31 46.38 11.90 22.92 25.39 22.70
+
+As shown in Table 6, increasing 𝜆 coord from 1 to 5 yields consis-tent improvements across nearly all metrics, particularly in sarcasm detection F1 (+2.78) and visual target AP (+7.59). Further increasing to 𝜆 coord = 10 brings additional gains, especially in recall (+11.93 over 𝜆 coord = 5) and text target F1 (+4.98), achieving the best overall balance. However, when the weight is pushed excessively high to 
+
+𝜆 coord = 15 , we observe a severe performance degradation across all tasks. Notably, the textual target F1 score crashes to 11.90, and the visual target AP drops sharply to 22.92. This shows that ap-propriately increasing the loss weight for the target box helps the model better focus on image regions related to sarcasm, thus im-proving the accuracy of sarcasm target identification. However, an excessively large coordinate weight can damage the joint learning objective, causing the model to over-emphasize coordinate label generation at the cost of overall semantic understanding. Accord-ingly, 𝜆 coord = 10 is selected for the main experiments as the most balanced choice. 
+
+## D.2 Effect of FTPO Reward Weight Allocation 
+
+In the main paper, the FTPO stage adopts the reward weights 
+
+(𝛽 1, 𝛽 2, 𝛽 3, 𝛽 4, 𝛽 5) = (0.05 , 0.15 , 0.40 , 0.40 , 0.30 ), which assign larger coefficients to the two grounding-oriented rewards, namely visual localization and textual target matching. To further verify the ra-tionality of this design, we compare the selected reward allocation against an equal-weight baseline, an accuracy-oriented variant, and a format-enhanced variant. The comparison results are summarized in Table 7. Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang 
+
+Table 7: Effect of FTPO reward weight allocation on GRASP (Qwen3-VL-4B). Larger weights on the grounding-oriented rewards 𝑅 box and 𝑅 txt yield the best overall trade-off across MSD and MSTI metrics.                                                                       
+
+> Setting Sarcasm Detection Text Target Visual Target Acc Prec. Rec. F1 EM F1 AP AP50 AP75 GRASP 78.50 77.11 90.12 83.11 43.16 35.04 41.31 45.84 40.74
+> Equal-weight 78.66 79.67 85.46 82.46 43.32 32.66 39.81 43.83 39.36 Acc-heavy 75.12 77.78 80.66 79.19 42.67 31.20 36.46 40.30 35.85 Format-enhanced 76.73 76.51 87.11 81.46 40.18 32.29 39.22 43.33 38.88
+> Weight settings: GRASP (0.05 ,0.15 ,0.40 ,0.40 ,0.30 );Equal-weight (0.25 ,0.25 ,0.25 ,0.25 ,0.30 );
+> Acc-heavy (0.05 ,0.45 ,0.25 ,0.25 ,0.30 );Format-enhanced (0.20 ,0.20 ,0.30 ,0.30 ,0.30 ).
+
+Table 7 shows that the proposed weight allocation achieves the best overall performance balance. Although the equal-weight base-line yields marginally higher accuracy, precision, and EM, it is con-sistently inferior to the selected allocation on the more task-critical metrics, including sarcasm detection F1, text-target F1, and all three visual grounding metrics. It suggests that uniformly distributing reward mass is suboptimal for MSTI, where high-quality reasoning must jointly support fine-grained textual and spatial localization. The two alternative allocations further support this conclusion. The accuracy-oriented variant, which substantially increases the weight on 𝑅 acc , leads to clear drops across nearly all metrics, espe-cially in visual grounding. Likewise, the format-enhanced allocation 
+
+(0.20 , 0.20 , 0.30 , 0.30 , 0.30 ), which assigns a larger coefficient to the structural reward than the adopted configuration, also remains weaker overall. These results indicate that the FTPO objective bene-fits from keeping the format reward relatively small while explicitly prioritizing 𝑅 box and 𝑅 txt . Overall, the chosen reward allocation is not arbitrary, but a task-aligned design that better matches the core requirements of multimodal sarcasm target identification. GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+Prompt for Data Distillation 
+
+[# Role You are a **Ground Truth Explainer**. Your task is to generate a logical reasoning chain that justifies the provided Ground Truth Label. # INPUTS 1. Tweet Text 2. **FIXED Label**: (0 or 1) 3. **Target Box**: `[x1, y1, x2, y2] `.- Note: If the box is `[0, 0, 1000, 1000] `, it means the **WHOLE IMAGE** is relevant. - If the box is smaller, it focuses on a specific object. # INSTRUCTION * **DO NOT PREDICT** the label. Just explain WHY the provided label is correct. * **FORCE ALIGNMENT**: - If Label 1 (Sarcastic): Explain the contradiction between the Text and the Image contents (inside the Target Box). - If Label 0 (Not Sarcastic): Explain the alignment/neutrality. # Output Format (Use <Think> and <Answer>) <Think> (Reasoning) 1. Visual Description: - If box is [0,0,1000,1000]: Describe the **overall scene** and main atmosphere. - If box is specific: Describe strictly the **object inside the box**. 2. Text Analysis: Literal meaning of the tweet. 3. Incongruity Check: Explain the relationship (Contradiction or Agreement). </Think> <Answer> (Placeholder - will be overwritten by code) Label: "..." Image Objects: [...] Text Objects: "..." </Answer> ]
+
+Figure 6: Prompt used to distill Grounded CoT reasoning annotations from the teacher model. Wan et al., Faxian Wan, Xiaocui Yang, Yifan Cao, Shi Feng, Daling Wang, and Yifei Zhang 
+
+Prompt for Model Inference 
+
+[# Role You are an expert in **Multimodal Sarcasm Detection**. Your goal is to determine if a tweet (Text + Image) is sarcastic by identifying contradictions between visual and textual information. # Task Analyze the input image and text step-by-step. You must output your reasoning process in a <Think> block, followed by a structured final answer in an <Answer> block. # Response Format ## 1. Visual-Textual Reasoning (<Think>) Inside <Think>, strictly follow these steps: 1. **Visual grounding**: * List key objects in the image. * **CRITICAL**: You MUST append normalized coordinates `[xmin, ymin, xmax, ymax] ` (0-1000) immediately after mentioning a relevant object. 2. **Semantic Analysis**: * Analyze the literal meaning and emotional tone of the tweet text. 3. **Incongruity Check**: * Compare the Visual Reality with the Text Description. * **Explicitly state**: "Does the image support the text, or contradict it?" ## 2. Final Structured Output (<Answer>) Inside `<Answer> `, output ONLY the following valid JSON-like format: Label: "sarcastic" OR "not sarcastic" Image Objects: [(xmin,ymin,xmax,ymax)] Text Objects: "keyword1, keyword2" # Constraints & Rules 1. **Label**: strictly "sarcastic" or "not sarcastic". 2. **Image Objects (Crucial Rules)**: * If a **specific object** contradicts the text, output its bounding box (e.g., `[(200,300,500,600)] `). * If the **Whole Scene** or **General Atmosphere** contradicts the text (e.g., bad weather, traffic jam, crowd), use **Full Image Coordinates**: `[(0,0,1000,1000)] `.* If not sarcastic, output `[(0,0,0,0)] ` or empty brackets `[] `.3. **Text Objects**: * Extract only the 1-3 keywords triggering the irony. * If not sarcastic, output `"" `.]
+
+Figure 7: Prompt used during inference for grounded multimodal sarcasm reasoning and structured prediction. GRASP: Grounded CoT Reasoning with Dual-Stage Optimization for Multimodal Sarcasm Target Identification 
+
+Prompt for LLM-as-a-Judge Evaluation 
+
+[Task: Evaluate a model 's reasoning for Multimodal Sarcasm Detection. Be a STRICT judge. 5 is extremely rare. [Inputs] 1. Image 2. Text: {text_input} 3. Ground Truth: Label=[{gt_label}], Box(0-1000)=[{gt_boxes}], Words=[{gt_words}] 4. Model Output: {model_response} [Scoring 1-5] - V_Score (Visual): 1=hallucinated/missed GT box, 3=superficial, 5=perfectly identified GT objects. - R_Score (Reasoning): 1=wrong logic, 3=shallow textual analysis, 5=deep text-image contradiction analysis matching GT. - C_Score (Consistency): 1=conclusion contradicts reasoning, 5=perfectly aligned. Output pure JSON only, no markdown, no explanations: {"V": <int>, "R": <int>, "C": <int> }]
+
+Figure 8: Prompt used by the LLM-as-a-Judge evaluator for assessing reasoning quality.

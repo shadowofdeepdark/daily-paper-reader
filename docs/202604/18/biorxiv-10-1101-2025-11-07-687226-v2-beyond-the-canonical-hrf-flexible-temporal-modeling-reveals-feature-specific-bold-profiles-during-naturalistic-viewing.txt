@@ -1,0 +1,1965 @@
+Title: 30331213
+
+URL Source: https://www.biorxiv.org/content/10.1101/2025.11.07.687226v2.full.pdf
+
+Number of Pages: 52
+
+Markdown Content:
+> 1
+
+Beyond the Canonical HRF: Flexible Temporal Modeling Reveals Feature-Specific BOLD 1
+
+Profiles During Naturalistic Viewing 2
+
+Xin Di 1* , George B. Hanna 1 , Bharat B. Biswal 1* 
+
+> 3
+> 4
+
+1. Department of Biomedical Engineering, New Jersey Institute of Technology, Newark, NJ, 5
+
+07102, USA 6
+
+> 7
+
+* Corresponding author: 8
+
+Xin Di, Ph.D. 9
+
+604 Fenster Hall, University Height 10 
+
+Newark, NJ, 07102, USA 11 
+
+xin.di@njit.edu 12 
+
+> 13
+
+Bharat B. Biswal, Ph.D. 14 
+
+607 Fenster Hall, University Height 15 
+
+Newark, NJ, 07102, USA 16 
+
+bbiswal@yahoo.com 17 
+
+> 18
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 2
+
+Abstract 19 
+
+Naturalistic stimuli, such as movies and narratives, are increasingly used in cognitive 20 
+
+neuroscience to map cognitive and affective processes onto brain activity measured with 21 
+
+functional MRI (fMRI). Features extracted from movies span multiple levels, from computational 22 
+
+descriptions of visual and auditory input to physiological signals and subjective ratings. However, 23 
+
+the temporal alignment between these features and the blood-oxygen-level-dependent (BOLD) 24 
+
+response can vary considerably, and the commonly used canonical hemodynamic response 25 
+
+function (HRF) with temporal derivatives may not adequately capture these delays. In this study, 26 
+
+we analyzed three movie-watching datasets and examined a range of features, including visual 27 
+
+luminance and contrast, auditory pitch, a physiological measure of pupil size, and subjective 28 
+
+ratings of theory of mind. We performed cross-correlation analyses and finite impulse response 29 
+
+(FIR) deconvolution between feature time series and fMRI responses across the whole brain. 30 
+
+Our results show that the canonical HRF captures sensory features well, but misaligns with 31 
+
+slower signals, such as pupil size and subjective ratings. Notably, raw pupil size and subjective 32 
+
+ratings exhibited stronger correspondence with delayed hemodynamic responses. Lastly, using 33 
+
+FIR deconvolution, we systematically characterized the true BOLD response profiles of these 34 
+
+diverse features, revealing distinct inter-regional temporal hierarchies and peak latencies that 35 
+
+systematically deviate from canonical assumptions. These findings highlight the critical role of 36 
+
+temporal alignment in mapping naturalistic features to brain activity. Accounting for feature-37 
+
+specific delays using flexible temporal modeling may improve the interpretability and accuracy 38 
+
+of fMRI studies using complex, real-world stimuli. 39 
+
+> 40
+
+Keywords : Blood-oxygen-level dependent, Finite Impulse Response, Deconvolution, 41 
+
+Naturalistic stimuli, Subjective rating, System response function, Timing. 42 
+
+> 43
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 3
+
+1. Introduction 44 
+
+Naturalistic stimuli — such as movies or spoken narratives — have become increasingly 45 
+
+popular in functional MRI (fMRI) research because they offer tools to investigate brain function 46 
+
+under ecologically valid conditions (Di et al., 2026; Hasson et al., 2004; Vanderwal et al., 2019). 47 
+
+Unlike traditional, highly controlled experimental paradigms, naturalistic stimuli capture the 48 
+
+richness and temporal continuity of real-world experiences, thereby engaging a wide range of 49 
+
+perceptual, cognitive, and affective processes simultaneously. This shift has opened new 50 
+
+avenues for studying how the brain integrates complex, dynamic information over time. 51 
+
+A seminal line of work demonstrated that when multiple individuals watch the same 52 
+
+movie or listen to the same story, their brain activity exhibits significant inter-subject correlations 53 
+
+(ISC), revealing shared neural responses to naturalistic events (Hasson et al., 2004). Such 54 
+
+data-driven analyses have been instrumental in identifying brain regions involved in high-level 55 
+
+perception, attention, and social cognition (Kauppi et al., 2010). However, while these 56 
+
+approaches effectively capture synchronized patterns of activity across individuals, they do not 57 
+
+directly reveal which specific features of the stimulus drive these neural responses. To address 58 
+
+this, researchers have increasingly focused on extracting quantitative features from naturalistic 59 
+
+stimuli and mapping their temporal dynamics onto brain activity measured by fMRI (Bartels et al., 60 
+
+2008; Bartels and Zeki, 2004; Huth et al., 2016; Lahnakoski et al., 2012a; Raz et al., 2016). 61 
+
+A wide variety of stimulus-derived features can be used for such mapping. These range 62 
+
+from low-level sensory features — such as visual luminance, contrast, and auditory pitch — to 63 
+
+higher-level variables derived from physiological signals (e.g., pupil size) or subjective 64 
+
+behavioral ratings (e.g., perceived emotional valence or theory of mind, ToM). In recent years, 65 
+
+feature extraction has also benefited from advances in deep neural networks, where model-66 
+
+based representations capture complex visual, auditory, or semantic content (McMahon et al., 67 
+
+2023; Samara et al., 2025; Sohn et al., 2024). These features can be analyzed individually 68 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 4
+
+using general linear models (GLMs) or jointly in encoding-model frameworks to predict regional 69 
+
+brain activity. 70 
+
+Crucially, naturalistic stimuli are not monolithic; they contain deeply nested, hierarchical 71 
+
+temporal structures. For example, visual streams progress from rapid, high-frequency shifts in 72 
+
+luminance to slower transitions between objects and scenes, while auditory streams build from 73 
+
+transient phonemes to extended narratives. A prominent theoretical framework posits that the 74 
+
+brain processes these nested features through a topography of hierarchical cortical timescales, 75 
+
+or temporal receptive windows (TRWs) (Lerner et al., 2011; Meer et al., 2020). In this framework, 76 
+
+primary sensory regions possess short TRWs to process rapid physical properties, whereas 77 
+
+higher-order associative networks possess long TRWs to integrate semantic and narrative 78 
+
+information over extended durations. 79 
+
+Beyond extrinsic stimulus features, naturalistic viewing also engages internally 80 
+
+generated, observer-dependent dynamics. Physiological responses, such as pupil size, act as 81 
+
+markers of autonomic arousal and cognitive load, reflecting an integration of sensory input and 82 
+
+internal state (Joshi and Gold, 2020). Similarly, subjective behavioral ratings—such as ToM 83 
+
+annotations—capture conscious, high-level social-cognitive evaluations of characters' mental 84 
+
+states over time (Saarimäki, 2021). As illustrated in our conceptual framework (Figure 1), 85 
+
+appropriately mapping naturalistic viewing to brain activity requires integrating three distinct 86 
+
+temporal levels: 1) the nested intrinsic hierarchies of the stimulus features; 2) the biological and 87 
+
+cognitive integration delays inherent to the observer's physiological and behavioral responses; 88 
+
+and 3) the region-dependent hemodynamic brain responses. 89 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 590
+
+Figure 1. Conceptual framework of nested temporal hierarchies and their mapping to 91 
+
+brain responses during naturalistic viewing. 92 
+
+Level 1: Intrinsic stimulus hierarchies. Naturalistic movies possess a deeply nested temporal 93 
+
+structure across modalities. Visual features (e.g., luminance, objects, actions, scenes) and 94 
+
+auditory/language features (e.g., pitch, phonemes, words, narratives) unfold over timescales 95 
+
+ranging from milliseconds to tens of seconds. The brain processes these continuous streams 96 
+
+through a topography of temporal receptive windows (TRWs), ranging from short integration 97 
+
+windows in primary sensory areas to extended timescales in higher-order networks. 98 
+
+Level 2: Observer-dependent delays. Extrinsic stimulus features elicit internally generated 99 
+
+latent cognitive and affective dynamics, which are not directly observable. Higher-order states, 100 
+
+such as Theory of Mind (ToM) engagement and autonomic arousal, evolve continuously and are 101 
+
+captured via delayed behavioral (joystick ratings) and physiological (pupil size) readouts. The 102 
+
+al re 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 6
+
+integration and motor/autonomic delays between the true latent neural states and these 103 
+
+observable proxies ( Δt₁, Δt₂) introduce critical temporal misalignments. 104 
+
+Level 3: Feature-specific BOLD dynamics. These multi-level features engage distinct brain 105 
+
+regions, each possessing specific neurovascular coupling properties. Because different feature 106 
+
+classes preferentially recruit different neural systems (e.g., sensory, associative/Default Mode, 107 
+
+and limbic networks) and operate on different intrinsic timescales, the resulting BOLD signals 108 
+
+exhibit highly diverse temporal response profiles. Consequently, mapping these features to fMRI 109 
+
+requires flexible temporal modeling, as applying a uniform canonical hemodynamic response 110 
+
+function (HRF) to the already-delayed readouts from Level 2 risks compounding delays. 111 
+
+Note: Solid arrows indicate intrinsic neural propagation and hypothesized pathways linking 112 
+
+stimulus features to latent cognitive states and regional brain responses. Dashed arrows 113 
+
+indicate the delayed measurement of these latent states via observable behavioral or 114 
+
+physiological proxies. Δt denotes the variable temporal delays inherent to these readouts. 115 
+
+> 116
+
+A critical challenge in linking these features to fMRI data lies in the temporal mismatch 117 
+
+between stimulus features and the hemodynamic response. The fMRI signal—via the blood-118 
+
+oxygen-level-dependent (BOLD) effect—typically lags behind underlying neural activity by about 119 
+
+5–6 seconds (Friston et al., 1998; Handwerker et al., 2004). To account for this, most studies 120 
+
+either apply a fixed delay (e.g., 4 s) or convolve the feature time-series with a canonical 121 
+
+hemodynamic response function (HRF). Some approaches further include temporal derivatives 122 
+
+of the HRF to allow limited flexibility in response timing (i.e., ≈1 s adjustment). However, the 123 
+
+shape and latency of the HRF vary considerably across brain regions, across individuals, and 124 
+
+even within the same region under different physiological conditions (Aguirre et al., 1998; 125 
+
+Handwerker et al., 2004). Such intrinsic biological variability complicates efforts to accurately 126 
+
+align continuous stimulus features with corresponding neural activity. 127 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 7
+
+This temporal uncertainty becomes especially pronounced when analyzing multiple 128 
+
+types of features that occupy different levels of the naturalistic processing hierarchy. Applying a 129 
+
+uniform canonical HRF across all feature classes fundamentally ignores the diverse intrinsic 130 
+
+frequencies and delays inherent to these distinct signals. Fast sensory inputs, delayed 131 
+
+physiological signals, and slow cognitive annotations possess vastly different temporal 132 
+
+relationships to neural and vascular processes. Because pupil size and subjective behavioral 133 
+
+ratings are themselves delayed responses relative to the eliciting neural activity, convolving 134 
+
+them with a standard HRF risks compounding delays. This conventional approach can result in 135 
+
+"double-smoothing" temporal artifacts that obscure true brain-behavior coupling (Lloyd et al., 136 
+
+2023). 137 
+
+To overcome the limitations of the canonical HRF and accurately map hierarchical 138 
+
+processing timescales, more flexible temporal modeling is required. Finite Impulse Response 139 
+
+(FIR) deconvolution provides a robust, non-parametric alternative (Glover, 1999). Rather than 140 
+
+imposing a predetermined temporal shape and fixed latency, FIR models utilize a set of time-141 
+
+lagged predictors to directly estimate the true, feature-specific system response function from 142 
+
+the continuous fMRI data. By allowing the response shape and peak latency to vary freely, FIR 143 
+
+deconvolution can capture the diverse temporal profiles of naturalistic processing—ranging from 144 
+
+rapid sensory responses to the extended, diffuse hemodynamic delays that characterize slower, 145 
+
+higher-order cognitive features. 146 
+
+In the present study, we analyzed three movie-watching fMRI datasets to systematically 147 
+
+characterize how different classes of stimulus, physiological, and behavioral features are 148 
+
+expressed in their true BOLD response shapes. We extracted continuous features spanning the 149 
+
+hierarchical levels of naturalistic processing: low-level sensory features (frame luminance, frame 150 
+
+contrast, and auditory pitch), a physiological measure (pupil size), and a subjective behavioral 151 
+
+measure (ToM ratings). Moving beyond conventional cross-correlation analyses, we applied 152 
+
+formal FIR deconvolution to estimate the BOLD system response functions across the whole 153 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 8
+
+brain. We hypothesize that these diverse features will exhibit distinct response profiles that 154 
+
+systematically deviate from the canonical HRF, and that quantifying the peak latencies of these 155 
+
+responses will empirically reveal the underlying inter-regional temporal hierarchies involved in 156 
+
+naturalistic viewing. 157 
+
+> 158
+
+2. Materials and Methods 159 
+
+2.1. Movie-watching fMRI Data 160 
+
+We analyzed three movie-watching fMRI datasets previously used in our work (Di et al., 2023; 161 
+
+Di and Biswal, 2022): two from the Healthy Brain Network (HBN) project (Alexander et al., 2017), 162 
+
+and one from the Partly Cloudy dataset (Richardson et al., 2018). 163 
+
+2.1.1. Healthy Brain Network (HBN) Dataset 164 
+
+The HBN dataset was obtained from the project repository 165 
+
+(http://fcon_1000.projects.nitrc.org/indi/cmi_healthy_brain_network/). For the current study, we 166 
+
+included a subset of participants without diagnosed psychiatric disorders who underwent fMRI 167 
+
+scanning while watching two video clips: The Present (3 min 21 s; Filmakademie Baden-168 
+
+Wuerttemberg, 2014) and a 10-minute segment from Despicable Me (Illumination, 2010). 169 
+
+In total, 87 participants watched The Present and 83 watched Despicable Me , with 66 170 
+
+participants overlapping, yielding 104 unique individuals (61 males, 43 females; age range = 171 
+
+5.0–21.9 years, mean = 12.0 ± 4.1). Additional inclusion and exclusion details are provided in Di 172 
+
+et al. (2023). 173 
+
+MRI data were collected across two imaging centers—Rutgers University Brain Imaging 174 
+
+Center (RUBIC) using a 3T Siemens Trio scanner, and the Citigroup Biomedical Imaging Center 175 
+
+(CBIC) using 3T Siemens Prisma scanners. Scanning protocols were harmonized across sites. 176 
+
+Functional MRI parameters were: TR = 800 ms, TE = 30 ms, flip angle = 31°, voxel size = 2.4 × 177 
+
+2.4 × 2.4 mm³, and multiband acceleration factor = 6. Each run contained 250 volumes for The 178 
+
+Present and 750 volumes for Despicable Me . High-resolution T1-weighted anatomical scans 179 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 9
+
+were acquired using either Human Connectome Project (HCP) or Adolescent Brain Cognitive 180 
+
+Development (ABCD) protocols and were used solely for preprocessing. Additional acquisition 181 
+
+details can be found on the HBN website and in Alexander et al. (2017). 182 
+
+> 183
+
+2.1.2. Partly Cloudy Dataset 184 
+
+The Partly Cloudy dataset was accessed from OpenNeuro 185 
+
+(https://openneuro.org/datasets/ds000228; Richardson et al., 2018). It included two groups: 186 
+
+adults (n = 29; 17 females, 12 males; age range = 18–39 years, mean = 24.6 ± 5.3) and 187 
+
+children (n = 53; 28 females, 25 males; age range = 3.5–12.3 years, mean = 7.0 ± 2.5). 188 
+
+Participants watched a silent version of the Pixar short film Partly Cloudy (5.6 minutes; 189 
+
+https://www.pixar.com/partly-cloudy) during scanning on a 3T Siemens Tim Trio system. 190 
+
+Younger children were scanned using one of two 32-channel custom head coils, while older 191 
+
+children and adults used the standard Siemens 32-channel coil. Functional images were 192 
+
+acquired using a gradient-echo EPI sequence (TR = 2000 ms, TE = 30 ms, flip angle = 90°) with 193 
+
+32 interleaved near-axial slices (EPI factor = 64). 194 
+
+Voxel sizes and slice gaps varied slightly across subgroups: (a) 3.13 mm isotropic, no 195 
+
+gap; (b) 3.13 mm isotropic, 10% gap; (c) 3 mm isotropic, 20% gap; and (d) 3 mm isotropic, 10% 196 
+
+gap. All functional images were resampled to 3 mm isotropic voxels during preprocessing. Each 197 
+
+run contained 168 volumes, with the first four discarded to allow for steady-state magnetization. 198 
+
+T1-weighted anatomical images were collected in 176 interleaved sagittal slices (1 mm isotropic; 199 
+
+GRAPPA = 3; FOV = 256 mm). Further methodological details are provided in Richardson et al. 200 
+
+(2018). 201 
+
+> 202
+
+2.2. Eye tracking data 203 
+
+Although eye-tracking data were not collected during the MRI sessions, a subset of participants 204 
+
+from the HBN project participated in a separate EEG session conducted on a different day 205 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 10
+
+outside the scanner (Langer et al., 2017). During this session, participants watched several 206 
+
+videos, including The Present , a shorter segment of Despicable Me , Fun with Fractals (an 207 
+
+educational video), and a trailer for Diary of a Wimpy Kid , while simultaneous EEG and eye-208 
+
+tracking data were recorded. Eye position and pupil size were measured using an infrared 209 
+
+video-based eye tracker (iView-X Red-m, SensoMotoric Instruments GmbH) operating at 210 
+
+sampling rates of 30, 60, or 120 Hz. In the current study, only pupil size data were analyzed. All 211 
+
+available recordings were included, but participants were excluded if more than 10% of time 212 
+
+points were missing, typically due to blinks or signal loss. The final sample consisted of 1,312 213 
+
+participants (665 males, 387 females, 260 sex not reported), ranging in age from 5 to 21 years 214 
+
+(mean = 9.94, SD = 3.24). 215 
+
+> 216
+
+2.3. Subjective Rating Data Collection 217 
+
+Subjective rating data were collected from a separate group of participants at the New Jersey 218 
+
+Institute of Technology (NJIT) to capture continuous, moment-to-moment fluctuations in 219 
+
+perceived mental states of movie characters. A total of 34 participants (age range: 18–27 years, 220 
+
+mean ± SD = 20.9 ± 2.3 years; 17 female) took part in the study. All participants reported normal 221 
+
+or corrected-to-normal vision and hearing, and none had a history of neurological or psychiatric 222 
+
+disorders. Informed consent was obtained from all participants in accordance with the 223 
+
+Institutional Review Board (IRB) of NJIT. 224 
+
+Participants viewed the same three video clips used in the fMRI experiment. Each 225 
+
+session took place in a quiet, darkened room to minimize visual and auditory distractions. 226 
+
+Stimuli were presented on a computer monitor with synchronized sound through a speaker. 227 
+
+Continuous subjective ratings were acquired using CARMA software (Continuous Affect 228 
+
+Rating and Media Annotation; (Girard, 2014) with a gaming joystick as the input device. 229 
+
+Participants were instructed to continuously indicate the extent to which they could perceive the 230 
+
+characters’ emotions, thoughts, or intentions while watching each clip. This measure was 231 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 11
+
+designed to capture participants’ theory-of-mind engagement—that is, the degree to which they 232 
+
+inferred or empathically understood the internal mental states of the characters throughout the 233 
+
+narrative. Before the experiment, participants completed a short practice session to familiarize 234 
+
+themselves with the rating procedure. 235 
+
+The joystick’s vertical position corresponded to a continuous numerical scale ranging 236 
+
+from -10 (not at all) to 10 (very strongly), representing the perceived strength of mental-state 237 
+
+understanding at each time point. Rating data were sampled at 4 Hz (every 250 ms) to provide 238 
+
+a high-resolution temporal record of evolving subjective experience. Between clips, participants 239 
+
+were given brief rest periods to minimize fatigue. 240 
+
+> 241
+
+2.4. Video feature extraction 242 
+
+We extracted three sensory features from the videos: mean pixel intensity, standard deviation of 243 
+
+pixel intensity, and pitch. For the two visual features, each video frame was first converted to 244 
+
+grayscale, and the mean and standard deviation of pixel intensity across the two-dimensional 245 
+
+matrix were computed. These yielded two time series corresponding to frame luminance and 246 
+
+frame contrast, respectively. For the auditory feature, audio signals from all channels were 247 
+
+averaged, and pitch was computed using a 100-ms window with no overlap, resulting in a 10 Hz 248 
+
+pitch time series. Pitch was extracted only for The Present and Despicable Me , as the Partly 249 
+
+Cloudy video contains no sound. Figure 2 shows the time series of mean and standard 250 
+
+deviations of pixel intensity and pitch for the video The Present .251 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 12
+> 252
+
+Figure 2. Continuous time series of multimodal features associated with the movie The 253 
+
+Present . The waveforms illustrate the diverse macroscopic temporal properties across the five 254 
+
+feature classes. Low-level sensory features (frame luminance, frame contrast, and auditory 255 
+
+pitch) exhibit rapid, high-frequency fluctuations directly tied to instantaneous stimulus changes. 256 
+
+In contrast, the physiological (pupil size) and subjective cognitive (Theory of Mind [ToM] rating) 257 
+
+measures operate on noticeably slower, lower-frequency timescales, reflecting underlying 258 
+
+biological and cognitive integration delays. 259 
+
+> 260
+
+2.5. Pupil Size Data Processing 261 
+
+Pupil size data for each participant were first resampled to a uniform sampling rate of 30 Hz. 262 
+
+Missing values (NaNs) were interpolated linearly, and blink periods—identified as time points 263 
+
+with zero values—were also replaced using linear interpolation. Participants with more than 10 264 
+
+of time points classified as blinks were excluded from further analyses. To reduce inter-265 
+
+e
+
+s. 
+
+)
+
+10% 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 13
+
+individual variability in absolute pupil size, each participant’s pupil time series was normalized 266 
+
+by dividing by its mean. 267 
+
+To evaluate the consistency of pupil size fluctuations across participants, we computed 268 
+
+leave-one-out inter-individual correlations. For each participant, their pupil size time series was 269 
+
+correlated with the mean time series of all other participants, resulting in one correlation 270 
+
+coefficient per individual. The statistical significance of the group-level mean correlation was 271 
+
+assessed using a circular time-shift randomization procedure with 1,000 iterations to generate a 272 
+
+null distribution (Kauppi et al., 2010). Finally, the median pupil size time series across 273 
+
+participants was extracted and used as the representative group-level signal for subsequent 274 
+
+analyses (Figure 2). 275 
+
+> 276
+
+2.6. Rating Data Processing 277 
+
+The subjective rating data were analyzed using the same leave-one-out inter-individual 278 
+
+correlation approach described above. For each video clip, the median rating time series across 279 
+
+participants was computed and used as the group-level representative signal for further 280 
+
+analyses (Figure 2 shows an example). 281 
+
+> 282
+
+2.7. Temporal characteristics of multimodal features 283 
+
+Across the five selected features, we observed distinct temporal and frequency characteristics 284 
+
+that correspond to their respective levels in the naturalistic processing hierarchy. Low-level 285 
+
+sensory features, such as frame luminance and auditory pitch, exhibited highly transient, high-286 
+
+frequency fluctuations (sampled at video frame rates or 10 Hz, respectively) reflecting rapid, 287 
+
+instantaneous changes in the external physical stimulus. In contrast, frame contrast exhibited 288 
+
+slightly slower dynamic shifts, corresponding to sustained visual scene characteristics. Finally, 289 
+
+the physiological (median pupil size) and behavioral (median ToM rating) features operated on 290 
+
+markedly slower, lower-frequency timescales. These differences highlight that higher-level 291 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 14
+
+features inherently incorporate sluggish biological constraints (e.g., autonomic nervous system 292 
+
+delays in pupillary constriction) and higher-order cognitive integration over extended narrative 293 
+
+windows. Recognizing these diverse intrinsic frequency profiles is critical, as applying a uniform, 294 
+
+fixed-delay HRF to all features risks severe temporal misalignment, directly motivating our 295 
+
+subsequent use of flexible FIR deconvolution. 296 
+
+> 297
+
+2.8. MRI Data Processing 298 
+
+Preprocessing of the fMRI data was performed separately for the HBN and Partly Cloudy 299 
+
+datasets, following procedures described in previous studies. Here, we provide a brief overview. 300 
+
+Structural MRI images for each participant were first segmented and normalized to the standard 301 
+
+Montreal Neurological Institute (MNI) space. For The Present and Despicable Me datasets, the 302 
+
+first 10 functional volumes were discarded, resulting in 240 and 740 volumes, respectively. In 303 
+
+contrast, all functional volumes were retained for the Partly Cloudy dataset. The remaining 304 
+
+functional images were then realigned to the first retained image, coregistered to the 305 
+
+participant’s structural image, normalized to MNI space using the deformation fields obtained 306 
+
+during segmentation, and spatially smoothed with an 8 mm full-width-at-half-maximum (FWHM) 307 
+
+Gaussian kernel. 308 
+
+Finally, a general linear model (GLM) was constructed to regress out head motion 309 
+
+effects using Friston’s 24-parameter motion model, which also incorporated an implicit high-310 
+
+pass filter with a cutoff frequency of 1/128 Hz. The resulting residual time series were used in all 311 
+
+subsequent analyses. 312 
+
+We adopted a region-of-interest (ROI)–based approach to achieve a balance between 313 
+
+spatial specificity and temporal flexibility. Cortical regions were defined using the Schaefer 100-314 
+
+region parcellation (Schaefer et al., 2018), and subcortical regions were defined using the 315 
+
+Automated Anatomical Labeling (AAL) atlas (Tzourio-Mazoyer et al., 2002). Fourteen bilateral 316 
+
+subcortical nuclei were included: hippocampus, parahippocampus, amygdala, caudate, 317 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 15
+
+putamen, pallidum, and thalamus. The Schaefer parcellation was divided into left (#1–50) and 318 
+
+right (#51–100) hemispheres and further organized into seven large-scale functional networks: 319 
+
+visual, somatomotor, dorsal attention, salience/ventral attention, limbic, control, and default 320 
+
+mode. 321 
+
+In total, 114 ROIs were analyzed. For each preprocessed fMRI run, the mean time 322 
+
+series was extracted from each ROI, resulting in data matrices of size 240 × 114 for The 323 
+
+Present , 740 × 114 for Despicable Me , and 168 × 114 for Partly Cloudy for each participant. 324 
+
+> 325
+
+2.9. Cross-correlation Analysis 326 
+
+Each feature time series from the three movie clips was first convolved with the canonical HRF 327 
+
+implemented in SPM12 (using the default parameters: peak delay = 6 s, undershoot delay = 16 328 
+
+s, and ratio = 6). The convolved feature time series were then resampled to match the temporal 329 
+
+resolution of the corresponding fMRI data (TR = 0.8 s for The Present and Despicable Me ; TR = 330 
+
+2.0 s for Partly Cloudy ). 331 
+
+Subsequently, cross-correlation analyses were performed between the HRF-convolved 332 
+
+feature time series and the mean fMRI time series from each ROI for each participant. 333 
+
+Correlations were computed across a lag range of ±16 seconds (i.e., ±20 TRs for HBN data and 334 
+
+±8 TRs for Partly Cloudy ), resulting in a lag-by-ROI correlation matrix for each participant. For 335 
+
+visualization and group-level interpretation, these matrices were averaged across participants 336 
+
+after Fisher’s z transformation of the correlation coefficients. 337 
+
+In addition, a regression analysis was conducted using the HRF-convolved feature time 338 
+
+series as predictors in a general linear model (GLM) framework for each participant. Group-level 339 
+
+statistical significance of the resulting parameter estimates was assessed using one-sample t-340 
+
+tests across participants, which corresponds to testing the cross-correlation at zero lag. Multiple 341 
+
+comparisons across the 114 ROIs were controlled using the false discovery rate (FDR) at p <342 
+
+0.05. 343 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 16
+
+To further examine temporal dependencies beyond the canonical HRF assumption, we 344 
+
+also repeated the cross-correlation and zero-lag t-tests using the raw (unconvolved) time series 345 
+
+of pupil size and theory-of-mind (ToM) ratings. Finally, we performed a simple cross-correlation 346 
+
+analysis between frame luminance and the group-level median pupil size time series for The 347 
+
+Present video clip to explore direct visual–physiological coupling. 348 
+
+> 349
+
+2.10. Finite Impulse Response Deconvolution 350 
+
+We performed FIR deconvolution to estimate the system response function between an input 351 
+
+signal ( x(t) ) and an output signal ( y(t) ). Specifically, we first examined the pupillary system 352 
+
+response using frame luminance as the input ( x(t) ) and pupil size as the output ( y(t) ). 353 
+
+Subsequently, we applied the same approach to estimate the HRFs in different brain regions 354 
+
+using the various video-related features described above as input signals and fMRI time series 355 
+
+from each ROI as outputs. 356 
+
+In general, the output signal can be modeled as the convolution of the input signal with 357 
+
+an unknown system response function: 358 
+
+> ᡷ䙦ᡲ䙧 㐄 ᡠ䙦ᡲ䙧 ᘠ ᡶ䙦ᡲ䙧 ㎗ –䙦ᡲ䙧
+
+where ( h(t) ) denotes the system’s impulse response function, ⊗ represents the convolution 359 
+
+operator, and ( 
+
+ε(t) ) is the residual noise term. 360 
+
+The goal of FIR deconvolution is to estimate ( h(t) ) directly from the observed time series. 361 
+
+We modeled ( h(t) ) as a finite-duration impulse response with a window of 20 seconds 362 
+
+(equivalent to 25 TRs for The Present and Despicable Me , and 10 TRs for Partly Cloudy ). The 363 
+
+deconvolution was implemented using linear regression, where the input signal was expanded 364 
+
+into a time-lagged design matrix containing shifted versions of ( x(t) ) at each time lag. The 365 
+
+estimated regression coefficients correspond to the discrete samples of ( h(t) ). 366 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 17
+
+To improve numerical stability and reduce overfitting, we first applied an autoregressive 367 
+
+AR(1) pre-whitening step, followed by second-difference regularization with a penalty term ( λ =368 
+
+10). Results were qualitatively consistent across robust to a range of λ values. 369 
+
+For the pupil–luminance analysis, FIR deconvolution was performed on the median pupil 370 
+
+size time series. Both the pupil and luminance signals were z-scored before analysis to remove 371 
+
+baseline offsets and normalize amplitudes. 372 
+
+For the fMRI data, FIR analysis was conducted separately for each participant and ROI. 373 
+
+Prior to deconvolution, input features were resampled to match the fMRI sampling rate, and 374 
+
+both input and output signals were z-scored. 375 
+
+To determine the statistical significance of the estimated FIR models, we utilized an F-376 
+
+test at the individual participant level to evaluate the overall variance explained by the full set of 377 
+
+time-lagged predictors. To perform group-level statistical inference, we applied Fisher's method 378 
+
+to aggregate the individual-level p-values across all participants for each ROI (Fisher, 1925). 379 
+
+The resulting group-level p-values were then corrected for multiple comparisons across the 114 380 
+
+ROIs using the FDR at p < 0.05, allowing us to systematically identify regions with significant 381 
+
+FIR effects. 382 
+
+For regions demonstrating significant group-level responses, we obtained group-level 383 
+
+response functions by averaging the individual FIR estimates after temporal alignment. To 384 
+
+accurately quantify temporal hierarchies, we characterized the temporal dynamics by extracting 385 
+
+the delay of the peak response (time-to-peak) for each ROI. To ensure that this metric captured 386 
+
+primary stimulus-driven activations rather than secondary signal dips or undershoots, the peak 387 
+
+delay was identified by extracting the maximum amplitude strictly from the positive values of the 388 
+
+estimated FIR response function. These resulting temporal profiles and peak latencies were 389 
+
+then evaluated to compare physiological and neural dynamics across brain systems. 390 
+
+> 391
+
+3. Results 392 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 18
+
+3.1. Sensory features: Temporal dynamics and spatial selectivity 393 
+
+Across all three movies, cross-correlation profiles exhibited a wide temporal spread across 394 
+
+multiple lags (Supplementary Figure S1). This extended temporal footprint likely reflects the 395 
+
+high inherent autocorrelation of both continuous naturalistic stimuli and the sluggish BOLD 396 
+
+signal. Despite this temporal smearing, the strongest zero-lag alignments reflected classical 397 
+
+functional specialization, localizing primarily to modality-specific sensory cortices. 398 
+
+Crucially, however, extended lag profiles revealed distinct temporal architectures 399 
+
+depending on the complexity of the sensory feature. While rudimentary features like frame 400 
+
+luminance exhibited tightly restricted spatial and temporal profiles mainly in the visual areas 401 
+
+(Figure 3A), computationally richer features—specifically frame contrast and auditory pitch— 402 
+
+demonstrated organized temporal delay structures propagating into broader cortical networks 403 
+
+(Figure 4A). These systematic temporal offsets across non-primary associative regions indicate 404 
+
+that fixed, uniform HRF models are insufficient for capturing the sequential dynamics of complex 405 
+
+sensory processing. Consequently, we applied FIR deconvolution to formally quantify these 406 
+
+temporal delays without imposing rigid hemodynamic assumptions. 407 
+
+3.1.1. Luminance processing aligns with canonical assumptions 408 
+
+For frame luminance, prominent correlation peaks near zero lag suggested that the canonical 409 
+
+HRF adequately approximates its hemodynamic delay. Consistent with prior literature, robust 410 
+
+zero-lag correlations localized to primary and secondary visual cortices across all three stimuli, 411 
+
+confirming the expected coupling between luminance fluctuations and early visual processing 412 
+
+(Figure 3B). 413 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 19 414
+
+Figure 3. Neural correlates of frame luminance and temporal response dynamics. (A) 415 
+
+Cross-correlation matrix illustrating the relationship between canonical HRF-convolved frame 416 
+
+luminance and fMRI time series across 114 regions of interest (ROIs) for the movie Despicable 417 
+
+Me (DM), plotted across multiple temporal lags. (B) Cortical maps displaying significant positive 418 
+
+zero-lag correlations between canonical HRF-convolved frame luminance (mean pixel intensity) 419 
+
+and fMRI activity for The Present (TP), DM, and Partly Cloudy (PC). Statistical maps in panel B 420 
+
+are thresholded at a false-discovery rate (FDR) of p < 0.05. (C) Estimated FIR response 421 
+
+functions for ROIs exhibiting significant effects in the movie DM. The inset highlights the 422 
+
+characteristic hemodynamic profiles of two primary visual regions. 423 
+
+> 424
+
+In contrast, FIR deconvolution yielded a more restricted set of significant regions 425 
+
+compared to the zero-lag analysis (Supplementary Figure S2). This disparity likely reflects a 426 
+
+reduction in statistical power inherent to the unconstrained FIR model relative to the more 427 
+
+parsimonious single-regressor correlation approach. Nevertheless, significant FIR effects within 428 
+
+the visual cortex during Despicable Me produced a recovered response function closely 429 
+
+resembling the canonical hemodynamic profile (Figure 3C). Collectively, these results indicate 430 
+
+that for rudimentary sensory features, the standard HRF model remains methodologically 431 
+
+sufficient and potentially more sensitive. 432 
+
+3.1.2. Visual contrast and the complexity of naturalistic narrative 433 
+
+le 
+
+y) Bn
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 20
+
+Initial zero-lag correlation analyses revealed that frame contrast elicited a predominantly 434 
+
+modality-specific spatial profile, localized primarily within visual cortices across the stimuli 435 
+
+(Figure 4B). However, cross-correlation profiling across extended lags demonstrated that 436 
+
+naturalistic visual contrast is not processed in strict isolation. Specifically, the cross-correlation 437 
+
+matrix for The Present (TP) revealed a widespread footprint extending well beyond primary 438 
+
+sensory areas (Figure 4A), suggesting the sequential engagement of higher-order functional 439 
+
+networks. 440 441 
+
+Figure 4. Neural correlates of frame contrast and associated temporal response 442 
+
+dynamics. (A) Cross-correlation matrix illustrating the relationship between canonical HRF-443 
+
+convolved frame contrast and fMRI time series across 114 regions of interest (ROIs) for the 444 
+
+movie The Present (TP) across multiple temporal lags. (B) Cortical maps displaying significant 445 
+
+positive zero-lag correlations between canonical HRF-convolved frame contrast and fMRI 446 
+
+activity for TP, Despicable Me (DM), and Partly Cloudy (PC). (C) Cortical maps illustrating 447 
+
+significant regional responses to frame contrast estimated via Finite Impulse Response (FIR) 448 
+
+deconvolution. (D) Estimated FIR response functions across all 114 ROIs during movie TP, 449 
+
+reflecting the diversity of hemodynamic profiles. (E, F) Distributions of estimated temporal 450 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 21
+
+delays (time-to-peak) for regions exhibiting positive FIR responses during movie TP (E) and PC 451 
+
+(F), categorized across Yeo’s seven functional networks. All statistical maps (Panels B and C) 452 
+
+are thresholded at a false-discovery rate (FDR) of p < 0.05. 453 
+
+> 454
+
+To evaluate this widespread temporal engagement, we applied FIR deconvolution 455 
+
+(Figure 4C; Supplementary Figure S3). While the spatial overlap of significant FIR effects 456 
+
+across all three movies was constrained to primary visual regions—largely due to a more limited 457 
+
+spatial response during Despicable Me —the unconstrained FIR model successfully captured a 458 
+
+distinct temporal architecture across the broader cortex for both The Present and Partly Cloudy .459 
+
+The estimated FIR response functions exhibited a clear, organized temporal progression 460 
+
+across varying ROIs (Figure 4D). To quantify this temporal hierarchy, we extracted positive 461 
+
+peak response latencies and examined their distributions across Yeo’s seven functional 462 
+
+networks (Figure 4E, 4F). Both stimuli demonstrated a systematic hierarchical delay structure: 463 
+
+visual networks consistently exhibited the shortest response latencies, whereas progressive 464 
+
+delays were observed in higher-order networks, culminating in the longest latencies within the 465 
+
+somatomotor, dorsal attention, ventral attention/salience, and default mode networks. 466 
+
+3.1.3. Auditory pitch and stimulus collinearity 467 
+
+Consistent with visual features, zero-lag correlation analysis demonstrated that auditory pitch 468 
+
+elicited strong, modality-specific alignments within core auditory cortices. However, during 469 
+
+Despicable Me , these significant correlations extended substantially into broader cortical 470 
+
+networks (Figure 5A). 471 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 22
+> 472
+
+Figure 5. Neural correlates of auditory pitch and temporal delay distributions. (A) Cortical 473 
+
+maps displaying positive zero-lag correlations between the canonical HRF-convolved auditory 474 
+
+pitch and fMRI activity during The Present (TP) and Despicable Me (DM). (B) Cortical maps 475 
+
+illustrating significant regional responses to auditory pitch estimated via Finite Impulse 476 
+
+Response (FIR) deconvolution for both videos. Statistical maps in panels A and B are 477 
+
+thresholded at a false-discovery rate (FDR) of p < 0.05. (C) Distributions of estimated temporal 478 
+
+delays (time-to-peak) for regions exhibiting positive FIR responses, categorized across Yeo’s 479 
+
+seven functional networks. Red markers denote two core auditory regions that are assigned to 480 
+
+the Default Mode Network in the Yeo parcellation. 481 
+
+> 482
+
+FIR deconvolution revealed complex, stimulus-dependent temporal response profiles 483 
+
+(Supplementary Figure S4). During The Present , regions exhibiting significant FIR effects were 484 
+
+unexpectedly localized predominantly to visual cortices (Figure 5B). Extracted response 485 
+
+functions in these visual areas revealed a distinct negative signal deflection within the first 5 486 
+
+seconds post-stimulus. This initial negative temporal profile indicates that auditory pitch is likely 487 
+
+inversely correlated with concurrent salient visual features specific to this stimulus, highlighting 488 
+
+cross-modal stimulus covariation rather than direct auditory processing in the visual cortex. 489 
+
+Conversely, FIR deconvolution for Despicable Me identified widespread significant 490 
+
+cortical effects distributed across multiple functional networks (Figure 5B). Mirroring the 491 
+
+temporal architecture observed for frame contrast, the latencies of positive peak responses to 492 
+
+al 
+
+al 
+
+o
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 23
+
+auditory pitch exhibited a clear hierarchical progression. The shortest latencies localized to core 493 
+
+auditory regions, followed by sequentially increasing delays systematically progressing through 494 
+
+the dorsal attention, somatomotor, ventral attention/salience, limbic, executive control, and 495 
+
+ultimately the default mode networks. (Note: Core auditory cortices are assigned to the default 496 
+
+mode network boundary in the standard Yeo parcellation based on resting-state data; to 497 
+
+maintain anatomical precision, these specific nodes are denoted with red markers in Figure 5C). 498 
+
+> 499
+
+3.2. Pupil size: Biological delays and autonomic network coupling 500 
+
+The median pupil size demonstrated high inter-individual consistency ( r = 0.62). However, its 501 
+
+relationship with neural activity is complicated by inherent physiological lag. Cross-correlation 502 
+
+between frame luminance and pupil size revealed a distinct negative peak at a 5-second lag 503 
+
+(Supplementary Figure S5), confirming that pupil constriction is naturally delayed relative to 504 
+
+visual input. Furthermore, FIR deconvolution of the pupil response to luminance remarkably 505 
+
+mirrored canonical HRF peak timing (Figure 6A). 506 507 
+
+re 
+
+). 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 24
+
+Figure 6. Neural correlates of pupil size and associated temporal response dynamics for 508 
+
+movie The Present (TP). (A) Temporal response function of pupil size relative to frame 509 
+
+luminance, shown in comparison to a canonical hemodynamic response function (HRF). (B) 510 
+
+Cross-correlation matrix illustrating the relationship between the raw pupil size and fMRI time 511 
+
+series across 114 regions of interest (ROIs) for movie TP across multiple temporal lags. (C) 512 
+
+Cortical maps displaying significant positive (hot) and negative (cold) zero-lag correlations 513 
+
+between canonical HRF-convolved pupil size and fMRI activity for movie TP. (D) Cortical maps 514 
+
+displaying significant positive (hot) and negative (cold) zero-lag correlations between raw 515 
+
+(unconvolved) pupil size and fMRI activity across the three videos. (E) Cortical maps illustrating 516 
+
+significant regional responses to pupil size estimated via Finite Impulse Response (FIR) 517 
+
+deconvolution, highlighting the peri-Sylvian autonomic hubs. (F) Estimated FIR response 518 
+
+functions for significant ROIs during movie TP, demonstrating the immediate peak at lag zero. 519 
+
+All statistical maps (Panels C, D, and E) are thresholded at a false-discovery rate (FDR) of p <520 
+
+0.05. 521 
+
+> 522
+
+Consequently, when HRF-convolved, the expected zero-lag negative correlation 523 
+
+between pupil size and visual cortical activity disappeared, replaced by artifactual positive 524 
+
+clusters (Figure 6C). Conversely, utilizing the raw pupil trace—which inherently contains its 525 
+
+biological delay—restored robust, physiologically plausible zero-lag negative correlations across 526 
+
+visual and attention networks (Figure 6B and 6D). This demonstrates that for physiological 527 
+
+features already exhibiting HRF-like temporal properties, canonical convolution is 528 
+
+methodologically counterproductive. 529 
+
+In addition, FIR deconvolution revealed robust effects localized to bilateral peri-Sylvian 530 
+
+regions, encompassing the superior temporal gyrus, Rolandic operculum, and posterior insula 531 
+
+(Figure 6E). Crucially, the extracted FIR response functions for these peri-Sylvian regions 532 
+
+peaked exactly at lag zero and gradually decreased thereafter (Red and yellow lines in Figure 533 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 25
+
+6F and Supplementary Figure S7). This immediate peak validates the use of the raw pupil trace, 534 
+
+as the physically delayed peripheral signal naturally aligns with the rapid neural dynamics of 535 
+
+these autonomic centers. 536 
+
+Finally, FIR analysis isolated regions with vastly different temporal profiles, underscoring 537 
+
+the necessity of flexible modeling. Beyond the core arousal network, a distinct visual cortical 538 
+
+region exhibited significant FIR effects characterized by a protracted temporal profile, with the 539 
+
+response function only rising after 15 seconds before a subsequent negative dip (Blue line in 540 
+
+Figure 6F). This delayed response likely reflects higher-order secondary processing rather than 541 
+
+an immediate autonomic orienting reflex, demonstrating that flexible temporal modeling is 542 
+
+critical for resolving network-specific latencies. 543 
+
+> 544
+
+3.3. Theory of Mind ratings: Context-dependent dynamics of social cognition 545 
+
+Inter-individual correlations of ToM rating time series demonstrated high consistency across The 546 
+
+Present (r = 0.58), Despicable Me (r = 0.41), and Partly Cloudy (r = 0.59; all p < 0.001), 547 
+
+validating the use of the median rating time series for subsequent fMRI analyses. 548 
+
+Consistent with our approach for the other features, we first performed cross-correlation 549 
+
+analyses using the HRF-convolved ToM ratings. However, the temporal alignments varied 550 
+
+substantially across the video stimuli (Supplementary Figure S8). For The Present , peak 551 
+
+correlations within the visual and dorsal attention networks occurred at positive lags (BOLD 552 
+
+leading; Supplementary Figure S8A), suggesting that canonical convolution may have over-553 
+
+compensated for inherent delays in the ToM rating time series. Conversely, for Partly Cloudy ,554 
+
+cross-correlation peaks in several visual areas aligned closely with the zero-lag line 555 
+
+(Supplementary Figure S8C). The results for Despicable Me were more complex 556 
+
+(Supplementary Figure S8B); while visual regions lacked clear zero-lag peaks, auditory regions 557 
+
+exhibited massive feature-leading delays of more than 10 seconds. Because the convolved time 558 
+
+series already incorporates an ~6-second hemodynamic delay, these extended lags cannot be 559 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 26
+
+explained by neurovascular coupling alone, and instead likely reflect the collinearity of ToM with 560 
+
+slowly unfolding narrative features. Consequently, zero-lag correlation maps using the HRF-561 
+
+convolved ToM ratings revealed only one consistent significant cluster in the left temporo-562 
+
+occipital region across all three videos (Figure 7A). 563 564 
+
+Figure 7. Neural correlates of Theory of Mind (ToM) ratings and associated temporal 565 
+
+response dynamics. (A) Cortical maps displaying significant positive zero-lag correlations 566 
+
+between canonical HRF-convolved ToM ratings and fMRI activity for The Present (TP), 567 
+
+Despicable Me (DM), and Partly Cloudy (PC). (B) Cortical maps displaying significant positive 568 
+
+zero-lag correlations between raw (unconvolved) ToM ratings and fMRI activity across the three 569 
+
+videos. (C) Cross-correlation matrix illustrating the relationship between the raw ToM rating and 570 
+
+fMRI time series across 114 regions of interest (ROIs) for movie TP across multiple temporal 571 
+
+lags. (D) Cortical maps illustrating significant regional responses to ToM ratings estimated via 572 
+
+Finite Impulse Response (FIR) deconvolution. (E) Estimated FIR response functions for 573 
+
+significant ROIs during movie TP, highlighting the rapid peak latencies. (F) Distributions of 574 
+
+estimated temporal delays (time-to-peak) for regions exhibiting positive FIR responses during 575 
+
+th 
+
+ed
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 27
+
+movie DM, categorized across Yeo’s seven functional networks. All statistical maps (Panels A, 576 
+
+B, and D) are thresholded at a false-discovery rate (FDR) of p < 0.05. 577 
+
+> 578
+
+Given that continuous behavioral ratings intrinsically incorporate cognitive processing 579 
+
+and motor execution delays, we hypothesized that applying the canonical HRF might 580 
+
+artifactually "double-delay" and over-smooth the signal. To address this, we repeated the cross-581 
+
+correlation analyses using the raw, unconvolved ToM ratings. This approach yielded more 582 
+
+temporally aligned cross-correlation profiles, with peaks shifting much closer to zero lag for both 583 
+
+The Present (Figure 7C) and Partly Cloudy (Supplementary Figure S8F). Consequently, the 584 
+
+zero-lag correlation maps using the raw ToM time series revealed a greater extent of 585 
+
+overlapping significant clusters—particularly in the left occipito-temporal junction—across the 586 
+
+three videos (Figure 7B). 587 
+
+However, while using the raw ToM time series avoids the penalty of double-smoothing, it 588 
+
+still rigidly assumes uniform neuro-behavioral latency across all brain regions and stimuli. FIR 589 
+
+deconvolution revealed that ToM processing dynamics are fundamentally stimulus-dependent 590 
+
+(Figure 7D and Supplementary Figure S9). For The Present , significant FIR effects were 591 
+
+primarily restricted to the dorsal visual stream and parietal regions. Crucially, the extracted 592 
+
+response functions in these regions peaked extremely rapidly (1.6–2.4 seconds; Figure 7E), 593 
+
+demonstrating exactly why the canonical HRF model (which assumes a ~5-second peak) was 594 
+
+systematically inappropriate for this specific stimulus. 595 
+
+Conversely, FIR deconvolution for Despicable Me revealed widespread significant 596 
+
+cortical responses. Unlike the distinct temporal hierarchies observed during basic sensory 597 
+
+processing, the estimated FIR delays for ToM in Despicable Me did not exhibit a clear cortical 598 
+
+feed-forward pattern (Figure 7F). This widespread, complex temporal profile likely reflects the 599 
+
+highly multimodal nature of mentalizing required for Despicable Me , which demands the 600 
+
+distributed integration of rapid dialogue, abstract social rules, and multi-character dynamics. 601 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 28
+
+Together, these results demonstrate that high-level cognitive annotations cannot be accurately 602 
+
+modeled with fixed hemodynamic assumptions; flexible approaches like FIR deconvolution are 603 
+
+strictly essential to capture the highly context-dependent speeds of social cognition during 604 
+
+naturalistic viewing. 605 
+
+> 606
+
+4. Discussion 607 
+
+In the present study, we systematically investigated the temporal dynamics of BOLD responses 608 
+
+to continuous naturalistic features during movie watching. By integrating multi-level features— 609 
+
+ranging from low-level sensory properties (luminance, contrast, pitch) to physiological (pupil size) 610 
+
+and subjective cognitive (ToM) signals—we evaluated how well conventional hemodynamic 611 
+
+modeling captures the brain's nested temporal hierarchies. To overcome the limitations of fixed-612 
+
+delay assumptions, we utilized FIR deconvolution alongside traditional cross-correlation 613 
+
+analyses to systematically map the true BOLD response profiles across the whole brain. 614 
+
+Our results demonstrate that different classes of naturalistic features exhibit distinctly 615 
+
+different temporal BOLD profiles that reflect their position in the cortical processing hierarchy. 616 
+
+Our main findings are threefold. First, while low-level sensory features generally aligned with the 617 
+
+temporal expectations of the canonical HRF, slower physiological and subjective cognitive 618 
+
+features systematically deviated from these standard models. Second, convolving inherently 619 
+
+delayed, low-frequency signals (such as pupil size and ToM ratings) with a standard HRF 620 
+
+introduces severe temporal artifacts—such as the "double-smoothing" effect—which led to 621 
+
+misalignments and even inverted zero-lag correlations. Finally, by employing flexible FIR 622 
+
+deconvolution, we successfully uncovered the feature-specific BOLD system response functions. 623 
+
+This approach allowed us to explicitly quantify peak response latencies, revealing extensive 624 
+
+inter-regional temporal hierarchies. These empirically derived maps demonstrated a clear 625 
+
+progression of processing delays from primary sensory cortices to higher-order associative 626 
+
+networks. Together, these findings underscore the necessity of feature-specific temporal 627 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 29
+
+modeling in naturalistic fMRI paradigms and demonstrate that mapping the true shape of the 628 
+
+BOLD response provides critical insights into the underlying processing timescales of the brain. 629 
+
+> 630
+
+4.1. Sensory features 631 
+
+The present study demonstrated that for low-level sensory features—specifically frame 632 
+
+luminance, frame contrast, and acoustic pitch—the canonical HRF implemented in standard 633 
+
+fMRI analysis tools (e.g., SPM) effectively captured the temporal delay between stimulus 634 
+
+dynamics and BOLD responses. Cross-correlation analyses revealed that the strongest 635 
+
+correlations between these features and regional BOLD signals occurred at lags consistent with 636 
+
+the canonical HRF peak (approximately 4–6 seconds). Similarly, FIR deconvolution yielded 637 
+
+impulse response functions that closely mirrored the canonical HRF in modality specific brain 638 
+
+regions, exhibiting the characteristic rise, peak, and undershoot phases. These results indicate 639 
+
+that the temporal characteristics of the BOLD response to continuously varying visual and 640 
+
+auditory inputs are largely consistent with those reported in conventional event-related 641 
+
+paradigms, even under naturalistic viewing conditions. 642 
+
+This finding aligns with classic event-related fMRI studies showing that BOLD responses 643 
+
+in early sensory regions are highly stereotyped in both shape and latency (Boynton et al., 1996; 644 
+
+Dale and Buckner, 1997; Glover, 1999; Handwerker et al., 2004). It also resonates with more 645 
+
+recent research using naturalistic stimuli, which has shown that BOLD activity in visual and 646 
+
+auditory cortices remains tightly coupled to sensory fluctuations over time (Bartels and Zeki, 647 
+
+2004; Hasson et al., 2004; Nishimoto et al., 2011). Together, these studies support the notion 648 
+
+that the canonical HRF offers a robust approximation of average neurovascular coupling in 649 
+
+primary sensory areas across diverse experimental contexts. 650 
+
+Nonetheless, subtle deviations in the FIR-estimated responses across cortical regions 651 
+
+were evident, suggesting regional variability in HRF dynamics. Some of these differences likely 652 
+
+stem from intrinsic vascular properties, such as baseline cerebral blood flow and local 653 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 30
+
+neurovascular coupling (Aguirre et al., 1998; Handwerker et al., 2004; Sonkusare et al., 2019; 654 
+
+Taylor et al., 2018). However, beyond physiological vascular artifacts, our FIR delay-distribution 655 
+
+plots revealed systematic inter-regional processing delays propagating progressively from 656 
+
+primary sensory areas to higher-order associative and default mode networks. 657 
+
+This temporal progression aligns powerfully with the theoretical framework of 658 
+
+hierarchical cortical timescales, or TRWs (Lerner et al., 2011; Meer et al., 2020). According to 659 
+
+this framework, early sensory cortices possess short TRWs adapted to process rapid, transient 660 
+
+physical changes in the environment, such as frame contrast or pitch variations. Consequently, 661 
+
+these modality-specific regions exhibited sharp FIR response profiles and early peak latencies. 662 
+
+In contrast, higher-order cortical regions possess long TRWs designed to accumulate and 663 
+
+integrate this sensory information over extended durations (Hasson et al., 2015). Because these 664 
+
+regions must synthesize semantic meaning and narrative context from continuous audio-visual 665 
+
+streams, their temporal response profiles are inherently slower and more temporally diffuse 666 
+
+(Lewis et al., 2018). 667 
+
+Our FIR results provide direct empirical support for this architecture, demonstrating that 668 
+
+the "sluggishness" of the BOLD response to naturalistic sensory features in higher-order regions 669 
+
+reflects the extended cognitive integration times required for naturalistic processing. Applying a 670 
+
+uniform canonical HRF across the entire brain obscures this fundamental hierarchical 671 
+
+topography, underscoring the value of flexible temporal modeling to capture true cortical 672 
+
+timescales. 673 
+
+> 674
+
+4.2. Pupil size 675 
+
+Previous fMRI studies have often modeled pupil diameter as a physiological regressor by 676 
+
+convolving it with a canonical HRF before correlating it with BOLD signals (Schneider et al., 677 
+
+2016; Yellin et al., 2015). This approach assumes that pupil size reflects instantaneous neural 678 
+
+or arousal-related processes that are temporally blurred by the hemodynamic response. 679 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 31
+
+However, our analysis of the relationship between pupil size and frame luminance revealed an 680 
+
+approximately 5-second delay of the pupil response to frame luminance, which directly 681 
+
+challenges the usage of canonical HRF convolution. 682 
+
+When comparing correlations between BOLD activity and both HRF-convolved and raw 683 
+
+pupil size time series, clear differences emerged. In visual cortical areas, where BOLD activity 684 
+
+positively tracks luminance, pupil size is expected to show an inverse relationship due to the 685 
+
+pupillary light reflex (Joshi and Gold, 2020; Mathot, 2018). Consistent with this prediction, 686 
+
+negative correlations were observed between raw pupil size and visual cortex BOLD signals 687 
+
+near zero lag. In contrast, when using the HRF-convolved pupil signal, these expected negative 688 
+
+correlations disappeared and instead became artifactually inverted (positive) at zero lag, 689 
+
+demonstrating a severe temporal misalignment between modeled and actual pupil–BOLD 690 
+
+dynamics. Furthermore, the spatial extent of correlated regions differed markedly between the 691 
+
+two approaches. While both revealed significant correlations in regions such as the insula and 692 
+
+temporoparietal junction, the raw pupil signal additionally showed broader associations 693 
+
+encompassing the lateral parietal and temporal cortices, as well as the thalamus—areas known 694 
+
+to participate in arousal, attention, and salience processing (Menon and Uddin, 2010; 695 
+
+Sadaghiani and D’Esposito, 2015; Shine et al., 2019). 696 
+
+Our FIR deconvolution analysis provided further evidence for this un-convolved temporal 697 
+
+alignment, revealing robust effects localized to bilateral peri-Sylvian regions, encompassing the 698 
+
+superior temporal gyrus, Rolandic operculum, and posterior insula. Crucially, the extracted FIR 699 
+
+response functions for these peri-Sylvian regions peaked exactly at lag zero and gradually 700 
+
+decreased thereafter. This immediate peak strongly validates the use of the raw pupil trace, as 701 
+
+the physically delayed peripheral signal naturally aligns with the rapid neural dynamics of these 702 
+
+autonomic centers without the need for additional temporal shifting. 703 
+
+From a neurophysiological perspective, pupil diameter is a reliable peripheral marker of 704 
+
+central arousal and neuromodulatory activity, particularly reflecting the influence of the locus 705 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 32
+
+coeruleus–norepinephrine (LC–NE) system (Aston-Jones and Cohen, 2005; Joshi et al., 2016; 706 
+
+Murphy et al., 2014). The widespread correlations observed between raw pupil fluctuations and 707 
+
+BOLD activity in the insula, temporoparietal junction, and thalamus are consistent with the 708 
+
+distributed impact of the LC–NE network on cortical and subcortical targets (Breton-Provencher 709 
+
+and Sur, 2019; Shine et al., 2019). These regions are frequently implicated in arousal regulation, 710 
+
+interoceptive awareness, and adaptive cognitive control. Thus, the coupling observed here may 711 
+
+reflect dynamic coordination between neuromodulatory arousal signals and cortical processing 712 
+
+of salient environmental events during naturalistic viewing. 713 
+
+These findings suggest that applying a canonical HRF convolution to inherently delayed 714 
+
+pupil data may distort or obscure the true temporal relationship between pupil fluctuations and 715 
+
+neural activity. Nevertheless, this does not invalidate prior work employing HRF-convolved pupil 716 
+
+regressors. Variability in eye-tracking systems, temporal resolution, and luminance control can 717 
+
+influence the temporal characteristics of pupil responses (Hoeks and Levelt, 1993; McDougal 718 
+
+and Gamlin, 2015), and in some cases—particularly with lower sampling rates—HRF 719 
+
+convolution may remain a pragmatic approximation. However, our results underscore the 720 
+
+importance of empirically testing temporal alignment between pupil and BOLD signals rather 721 
+
+than assuming a fixed hemodynamic delay. Cross-correlation analyses and FIR deconvolution, 722 
+
+as illustrated here, offer a straightforward diagnostic approach for validating these relationships 723 
+
+and optimizing analytical strategies. 724 
+
+Overall, these results emphasize the need for careful temporal modeling of pupil–BOLD 725 
+
+coupling. Because pupil responses themselves exhibit an intrinsic biological latency relative to 726 
+
+underlying neural events (de Gee et al., 2017; Hoeks and Levelt, 1993), applying an additional 727 
+
+HRF convolution introduces systematic misalignment (i.e., double-smoothing), reducing 728 
+
+sensitivity to true neural–autonomic interactions. Future studies should therefore consider 729 
+
+flexible data-driven approaches—such as empirical lag estimation, FIR modeling, or joint 730 
+
+modeling frameworks (Cohen et al., 2016; Di and Biswal, 2019)—to better capture the temporal 731 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 33
+
+dynamics linking arousal-related physiology and brain activity across resting-state, naturalistic, 732 
+
+and controlled experimental paradigms. 733 
+
+> 734
+
+4.3. Theory of Mind Rating 735 
+
+In this study, an independent group of participants provided continuous ratings reflecting their 736 
+
+perceived understanding of the characters’ thoughts, feelings, and intentions while viewing short 737 
+
+movie clips. These ratings are intended to index moment-to-moment engagement of ToM—the 738 
+
+ability to attribute mental states to others (Frith and Frith, 2006; Schurz et al., 2021). Unlike low-739 
+
+level sensory or physiological features, however, the temporal coupling between such 740 
+
+introspective, socially grounded judgments and underlying neural activity is far less constrained 741 
+
+and may vary with narrative structure, attention, and individual interpretation (Jacoby et al., 742 
+
+2016; Richardson et al., 2018). 743 
+
+Continuous introspective ratings inherently integrate information over several seconds 744 
+
+due to cognitive evaluation and motor execution delays (Nummenmaa et al., 2012; Zahn et al., 745 
+
+2009). Because the generation of a continuous behavioral rating is intrinsically a temporally 746 
+
+smoothed process, applying an additional HRF convolution to these time series is 747 
+
+mathematically redundant. This secondary convolution compounds the temporal dynamics, 748 
+
+creating a "double-delay" that fundamentally shifts the regressor out of phase with true neural 749 
+
+activity, while also over-smearing the signal variance. The improved spatial consistency 750 
+
+observed across videos when using raw (unconvolved) ToM ratings is thus likely attributable to 751 
+
+both the adjustment of this temporal misalignment and the avoidance of this redundant 752 
+
+smoothing. Furthermore, because the raw ToM time series already represents a delayed 753 
+
+behavioral output relative to the initial neural event, performing FIR deconvolution directly on 754 
+
+this trace logically yields an accelerated estimated hemodynamic peak (as the behavioral 755 
+
+latency accounts for a portion of the typical neurovascular lag). This accelerated response 756 
+
+profile—as empirically confirmed by our FIR estimations—explicitly demonstrates why the 757 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 34
+
+canonical HRF model, which rigidly assumes a ~5-second peak, is systematically inappropriate 758 
+
+when modeling inherently delayed and smoothed behavioral traces. 759 
+
+Furthermore, our FIR deconvolution results demonstrate that ToM processing dynamics 760 
+
+are fundamentally stimulus- and context-dependent. While low-level sensory features—such as 761 
+
+frame contrast and auditory pitch—exhibited a clear temporal hierarchy with processing delays 762 
+
+propagating sequentially from primary sensory cortices to higher-order associative networks, 763 
+
+ToM processing did not follow this pattern. Specifically, the peak lag distributions for ToM during 764 
+
+Despicable Me did not exhibit a clear feed-forward cortical hierarchy; instead, the temporal 765 
+
+delay distributions were remarkably similar and widespread across all the functional networks. 766 
+
+This simultaneous, distributed temporal profile likely reflects the highly multimodal and 767 
+
+continuous nature of the mentalizing required for this specific film, which demands the 768 
+
+concurrent integration of rapid dialogue, abstract social rules, and dynamic multi-character 769 
+
+interactions across the brain, rather than a simple sequential processing stream. 770 
+
+These complexities highlight the profound challenges of mapping continuous, high-level 771 
+
+social cognition onto temporally sluggish BOLD signals. Our results converge with recent efforts 772 
+
+advocating explicit examination of temporal relationships between behavioral regressors and 773 
+
+neural responses in naturalistic paradigms (Di and Biswal, 2022; Lahnakoski et al., 2012b). 774 
+
+Rather than assuming a canonical HRF—or relying solely on raw time series—data-driven 775 
+
+approaches such as FIR deconvolution are strictly essential to capture the highly context-776 
+
+dependent and feature-specific speeds of social cognition. Future work could further disentangle 777 
+
+these overlapping temporal profiles by integrating synchronized physiological measures (e.g., 778 
+
+facial EMG or reaction-based time stamping) to refine lag estimation, or by employing advanced 779 
+
+regularization techniques to account for the inherent collinearity of cinematic features. 780 
+
+> 781
+
+4.4. Complexity of naturalistic stimuli: Inter-stimulus variability and feature collinearity 782 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 35
+
+A striking observation in our analysis was the substantial variability in brain responses across 783 
+
+the three films. While sensory features generally exhibited more consistent activations across 784 
+
+datasets, there were notable exceptions—such as widespread cortical responses to frame 785 
+
+contrast in The Present and to auditory pitch in Despicable Me . This variability was even more 786 
+
+pronounced for high-level cognitive features like ToM. Specifically, ToM processing did not 787 
+
+uniformly engage classical mentalizing or default mode network regions across all datasets. 788 
+
+This divergence likely stems from profound differences in narrative complexity and the specific 789 
+
+nature of the ToM content elicited by each film. For example, Despicable Me involves complex, 790 
+
+dialogue-driven social rules and dynamic multi-character interactions, which manifested as 791 
+
+widespread, distributed cortical engagement. In contrast, short animations like The Present or 792 
+
+Partly Cloudy rely heavily on non-verbal, visually driven social cues, which may engage a 793 
+
+different, more restricted sub-network of social-perceptual regions. Thus, the neural correlates 794 
+
+of "ToM" during naturalistic viewing are not monolithic; they are highly context-dependent and 795 
+
+intrinsically tied to the statistical and narrative structure of the specific stimulus. 796 
+
+Beyond narrative content, inter-stimulus variability is also driven by fundamental 797 
+
+differences in data acquisition and technical parameters. The statistical power and temporal 798 
+
+resolution varied considerably across datasets: Despicable Me contained 740 time points (TR = 799 
+
+800 ms), The Present contained 240 time points (TR = 800 ms), and Partly Cloudy was 800 
+
+acquired with a significantly slower temporal resolution (TR = 2000 ms) and only 168 time points. 801 
+
+The extended data length in Despicable Me likely afforded higher statistical power, which 802 
+
+partially explains the more widespread network recruitment observed for both ToM and sensory 803 
+
+features in this video. Furthermore, differences in TR inherently impact the temporal precision of 804 
+
+FIR deconvolution, as higher temporal resolution allows for more accurate estimation of 805 
+
+response peaks compared to slower acquisitions. 806 
+
+A final critical methodological consideration when mapping these temporal dynamics 807 
+
+during naturalistic viewing is the inherent collinearity of stimulus features. Unlike highly 808 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 36
+
+controlled, artificial experimental designs where stimuli are presented in isolation, cinematic 809 
+
+features are continuously and simultaneously presented, frequently covarying with one another 810 
+
+as well as with a vast array of unmeasured features (e.g., semantic meaning, emotional valence, 811 
+
+or biological motion). In the present study, we largely evaluated the temporal relationship of 812 
+
+individual features with regional BOLD activity one at a time. Consequently, the estimated 813 
+
+temporal response functions capture the overall neural engagement associated with that 814 
+
+feature's occurrence in the narrative, rather than its strictly isolated processing. For instance, the 815 
+
+widespread cortical responses and extended temporal delays observed for auditory pitch— 816 
+
+extending well beyond primary auditory cortex into higher-order associative networks—are likely 817 
+
+driven by its natural covariance with human speech, music, and emotional prosody. 818 
+
+While combining multiple features into a single, comprehensive general linear model 819 
+
+could theoretically isolate the unique variance of each specific feature, implementing such an 820 
+
+approach alongside FIR deconvolution introduces severe multicollinearity. Expanding numerous 821 
+
+correlated features into dozens of time-lagged predictors severely inflates variance and 822 
+
+destabilizes the estimated response functions. Therefore, while our unconstrained temporal 823 
+
+modeling reveals the complex, sequential brain states triggered by naturalistic events, future 824 
+
+studies employing advanced regularization techniques (e.g., ridge regression) or dimensionality 825 
+
+reduction will be necessary to disentangle the overlapping temporal profiles of highly collinear 826 
+
+narrative features. 827 
+
+> 828
+
+4.5. Broader implications for hemodynamic response 829 
+
+The present analysis provides robust empirical evidence that the HRF can be estimated directly 830 
+
+from continuous naturalistic data using FIR modeling. Traditional HRF estimation approaches 831 
+
+have primarily relied on event-related or block designs, where each stimulus or trial is modeled 832 
+
+as a discrete impulse (Dale and Buckner, 1997; Glover, 1999). Although such methods have 833 
+
+been instrumental in characterizing canonical HRF properties, they inherently simplify the 834 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 37
+
+temporal and cognitive structure of real-world experiences. Event-based paradigms constrain 835 
+
+the complexity and duration of modeled processes and often assume that cognitive or affective 836 
+
+responses occur as isolated, time-locked events rather than as continuously evolving states. 837 
+
+In contrast, naturalistic paradigms offer an alternative framework by leveraging time-838 
+
+varying sensory, behavioral, or physiological features as continuous inputs to estimate neural 839 
+
+response functions. This approach captures more ecologically valid dynamics of neural activity, 840 
+
+encompassing sustained attention, emotional engagement, and social inference—processes 841 
+
+that unfold gradually rather than discretely (Hasson et al., 2004; Nastase et al., 2019). Although 842 
+
+continuous designs face challenges such as limited variability in specific features and uneven 843 
+
+temporal sampling across frequency ranges, they allow HRF estimation in higher-order cortical 844 
+
+and subcortical regions that are less reliably engaged by simple, transient stimuli. 845 
+
+The current findings demonstrate the utility of using continuous naturalistic features to 846 
+
+perform data-driven HRF deconvolution across multiple brain regions. The FIR model, which 847 
+
+imposes minimal assumptions about response shape or latency, revealed systematically diverse 848 
+
+temporal profiles and hierarchical peak latencies across regions, consistent with prior evidence 849 
+
+that HRF dynamics vary with vascular and neuronal properties (Aguirre et al., 1998; 850 
+
+Handwerker et al., 2004; Lindquist et al., 2009). Such flexibility is valuable for uncovering 851 
+
+region-specific or stimulus-specific variations in hemodynamic coupling that are not well 852 
+
+captured by canonical models. 853 
+
+However, this flexibility comes at the cost of increased variance and reduced reliability, 854 
+
+particularly when the number of model parameters approaches the available data length (Goutte 855 
+
+et al., 2000; Pedregosa et al., 2015). Future research should explore hybrid or regularized 856 
+
+approaches—such as ridge-regularized FIR models, basis function modeling (e.g., gamma or 857 
+
+spline basis sets), or parametric HRF estimation—to balance flexibility with stability and 858 
+
+physiological interpretability (Lindquist et al., 2009; Pedregosa et al., 2015). Comparative 859 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 38
+
+evaluations across these frameworks will be critical for identifying optimal trade-offs between 860 
+
+model adaptability and robustness in naturalistic contexts. 861 
+
+An additional priority is to assess the reliability and inter-individual variability of HRF 862 
+
+estimates derived from continuous data. Individual differences in vascular dynamics, 863 
+
+neurovascular coupling, or baseline physiology may systematically influence HRF latency and 864 
+
+shape (Handwerker et al., 2004; West et al., 2019). Quantifying these sources of variability 865 
+
+could enhance both within-subject reproducibility and between-subject interpretability, with 866 
+
+potential applications in aging (Chen et al., 2024; West et al., 2019), cerebrovascular disease, 867 
+
+and neuropsychiatric populations. Robust, data-driven HRF estimation could ultimately improve 868 
+
+the interpretability of BOLD responses in naturalistic and task-free paradigms, bridging the gap 869 
+
+between experimental control and ecological validity. 870 
+
+Finally, integrating FIR-based HRF estimation with analyses of sensory, physiological, 871 
+
+and cognitive features—as demonstrated in the present study—illustrates the value of unified 872 
+
+temporal modeling across multiple domains. The observation that low-level sensory features 873 
+
+align well with the canonical HRF, whereas physiological (pupil) and introspective (ToM rating) 874 
+
+signals exhibit more complex, delayed timing relationships, confirms that hemodynamic coupling 875 
+
+differs systematically across cortical processing hierarchies and temporal receptive windows. 876 
+
+Data-driven HRF estimation, therefore, provides not only a methodological advance but also a 877 
+
+conceptual framework for understanding how distinct neural systems integrate information over 878 
+
+time. Extending this approach across diverse stimulus types and participant populations could 879 
+
+yield a more comprehensive characterization of the temporal architecture of brain function under 880 
+
+naturalistic conditions. 881 
+
+> 882
+
+5. Conclusion 883 
+
+In summary, this study systematically characterized the temporal relationships between 884 
+
+continuous sensory, physiological, and behavioral features and fMRI BOLD signals during 885 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 39
+
+naturalistic movie viewing. Using cross-correlation and flexible FIR deconvolution, we 886 
+
+demonstrated that while low-level sensory features generally align with canonical hemodynamic 887 
+
+expectations, slower physiological signals (pupil size) and high-level cognitive annotations (ToM) 888 
+
+systematically deviate from these standard models. Crucially, applying a uniform canonical HRF 889 
+
+to inherently delayed physiological and behavioral time series introduces temporal artifacts, 890 
+
+such as double-smoothing, which obscure true brain-behavior coupling. 891 
+
+By employing data-driven FIR deconvolution, we successfully uncovered the feature-892 
+
+specific BOLD response profiles, explicitly mapping the underlying temporal hierarchies and 893 
+
+processing timescales across the cortex. These findings highlight the necessity of flexible 894 
+
+temporal modeling when mapping diverse, multi-level features in naturalistic paradigms. 895 
+
+Moreover, this analysis validates the robust utility of using continuous input signals to estimate 896 
+
+hemodynamic response functions directly from naturalistic viewing. This framework offers a 897 
+
+powerful alternative to event-related designs for studying complex, gradually unfolding brain 898 
+
+processes, and provides a valuable tool for investigating individual differences in neurovascular 899 
+
+coupling across diverse populations, such as aging or clinical cohorts. 900 
+
+> 901
+> 902
+
+Acknowledgments 903 
+
+During the preparation of this revised manuscript, the authors utilized Gemini (Google) solely for 904 
+
+language polishing and assistance with drafting technical summaries. No artificial intelligence 905 
+
+tools were used in the generation of research data, data analysis, or the scientific interpretation 906 
+
+of the results. The authors thoroughly reviewed and edited all AI-assisted text and take full 907 
+
+responsibility for the final content of the manuscript. 908 
+
+> 909
+
+Data and Code Availability 910 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted April 14, 2026. ;https://doi.org/10.1101/2025.11.07.687226 doi: bioRxiv preprint 40
+
+MRI and pupil size data were obtained from publicly available sources: the Healthy Brain 911 
+
+Network (HBN) dataset (http://fcon_1000.projects.nitrc.org/indi/cmi_healthy_brain_network/) 912 
+
+and the OpenNeuro repository (https://openneuro.org/datasets/ds000228). 913 
+
+> 914
+
+Author Contributions 915 
+
+X.D. conceived and designed the study, developed the methodology, performed the analyses, 916 
+
+and wrote the original draft of the manuscript. G.B.H. collected and curated the data and 917 
+
+contributed to manuscript review and editing. B.B.B. and X.D. provided resources and secured 918 
+
+funding for the project. All authors contributed to the interpretation of results and approved the 919 
+
+final version of the manuscript. 920 
+
+> 921
+
+Funding 922 
+
+This study was supported by grants from (US) National Institutes of Health for Xin Di 923 
+
+(R15MH125332) and Bharat B. Biswal (5R01MH131335 and 1R01AG085665) and by (NJ) 924 
+
+Governor's Council for Medical Research and Treatment of Autism for Xin Di (CAUT25BRP005). 925 
+
+> 926
+
+Declaration of Competing Interests 927 
+
+The authors declare that there is no competing interest. 928 
+
+> 929
+> 930
+
+Reference: 931 Aguirre, G.K., Zarahn, E., D’Esposito, M., 1998. The Variability of Human, BOLD Hemodynamic Responses. 932 NeuroImage 8, 360–369. https://doi.org/10.1006/nimg.1998.0369 933 Alexander, L.M., Escalera, J., Ai, L., Andreotti, C., Febre, K., Mangone, A., Vega-Potler, N., Langer, N., 934 Alexander, A., Kovacs, M., Litke, S., O’Hagan, B., Andersen, J., Bronstein, B., Bui, A., Bushey, M., 935 Butler, H., Castagna, V., Camacho, N., Chan, E., Citera, D., Clucas, J., Cohen, S., Dufek, S., Eaves, 936 M., Fradera, B., Gardner, J., Grant-Villegas, N., Green, G., Gregory, C., Hart, E., Harris, S., Horton, 937 M., Kahn, D., Kabotyanski, K., Karmel, B., Kelly, S.P., Kleinman, K., Koo, B., Kramer, E., Lennon, E., 938 Lord, C., Mantello, G., Margolis, A., Merikangas, K.R., Milham, J., Minniti, G., Neuhaus, R., Levine, 939
