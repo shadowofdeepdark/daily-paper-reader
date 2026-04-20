@@ -1,0 +1,207 @@
+Title: HumDial-EIBench: A Human-Recorded Multi-Turn Emotional Intelligence Benchmark for Audio Language Models
+
+URL Source: https://arxiv.org/pdf/2604.11594v1
+
+Published Time: Tue, 14 Apr 2026 02:29:01 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# HumDial-EIBench: A Human-Recorded Multi-Turn Emotional Intelligence Benchmark for Audio Language Models 
+
+## Shuiyuan Wang 1,∗, Zhixian Zhao 1,∗, Hongfei Yue 1, Chengyou Wang 1, Shuai Wang 2, Hui Bu 3, Xin Xu 3, Lei Xie 1,∗∗ 
+
+1 Audio, Speech and Language Processing Group (ASLP@NPU), School of Computer Science, Northwestern Polytechnical University, Xi’an, China 
+
+2 Nanjing University, China 
+
+3 AISHELL, China 
+
+wangshuiyuan@mail.nwpu.edu.cn, zxzhao@mail.nwpu.edu.cn 
+
+## Abstract 
+
+Evaluating the emotional intelligence (EI) of audio language models (ALMs) is critical. However, existing benchmarks mostly rely on synthesized speech, are limited to single-turn interactions, and depend heavily on open-ended scoring. This paper proposes HumDial-EIBench, a comprehensive bench-mark for evaluating ALMs’ EI. Using real-recorded human di-alogues from the ICASSP 2026 HumDial Challenge, it refor-mulates emotional tracking and causal reasoning into multiple-choice questions with adversarial distractors, mitigating subjec-tive scoring bias for cognitive tasks. It retains the generation of empathetic responses and introduces an acoustic-semantic con-flict task to assess robustness against contradictory multimodal signals. Evaluations of eight ALMs reveal that most models struggle with multi-turn emotional tracking and implicit causal reasoning. Furthermore, all models exhibit decoupled textual and acoustic empathy, alongside a severe text-dominance bias during cross-modal conflicts. 
+
+Index Terms : audio language models, emotional intelligence, multi-turn dialogues, acoustic-semantic conflict 
+
+## 1. Introduction 
+
+Traditional spoken dialogue systems rely on cascaded architec-tures (automatic speech recognition → large language model 
+
+→ text-to-speech), where the intermediate text transcription in-evitably discards critical paralinguistic cues, such as intonation and emotion. The recent paradigm shift toward end-to-end au-dio language models (ALMs) [1, 2, 3, 4, 5] enables models to process continuous audio signals directly, theoretically main-taining a unified representation of semantic content and acoustic paralinguistic features to achieve native emotional intelligence (EI) [6, 7, 8, 9]. However, a critical question remains: do these advanced models genuinely perceive acoustic emotion, or do they still primarily process audio as a proxy for text transcrip-tion? 
+
+Despite the rapid development of ALMs, existing emo-tional evaluation benchmarks exhibit limitations that obscure genuine EI capabilities. First, most multi-turn dialogue bench-marks rely entirely on TTS-synthesized speech. This creates a pseudo-multi-turn effect that disrupts natural, continuous emo-tional evolution and lacks authentic acoustic nuances. Sec-ond, although some benchmarks incorporate authentic human recordings, they strictly confine evaluation to static, single-turn emotion recognition, failing to evaluate emotional trajectory 
+
+> *
+
+These authors contributed equally. 
+
+> **
+
+indicates the corresponding author. 
+
+tracking and implicit causal reasoning across multiple conversa-tional turns. Third, current frameworks rely heavily on unstable LLM-as-a-judge scoring, which introduces severe subjective in-stability and fails to objectively distinguish cognitive reasoning errors from superficial generation fluency. Furthermore, exist-ing evaluations consistently omit the systematic examination of complex cross-modal contradictions, such as acoustic-semantic conflicts [10]. These methodological gaps mask fundamental weaknesses in multimodal alignment, preventing the accurate assessment of true emotional intelligence. Table 1 summarizes this comparison. To overcome these evaluation bottlenecks, this paper pro-poses HumDial-EIBench 1, a comprehensive benchmark for sys-tematically diagnosing the emotional intelligence of ALMs. Based on the authentic human-recorded multi-turn dialogues from the ICASSP 2026 HumDial Challenge [11], this bench-mark reformulates traditional open-ended emotional under-standing tasks into objective multiple-choice questions (MCQs) utilizing adversarial distractors. This design bypasses superfi-cial text generation fluency to accurately measure underlying contextual reasoning capabilities. Additionally, alongside the empathetic response generation task, HumDial-EIBench intro-duces a dedicated task for acoustic-semantic conflict recogni-tion. This addition systematically evaluates cross-modal inte-gration and perceptual robustness when text semantics contra-dict acoustic emotions. The main contributions are threefold: • HumDial-EIBench provides a comprehensive evaluation framework grounded in real human multi-turn dialogues, covering emotional trajectory detection, causal reasoning, empathetic response generation, and acoustic-semantic con-flict recognition. • The adversarial MCQ formulation bypasses the subjective in-stability of LLM judges for contextual comprehension, effec-tively isolating cognitive reasoning deficits from generative expression flaws. • Systematic evaluations of eight mainstream ALMs iden-tify critical performance gaps: current models struggle with multi-turn temporal modeling and implicit causal reason-ing, and they exhibit a clear divergence between textual and acoustic empathy alongside a severe text-dominance bias when resolving cross-modal conflicts.  
+
+> 1
+
+https://github.com/ASLP-lab/HumDial-EIBench 
+
+> arXiv:2604.11594v1 [eess.AS] 13 Apr 2026
+
+Table 1: Comparison of HumDial-EIBench with existing benchmarks. A-S Conflict denotes Acoustic-Semantic Conflict.                                                                                
+
+> Benchmark Input Source Turns Targeted Capabilities Eval Method Emotion Causal Empathetic A-S Trajectory Reasoning Response Conflict
+> Dynamic-SUPERB [12] Mixed Single ××××Obj. AIR-Bench [13] Human-rec. Single ××××LLM / Human HPSU [14] Human-rec. Single ××××Obj. VoiceBench [15] Mixed Single ××××Obj. / LLM URO-Bench [16] Mixed Multi ××××LLM ParaS2S [17] Mixed Single ×××✓LLM VoxDialogue [18] TTS Multi ××✓×LLM MTalk-Bench [19] Human-rec. Multi ×✓✓×LLM / Human Multi-Bench [20] Mixed Multi ✓×✓×LLM
+> HumDial-EIBench (Ours) Human-rec. Multi ✓✓✓✓Obj. / LLM / Human
+
+## 2. Related Work 
+
+Audio Language Models. Traditional spoken dialogue systems adopt a cascaded ASR →LLM →TTS architecture, where the intermediate text transcription inevitably discards paralinguis-tic cues such as intonation and emotion. End-to-end ALMs— including open-source models like Moshi [21], Qwen2.5-Omni [22], and Qwen3-Omni [23], alongside closed-source ar-chitectures such as GPT-4o [1]—have emerged to address this limitation. By directly processing continuous audio signals, these models maintain unified representations of both seman-tic content and acoustic paralinguistic features, establishing the technical foundation for native emotional intelligence tasks. 
+
+Evaluation Benchmarks. The development of ALMs necessi-tates corresponding evaluation frameworks. Early benchmarks, such as AIR-Bench and Dynamic-SUPERB [13, 12, 15], pri-marily test ASR precision and instruction-following. Subse-quent benchmarks, including URO-Bench, ParaS2S, and Vox-Dialogue [16, 17, 18], introduce complex conversational rea-soning but rely entirely on TTS-synthesized speech. While HPSU and ISA-Bench [14, 24] incorporate authentic human recordings, they restrict evaluation to static, single-turn emo-tion recognition, precluding the assessment of cross-turn emo-tional dynamics. For multi-turn emotional interactions, Multi-Bench and MTalk-Bench [20, 19] assess emotional trajectory tracking and empathy. However, these benchmarks exhibit two fundamental limitations: their reliance on TTS synthesis gen-erates a pseudo-multi-turn effect that disrupts natural continu-ous emotional evolution, and their widespread use of LLM-as-a-Judge scoring introduces severe subjective instability. Fur-thermore, although specific studies [10, 25] explore acoustic-semantic mismatches within traditional speech emotion recog-nition (SER), comprehensive ALM benchmarks omit system-atic cross-modal contradiction evaluation. HumDial-EIBench resolves these structural gaps by assessing ALM emotional in-telligence through authentic human multi-turn dialogues, ob-jective multiple-choice formulations, and an explicit acoustic-semantic conflict task. 
+
+## 3. HumDial-EIBench 
+
+HumDial-EIBench is directly built upon the test set of the ICASSP 2026 HumDial Challenge. To ensure both controllabil-ity and realism, the foundational data were created by design-ing specific dialogue scenarios and speaker turns, which were then naturalistically enacted. This paper extends this founda-tion by reformulating the open-ended challenges into an objec-tive evaluation framework and introducing a cross-modal con-flict task. Figure 1 details the complete three-stage data con-Table 2: Data and evaluation overview of HumDial-EIBench. Gen.: Generation.                          
+
+> Task Type Turns Dialogue (CN/EN) Utterance Metric
+> Task 1 MCQ 3–5 150/150 1200 ACC Task 2 MCQ 3–5 134/149 1132 ACC Task 3 Gen. 3–5 144/150 1170 LLM/Hum Task 4 MCQ 1100/100 200 ACC
+
+struction pipeline and presents representative examples for the four targeted evaluation tasks. 
+
+3.1. Task formulation and statistics 
+
+The proposed benchmark comprises four tasks constructed di-rectly from high-quality human recordings. Table 2 summa-rizes the data scale and designated evaluation metrics. While Tasks 1, 2, and 3 use multi-turn conversational audio, primarily sourced from the HumDial Challenge test set, this benchmark reformulates the original open-ended trajectory and reasoning tasks (Tasks 1 and 2) into objective multiple-choice questions (MCQs). Task 3 retains its open-ended generative format. Fur-thermore, Task 4 is newly collected and designed using single-turn samples to evaluate acoustic-semantic consistency and con-tradiction. All tasks include Chinese (CN) and English (EN) subsets, yielding a total of 1,077 evaluation samples. • Task 1 (Emotional Trajectory Detection) examines emo-tional memory in dialogues, requiring the ALM to select the correct trajectory of user emotional shifts over time (e.g., 
+
+Et1 → Et2 → Et3) from the provided options. • Task 2 (Implicit Causal Reasoning) requires inferring the unstated root cause of the current emotion from scattered context. Formulating this task as an MCQ minimizes scoring subjectivity while strictly evaluating deep contextual under-standing. • Task 3 (Empathetic Response Generation) assesses both the semantic depth (text empathy) and the acoustic appropri-ateness (acoustic empathy) of the generated response. • Task 4 (Acoustic-Semantic Conflict) targets scenarios where textual semantics contradict acoustic emotions (e.g., sarcasm). It tests whether the model can identify the true emotional state primarily from acoustic cues despite textual interference, evaluating its robustness against text-dominance bias. "I won a prize! Two movie tickets!"        
+
+> "Can you summarize the evolution of my emotions?" "Too bad my friend canceled last minute, no one will go with me."
+> Anchor Override Recall
+> "My hands are shaking, and the envelope is empty." "I can't believe I trusted that email link." "What is the underlying reason for my current state?"
+> Implied Cause Accumulation Inquiry
+> "Great job working overtime."
+> Text Emo Audio Emo Text Emo Audio Emo
+
+≠
+
+> LLM-based
+> Generation
+
+Stage 1:  Dialogue Script Design 
+
+> Authentic Human Enactment Emotional Prosody
+> Speaker Pool
+
+Stage 2:  Authentic Human Enactment and Quality Control 
+
+> Generated Dialogue Scripts Human and Automated Check 100% Verification High-Quality Speech Data
+> Audio Samples
+> User Independence Principle Context → User Logic → System Reply
+> Turns 3~5
+> Turns 3~5
+
+Task 1 
+
+> User (Turn 1): "I'm furious! My colleague stole my proposal and presented it as their own. It's daylight robbery!" (Emotion: Anger) User (Turn 2): "Wait... Wow! I just got an email—my design entry made it to the finals! Unbelievable!" (Emotion: Happy) User (Turn 3 Question): Please summarize how my emotions evolved during this interaction. Choose one of the following options and provide a reason: A. From Disgust to Joy B. From Surprise to Joy C. From Anger to Surprise D. From Anger to Joy"
+
+Task 2 
+
+> User (Turn 1): "So annoying... [Cough] I kept getting emails from a weird address. I almost deleted them as spam." (Emotion: Disgust) User (Turn 2): "But I opened one... guess what? [Laugh] I won a photography contest from college! I totally forgot about it!" (Emotion: Surprise) User (Turn 3 Question): "Why do I have such a feeling of surprise? Choose one of the following options and provide a reason: A. Received a prize notice in a 'spam' email B. Felt curious about the email content C. Forgot about entering the contest D. The email was related to past experience"
+
+Task 4  
+
+> User (Question):
+> Please help identify the emotion of the following sentence: 'Unbelievable... you actually threw the report I worked so hard on into the trash as if it were scrap paper.' Choose one of the following options and provide a reason: A. Fear B. Disgust C. Anger D. Happy
+
+Task 3 
+
+> User: "I've been preparing for this interview for weeks, but I still got rejected. I feel like I'm just not good enough." (Emotion: Sad)
+> "I'm so sorry. It's incredibly frustrating to face rejection after working so hard. Remember, this doesn't define your worth. I'm here if you want to talk."
+> (Evaluation: D1 Textual Empathy, D2 Vocal Empathy, D3 Naturalness)
+> Model (Empathetic Response Generation):
+
+Stage 3:  Benchmark Reformulation and Distractor Construction 
+
+> Multi-turn (3-5 Turns) Single-turn Multi-turn (3-5 Turns) Multi-turn (3-5 Turns)
+
+Figure 1: Data construction and task overview of HumDial-EIBench. Left: Three-stage pipeline— Stage 1 : Dialogue Script Design; 
+
+Stage 2 : Authentic Human Enactment and Quality Control; Stage 3 : Multiple-Choice Reformulation and Distractor Construction. 
+
+Right: Representative examples of the four tasks. 
+
+3.2. Data construction pipeline 
+
+The data construction pipeline consists of three sequential stages. 
+
+3.2.1. Dialogue script design 
+
+In the foundational dataset, dialogue scenarios and multi-turn speaker scripts were pre-generated using an auxiliary LLM based on specified scenario instructions. To ensure rigorous evaluation and acoustic consistency, these scripts were fixed of-fline rather than generated dynamically by the evaluated mod-els. The scripts fall into three principal categories: • Trajectory-Oriented (Tasks 1 & 3): These scripts estab-lish an initial emotion (e.g., “slightly sad”), introduce a mid-dialogue turning point (improvement or deterioration), and conclude with a neutral inquiry to form a traceable emotional evolution (e.g., Et1 → Et2 → Et3 in a three-turn example). • Reasoning-Oriented (Tasks 2 & 3): The user disperses im-plicit emotional trigger details across multiple turns (e.g., chronic overtime or family conflicts) without explicit affect labels. The task forces the model to infer the root cause from the accumulated historical context. • Conflict-Oriented (Task 4): Single-sentence text scripts are designed for human speakers to deliver in two distinct man-ners: one where vocal emotion matches the text sentiment (consistent), and another where vocal emotion contradicts the text sentiment (conflict), generating paired contrastive sam-ples. 
+
+3.2.2. Authentic human enactment and quality control 
+
+During the recording phase, 52 speakers enacted the structured scripts in accordance with the designated scenarios. The enact-ment intentionally preserved human behavioral variations, nat-urally embedding speech-rate shifts, pauses, sighs, and hesita-tions to closely approximate daily conversations. The founda-tional test set was finalized following baseline denoising and rigorous manual inspection to exclude samples with severe noise or mispronunciations. 
+
+3.2.3. Multiple-choice reformulation and distractor construc-tion 
+
+To mitigate the subjectivity of LLM-as-a-Judge evaluations in assessing comprehension and reasoning capabilities, the as-sessment of contextual and cross-modal understanding is trans-formed into objective MCQs. The audio for all multiple-choice options is synthesized using Qwen3-TTS [26], which employs the original speaker’s voice as the reference audio to maintain acoustic consistency. These synthesized options are directly ap-pended to the final turn of the human-recorded dialogue. Task 3 remains an open-ended generation task and therefore requires no options. For each sample in the objective tasks (Tasks 1, 2, and 4), three adversarial distractors are designed: • Task 1 (Trajectory): Distractors are formulated by flipping emotional polarity, scrambling temporal order, or substitut-ing specific sequence segments. They appear locally plausi-ble but remain globally inconsistent with the true emotional trajectory. • Task 2 (Reasoning): An auxiliary LLM generates options at-tached to secondary facts explicitly mentioned in the text, yet detached from the genuine emotional trigger. This forces the evaluated ALM to distinguish mere factual statements from actual emotional causes. • Task 4 (Conflict): A “literal interpretation” option based en-tirely on text semantics serves as a strong distractor. This option specifically exposes whether a model improperly pri-oritizes textual meaning over authentic acoustic emotion. 
+
+3.3. Evaluation methodology 
+
+Tasks 1, 2, and 4 are evaluated automatically using standard classification accuracy. The generative task (Task 3) is assessed on a 1–5 scale across three defined dimensions. Dimension 1 (D1, Textual Empathy & Insight) evaluates the depth of tex-tual empathy, assessing whether the response actively validates and explores the user’s emotional state rather than merely mir-roring it. Dimension 2 (D2, Vocal Empathy & Congruence) assesses paralinguistic appropriateness, evaluating whether the synthesized speech exhibits natural tonal shifts and warmth that correspond to the emotional context. Dimension 3 (D3, Audio Quality & Naturalness) measures the technical clarity, fluency, and human-like naturalness of the synthesized audio. Detailed evaluation rubrics and prompts are available in the open-source repository 2. For scoring, D1 relies on advanced text LLMs (Qwen3-Omni and Gemini-2.5-Pro). Since current automated tools remain unreliable for quantifying complex vocal expres-
+
+2https://github.com/ASLP-lab/Hum-Dial Table 3: Accuracy (%) on Tasks 1 and 2. Bold : best in column; underline: second best.                                                        
+
+> Model Task 1 (Trajectory) Task 2 (Reasoning)
+> CN EN Avg CN EN Avg
+> Open-Source
+> Freeze-Omni 16.00 6.00 11.00 23.88 24.16 24.02 GLM-4-Voice 42.67 18.00 30.34 58.96 52.35 55.66 Kimi-Audio 70.00 62.67 66.34 71.64 65.77 68.71 Step-Audio-2-mini 34.67 34.67 34.67 67.16 76.51 71.84 Qwen2.5-Omni 66.67 80.67 73.67 76.09 77.85 76.99
+> Closed-Source
+> Doubao-realtime 76.67 60.00 68.33 52.24 53.69 52.97 GPT-4o-audio 79.33 86.67 83.00 72.39 80.54 76.47 Gemini-2.5-flash 84.67 91.33 88.00 76.12 83.22 79.67
+
+Table 4: Scores on Task 3. D1: text empathy, scored by LLM judges (Qwen3-Omni / Gemini2.5-Pro); D2/D3: acoustic em-pathy / naturalness. Bold : best in column; underline: second best; italics: anomalous low.                                                
+
+> Model D1 (Q / G) D2 / D3 (Human)
+> CN EN CN EN
+> Open-Source
+> Freeze-Omni 3.69 / 2.69 3.25 / 2.52 3.29 / 3.42 3.37 / 3.45 GLM-4-Voice 3.62 / 3.38 2.77 / 2.42 3.27 / 3.31 3.37 / 3.41 Kimi-Audio 3.62 / 3.59 1.17 /1.19 3.52 / 3.60 3.50 / 3.49 Qwen2.5-Omni 3.41 / 3.19 3.37 / 2.87 3.55 / 3.65 3.49 / 3.59 Step-Audio-2-mini 3.48 / 3.48 3.29 / 3.07 3.36 / 3.47 3.47 / 3.52
+> Closed-Source
+> Doubao-realtime 3.24 / 3.29 3.23 / 3.04 3.79 /3.79 3.58 / 3.57 GPT-4o-audio 3.77 /3.79 3.77 /4.10 3.23 / 3.26 3.42 / 3.49 Gemini-2.5-flash 3.68 / 3.73 3.64 / 3.93 3.26 / 3.39 3.60 /3.60
+
+sions, D2 and D3 are assessed by human judges. Ten experi-enced listeners evaluated both the Chinese and English subsets under a blind rating protocol. 
+
+## 4. Experiments 
+
+4.1. Experimental setup 
+
+We evaluate eight ALMs in two categories. The open-source group includes Freeze-Omni [27], GLM-4-Voice [28], Kimi-Audio [29], Step-Audio-2-mini [30], and Qwen2.5-Omni [22]. The closed-source group consists of Doubao-realtime, GPT-4o-audio [1], and Gemini-2.5-flash [2]. These models represent the current state of the art in ALM performance. 
+
+4.2. Results and analysis Multi-Turn Emotional Tracking and Reasoning As shown in Table 3, closed-source models (e.g., Gemini-2.5-flash) achieve the highest average accuracies in emotional trajectory tracking (88.00%) and implicit causal reasoning (79.67%) for Tasks 1 and 2. Open-source models display high variance, with only Qwen2.5-Omni performing competitively. Notably, the two model classes exhibit opposite trends: closed-source models ex-cel at trajectory tracking, demonstrating robust sequential emo-tion memory, whereas open-source models perform better at lo-calized causal extraction but struggle with multi-step sequences. This disparity likely arises from differences in long-term con-text processing capacity. 
+
+Empathetic Response Generation Table 4 presents three find-ings for Task 3. First, dual LLM evaluation of text empa-Table 5: Accuracy (%) on Task 4. “Conflict” denotes samples where acoustic emotion contradicts text sentiment; “Nonconf.” denotes consistent samples. Bold : best in column; underline: second best.                                      
+
+> Model CN EN
+> Conflict Nonconf. Conflict Nonconf.
+> Open-Source
+> Freeze-Omni 18.00 50.00 22.00 60.00 GLM-4-Voice 30.00 82.00 20.00 54.00 Kimi-Audio 48.00 80.00 38.00 80.00 Step-Audio-2-mini 24.00 82.00 26.00 82.00 Qwen2.5-Omni 22.00 88.00 32.00 86.00
+> Closed-Source
+> Doubao-realtime 54.00 74.00 40.00 64.00 GPT-4o-audio 34.00 70.00 46.00 68.00 Gemini-2.5-flash 50.00 80.00 62.00 70.00
+
+thy (D1) exposes significant scoring variance (e.g., a 1.0-point difference for Freeze-Omni), indicating subjectivity in current LLM-as-a-judge approaches. Second, despite systemic fluc-tuations in D1 scores, incorporating human-evaluated acoustic empathy (D2) demonstrates a consistent structural decoupling between textual and acoustic empathy. For example, Doubao-realtime achieves the highest acoustic empathy (D2: 3.79) de-spite moderate text empathy (D1: 3.24/3.29). This indicates ALMs can synthesize expressive speech independently of se-mantic depth. Finally, Kimi-Audio exhibits anomalously low English D1 scores (1.17/1.19) due to severe cross-lingual in-terference, resulting in frequent Chinese responses to English prompts. 
+
+Acoustic-Semantic Conflict Recognition Task 4 evaluates ro-bustness when acoustic emotions contradict text semantics. Ta-ble 5 shows that all ALMs degrade significantly on conflict sam-ples. Notably, models excelling on consistent samples suffer se-vere declines; for instance, Qwen2.5-Omni accuracy drops from 88.00% to 22.00% on Chinese conflict samples. This demon-strates a prevalent “text-dominance bias,” where models un-der cross-modal interference over-rely on literal text and select text-derived distractors instead of prioritizing authentic acoustic emotion. Even robust closed-source models like Gemini-2.5-flash exhibit this vulnerability. Consequently, current audio-native architectures retain the “transcribe-then-understand” bias of cascaded systems, establishing cross-modal conflict resolu-tion as a primary challenge. 
+
+## 5. Discussion and Conclusion 
+
+This paper introduces HumDial-EIBench, an objective evalu-ation framework utilizing authentic human-recorded dialogues to assess the emotional intelligence of ALMs. By reformulat-ing open-ended scenarios into multiple-choice tasks, the bench-mark successfully isolates multi-turn emotional memory and reasoning capacities from superficial generation proficiency for independent diagnosis. System-level evaluations reveal crit-ical structural deficiencies in current architectures, notably a widespread “text-dominance bias” under cross-modal conflicts and a “structural decoupling” between textual and acoustic em-pathy. These findings indicate that existing models still primar-ily process audio as a transcription proxy rather than treating it as an independent emotional modality of equal importance to text, underscoring the urgent necessity of explicit cross-modal consistency training to achieve genuine multimodal alignment. Nevertheless, this study exhibits certain limitations. First, regarding the text empathy evaluation of generated responses (Task 3, D1), the high variance among different LLM judges indicates that automatically and objectively quantifying empa-thy depth remains an unsolved open problem. Second, the acoustic-semantic conflict evaluation (Task 4) currently focuses on single-turn utterances, whereas real-world sarcasm or im-plicit emotions are often intertwined within complex multi-turn interactions. Future work will aim to expand multi-turn conflict scenarios and explore more stable, reliable automatic evaluation metrics for multimodal empathy. 
+
+## 6. Generative AI Use Disclosure 
+
+Generative AI models, including Qwen3-TTS, Qwen2.5-Omni and Gemini 2.5 Pro, were used for data generation, and response evaluation. The authors are fully responsible and accountable for the final content of this paper. All authors agree with the submission of this paper. 
+
+## 7. References 
+
+[1] A. Hurst, A. Lerer, A. P. Goucher, A. Perelman et al. , “Gpt-4o system card,” arXiv preprint arXiv:2410.21276 , 2024. [2] G. Comanici, E. Bieber, M. Schaekermann, I. Pasupat, N. Sachdeva et al. , “Gemini 2.5: Pushing the frontier with ad-vanced reasoning, multimodality, long context, and next genera-tion agentic capabilities,” arXiv preprint arXiv:2507.06261 , 2025. [3] Y. Chu, J. Xu, X. Zhou, Q. Yang, S. Zhang, Z. Yan, C. Zhou, and J. Zhou, “Qwen-audio: Advancing universal audio understand-ing via unified large-scale audio-language models,” arXiv preprint arXiv:2311.07919 , 2023. [4] Y. Chu, J. Xu, Q. Yang, H. Wei, X. Wei, Z. Guo et al. , “Qwen2-audio technical report,” arXiv preprint arXiv:2407.10759 , 2024. [5] D. Zhang, S. Li, X. Zhang, J. Zhan, P. Wang, Y. Zhou, and X. Qiu, “Speechgpt: Empowering large language models with intrinsic cross-modal conversational abilities,” in EMNLP , ser. Findings of ACL, vol. EMNLP, 2023, pp. 15 757–15 773. [6] H. Xue, Y. Liang, B. Mu, S. Zhang, M. Chen, Q. Chen, and L. Xie, “E-chat: Emotion-sensitive spoken dialogue system with large language models,” in Proc. ISCSLP . IEEE, 2024, pp. 586–590. [7] X. Geng, K. Wei, Q. Shao, S. Liu, Z. Lin, Z. Zhao, G. Li, W. Tian, P. Chen, Y. Li, P. Guo, M. Shao, S. Wang, Y. Cao, C. Wang, T. Xu, Y. Dai, X. Zhu, Y. Li, L. Zhang, and L. Xie, “OSUM: advanc-ing open speech understanding models with limited resources in academia,” arXiv preprint arXiv:2501.13306 , 2025. [8] X. Geng, Q. Shao, H. Xue, S. Wang, H. Xie, Z. Guo, Y. Zhao, G. Li, W. Tian, C. Wang, Z. Zhao et al. , “Osum-echat: Enhancing end-to-end empathetic spoken chatbot via understanding-driven spoken dialogue,” arXiv preprint arXiv:2508.09600 , 2025. [9] W. Tian, Z. Zhao, J. Hu, H. Chen, H. Liu, B. Mu, and L. Xie, “EmoOmni: Bridging emotional understanding and expression in omni-modal LLMs,” arXiv preprint arXiv:2602.21900 , 2026. [10] D. Huang, Y. Lv, R. Xiong, C. Jin, and X. Peng, “When tone and words disagree: Towards robust speech emotion recognition un-der acoustic-semantic conflict,” arXiv preprint arXiv:2601.04564 ,2026. [11] Z. Zhao, S. Wang, G. Li, H. Xue, C. Wang, S. Wang, L. Xiao, Z. Zhang, H. Bu, X. Xu, X. Wang, H. Liu, E. S. Chng, H. Lee, H. Li, and L. Xie, “The ICASSP 2026 humdial challenge: Bench-marking human-like spoken dialogue systems in the LLM era,” 
+
+arXiv preprint arXiv:2601.05564 , 2026. [12] C. Huang, K. Lu, S. Wang, C. Hsiao, C. Kuan, H. Wu, S. Arora, K. Chang, J. Shi, Y. Peng, R. S. Sharma, S. Watanabe, B. Ra-makrishnan, S. Shehata, and H. Lee, “Dynamic-superb: Towards a dynamic, collaborative, and comprehensive instruction-tuning benchmark for speech,” in Proc. ICASSP . IEEE, 2024, pp. 12 136–12 140. [13] Q. Yang, J. Xu, W. Liu, Y. Chu, Z. Jiang, X. Zhou, Y. Leng, Y. Lv, Z. Zhao, C. Zhou, and J. Zhou, “Air-bench: Benchmarking large audio-language models via generative comprehension,” in Proc. ACL , L. Ku, A. Martins, and V. Srikumar, Eds. Association for Computational Linguistics, 2024, pp. 1979–1998. [14] C. Li, P. Yang, Y. Zhong, J. Yu, Z. Wang, Z. Gou, W. Chen, and J. Yin, “HPSU: A benchmark for human-level percep-tion in real-world spoken speech understanding,” arXiv preprint arXiv:2511.23178 , 2025. [15] Y. Chen, X. Yue, C. Zhang, X. Gao, R. T. Tan, and H. Li, “Voicebench: Benchmarking llm-based voice assistants,” arXiv preprint arXiv:2410.17196 , 2024. [16] R. Yan, X. Li, W. Chen, Z. Niu, C. Yang, Z. Ma, K. Yu, and X. Chen, “Uro-bench: Towards comprehensive evalua-tion for end-to-end spoken dialogue models,” in Proc. EMNLP ,C. Christodoulopoulos, T. Chakraborty, C. Rose, and V. Peng, Eds. Association for Computational Linguistics, 2025, pp. 17 211–17 242. [17] S.-w. Yang, M. Tu, A. T. Liu, X. Qu, H.-y. Lee, L. Lu, Y. Wang, and Y. Wu, “Paras2s: Benchmarking and aligning spoken lan-guage models for paralinguistic-aware speech-to-speech interac-tion,” arXiv preprint arXiv:2511.08723 , 2025. [18] X. Cheng, R. Hu, X. Yang, J. Lu, D. Fu, Z. Wang, S. Ji, R. Huang, B. Zhang, T. Jin, and Z. Zhao, “Voxdialogue: Can spoken dia-logue systems understand information beyond words?” in TProc. ICLR . OpenReview.net, 2025. [19] Y. Du, Q. Huang, G. Zhu, Z. Dai, S. Chen, Q. Zhu, Y. Zhang, L. Zhou, and B. Wang, “Mtalk-bench: Evaluating speech-to-speech models in multi-turn dialogues via arena-style and rubrics protocols,” arXiv preprint arXiv:2508.18240 , 2025. [20] Y. Deng, G. Hu, H. Sun, X. Zhang, H. Zhang, F. Tian, X. Yang, G. Yu, and E. S. Chng, “Multi-bench: A multi-turn interactive benchmark for assessing emotional intelligence ability of spoken dialogue models,” arXiv preprint arXiv:2511.00850 , 2025. [21] A. D´ efossez, L. Mazar´ e, M. Orsini, A. Royer, P. P´ erez, H. J´ egou, E. Grave, and N. Zeghidour, “Moshi: a speech-text foundation model for real-time dialogue,” arXiv preprint arXiv:2410.00037 ,2024. [22] J. Xu, Z. Guo, J. He, H. Hu, T. He et al. , “Qwen2.5-omni technical report,” arXiv preprint arXiv:2503.20215 , 2025. [23] J. Xu, Z. Guo, H. Hu, Y. Chu, X. Wang, J. He et al. , “Qwen3-omni technical report,” arXiv preprint arXiv:2509.17765 , 2025. [24] B. Li, W. Huang, Y. Qiu, Y. Guo, H. Wang, Z. Li, J. Peng, Z. Ma, X. Chen, and K. Yu, “Isa-bench: Benchmarking instruc-tion sensitivity for large audio language models,” arXiv preprint arXiv:2510.23558 , 2025. [25] Z. Zhao, X. Zhu, X. Wang, S. Wang, X. Geng, W. Tian, and L. Xie, “Steering language model to stable speech emotion recog-nition via contextual perception and chain of thought,” IEEE Transactions on Audio, Speech and Language Processing , vol. 34, pp. 415–426, 2025. [26] H. Hu, X. Zhu, T. He, D. Guo, B. Zhang, X. Wang, Z. Guo, Z. Jiang, H. Hao, Z. Guo, X. Zhang, P. Zhang, B. Yang, J. Xu, J. Zhou, and J. Lin, “Qwen3-tts technical report,” arXiv preprint arXiv:2601.15621 , 2026. [27] X. Wang, Y. Li, C. Fu, Y. Zhang, Y. Shen, L. Xie, K. Li, X. Sun, and L. Ma, “Freeze-omni: A smart and low latency speech-to-speech dialogue model with frozen LLM,” in Proc. ICML , vol. 267, 2025. [28] A. Zeng, Z. Du, M. Liu, K. Wang, S. Jiang, L. Zhao, Y. Dong, and J. Tang, “Glm-4-voice: Towards intelligent and human-like end-to-end spoken chatbot,” arXiv preprint arXiv:2412.02612 , 2024. [29] D. Ding, Z. Ju, Y. Leng, S. Liu, T. Liu, Z. Shang, K. Shen, W. Song et al. , “Kimi-audio technical report,” arXiv preprint arXiv:2504.18425 , 2025. [30] B. Wu, C. Yan, C. Hu, C. Yi, C. Feng, F. Tian, F. Shen, G. Yu, H. Zhang, J. Li et al. , “Step-audio 2 technical report,” arXiv preprint arXiv:2507.16632 , 2025.
