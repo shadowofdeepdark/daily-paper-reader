@@ -1,0 +1,1425 @@
+Title: Think in Latent Thoughts: A New Paradigm for Gloss-Free Sign Language Translation
+
+URL Source: https://arxiv.org/pdf/2604.15301v1
+
+Published Time: Fri, 17 Apr 2026 01:19:38 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# Think in Latent Thoughts: A New Paradigm for Gloss-Free Sign Language Translation 
+
+Yiyang Jiang 1 Li Zhang 1 Xiaoyong Wei 1,2* Qing Li 11The Hong Kong Polytechnic University 2Sichuan University 
+
+yiyang.jiang@connect.polyu.hk {zanly20.zhang, cs007.wei, qing-prof.li}@polyu.edu.hk 
+
+Abstract 
+
+Many Sign language translation (SLT) systems quietly assume that brief chunks of signing map directly to spoken-language words. That assumption breaks down because signers of-ten create meaning on the fly using context, space, and movement. We revisit SLT and ar-gue that it is mainly a cross-modal reasoning task, not just a straightforward video-to-text conversion. We thus introduce a reasoning-driven SLT framework that uses an ordered sequence of latent thoughts as an explicit mid-dle layer between the video and the generated text. These latent thoughts gradually extract and organize meaning over time. On top of this, we use a plan-then-ground decoding method: the model first decides what it wants to say, and then looks back at the video to find the evidence. This separation improves coherence and faithfulness. We also built and released a new large-scale gloss-free SLT dataset with stronger context dependencies and more real-istic meanings. Experiments across several benchmarks show consistent gains over exist-ing gloss-free methods. Code and data will be released upon acceptance at https://github. com/fletcherjiang/SignThought .
+
+1 Introduction 
+
+Sign language translation (SLT) is critically impor-tant both as a vital assistive technology for connect-ing Deaf and hard-of-hearing communities and as a challenging multimodal task within natural lan-guage processing (Bragg et al., 2019). Research in this area has evolved significantly, progress-ing from early methods that approached SLT as a gloss-level classification problem over video seg-ments (Koller et al., 2015) to more recent formula-tions as a gloss-free, video-to-text sequence trans-duction task (Lin et al., 2023; Chen et al., 2024a), tackled by specialized architectures or multimodal large language models (Wong et al., 2024; Chen         
+
+> *Corresponding author Encoder
+> Decoder
+> vehicle next to a tree
+> (a) Direct SLT
+> Encoder
+> Decoder
+> Think
+> vehicle/crash@A ,
+> tree@B ,action: A→B
+> a vehicle crashed into a tree
+> (b) SignThought (think with latent thought chains)
+
+Figure 1: Latent thoughts clarified the context to dis-ambiguate signs and guide decoding toward the correct object interaction in gloss-free SLT. 
+
+et al., 2024b; Gong et al., 2024). While these ef-forts have yielded encouraging outcomes, substan-tial room for improvement remains. A key limitation lies in a long-standing mis-conception in model design: treating sign video segments as if they were directly mappable to static spoken-language words or phrases (Yin et al., 2021; Camgoz et al., 2018; Bragg et al., 2019). This view originates from an early emphasis on the Frozen Lexicon , i.e., the finite inventory of conventionalized signs listed in glossaries, while largely overlooking Productive Forms (Forster et al., 2014). Productive forms are constructed on-the-fly through classifiers, spatial grammar, and motion modulation, forming an open-ended and context-governed system that cannot be enumer-ated as discrete lexical entries (Zwitserlood, 2012). For instance, a single “vehicle” handshape may ex-press meanings such as “park,” “crash,” or “drive” purely through variations in movement and spa-tial configuration (Zwitserlood, 2012; Ngo et al., 2008). As a consequence, meaning in sign lan-guage is often not explicitly encoded in fixed sym-bolic units but dynamically generated from motion, space, and discourse context (Zwitserlood, 2012; Cormier et al., 2012; Xiao-Yong Wei, 2013). SLT is therefore a generative, context-dependent reason-ing problem, not just segment alignment or symbol substitution (Yin et al., 2021; Bragg et al., 2019; Gong et al., 2024; Jiang et al., 2024). 
+
+> arXiv:2604.15301v1 [cs.CV] 16 Apr 2026
+
+From this view, SLT naturally aligns with recent advances in text reasoning techniques, where mod-els explicitly maintain intermediate semantic states to support multi-step meaning composition under weak or implicit supervision (Wei et al., 2022; Yao et al., 2022). However, unlike text-only reasoning, SLT reasoning must operate across heterogeneous visual and linguistic modalities (Mitra et al., 2024). The absence of discrete reasoning primitives and explicit intermediate representations makes exist-ing reasoning techniques difficult to transfer di-rectly, leaving multimodal reasoning in SLT largely unexplored (Yin et al., 2021). We therefore position this work as a pilot study toward understanding how explicit reasoning can be modeled in gloss-free SLT, with the goal of identifying fundamental chal-lenges and exploring principled solutions (Bragg et al., 2019; Jiang et al., 2026b). This paradigm of-fers three key advantages that tackle the reasoning challenges as: • Latent Thought Abstraction. We introduce latent thoughts as an explicit intermediate se-mantic interface between sign videos and text generation. Rather than compressing all se-mantic information into opaque encoder fea-tures, the model maintains an ordered set of la-tent reasoning states that progressively distill and organize meaning from long, continuous visual streams, thereby bridging the mismatch between continuous visual evidence and dis-crete reasoning primitives. • Plan–Ground Decoupling. Reasoning and grounding are explicitly separated through a plan-then-ground generation mechanism: the model first determines what semantic content to express by reasoning over latent thoughts, and only then decides where to retrieve the cor-responding visual evidence. This decoupling alleviates the strong entanglement between semantic decision-making and evidence re-trieval in existing SLT systems, improving controllability and grounding faithfulness. • Traceable Evidence Alignment. Latent thoughts function not only as internal plan-ning states but also as traceable anchors that align generated text with specific temporal regions of the input video, enabling explicit evidence attribution and more faithful trans-lations, while a newly constructed large-scale gloss-free SLT dataset provides the essential empirical basis for studying and validating such reasoning behaviors. 
+
+2 Related Work 
+
+Sign Language Recognition and Translation. 
+
+Sign Language Recognition (SLR) maps sign videos to gloss sequences, evolving from isolated (ISLR) (Albanie et al., 2020; Li et al., 2020a) to continuous settings (CSLR), with typical pipelines extracting visual features from RGB or pose-based inputs (Chen et al., 2022b), modeling temporal dynamics via RNN/LSTM or Transformer archi-tectures (Camgoz et al., 2018, 2020), and decod-ing glosses using HMMs (Koller et al., 2017) or CTC objectives (Cheng et al., 2020). While effec-tive, such systems are computationally intensive and limited in exploiting higher-level linguistic context. Sign Language Translation (SLT) further translates sign videos into spoken or written lan-guage, where most methods remain gloss-based by cascading SLR with translation or jointly optimiz-ing both tasks (Camgoz et al., 2020; Zhou et al., 2021). In contrast, gloss-free SLT directly learns video-to-text mappings using Transformer-based or variational models (Li et al., 2020b; Camgoz et al., 2018; Tu and Weng, 2026); although recent advances leveraging large-scale multimodal pre-training (Li et al., 2025) and large language model adaptation (Wong et al., 2024) improve translation fluency, they introduce substantial computational overhead and increased dependence on external corpora. 
+
+Reasoning and Latent Thoughts. Chain-of-Thought (CoT) prompting enhances multi-step rea-soning in large language models (LLMs) by elicit-ing intermediate reasoning steps (Wei et al., 2023; Zhou et al., 2024b, 2025), with extensions such as self-consistency (Wang et al., 2023), planning, search, and tool-augmented reasoning further im-proving robustness and capability (Yao et al., 2023; Xie et al., 2025; Zeng et al., 2025). Beyond gen-eral reasoning tasks, LLMs have also been ap-plied to personalized recommendation assistants with memory and reasoning (Huang et al., 2026, 2025). CoT has also been explored in multimodal grounding and video reasoning (Zhang et al., 2024). More recently, reasoning has shifted from dis-crete language tokens to continuous latent spaces, where hidden states are reused as “latent thoughts” through feedback or iterative computation (Hao et al., 2025), with formal analyses and surveys Sign Embedding             
+
+> Positional
+> Encoding
+> Sign Encoder
+> Sign Language Video
+> Latent Chain -of -Thought Thinking Module
+> 𝐄
+> Learnable Thoughts
+> …????
+> Thinking Layer ×𝑳
+> 𝐂 𝟎 ?
+> 𝐂 𝒍 "𝟏
+> ?
+> 𝐂 "𝒍
+> Soft Segmentation
+> Segment Tokens
+
+S1
+
+S2
+
+S3
+
+S4 …
+
+Sj                                                    
+
+> …
+> …
+> …
+> …
+> …
+> …
+> …
+> …
+> …
+> …
+> …
+> Causal Self Attention Similarity
+> G
+> Sinkhorn
+> Norm
+> Soft Binding
+> Matrix
+> A
+> Routed
+> Summary
+> 𝒑 𝒌
+> Evidence -Routed
+> Cross -Attention
+> 𝐂 𝒍
+> Repeat 𝑳 times
+> Final Thought Chain 𝐂
+> Reference sentence
+> <𝐵𝑂𝑆 >And then there's alot of
+> arm strength involved to stabilize the
+> dumbbell right above his shoulders .
+> Word Embedding
+> Positional
+> Encoding
+> And then there's alot of arm strength
+> involved to stabilize the dumbbell
+> right above his shoulders .<𝐸 𝑂𝑆 >
+> Linear +Softmax
+> Final translation
+> Dual -Stream De coder
+> Cross -Attention
+> (Think Stream)
+> 𝐇 𝐭𝐡𝐢𝐧𝐤
+> 𝐇 &'(
+> Routing Bias
+> Attn Weights
+> Cross -Attention
+> (Ground Stream)
+> Bias Injection
+> FFN
+> 𝐇
+> 𝐄 :frame -level evidence tokens
+> 𝐒 :segment tokens
+> (soft segmentation)
+> 𝐂 𝟎 →𝐂 :learnable thoughts /
+> final thought chain
+> 𝐀 ∈𝐑 𝐊 ×𝐌 :soft binding
+> (Sinkhorn -normalized)
+> Masked Self -
+> Attention
+> : data flow
+> : routing bias
+> 𝐇 𝐬𝐞𝐥𝐟
+> …
+
+Figure 2: An overview of the SignThought framework, which consists of three parts: (i) a sign encoder that maps the input video X into dense evidence features E; (ii) a Latent Chain-of-Thought module that iteratively updates K
+
+learnable thought slots and performs structured routing (segmentation → Sinkhorn-style binding → routed retrieval, with an optional monotonic bias) to distill E into an ordered thought chain C; and (iii) a plan-then-ground dual-stream decoder that first attends to C for semantic planning and then grounds each token on E under thought-guided temporal priors to generate the spoken-language translation end-to-end. 
+
+clarifying the relationship between CoT and latent-thought paradigms (Xu and Sato, 2025). Notably, existing latent-thought approaches primarily op-erate on token-level embeddings within unimodal LLMs, whereas our Latent Thoughts are video-conditioned latent slots updated via attention over sign-video features, explicitly serving as a cross-modal interface bridging visual evidence and de-coding in gloss-free SLT. 
+
+3 Method 
+
+We study gloss-free sign language translation (SLT), where the supervision consists solely of sentence-level translations without any interme-diate gloss annotations. Given a sign video clip, we aim to generate a target spoken-language sen-tence. Let a sign clip be represented as a se-quence of visual observations X = {xt}Ts
+
+t=1 (pre-extracted features). A binary mask m ∈ { 0, 1}Ts
+
+indicates valid time steps when clips are padded. The target translation is a token sequence Y =
+
+{yt}Tt
+
+t=1 with yt ∈ V , where V is the text vocab-ulary. We assume a dataset of paired samples 
+
+D = {(X(n), Y(n))}Nn=1 .Crucially, no gloss sequence or sign-token align-ment is provided. We learn a conditional sequence model that maximizes the likelihood of the target sentence given the sign clip: 
+
+pθ(Y | X) = 
+
+TtY
+
+t=1 
+
+pθ(yt | y<t , X) . (1) In addition to the standard autoregressive formu-lation, our method introduces a set of K ordered latent thought states C = {ck}Kk=1 that serve as an intermediate semantic plan distilled from X and consumed by the decoder during generation. 
+
+3.1 Sign Encoder 
+
+Given a sign video clip, we represent it as a feature sequence X = {xt}Ts
+
+t=1 , where each xt ∈ Rdx is a pre-extracted visual feature vector from a pre-trained Inception network at time step t, and Ts
+
+is the padded sequence length. Following the fea-ture setting of (Voskou et al., 2021), we initialize the visual feature extractor from the open-sourced Inception network and remove gloss-dependent su-pervision during feature learning. The extractor is trained with a sentence-level contrastive objective using only paired sign video-sentence data. We use a binary mask m ∈ { 0, 1}Ts to indicate valid (non-padded) positions. We first project the raw per-frame features into the model space via a learn-able embedding layer, i.e., E(0) = Embed( X),where Embed( ·) is implemented as a linear projec-tion followed by normalization and dropout. This step unifies sign features into a shared representa-tion space for subsequent sequence modeling. To inject order information, we add positional encoding to obtain ˆE(0) , with dropout applied after-ward. We then stack Nenc encoder layers to model long-range dependencies and local motion patterns: 
+
+ˆE(n) = EncBlock (n)( ˆE(n−1) , m), n = 1 , . . . , N, 
+
+(2) where each EncBlock follows a Conformer-style design, combining multi-head self-attention (masked by m) with a lightweight convolutional module to capture local temporal dynamics, to-gether with feed-forward sublayers and residual normalization. The final encoder output is E =ˆE(N ) = {et}Ts
+
+> t=1
+
+. The resulting sequence E serves as the frame-level evidence source for both the Latent CoT thinking module (Sec. 3.2) and the dual-stream decoder (Sec. 3.3). 
+
+3.2 Thinking in Latent Chain-of-Thought 
+
+The objective of the thinking module is to trans-form the dense encoder representations E into a compact and ordered set of K latent thought states C = {ck}Kk=1 , which collectively serve as a high-level semantic plan for translation. In con-trast to gloss-based pipelines, these thought states are learned end-to-end under sentence-level su-pervision and are explicitly organized to form a directional latent chain. Given encoder features 
+
+E = {et}Ts 
+
+> t=1
+
+and corresponding source mask, the module outputs C = Think( E) ∈ RK×d, where the index k defines the causal order of the latent reasoning process. 
+
+Learnable thought slots. A central difficulty in gloss-free SLT is that the video provides dense and redundant evidence, while the translation requires a compact sequence of semantic decisions. Instead of forcing the decoder to discover this structure on the fly, we introduce an explicit intermediate interface: a small set of ordered thought slots that serve as the model’s working memory for step-wise semantic composition. Concretely, we initialize the thought chain with K learnable slots C(0) = {c(0)  
+
+> k
+
+}Kk=1 ,where each c(0)  
+
+> k
+
+∈ Rd is a trainable parameter, serv-ing as empty reasoning states before evidence injec-tion. These slots can be viewed as empty reasoning states that will be filled with semantic evidence distilled from E.
+
+Thinking layers. A key bottleneck in gloss-free SLT is that the encoder produces a long, continu-ous evidence stream E, while what we ultimately need for generation is a compact and structured semantic plan. If we let the decoder directly attend to all frames, it must simultaneously decide what to express and where the supporting evidence lies, which often leads to diffuse attention and unstable evidence tracking. We therefore introduce a dedi-cated thinking stage that repeatedly compresses and reorganizes E into an ordered latent chain C be-fore decoding. To make this compression process expressive yet controllable, we stack L identical thinking layers to iteratively refine the chain: 
+
+C(ℓ) = ThinkLayer (ℓ)(C(ℓ−1) , E), ℓ = 1 , . . . , L, 
+
+(3) and set C = C(L) as the final latent chain-of-thought. Each thinking layer consists of two main steps: causal thought mixing to impose an ordered chain prior, and an evidence-routed cross-attention operator that retrieves sign evidence in a structured manner. We first encourage a directional (coarse-to-fine) refinement inside the latent chain. Specifically, we apply masked self-attention over the K thought states using a lower-triangular (causal) mask, so that the k-th thought only attends to {1, . . . , k }:
+
+˜C(ℓ) = CausalSelfAttn 
+
+
+
+C(ℓ−1) 
+
+. (4) This simple prior turns the thought set into an ordered workspace: earlier thoughts summarize coarse semantics and provide context, while later thoughts refine with additional details, making the intermediate reasoning process more stable and interpretable. The second challenge is evidence assignment. A standard cross-attention from thoughts to all frames is both inefficient on long clips and prone to de-generacy, where multiple thoughts attend to the same frames. We address this by routing before retrieval: each thought is first encouraged to be ap-proximately contiguous (via Lcont), and only then does it retrieve fine-grained evidence within that responsibility region. From the frame-level stream E, we derive (i) frame evidence (the original tokens), (ii) a small set of segment-level tokens S obtained by a dif-ferentiable soft segmentation over time (Chen et al., 2025). Intuitively, S provides sparse se-mantic “chunks” (analogous to latent phrase units) while frame evidence preserves fine-grained lexi-cal details. We compute segment-to-frame weights 
+
+Wseg ∈ RM ×Ts via soft boundaries (per instance), where each row defines a soft temporal window and is normalized over frames. Segment tokens are obtained by weighted pooling: 
+
+Sj =
+
+> Ts
+
+X
+
+> t=1
+
+(Wseg )j,t et, j = 1 , . . . , M. (5) Given segment tokens S = {Sj }Mj=1 and latent thoughts C = {ck}Kk=1 , we compute a similarity score matrix G ∈ RK×M with 
+
+Gk,j = (Wqck)⊤(WkSj )
+
+√d . (6) We then apply a differentiable Sinkhorn-style nor-malization to obtain a soft binding matrix A =Sinkhorn( G) ∈ RK×M , where Ak,j ≥ 0 denotes the (soft) amount of segment j assigned to thought 
+
+k. In practice, we perform Sinkhorn normaliza-tion with a row-wise unit mass and a uniform col-umn budget , i.e., PMj=1 Ak,j ≈ 1 for all k and 
+
+PKk=1 Ak,j ≈ K/M for all j (up to a small error 
+
+ϵnum ). This yields an approximately balanced trans-port plan: each thought receives comparable total evidence, while each segment contributes a lim-ited and evenly distributed amount across thoughts, preventing collapsed routing while keeping the as-signment fully soft. Each thought receives a routed segment summary: 
+
+pk =
+
+> M
+
+X
+
+> j=1
+
+Ak,j Sj , pk ∈ Rd, (7) where pk aggregates the segment evidence assigned to thought ck. Since A is approximately row-normalized (i.e., P 
+
+> j
+
+Ak,j ≈ 1), pk can be inter-preted as a weighted average of segment tokens. Conditioned on the routed summary pk, each thought retrieves fine-grained sign evidence from 
+
+E via cross-attention (and optionally sparse/de-formable retrieval for efficiency on long clips). We denote the resulting evidence-aware thought update by 
+
+ˆC(ℓ) = RoutedXAttn 
+
+ ˜C(ℓ), E, p
+
+
+
+, p = {pk}Kk=1 
+
+(8) where RoutedXAttn encapsulates (evidence-fabric → routing → retrieval) as a single operator in our implementation and in the overview figure, and uses pk (equivalently, the routing induced by 
+
+A) to bias the cross-attention over E. Finally, we apply a position-wise feed-forward network with residual normalization to produce the layer output: 
+
+C(ℓ) = FFN 
+
+ ˆC(ℓ)
+
+. (9) The final thought chain C is consumed by the decoder through thinking cross-attention (Sec. 3.3). In addition, the intermediate routing variables (e.g., the thought-to-segment binding A and the segmen-tation weights) can be cached as an internal prior to guide visual grounding in the dual-stream decoder, without changing the model Input and Output. 
+
+3.3 Dual-Stream Decoder 
+
+We adopt an autoregressive Transformer decoder that explicitly follows a plan-then-ground genera-tion pattern. At each layer, the decoder first con-sults the latent thought chain to decide what se-mantic content to express, and then returns to the encoder features to retrieve fine-grained signing evidence for how to realize that content in fluent text. Given an input text prefix y<t (teacher forcing during training), we embed tokens with standard word and positional (and optionally token-type) embeddings to obtain decoder states. Let H(l−1) denote the decoder hidden states entering layer l. Each layer contains the fol-lowing sub-layers. We first apply masked self-attention over previously generated tokens to pro-duce H(l)self = MSA  H(l−1) , where the subse-quent mask ensures autoregressive generation. We then attend to the latent thought chain C:
+
+H(l)think = XAttn 
+
+
+
+H(l)self , C
+
+
+
+. (10) Intuitively, this step selects the current semantic “reasoning state” from the ordered thoughts, pro-viding a high-level plan for the next tokens. We also retain the corresponding attention weights over thoughts, denoted by α, as they reflect which thought(s) each target position relies on. To make “think first, then ground” a mechanism rather than only an ordering, we derive a soft tem-poral retrieval prior from α using intermediate routing variables produced by the thinking mod-ule (per instance). Specifically, we reuse (i) the thought-to-segment binding matrix A ∈ RK×M ,and (ii) the segment-to-frame aggregation weights Wseg ∈ RM ×Ts . We map token-to-thought atten-tion to a token-to-frame prior: 
+
+β = αA, w = βWseg , (11) where α ∈ RTt×K denotes the head-averaged at-tention weights over K thoughts for each target position, and w ∈ RTt×Ts assigns each target posi-tion a soft preference over source time steps. Here A is approximately row-normalized over segments (i.e., PMj=1 Ak,j ≈ 1) and Wseg is row-normalized over frames (i.e., PTs
+
+> t=1
+
+(Wseg )j,t = 1 ), with all entries non-negative, so that each row of w
+
+forms an (approximately) normalized soft temporal prior. This routing prior is internal (no change to model I/O) and can be omitted without affecting the decoder interface. Finally, we attend to the encoder features E to obtain grounded decoder states: 
+
+H(l)vis = XAttn 
+
+
+
+H(l)think , E
+
+
+
+, (12) with the standard source mask applied. When the routing prior w is enabled, we incorporate it as a soft additive bias in the attention logits, encourag-ing the decoder to retrieve evidence from time re-gions consistent with the selected thought(s). This yields thought-guided evidence retrieval while pre-serving the standard Transformer decoder struc-ture (Li et al., 2026a; Hu et al., 2026). A position-wise FFN with residual connections and layer normalization produces the layer output: 
+
+H(l) = FFN 
+
+
+
+H(l)vis 
+
+
+
+. The final decoder states are projected to the vocabulary to obtain token proba-bilities, and the model is trained with the standard sequence-level cross-entropy objective (Sec. 3.4). 
+
+3.4 Training Objective Translation loss. Given a mini-batch of paired data {(X(b), Y(b))}Bb=1 , where B is the batch size and T (b) 
+
+> t
+
+denotes the target length of the b-th sam-ple, we train the dual-stream decoder with teacher forcing and standard cross-entropy: 
+
+Lce = − 1
+
+B
+
+> B
+
+X 
+
+> b=1
+> T(b)
+> t
+
+X
+
+> t=1
+
+log pθ
+
+
+
+y(b) 
+
+> t
+
+| y(b) 
+
+> <t
+
+, E(b), C(b)
+
+.
+
+(13) 
+
+Latent chain regularization. To encourage the latent thoughts to behave as an ordered chain of contiguous semantic units, we add two simple regu-larizers on the thought-to-segment assignment ma-trix A produced by the thinking module (Sec. 3.2). Let μk be the expected segment index assigned to the k-th thought: 
+
+μ(b) 
+
+> k
+
+=
+
+> M
+
+X
+
+> j=1
+
+j · A(b) 
+
+> k,j
+
+(14) We penalize violations of the forward (coarse-to-fine) progression: 
+
+Lmono = 1
+
+B
+
+> B
+
+X
+
+> b=1
+> K−1
+
+X
+
+> k=1
+
+ReLU( μ(b) 
+
+> k
+
+− μ(b) 
+
+> k+1
+
++ δ)
+
+(15) where δ = 1 is a small margin. We encourage each thought to focus on a con-tiguous region in segment space using a total-variation penalty: 
+
+Lcont = 1
+
+BK 
+
+> B
+
+X
+
+> b=1
+> K
+
+X
+
+> k=1
+> M
+
+X
+
+> j=2
+
+|A(b) 
+
+> k,j
+
+− A(b)
+
+> k,j −1
+
+| (16) 
+
+Overall objective. Our final training loss is: 
+
+Ltotal = Lce + λmono Lmono + λcont Lcont (17) where λmono = 0 .1 and λcont = 0 .2 control the strength of structural regularization. All compo-nents (encoder, thinking module, and decoder) are trained end-to-end with sentence-level supervision. 
+
+4 LC-HKSLT Dataset 
+
+Despite recent progress on gloss-free SLT, exist-ing benchmarks are often limited in scale or do not fully reflect realistic deployment, where only videos and sentence-level translations (without glosses or SLR vocabularies) are available and may be noisy. This setting places greater emphasis on robust cross-modal reasoning and grounding. To study large-scale, gloss-free SLT in a realistic set-ting, we construct LC-HKSLT , a Hong Kong Sign Language corpus curated from broadcast-style pub-lic briefings with continuously visible interpreters. It contains 1,311 hours (432K clips) and provides only sentence-level supervision (no glosses or SLR vocabularies), matching our intended deployment regime. Full details are provided in Appendix C.1. 
+
+5 Experiments 
+
+5.1 Experimental Setup Datasets. Following prior works (Chen et al., 2022a; Zhou et al., 2023, 2024a), we conduct ex-periments on five SLT benchmarks: PHOENIX-2014T (DGS) (Camgoz et al., 2018), CSL-Daily (CSL) (Zhou et al., 2021), How2Sign Method Modality PHOENIX14T CSL-Daily 
+
+Pose RGB B@1 B@2 B@3 B@4 ROUGE B@1 B@2 B@3 B@4 ROUGE Gloss-based SLRT (Camgoz et al., 2020) ✔ 46.61 33.73 26.19 21.32 - 37.38 24.36 16.55 11.79 36.74 SignBT (Zhou et al., 2021) ✔ 50.80 37.75 29.72 24.32 49.54 51.42 37.26 27.76 21.34 49.31 MMTLB (Chen et al., 2022a) ✔ 53.97 41.75 33.84 28.39 52.65 53.31 40.41 30.87 23.92 53.25 SLTUNET (Zhang et al., 2023) ✔ 52.92 41.76 33.99 28.47 52.11 54.98 41.44 31.84 25.01 54.08 CV-SLT (Zhao et al., 2024) ✔ 54.88 42.68 34.79 29.27 54.33 58.29 45.15 35.77 28.94 57.06 TS-SLT (Chen et al., 2022b) ✔ ✔ 54.90 42.43 34.46 28.95 53.48 55.44 42.59 32.87 25.79 55.72 Weakly supervised gloss-free GASLT (Yin et al., 2023) ✔ 39.07 26.74 21.86 15.74 39.86 19.90 9.94 5.98 4.07 20.35 VAP (Jiao et al., 2024) ✔ 53.07 - - 26.16 51.28 52.98 - - 23.65 51.09 Gloss-free NSLT (Camgoz et al., 2018) ✔ 32.24 19.03 12.83 9.58 31.80 34.16 19.57 11.84 7.56 34.54 GFSLT-VLP (Zhou et al., 2023) ✔ 43.71 33.18 26.11 21.44 42.29 39.37 24.93 16.26 11.00 36.44 MSLU (Zhou et al., 2024a) ✔ 46.56 34.21 - 22.24 46.73 33.97 22.20 - 11.42 33.80 FLa-LLM (Chen et al., 2024b) ✔ 46.29 35.33 28.03 23.09 45.27 37.13 25.12 18.38 14.20 37.25 Sign2GPT (Wong et al., 2024) ✔ 49.54 35.96 28.83 22.52 48.90 41.75 28.73 20.60 15.40 42.36 SignLLM (Gong et al., 2024) ✔ 45.21 34.78 28.05 23.40 44.49 39.55 28.13 20.07 15.75 39.91 C2RL (Chen et al., 2024a) ✔ 52.81 40.20 32.20 26.75 50.96 49.32 36.28 27.54 21.61 48.21 
+
+SignThought (Ours) ✔ 51.18 39.40 32.17 27.22 54.50 49.57 37.90 29.33 23.92 50.99 
+
+Table 1: SLT results on PHOENIX14T and CSL-Daily datasets. The best results are highlighted as bold , and the second-best are underlined. 
+
+Method Modality How2Sign OpenASL 
+
+Pose RGB B@1 B@2 B@3 B@4 ROUGE B@1 B@2 B@3 B@4 ROUGE GloFE-VN (Lin et al., 2023) ✔ 14.94 7.27 3.93 2.24 12.61 21.56 12.74 9.05 7.06 21.75 T5-SLT (Uthus et al., 2023) ✔ 14.96 5.11 2.26 1.22 - - - - - -T5-SLT-YT (Uthus et al., 2023) ✔ 37.82 24.13 16.92 12.39 - - - - - -VAP (Jiao et al., 2024) ✔ 39.22 - - 12.87 27.77 45.92 - - 21.23 41.38 
+
+I3D-transformer (Shi et al., 2022a) ✔ - - - - - 18.31 10.15 7.19 5.66 18.64 OpenASL (Shi et al., 2022a) ✔ - - - - - 20.92 12.08 8.59 6.72 21.02 TF-H2S (Alvarez et al.) ✔ 17.40 7.69 3.97 2.21 - - - - - -SLT-IV (Tarrés et al., 2023) ✔ 34.01 19.30 12.18 8.03 - - - - - -C2RL (Chen et al., 2024a) ✔ 29.07 18.56 12.92 9.37 27.02 31.46 21.85 16.58 13.21 31.36 
+
+SignThought (Ours) ✔ 36.65 20.96 16.27 13.39 27.85 38.10 26.33 23.12 19.55 38.78 
+
+Table 2: How2Sign and OpenASL datasets. T5-SLT-YT denotes training on YouTube-ASL and then fine-tuning on the 30-hour split How2Sign. The best results are highlighted as bold , and the second-best are underlined.                                    
+
+> Method B@1 B@2 B@3 B@4 ROUGE NSLT (Camgoz et al., 2018) 29.91 19.56 13.02 8.65 9.67 TSPNet (Li et al., 2020b) 31.36 23.19 17.27 12.83 38.37 GASLT (Yin et al., 2023) 38.65 28.27 24.05 19.40 44.92 GFSLT-VLP (Zhou et al., 2023) 37.37 29.73 23.03 19.64 45.05
+> SignThought (Ours) 39.12 31.75 25.93 21.15 47.87 SignThought (Ours) †45.33 38.01 31.83 30.22 60.01
+
+Table 3: SLT results on LC-HKSLT. We report scores for four publicly available open-source gloss-free baselines and our SignThought. † denotes a variant that is pre-trained on the remaining LC-HKSLT data and then fine-tuned on the 30-hour split. 
+
+(ASL) (Duarte et al., 2021), OpenASL (ASL) (Shi et al., 2022b), and our LC-HKSLT corpus. 
+
+Evaluation Metrics. In line with previous stud-ies (Chen et al., 2022a,b; Zhou et al., 2023), we report BLEU (Papineni et al., 2002) and ROUGE - L (Lin, 2004) for SLT. BLEU -n measures 
+
+n- gram precision; we present BLEU - 1 to BLEU - 4(B1-B4). ROUGE -L computes the F1 score based on the longest common subsequence between the hypothesis and the reference. 
+
+5.2 Comparison with SOTA Methods 
+
+Tab. 1 and 2 compare SignThought with represen-tative gloss-free SLT methods across five bench-marks. SignThought achieves the best gloss-free BLEU-4 on all datasets and attains the highest ROUGE on PHOENIX14T, How2Sign, OpenASL, and LC-HKSLT, while remaining competitive on CSL-Daily. On PHOENIX14T, SignThought reaches 27.22 BLEU-4 and 54.50 ROUGE, sur-passing the strongest prior gloss-free method C 2RL (26.75 / 50.96) as well as recent LLM-assisted base-lines. On CSL-Daily, it achieves 23.92 BLEU-4 and 50.99 ROUGE, improving over C 2RL and slightly outperforming VAP in BLEU-4. Notably, larger gains are observed on large-scale datasets, with BLEU-4 improving from 9.37 to 13.39 on How2Sign and from 13.21 to 19.55 on OpenASL, accompanied by consistent ROUGE improvements. On LC-HKSLT, SignThought establishes a new ID Thk Cau Rtg DDec Pr Lm Lc B4 ↑ R↑                                                                                 
+
+> 0✓✓✓✓✓✓✓27.49 55.90
+> 1✗––✓✗✗✗25.30 51.20 2✓✗✓✓✓✓✓26.50 53.60 3✓✓✗✓✓✓✓26.10 53.00 4✓✓✓✗✗✓✓26.20 53.10 5✓✓✓✓✗✓✓26.60 53.90 6✓✓✓✓✓✗✓26.70 54.00 7✓✓✓✓✓✓✗26.75 54.05 8✓✓✓✓✓✗✗26.20 53.20
+
+Table 4: Key element ablation in SignThought. Thk: la-tent thinking module; Cau: causal self-attn on thoughts; Rtg: structured routing; DDec: dual-stream decoder; Pr: prior injection; Lm/Lc: monotonicity/contiguity regularizers. “–” denotes not applicable. 
+
+state of the art among publicly available methods, achieving 21.15 BLEU-4 and 47.87 ROUGE. More-over, due to the limited scale of existing public SLT benchmarks, most prior methods cannot perform additional in-domain pre-training under compara-ble settings. By pre-training SignThought on the remaining LC-HKSLT data and fine-tuning on the curated 30-hour split, we obtain substantial addi-tional gains (denoted by †), highlighting the critical role of scaling in-domain sign–text data. 
+
+5.3 Ablation Study Impact of Key Components in SignThought 
+
+We conduct ablation studies on the PHOENIX14T dev set (Tab. 4); additional results are reported in the Appendix. Removing the latent thinking mod-ule (ID 1) leads to the largest performance drop, confirming the necessity of an explicit intermedi-ate reasoning interface. Disabling causal thought updates (ID 2) further degrades accuracy, indicat-ing that chain-structured reasoning is superior to unordered latent representations. Replacing struc-tured routing with soft routing (ID 3) and simpli-fying the dual-stream decoder to a single stream (ID 4) both impair performance, highlighting the importance of explicit evidence allocation and plan-then-ground decoding. Removing thought-guided prior injection (ID 5) results in a smaller yet con-sistent decline, suggesting its role in emphasizing relevant temporal evidence. Finally, ablations of 
+
+Lmono and Lcont (IDs 6–8) yield limited indi-vidual impact but a pronounced drop when jointly removed, implying complementary effects in stabi-lizing coherent thought-to-evidence alignment. 
+
+Hyperparameter and Structure-Strength Abla-tions. On PHOENIX14T, we vary one factor at a time while keeping the rest of the full model unchanged. We sweep the number of thoughts 
+
+K ∈ { 2, 4, 6, 8, 10 } (reasoning slots), the thinking                                                          
+
+> Vary Kfix L=2 ,M=16 Vary Lfix K=8 ,M=16
+> KB4 ↑R↑LB4 ↑R↑
+> 225.90 52.00 126.70 53.90 426.60 53.10 227.49 55.90
+> 627.00 54.10 327.18 54.40 827.49 55.90 427.05 54.10 10 27.10 54.30 526.73 54.02
+> Vary Mfix K=8 ,L=2
+> MB4 ↑R↑
+> 426.50 53.30 826.95 54.00 16 27.49 55.90
+> 32 27.12 54.30 64 26.80 53.70
+
+Table 5: Hyperparameter/structure-strength ablations. 
+
+depth L ∈ { 1, 2, 3, 4, 5} (refinement steps), and the number of segment tokens M ∈ { 4, 8, 16 , 32 , 64 }
+
+(evidence granularity for routing) to study the trade-off between reasoning capacity and routing com-plexity and to locate a practical sweet spot.                               
+
+> Reference :我完全看不出这两张照片有什么 差别。(I totally can’t tell what the difference is between these two photos.)
+> GFSLT-VLP :我觉得这照片有问题。(I think there’s something wrong with this photo.)
+> SignThought :我真的看不出这两张照片有什么 区别。(I really can’t tell what the distinction between these two photos.)
+> Reference :这场大雨已经下了一 整天了。(This heavy rain has been falling all day.)
+> GFSLT-VLP :外面正在下雨一天。(It’s raining outside for one day.)
+> SignThought :这场大雨下了 整整 一天。(This heavy rain has been falling for the whole day.)
+> Reference :晚上我请你去吃肯德基。(I’ll treat you to KFC tonight.)
+> GFSLT-VLP :晚上一 起去吃饭吧。(Let’s go out for dinner tonight.)
+> SignThought :今晚我请你去吃肯德基。(Tonight, I’ll treat you to KFC.)
+> Reference :走在一对情侣旁边，我感觉自己很多余。(Walking next to a couple, I feel like a third wheel.)
+> GFSLT-VLP :我走在他们之 间，感觉不太自在。(Walking between them, I don’t feel very comfortable.)
+> SignThought :走在那对情侣旁边，我觉得自己特别多余。(Walking next to that couple, I feel like such a third wheel.)
+
+Table 6: Translation results. Correct answers are marked in green, semantically similar but rephrased answers are displayed in blue, and incorrect answers are indicated in red. 
+
+5.4 Qualitative Results 
+
+Table 6 presents representative CSL-Daily cases comparing SignThought with GFSLT-VLP, a only recent open-source baseline for gloss-free SLT. Following the color scheme in the caption, Sign-Thought consistently preserves the core semantics of the reference while allowing minor paraphrases (blue), whereas GFSLT-VLP more often exhibits se-mantic drift or missing key information (red), e.g., over-generalizing “difference between two photos” to a vague “something wrong,” weakening duration expressions such as “all day,” or dropping salient entities (e.g., KFC ). These examples qualitatively support our claim that the proposed latent reason-ing and evidence allocation help maintain faithful, grounded translations, especially for sentences re-quiring fine-grained semantic composition. 6 Conclusion 
+
+We propose SignThought, a reasoning-driven framework for gloss-free sign language translation that introduces Cross-Modal Latent Thoughts and a Latent Chain-of-Thought to bridge continuous sign videos and text generation without gloss supervi-sion. SignThought achieves SOTA performance across five benchmarks, demonstrating that latent-thought reasoning provides a scalable alternative to gloss annotations. We further introduce LC-HKSLT, a large-scale Cantonese SLT dataset to facilitate evaluation in realistic settings. Future work will explore stronger reasoning supervision, improved training and inference efficiency, and ex-tensions to broader sign languages and open-world scenarios. 
+
+Limitation 
+
+Although SignThought introduces an ordered thought chain, the “thinking” process in our frame-work remains latent rather than explicit. The inter-mediate thoughts are continuous hidden states that are only indirectly learned from the final translation objective, rather than being verbalized, externally supervised, or exposed as human-interpretable rea-soning steps. As a result, while the model ben-efits from improved planning and grounding, its intermediate reasoning is still difficult to directly inspect, verify, or control. In particular, we cannot guarantee that each latent thought corresponds to a stable semantic concept or a human-recognizable reasoning unit, and error analysis remains largely outcome-based at the final translation level. There-fore, the current framework should be viewed as a step toward reasoning-aware sign language trans-lation, rather than a system that already produces explicit and fully interpretable reasoning traces. An important direction for future work is to bridge la-tent planning with more explicit forms of reasoning, such as textual rationales, gloss-like abstractions, or controllable semantic plans (Dong et al., 2026). 
+
+Acknowledgement 
+
+The research described in this paper was supported by the National Natural Science Foundation of China (Grant No. 62372314). This work was also supported by computational resources provided by The Centre for Large AI Models (CLAIM) of The Hong Kong Polytechnic University. 
+
+References 
+
+Nikolas Adaloglou, Theocharis Chatzis, Ilias Papas-tratis, Andreas Stergioulas, Georgios Th Papadopou-los, Vassia Zacharopoulou, George J Xydopoulos, Klimnis Atzakas, Dimitris Papazachariou, and Pet-ros Daras. 2021. A comprehensive study on deep learning-based methods for sign language recogni-tion. IEEE transactions on multimedia , 24:1750– 1762. Samuel Albanie, Gül Varol, Liliane Momeni, Triantafyl-los Afouras, Joon Son Chung, Neil Fox, and Andrew Zisserman. 2020. Bsl-1k: Scaling up co-articulated sign language recognition using mouthing cues. In 
+
+Computer Vision–ECCV 2020: 16th European Con-ference, Glasgow, UK, August 23–28, 2020, Proceed-ings, Part XI 16 , pages 35–53. Springer. Patricia Cabot Alvarez, Xavier Giró Nieto, and Laia Tar-rés Benet. Sign language translation based on trans-formers for the how2sign dataset. Danielle Bragg, Oscar Koller, Mary Bellard, Larwan Berke, Patrick Boudreault, Annelies Braffort, Naomi Caselli, Matt Huenerfauth, Hernisa Kacorri, and Tessa Verhoef. 2019. Sign language recognition, gen-eration, and translation: An interdisciplinary perspec-tive. In Proceedings of the 21st international ACM SIGACCESS conference on computers and accessi-bility , pages 16–31. Necati Cihan Camgoz, Simon Hadfield, Oscar Koller, Hermann Ney, and Richard Bowden. 2018. Neu-ral sign language translation. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 7784–7793. Necati Cihan Camgoz, Oscar Koller, Simon Hadfield, and Richard Bowden. 2020. Sign language trans-formers: Joint end-to-end sign language recognition and translation. In Proceedings of the IEEE/CVF con-ference on computer vision and pattern recognition ,pages 10023–10033. Yutong Chen, Fangyun Wei, Xiao Sun, Zhirong Wu, and Stephen Lin. 2022a. A simple multi-modality transfer learning baseline for sign language transla-tion. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 5120–5130. Yutong Chen, Ronglai Zuo, Fangyun Wei, Yu Wu, Shu-jie Liu, and Brian Mak. 2022b. Two-stream network for sign language recognition and translation. Ad-vances in Neural Information Processing Systems ,35:17043–17056. Zhigang Chen, Benjia Zhou, Yiqing Huang, Jun Wan, Yibo Hu, Hailin Shi, Yanyan Liang, Zhen Lei, and Du Zhang. 2024a. C 2rl: Content and context repre-sentation learning for gloss-free sign language trans-lation and retrieval. Zhigang Chen, Benjia Zhou, Jun Li, Jun Wan, Zhen Lei, Ning Jiang, Quan Lu, and Guoqing Zhao. 2024b. Factorized learning assisted with large language model for gloss-free sign language translation. pages 7071–7081. Zhiwei Chen, Yupeng Hu, Zhiheng Fu, Zixu Li, Jiale Huang, Qinlei Huang, and Yinwei Wei. 2026. Intent: Invariance and discrimination-aware noise mitigation for robust composed image retrieval. In Proceedings of the AAAI Conference on Artificial Intelligence ,volume 40, pages 20463–20471. Zhiwei Chen, Yupeng Hu, Zixu Li, Zhiheng Fu, Xuemeng Song, and Liqiang Nie. 2025. Off-set: Segmentation-based focus shift revision for composed image retrieval. In Proceedings of the ACM International Conference on Multimedia , page 6113–6122. Ka Leong Cheng, Zhaoyang Yang, Qifeng Chen, and Yu-Wing Tai. 2020. Fully convolutional networks for continuous sign language recognition. In Com-puter Vision–ECCV 2020: 16th European Confer-ence, Glasgow, UK, August 23–28, 2020, Proceed-ings, Part XXIV 16 , pages 697–714. Springer. Kearsy Cormier, David Quinto-Pozos, Zed Sevcikova, and Adam Schembri. 2012. Lexicalisation and de-lexicalisation processes in sign languages: Compar-ing depicting constructions and viewpoint gestures. 
+
+Language & communication , 32(4):329–348. Haonan Dong, Kehan Jiang, Haoran Ye, Wenhao Zhu, Zhaolu Kang, and Guojie Song. 2026. Neurea-soner: Towards explainable, controllable, and uni-fied reasoning via mixture-of-neurons. Preprint ,arXiv:2604.02972. Amanda Duarte, Shruti Palaskar, Lucas Ventura, Deepti Ghadiyaram, Kenneth DeHaan, Florian Metze, Jordi Torres, and Xavier Giro i Nieto. 2021. How2sign: A large-scale multimodal dataset for continuous ameri-can sign language. Preprint , arXiv:2008.08143. Jens Forster, Christoph Schmidt, Oscar Koller, Martin Bellgardt, and Hermann Ney. 2014. Extensions of the sign language recognition and translation corpus rwth-phoenix-weather. In LREC , pages 1911–1916. Jia Gong, Lin Geng Foo, Yixuan He, Hossein Rahmani, and Jun Liu. 2024. Llms are good sign language translators. In CVPR , pages 18362–18372. Shibo Hao, Sainbayar Sukhbaatar, DiJia Su, Xian Li, Zhiting Hu, Jason Weston, and Yuandong Tian. 2025. Training large language models to reason in a contin-uous latent space. Preprint , arXiv:2412.06769. Yupeng Hu, Zixu Li, Zhiwei Chen, Qinlei Huang, Zhi-heng Fu, Mingzhu Xu, and Liqiang Nie. 2026. Re-fine: Composed video retrieval via shared and differ-ential semantics enhancement. ACM Transactions on Multimedia Computing, Communications and Appli-cations .Jiani Huang, Shijie Wang, Liangbo Ning, Wenqi Fan, Shuaiqiang Wang, Dawei Yin, and Qing Li. 2026. Towards next-generation recommender systems: A benchmark for personalized recommendation assis-tant with llms. In Proceedings of the Nineteenth ACM International Conference on Web Search and Data Mining , pages 217–226. Jiani Huang, Xingchen Zou, Lianghao Xia, and Qing Li. 2025. Mr. rec: Synergizing memory and reasoning for personalized recommendation assistant with llms. 
+
+arXiv preprint arXiv:2510.14629 .Kehan Jiang, Haonan Dong, Zhaolu Kang, Zhengzhou Zhu, and Guojie Song. 2026a. Foe: Forest of errors makes the first solution the best in large reasoning models. Preprint , arXiv:2604.02967. Yiyang Jiang, Guangwu Qian, Jiaxin Wu, Qi Huang, Qing Li, Yongkang Wu, and Xiao-Yong Wei. 2026b. Self-paced learning for images of antinuclear an-tibodies. IEEE Transactions on Medical Imaging ,45(4):1661–1672. Yiyang Jiang, Wengyu Zhang, Xulu Zhang, Xiao-Yong Wei, Chang Wen Chen, and Qing Li. 2024. Prior knowledge integration via llm encoding and pseudo event regulation for video moment retrieval. In Pro-ceedings of the 32nd ACM International Conference on Multimedia , MM ’24, page 7249–7258, New York, NY, USA. Association for Computing Machinery. Peiqi Jiao, Yuecong Min, and Xilin Chen. 2024. Visual alignment pre-training for sign language translation. In European Conference on Computer Vision , pages 349–367. Springer. Oscar Koller, Jens Forster, and Hermann Ney. 2015. Continuous sign language recognition: Towards large vocabulary statistical recognition systems handling multiple signers. Computer Vision and Image Under-standing , 141:108–125. Oscar Koller, Sepehr Zargaran, and Hermann Ney. 2017. Re-sign: Re-aligned end-to-end sequence modelling with deep recurrent cnn-hmms. In 2017 IEEE Con-ference on Computer Vision and Pattern Recognition (CVPR) , pages 3416–3424. Dongxu Li, Cristian Rodriguez, Xin Yu, and Hongdong Li. 2020a. Word-level deep sign language recogni-tion from video: A new large-scale dataset and meth-ods comparison. In Proceedings of the IEEE/CVF winter conference on applications of computer vision ,pages 1459–1469. Dongxu Li, Chenchen Xu, Xin Yu, Kaihao Zhang, Ben-jamin Swift, Hanna Suominen, and Hongdong Li. 2020b. Tspnet: Hierarchical feature learning via tem-poral semantic pyramid for sign language translation. 
+
+Advances in Neural Information Processing Systems ,33:12034–12045. Zecheng Li, Wengang Zhou, Weichao Zhao, Kepeng Wu, Hezhen Hu, and Houqiang Li. 2025. Uni-sign: Toward unified sign language understanding at scale. 
+
+arXiv preprint arXiv:2501.15187 .Zixu Li, Yupeng Hu, Zhiwei Chen, Qinlei Huang, Guozhi Qiu, Zhiheng Fu, and Meng Liu. 2026a. Retrack: Evidence-driven dual-stream directional anchor calibration network for composed video re-trieval. In Proceedings of the AAAI Conference on Ar-tificial Intelligence , volume 40, pages 23373–23381. Zixu Li, Yupeng Hu, Zhiwei Chen, Shiqi Zhang, Qinlei Huang, Zhiheng Fu, and Yinwei Wei. 2026b. Habit: Chrono-synergia robust progressive learning frame-work for composed image retrieval. In Proceedings of the AAAI Conference on Artificial Intelligence ,volume 40, pages 6762–6770. Chin-Yew Lin. 2004. Rouge: A package for automatic evaluation of summaries. In Text summarization branches out , pages 74–81. Kezhou Lin, Xiaohan Wang, Linchao Zhu, Ke Sun, Bang Zhang, and Yi Yang. 2023. Gloss-free end-to-end sign language translation. arXiv preprint arXiv:2305.12876 .Peiyang Liu, Ziqiang Cui, Di Liang, and Wei Ye. 2025a. Who stole your data? a method for detecting unau-thorized rag theft. arXiv preprint arXiv:2510.07728 .Peiyang Liu, Xi Wang, Ziqiang Cui, and Wei Ye. 2025b. Queries are not alone: Clustering text embeddings for video search. In Proceedings of the 48th Inter-national ACM SIGIR Conference on Research and Development in Information Retrieval , pages 874– 883. Peiyang Liu, Jinyu Yang, Lin Wang, Sen Wang, Yunlai Hao, and Huihui Bai. 2023. Retrieval-based unsu-pervised noisy label detection on text data. In Pro-ceedings of the 32nd ACM International Conference on Information and Knowledge Management , pages 4099–4104. Chancharik Mitra, Brandon Huang, Trevor Darrell, and Roei Herzig. 2024. Compositional chain-of-thought prompting for large multimodal models. In Proceed-ings of the IEEE/CVF Conference on Computer Vi-sion and Pattern Recognition , pages 14420–14431. Chong-Wah Ngo, Yu-Gang Jiang, Xiao-Yong Wei, Wan-lei Zhao, Feng Wang, Xiao Wu, and Hung-Khoon Tan. 2008. Beyond semantic search: What you ob-serve may not be what you think. In IEEE Computer Society .Shuo Ni, Di Wang, He Chen, Haonan Guo, Ning Zhang, and Jing Zhang. 2025. Unigeoseg: Towards uni-fied open-world segmentation for geospatial scenes. 
+
+arXiv preprint arXiv:2511.23332 .Zhe Niu, Ronglai Zuo, Brian Mak, and Fangyun Wei. 2024. A hong kong sign language corpus col-lected from sign-interpreted tv news. Preprint ,arXiv:2405.00980. Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002. Bleu: a method for automatic evalu-ation of machine translation. In Proceedings of the 40th annual meeting of the Association for Computa-tional Linguistics , pages 311–318. Bowen Shi, Diane Brentari, Greg Shakhnarovich, and Karen Livescu. 2022a. Open-domain sign language translation learned from online video. In EMNLP .Bowen Shi, Diane Brentari, Greg Shakhnarovich, and Karen Livescu. 2022b. Open-domain sign language translation learned from online video. Preprint ,arXiv:2205.12870. Laia Tarrés, Gerard I Gállego, Amanda Duarte, Jordi Torres, and Xavier Giró-i Nieto. 2023. Sign language translation from instructional videos. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 5624–5634. Guobin Tu and Di Weng. 2026. Easlt: Emotion-aware sign language translation. Preprint ,arXiv:2601.03549. David Uthus, Garrett Tanzer, and Manfred Georg. 2023. Youtube-asl: A large-scale, open-domain american sign language-english parallel corpus. Preprint ,arXiv:2306.15162. Andreas Voskou, Konstantinos P Panousis, Dimitrios Kosmopoulos, Dimitris N Metaxas, and Sotirios Chatzis. 2021. Stochastic transformer networks with linear competing units: Application to end-to-end sl translation. In Proceedings of the IEEE/CVF In-ternational Conference on Computer Vision , pages 11946–11955. Xuezhi Wang, Jason Wei, Dale Schuurmans, Quoc Le, Ed Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. 2023. Self-consistency improves chain of thought reasoning in language models. Preprint ,arXiv:2203.11171. Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc Le, and Denny Zhou. 2023. Chain-of-thought prompting elic-its reasoning in large language models. Preprint ,arXiv:2201.11903. Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny Zhou, and 1 others. 2022. Chain-of-thought prompting elic-its reasoning in large language models. Advances in neural information processing systems , 35:24824– 24837. Ryan Wong, Necati Cihan Camgoz, and Richard Bow-den. 2024. Sign2GPT: Leveraging large language models for gloss-free sign language translation. In 
+
+ICLR .Zhen-Qun Yang Xiao-Yong Wei. 2013. Coaching the exploration and exploitation in active learning for interactive video retrieval. IEEE Transactions on Image Processing , 22(3):955–968. Can Xie, Ruotong Pan, Xiangyu Wu, Yunfei Zhang, Jiayi Fu, Tingting Gao, and Guorui Zhou. 2025. Un-locking exploration in rlvr: Uncertainty-aware advan-tage shaping for deeper reasoning. arXiv preprint arXiv:2510.10649 .Kevin Xu and Issei Sato. 2025. A formal comparison be-tween chain-of-thought and latent thought. Preprint ,arXiv:2509.25239. Qianyun Yang, Zhiwei Chen, Yupeng Hu, Zixu Li, Zhiheng Fu, and Liqiang Nie. 2026. Stable: Effi-cient hybrid nearest neighbor search via magnitude-uniformity and cardinality-robustness. arXiv preprint arXiv:2604.01617 .Jiayu Yao, He Chen, Yizhuang Xie, Ning Zhang, Mingxu Yang, and Liang Chen. 2025. S 2 net: Spatial-aligned and semantic-discriminative network for remote sensing object detection. IEEE Transac-tions on Geoscience and Remote Sensing .Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. React: Synergizing reasoning and acting in language models. Preprint , arXiv:2210.03629. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik R Narasimhan, and Yuan Cao. 2022. React: Synergizing reasoning and acting in language models. In The eleventh international conference on learning representations .Aoxiong Yin, Tianyun Zhong, Li Tang, Weike Jin, Tao Jin, and Zhou Zhao. 2023. Gloss attention for gloss-free sign language translation. In ICCV , pages 2551– 2562. Kayo Yin, Amit Moryossef, Julie Hochgesang, Yoav Goldberg, and Malihe Alikhani. 2021. Including signed languages in natural language processing. 
+
+arXiv preprint arXiv:2105.05222 .Shuang Zeng, Xinyuan Chang, Mengwei Xie, Xin-ran Liu, Yifan Bai, Zheng Pan, Mu Xu, and Xing Wei. 2025. Futuresightdrive: Thinking visually with spatio-temporal cot for autonomous driving. arXiv preprint arXiv:2505.17685 .Biao Zhang, Mathias Müller, and Rico Sennrich. 2023. SLTUNET: A simple unified model for sign language translation. In ICLR .Ning Zhang, Shuo Ni, Liang Chen, Tong Wang, and He Chen. 2025a. High-throughput and energy-efficient fpga-based accelerator for all adder neural networks. IEEE Internet of Things Journal .Wengyu Zhang, Qi Tian, Yi Cao, Wenqi Fan, Dongmei Jiang, Yaowei Wang, Qing Li, and Xiao-Yong Wei. 2025b. Graphatc: advancing multilevel and multi-label anatomical therapeutic chemical classification via atom-level graph learning. Briefings in bioinfor-matics , 26(2):bbaf194. Zhuosheng Zhang, Aston Zhang, Mu Li, Hai Zhao, George Karypis, and Alex Smola. 2024. Multi-modal chain-of-thought reasoning in language mod-els. Preprint , arXiv:2302.00923. Rui Zhao, Liang Zhang, Biao Fu, Cong Hu, Jinsong Su, and Yidong Chen. 2024. Conditional variational autoencoder for sign language translation with cross-modal alignment. In AAAI , pages 19643–19651. Benjia Zhou, Zhigang Chen, Albert Clapés, Jun Wan, Yanyan Liang, Sergio Escalera, Zhen Lei, and Du Zhang. 2023. Gloss-free sign language trans-lation: Improving from visual-language pretraining. In Proceedings of the IEEE/CVF International Con-ference on Computer Vision , pages 20871–20881. Hao Zhou, Wengang Zhou, Weizhen Qi, Junfu Pu, and Houqiang Li. 2021. Improving sign language transla-tion with monolingual data by sign back-translation. In Proceedings of the IEEE/CVF conference on com-puter vision and pattern recognition , pages 1316– 1325. Wengang Zhou, Weichao Zhao, Hezhen Hu, Zecheng Li, and Houqiang Li. 2024a. Scaling up multimodal pre-training for sign language understanding. arXiv preprint arXiv:2408.08544 .Xiaoling Zhou, Wei Ye, Zhemg Lee, Lei Zou, and Shikun Zhang. 2025. Valuing training data via causal inference for in-context learning. IEEE Transactions on Knowledge and Data Engineering .Xiaoling Zhou, Wei Ye, Yidong Wang, Chaoya Jiang, Zhemg Lee, Rui Xie, and Shikun Zhang. 2024b. En-hancing in-context learning via implicit demonstra-tion augmentation. In Proceedings of the 62nd An-nual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 2810– 2828. Inge Zwitserlood. 2012. Classifiers. In Sign language: An international handbook . de Gruyter. A Method and Implementation Details 
+
+A.1 Implementation Details. 
+
+All experiments are conducted on a single NVIDIA RTX A6000 GPU. We implement our model in PyTorch and train all components (sign encoder, Latent CoT thinking module, and dual-stream de-coder) end-to-end for 200 epochs. Unless oth-erwise specified, we use a shared model dimen-sion d=256 throughout the encoder, thinking mod-ule, and decoder. All datasets use the same pre-extracted visual features of dimension 1024, follow-ing the feature extraction pipeline used in (Camgoz et al., 2020; Voskou et al., 2021), which adopts an identical approach with an open-sourced pretrained Inception network. The sign encoder consists of 
+
+Nenc = 2 stacked encoder layers, and the Latent CoT thinking module contains L = 2 thinking layers with K = 8 learnable thought slots. The decoder is a standard autoregressive Transformer with Ndec = 2 layers, where each layer performs masked self-attention, thinking cross-attention to the thought chain, and visual cross-attention to en-coder features (Sec. 3.3). For the optional thought-guided evidence rout-ing, we reuse the cached routing variables from the thinking module and apply them as a soft bias in the decoder’s visual cross-attention. We initialize lin-ear/embedding weights with Xavier initialization and apply dropout with a rate of 0.1 to attention and feed-forward sublayers. We use layer normaliza-tion in all Transformer-style blocks. We optimize with Adam (lr = 1 × 10 −3, β1=0 .9, β2=0 .998 )and a batch size of 32. We train the model with weight decay = 3 × 10 −3 and label smoothing 
+
+= 0 .1. We use a plateau-based learning rate sched-uler and apply a warmup phase of 2000 steps before the scheduler takes effect. We evaluate on the validation set periodically and reduce the learning rate by a factor of 0.8 if the validation metric does not improve for several con-secutive checks, stopping when the learning rate drops below 1 × 10 −4. At test time, we use beam search for translation decoding and tune decod-ing hyperparameters on the development set. We sweep the beam size b ∈ [1 , 10] and length-penalty coefficient a ∈ {− 1, 0, 1, 2, 3, 4, 5} on the dev set; the best (b, a ) is used for test-time decoding. 
+
+A.2 Soft Segmentation via Soft Boundaries 
+
+Given encoder frame features E = {et}Ts
+
+> t=1
+
+, we construct M segment tokens S = {Sj }Mj=1 by predicting soft temporal windows with learnable boundaries (per instance). Let ¯mt ∈ { 0, 1} denote a multiplicative padding mask over source frames ( ¯mt = 0 for padded frames and ¯mt = 1 other-wise). Define the valid length Lvaild = PTs 
+
+> t=1
+
+¯mt
+
+(we assume Lvaild ≥ 1). We first obtain a clip-level summary by masked mean pooling: 
+
+z =
+
+PTs 
+
+> t=1
+
+¯mt et
+
+Lvaild + ϵnum 
+
+∈ Rd. (18) We then predict positive segment lengths ρ ∈ RM
+
+with a boundary MLP: 
+
+ρ = softplus(MLP bd (z)) , (19) 
+
+π = ρ
+
+PMj=1 ρj + ϵnum 
+
+, (20) and convert proportions into cumulative boundaries in continuous time over valid frames: 
+
+τ0 = 1 , τ j = 1+( Lvaild −1) 
+
+> j
+
+X
+
+> i=1
+
+πi, j = 1 , . . . , M, 
+
+(21) so τM ≈ Lvaild and each instance can have different segment durations even when M is fixed. 
+
+Soft window membership and weights. Let ˆt =Ptu=1 ¯mu denote the valid-frame rank of position 
+
+t. For each segment j, we define a soft window membership over discrete frames: 
+
+uj,t = σ(γ(ˆ t−τj−1)) −σ(γ(ˆ t−τj )) , t = 1 , . . . , T s,
+
+(22) where σ(·) is the sigmoid and γ > 0 controls boundary softness (we set γ = 1 ). We apply the padding mask and normalize over frames: 
+
+uj,t ← ¯mt uj,t , (Wseg )j,t = uj,t 
+
+PTs 
+
+> t′=1
+
+uj,t ′ + ϵnum 
+
+,
+
+(23) so each row of Wseg ∈ RM ×Ts sums to 1.
+
+Segment tokens. Finally, segment tokens are ob-tained by weighted pooling: 
+
+Sj =
+
+> Ts
+
+X
+
+> t=1
+
+(Wseg )j,t et, j = 1 , . . . , M. (24) We use ϵnum = 10 −6 throughout for numerical stability. A.3 Injecting routed summaries pk into RoutedXAttn 
+
+We implement conditioning on pk by converting it into a routing-dependent bias over source time steps and adding it to the cross-attention logits. For each head h ∈ { 1, . . . , H } with head dimension 
+
+dh = d/H , we compute standard logits: 
+
+ℓ(h) 
+
+> k,t
+
+=
+
+
+
+W (h) 
+
+> Q
+
+˜ck
+
+⊤ 
+
+W (h) 
+
+> K
+
+et
+
+
+
+√dh
+
+, (25) and add a pk-dependent bias before softmax: 
+
+˜ℓ(h) 
+
+> k,t
+
+= ℓ(h) 
+
+> k,t
+
++ λp b(h) 
+
+> k,t
+
+(pk, E), (26) where λp ≥ 0 controls the bias strength (we set 
+
+λp = 1 in all experiments). 
+
+Attention with hard padding mask. Let m ∈{0, −∞} Ts be the additive attention mask over the 
+
+Ts source frames, where for each t ∈ { 1, . . . , T s},
+
+mt = 0 if frame t is valid (non-padded) and mt =
+
+−∞ otherwise; then: 
+
+a(h) 
+
+> k,t
+
+= softmax t
+
+˜ℓ(h) 
+
+> k,t
+
++ mt
+
+
+
+, (27) 
+
+o(h) 
+
+> k
+
+=
+
+> Ts
+
+X
+
+> t=1
+
+a(h)
+
+> k,t
+
+
+
+W (h) 
+
+> V
+
+et
+
+
+
+. (28) 
+
+A minimal content-based bias. A simple differ-entiable instantiation is: 
+
+b(h) 
+
+> k,t
+
+(pk, E) = 
+
+
+
+W (h) 
+
+> P
+
+pk
+
+⊤ 
+
+W (h) 
+
+> B
+
+et
+
+
+
+√dh
+
+. (29) 
+
+Optional routing-derived temporal prior. If segment-to-frame weights Wseg ∈ RM ×Ts are available (row-normalized over frames), we can derive a purely routing-based temporal prior: 
+
+rk = Ak, :Wseg ∈ R1×Ts , (30) 
+
+rk,t =
+
+> M
+
+X
+
+> j=1
+
+Ak,j (Wseg )j,t . (31) We then inject it as an additive log-prior: 
+
+b(h) 
+
+> k,t
+
+← b(h) 
+
+> k,t
+
++ log( rk,t + ϵnum ), (32) with ϵnum = 10 −6.
+
+A.4 Injecting the temporal prior w into grounding cross-attention 
+
+We compute a token-to-frame prior w ∈ RTt×Ts
+
+as: 
+
+β = αA, w = βWseg , (33) where α ∈ RTt×K are head-averaged decoder-to-thought attention weights (row-normalized over K
+
+thoughts). Under non-negativity and approximate row normalization of α, A, Wseg , each row wt, ·
+
+is an (approximately) normalized soft prior over source frames. For grounding cross-attention at layer l, logits are: 
+
+ℓ(h) 
+
+> t,s
+
+=
+
+
+
+W (h) 
+
+> Q
+
+h(l)think ,t 
+
+⊤ 
+
+W (h) 
+
+> K
+
+es
+
+
+
+√dh
+
+. (34) When enabled, we add a soft bias: 
+
+˜ℓ(h) 
+
+> t,s
+
+= ℓ(h) 
+
+> t,s
+
++ λw log( wt,s + ϵnum ), (35) where λw ≥ 0 (we set λw = 1 in all experiments). We then apply the standard additive source mask 
+
+ms ∈ { 0, −∞} :
+
+a(h) 
+
+> t,s
+
+= softmax s
+
+˜ℓ(h) 
+
+> t,s
+
++ ms
+
+
+
+. (36) Let the K thought tokens at layer ℓ be ˜C(ℓ) =[˜ c1, . . . , ˜cK ]⊤ ∈ RK×d. Let the encoder (frame-level) features be E = [ e1, . . . , e Ts ]⊤ ∈ RTs×d.Let the segment tokens be S = [ S1, . . . , S M ]⊤ ∈
+
+RM ×d, and the Sinkhorn routing matrix be A ∈
+
+RK×M with non-negative entries and approxi-mately row-normalized ( PMj=1 Ak,j ≈ 1). The routed summary for thought k is 
+
+pk =
+
+> M
+
+X
+
+> j=1
+
+Ak,j Sj , pk ∈ Rd, (37) and we denote p = {pk}Kk=1 .Conditioned on pk, RoutedXAttn performs cross-attention from the thought tokens to the en-coder features, with a pk-dependent bias that favors frames consistent with the routed segment content (or equivalently, the routing induced by A). Concretely, for each head h ∈ { 1, . . . , H } with head dimension dh = d/H , we compute standard cross-attention logits 
+
+ℓ(h) 
+
+> k,t
+
+=
+
+
+
+W (h) 
+
+> Q
+
+˜ck
+
+⊤ 
+
+W (h) 
+
+> K
+
+et
+
+
+
+√dh
+
+, (38) and add a pk-dependent bias term b(h) 
+
+> k,t
+
+(pk, E) be-fore the softmax: 
+
+˜ℓ(h) 
+
+> k,t
+
+= ℓ(h) 
+
+> k,t
+
++ λp b(h) 
+
+> k,t
+
+(pk, E). (39) where λp ≥ 0 controls the strength of the routed-summary bias (we set λp = 1 in all experiments unless otherwise specified). The attention weights and outputs follow the standard definition: 
+
+a(h) 
+
+> k,t
+
+= softmax t
+
+˜ℓ(h) 
+
+> k,t
+
++ mt
+
+
+
+, (40) 
+
+o(h) 
+
+> k
+
+=
+
+> Ts
+
+X
+
+> t=1
+
+a(h)
+
+> k,t
+
+
+
+W (h) 
+
+> V
+
+et
+
+
+
+, (41) where softmax t denotes normalization over the source time index t. Here mt = −∞ for masked (padded) time steps and mt = 0 otherwise; thus the mask remains a hard constraint. A minimal instantiation is a content-based com-patibility between the routed summary and each source frame: 
+
+b(h) 
+
+> k,t
+
+(pk, E) = 
+
+
+
+W (h) 
+
+> P
+
+pk
+
+⊤ 
+
+W (h) 
+
+> B
+
+et
+
+
+
+√dh
+
+, (42) which increases attention to frames whose features align with the routed segment summary. Alternatively, when the segmentation weights 
+
+Wseg ∈ RM ×Ts are available (row-normalized over frames), we can additionally derive a purely routing-based temporal prior 
+
+rk,t =
+
+> M
+
+X
+
+> j=1
+
+Ak,j (Wseg )j,t , t = 1 , . . . , T s,
+
+(43) We denote the resulting temporal prior vector by 
+
+rk ∈ RTs with entries (rk)t = rk,t . and inject it as a log-prior bias: 
+
+b(h) 
+
+> k,t
+
+← b(h) 
+
+> k,t
+
++ log( rk,t + ϵnum ). (44) This realizes the “equivalently, the routing induced by A” view: both pk and rk are functions of the same routing variables, with pk summarizing what 
+
+evidence is assigned, and rk summarizing where in time it is expected to lie. We write Eqs. (26)–(44) as 
+
+ˆC(ℓ) = RoutedXAttn 
+
+ ˜C(ℓ), E, p
+
+
+
+, (45) where RoutedXAttn performs standard multi-head cross-attention from thoughts to encoder fea-tures with the above biasing mechanism. 
+
+A.5 Injecting the temporal prior w into the Dual-Stream Decoder grounding cross-attention 
+
+Let Tt be the target length. We compute a token-to-frame prior w ∈ RTt×Ts per instance as 
+
+β = αA, w = βWseg , (46) where α ∈ RTt×K is the head-averaged attention weights (row-normalized over K thoughts) from the decoder token positions to the K thought to-kens. With non-negative α, A, Wseg and approxi-mate normalization (rows summing to ≈ 1), each row vector wt ∈ RTs (the t-th row of w) forms an (approximately) normalized soft temporal prior over source time steps. In the dual-stream decoder, we compute α from the thought-attention sublayer first (standard atten-tion producing weights), then form w via Eq. (46) ,and finally use w in the grounding (encoder) cross-attention sublayer as a bias. This ensures w is available before computing the grounded attention distribution. Let H(l)think ∈ RTt×d denote the decoder states entering the grounding cross-attention at layer l.Vanilla cross-attention to encoder features uses log-its 
+
+ℓ(h) 
+
+> t,s
+
+=
+
+
+
+W (h) 
+
+> Q
+
+h(l)think ,t 
+
+⊤ 
+
+W (h) 
+
+> K
+
+es
+
+
+
+√dh
+
+. (47) When the routing prior is enabled, we add a soft bias derived from w before the softmax: 
+
+˜ℓ(h) 
+
+> t,s
+
+= ℓ(h) 
+
+> t,s
+
++ λw log( wt,s + ϵnum ), (48) where λw ≥ 0 controls the strength of the temporal prior bias (we set λw = 1 in all experiments unless otherwise specified). Followed by the standard source mask ms (padded frames remain excluded): 
+
+a(h) 
+
+> t,s
+
+= softmax s
+
+˜ℓ(h) 
+
+> t,s
+
++ ms
+
+
+
+, (49) 
+
+H(l)vis ,t = Concat h
+
+> Ts
+
+X
+
+> s=1
+
+a(h) 
+
+> t,s
+
+W (h) 
+
+> V
+
+es
+
+!
+
+WO. (50) where softmax s denotes normalization over the source time index s. Thus w steers the grounding cross-attention toward time regions consistent with the routed thought mixture implied by α, while pre-serving the standard Transformer decoder structure. Setting λw = 0 disables the mechanism without changing the model I/O or the decoder interface. B Additional Ablations 
+
+B.1 Ablations on the Evidence Fabric 
+
+To verify that the gains come from multi-granular evidence rather than extra computation, we ablate the evidence fabric while keeping the routing and the dual-stream decoder unchanged, and only vary which evidence tokens are provided (Table 7). We evaluate: (i) Frame-only , where the fabric con-sists of frame-level tokens E only; (ii) Segment-only , where the fabric consists of segment tokens 
+
+S only; and (iii) Global-only , where we replace the fabric with a single pooled token g computed by masked mean pooling over E (used only for this ablation). Frame evidence preserves fine lexical cues but weakens long-range composition; segment evidence supports planning but loses fine details; global-only is the most compressed and thus the weakest.           
+
+> Fabric Variant (PHOENIX14T) B4 ↑R↑
+> Frame-only (no seg) 26.40 53.40 Segment-only (no frame) 26.00 52.90 Global-only (single pooled token) 24.80 50.80 Frame+Segment (Full) 27.49 55.90
+
+Table 7: Evidence fabric ablations on PHOENIX14T 
+
+B.2 Additional Analyses: Length Buckets and Interpretability Metrics Length-bucket evaluation. To further examine whether SignThought improves long-range seman-tic composition , we evaluate BLEU-4 under target-length buckets on PHOENIX14T (Table 8). We divide the dev set into three equally sized groups by reference length |y| (in BPE tokens): S HORT 
+
+(|y| ≤ 9), M EDIUM (10 ≤ | y| ≤ 17 ), and L ONG 
+
+(|y| ≥ 18 ), corresponding to the lower, middle, and upper tertiles of the dev set length distribution. As shown in Table 8, the improvements of Sign-Thought over the baseline grow with target length: +0.4 for short sentences, +1.1 for medium, and +2.2 for long sentences. This trend suggests that the latent reasoning chain contributes most when translation requires compositional aggregation of multiple visual evidences or modeling long-range temporal dependencies, aligning with the intended “plan–then–ground” inductive bias. 
+
+Quantitative interpretability metrics. We ad-ditionally quantify whether the latent chain learns selective and ordered thought-to-evidence align-ments. Metrics are computed from the final-layer               
+
+> BLEU-4 by |y|buckets Short Medium Long w/o latent thinking 29.20 25.60 19.40 SignThought (Full) 29.60 26.70 21.60 Gain (Full – Base) +0.40 +1.10 +2.20
+
+Table 8: Length-bucket BLEU-4 on PHOENIX14T.             
+
+> Method Entropy ↓MonoViol ↓Span ↓TV ↓
+> w/o latent thinking 2.10 0.27 18.5 0.34 SignThought (Full) 1.45 0.12 14.0 0.22
+
+Table 9: Quantitative interpretability metrics on PHOENIX14T. 
+
+thought-to-segment binding matrix A ∈ RK×M
+
+on the PHOENIX14T test set and averaged over samples. Lower values indicate more structured and interpretable alignments. • Entropy ( ↓): measures selectivity of each thought k as Hk = − PMj=1 Ak,j log( Ak,j +
+
+ϵ), averaged over k. Lower entropy indicates sharper attention (less diffuse binding). • Monotonicity violation (MonoViol, ↓): cap-tures ordering consistency. Let μk =P 
+
+> j
+
+jA k,j be the expected segment index for thought k. We report the fraction of violations MonoViol = 1
+
+> K−1
+
+PK−1 
+
+> k=1
+
+I[μk > μk+1 ],where smaller values mean that later thoughts attend to later evidence more consistently. • Span ( ↓): quantifies localization sharpness. For each k, define coverage indices j(p) 
+
+> k
+
+sat-isfying P
+
+> j≤j(p)
+> k
+
+Ak,j ≥ p, and compute Span k = j(0 .95)  
+
+> k
+
+− j(0 .05)  
+
+> k
+
+. Smaller spans im-ply tighter evidence localization. • Total variation (TV, ↓): measures frag-mentation of attention along time, TV =
+
+> 1
+> K
+
+PKk=1 
+
+PMj=2 |Ak,j − Ak,j −1|. Lower TV indicates smoother, more contiguous align-ments. Table 9 reports these metrics, showing consistent improvements across all four aspects. SignThought exhibits lower entropy (1.45 vs. 2.10), fewer order-ing violations (0.12 vs. 0.27), tighter localization (14.0 vs. 18.5), and smoother attention (0.22 vs. 0.34). Together, these results quantitatively con-firm that the latent thought chain promotes coher-ent, ordered, and interpretable evidence allocation, aligning with the qualitative visualizations in Fig. 2. Reference : 我完全看不出这两张照片有什么差别。 (I totally can’t tell what the difference is between these two photos. )
+
+我真的看不出 这两张照 
+
+片 有 什 么 区 别 。
+
+(I really can’t tell what the 
+
+difference between these 
+
+two photos .)
+
+我 看 得 出 这 两 张 照 片 有 
+
+点 差 别 。
+
+(I can tell these two photos 
+
+are a bit different .. )
+
+我看不出这两张照片 。
+
+有 什 么 差 别 。
+
+(I can’t tell these two 
+
+photo s. What difference 
+
+they have .)
+
+我觉得 这两张照片 不太 
+
+一 样 。
+
+(I feel these two photos are 
+
+not quite the same .)
+
+Reference : 这场大雨已经下了一整天了。 (This heavy rain has been falling all day. )
+
+这场大雨已经下了 一整天 。
+
+(This heavy rain has been 
+
+going on all day .)
+
+这场大雨 刚下了一会儿 。
+
+(This heavy rain has only 
+
+been falling for a short 
+
+while .)
+
+这场雨 已经下了 …一整 
+
+天 了 。
+
+(This rain has been 
+
+falling … all day .)
+
+外 面 在 下 雨 。
+
+(It’s raining outside .)
+
+Reference : 晚上我请你去吃肯德基。 (I’ll treat you to KFC tonight. )
+
+今晚 我请你去吃肯德基 。
+
+(Tonight, I’ll treat you to 
+
+KFC .)
+
+今晚 你请我去吃 肯德基 。
+
+(Tonight , you’ll treat me 
+
+to KFC .)
+
+今晚 请你去吃 肯德基 。
+
+(Tonight , I invite you to go 
+
+to KFC .)
+
+晚 上 去 吃 火 锅 。
+
+(Let ’s have hotpot tonight .)
+
+Reference : 走在一对情侣旁边，我感觉自己很多余。 (Walking next to a couple, I feel like a third wheel. )
+
+走在 那对 情侣旁边 ，我觉 
+
+得 自 己 特 别 多 余 。
+
+(Walking next to that couple, 
+
+I feel like such a third wheel .)
+
+走在一对 情侣旁边 ，我
+
+觉 得 自 己 很 好 。
+
+(Walking next to a couple ,
+
+I feel very good .)
+
+我感觉 自己不好走在路上 。
+
+(I feel uneasy walking on 
+
+the road ..)
+
+我走在旁边 ，感觉 不太自在 。
+
+(I walked beside them, feeling 
+
+a bit uncomfortable .)
+
+Reference : 不要担心，伯伯无论如何都要给你筹到学费。 (Don’t worry , your uncle will find a way to raise your tuition, no matter what. )
+
+别担心 ，伯伯无论如何都 
+
+会 帮 你 筹 到 学 费 。
+
+(Do not worry , your uncle 
+
+will help raise your tuition 
+
+no matter what .)
+
+不用担心 ，伯伯给学费 。
+
+(No need to worry , your 
+
+uncle give your tuition .)
+
+担心 ，伯伯会给到学费 。
+
+(Wor ry , your uncle will 
+
+give tuition .)
+
+别担心 ，总会有办法的 。
+
+(No worry , there will be a
+
+way .)Figure 3: Qualitative visualization on CSL-Daily. B.3 Effect of Structural Regularization Strength 
+
+We study the sensitivity of the structured routing regularization to the two loss weights λmono and 
+
+λcont in 
+
+Ltotal = Lce + λmono Lmono + λcont Lcont . (51) These terms encourage (i) monotonic progres-sion of the thought-to-segment assignment and (ii) reduced fragmentation (contiguity) in seg-ment space, respectively. Concretely, we sweep 
+
+λmono ∈ {0, 0.01 , 0.05 , 0.1, 0.2, 0.5, 1.0} and 
+
+λcont ∈ { 0, 0.05 , 0.1, 0.2, 0.4} while keeping all other settings fixed. For clarity, Table 10 reports representative one-dimensional sweeps on the de-velopment set: (i) varying λmono with λcont fixed to 0.2, and (ii) varying λcont with λmono fixed to 
+
+0.1.Overall, introducing small-to-moderate struc-tural regularization consistently improves trans-lation quality over the no-regularization baseline (λmono = λcont = 0). Performance peaks at 
+
+λmono = 0 .1 with λcont = 0 .2, while further in-creasing either coefficient degrades performance, suggesting over-regularization. Based on this sweep, we set λmono = 0 .1 and λcont = 0 .2 as the default choice in all experiments.                                      
+
+> Sweep λmono Sweep λcont
+> λmono λcont Dev B4 ↑λmono λcont Dev B4 ↑
+> 00.2 26.10 0.1 027.10 0.01 0.2 26.55 0.1 0.05 27.35 0.05 0.2 27.10 0.1 0.1 27.22
+> 0.1 0.2 27.49 0.1 0.2 27.49
+> 0.2 0.2 27.25 0.1 0.4 26.64 0.5 0.2 26.50 1.0 0.2 25.95
+
+Table 10: Development-set sensitivity to the structural regularization weights. We report one-dimensional sweeps by varying one coefficient and fixing the other to its selected default. The best setting is λmono = 0 .1
+
+and λcont = 0 .2 (bold). 
+
+C More Details on LC-HKSLT: Scaling, Quality, and Ethics 
+
+C.1 LC-HKSLT Dataset 
+
+Our objective is to enable scalable, gloss-free sign language translation suitable for real-world deploy-ment, where sign–text pairs are readily available but token-level annotations, such as glosses, are 0 200 400 600 800 1000 1200       
+
+> Training data (hours)
+> 020 40 60 80 100
+> Training data (% of full LC-HKSLT)
+> 22
+> 24
+> 26
+> 28
+> 30
+> BLEU-4
+> 21.15
+> 22.42
+> 23.73
+> 25.03
+> 26.34
+> 26.68
+> 27.63
+> 28.34
+> 28.92 29.32
+> 30.22
+> LC-HKSLT scaling trend
+
+Figure 4: LC-HKSLT scaling trend. 
+
+scarce. Existing Hong Kong Sign Language re-sources are typically limited in scale or rely heav-ily on gloss supervision, which is misaligned with learning directly from raw videos and sentence-level translations. To bridge this gap and support our Latent Chain-of-Thought framework for long-range, weakly supervised sign-to-text reasoning, we construct LC-HKSLT, a large-scale corpus cu-rated from realistic broadcast-style scenarios. 
+
+Collection pipeline. We collect approximately 1,300 hours of Hong Kong Sign Language videos from YouTube, primarily drawn from Hong Kong Government and Legislative Council briefings in which an interpreter is continuously visible and the spoken content is publicly accessible. The videos are segmented into sentence-level clips, from which frames are extracted, and the cor-responding speech tracks are transcribed using 
+
+openai/whisper-large-v3 to produce sentence-level targets. Notably, no gloss annotations or sign language recognition vocabularies are introduced. The resulting supervision consists solely of weak, sentence-level signals that are readily obtainable at scale in real-world settings, thereby aligning with the intended operating regime of our gloss-free for-mulation. 
+
+Evaluation protocol. Although LC-HKSLT is col-lected at web scale, this paper focuses on a carefully curated 30-hour subset, with zero sentence overlap across the training, validation, and test splits. This design choice is not intended to underrepresent the dataset, but rather to isolate the methodological contribution in a controlled, comparable setting. Specifically, (i) most existing Chinese SLT bench-marks operate in the 20 to 30 hour regime, enabling fair and direct comparison; (ii) the reduced scale allows training to remain practical on a single GPU; and (iii) we observe that, even without external pre-Dataset / Work Lang. SLR Vocab. SLT Vocab. Duration (h) Videos Signers Source GSL (Adaloglou et al., 2021) GSL 310 – 9.59 10K 7 Lab PHOENIX–14T (Camgoz et al., 2018) DGS 1,066 2,887 10.53 8K 9 TV CSL–Daily (Zhou et al., 2021) CSL 2,000 2,370 23.27 21K 10 Lab TVB–HKSL–News (Niu et al., 2024) HKSL 6,515 2,850 16.07 7K 2 TV        
+
+> LC–HKSLT (Ours) HKSL –125,833 1311 432K 14 YouTube
+> Table 11: Comparison of LC–HKSLT with representative SLR/SLT datasets.
+
+training, this data budget is sufficient to validate the core benefits of explicit latent reasoning. Ta-ble 11 situates LC-HKSLT among representative SLR and SLT datasets. Beyond the subset used in this study, the complete collection comprises 432k clips from 14 signers and covers 125,833 Chinese words and phrases in the translation vo-cabulary. The full dataset will be publicly released to support future research on large-scale, gloss-free SLT. Beyond direct translation, large-scale sign-text corpora may also support retrieval-oriented multimodal settings that require composing linguis-tic intent with fine-grained visual evidence (Li et al., 2026b). 
+
+C.2 Scaling Study on LC-HKSLT 
+
+To address concerns about the gap between our web-scale collection and the controlled 30-hour evaluation protocol, we conduct an additional scal-ing study on LC-HKSLT by training the same model with increasing fractions of the training pool while keeping the dev/test split fixed. As shown in Fig. 4, performance improves monotonically with more training data: BLEU-4 increases from 21.15 in the smallest-data setting to 30.22 when using the full LC-HKSLT collection (up to ∼1.3k hours), yielding a total gain of +9.07 BLEU-4. Notably, improvements are most pronounced in the low-data regime and gradually taper off as the data scale grows, suggesting that our method is data-efficient while continuing to benefit from additional weakly supervised sign-text pairs. 
+
+C.3 Data Quality, Licensing, and Privacy Considerations Data source and intended use. LC-HKSLT is collected from publicly accessible broadcast-style videos on YouTube, focusing on Hong Kong Gov-ernment and Legislative Council (LegCo) brief-ings where a sign language interpreter is con-sistently visible and the spoken content is pub-licly available. We segment videos into sentence-level clips and obtain sentence targets by tran-scribing the accompanying speech track using 
+
+openai/whisper-large-v3 . The dataset is in-tended solely for non-commercial research and education on sign language translation and related multimodal learning problems. More broadly, this line of work is also related to structured prediction over complex inputs, where multi-level semantic dependencies are important (Zhang et al., 2025b). 
+
+Label noise and alignment limitations. Since sentence targets are derived from automatic speech recognition (ASR), LC-HKSLT may contain: (i) ASR transcription errors, (ii) sentence bound-ary/segmentation errors, and (iii) imperfect tem-poral alignment between the interpreter’s signing and the spoken content. Such issues are related to the broader challenge of learning under noisy su-pervision in text-centered settings (Liu et al., 2023, 2025b; Chen et al., 2026). We explicitly view LC-HKSLT as weak, sentence-level supervision at scale, which matches the real-world operating condition targeted by gloss-free SLT. We will re-lease meta-information (e.g., clip timestamps and source video identifiers) to facilitate error analysis and downstream filtering by the community. Effi-cient hybrid nearest-neighbor search may further support scalable indexing and community-driven filtering over large clip collections (Yang et al., 2026; Ni et al., 2025). 
+
+Privacy protection. Although the source videos are publicly available, we treat privacy as a first-class concern. To mitigate re-identification risks in data release, we will: (1) publish a privacy-preserving version of the clips where human faces are blurred (including the interpreter and any other visible individuals); (2) avoid releasing personal identifiers beyond what is necessary for research (e.g., no names, no user handles), and provide only minimal source references (video ID and time range) for traceability; (3) explicitly prohibit any attempt to use LC-HKSLT for biometric identifica-tion, surveillance, or re-identification. 
+
+Copyright and licensing considerations. LC-HKSLT is derived from third-party online videos. We do not claim ownership over the original con-tent. Our release will follow a research-only license and will include clear attribution to the original sources, in line with broader concerns about unau-thorized reuse of externally sourced data (Liu et al., 2025a). If any source content owner or appear-ing individual requests removal, we will promptly honor such requests. 
+
+Take-down policy. We will maintain a take-down mechanism: upon receiving a request with the source video identifier and timestamp range, we will remove the corresponding clips/annotations from future releases and provide an updated index to the community. 
+
+D Additional Quantitative Results 
+
+Fig. 3 visualizes the frame-level thought-to-time alignment of our latent reasoning module on five CSL-Daily examples. For each video, we show: (i) the attention heatmap from K=8 latent thoughts (C1∼C8) to input frames, together with the selectiv-ity entropy H and monotonic-violation rate viol ;and (ii) the corresponding Chinese prediction with its English translation. The full model exhibits clear ordered bands (near-diagonal alignment), low 
+
+viol , and relatively low H, indicating that different thoughts attend to progressively later evidence in a coherent manner. This observation is broadly con-sistent with the importance of spatially aligned and semantically discriminative representations in com-plex visual recognition settings (Yao et al., 2025; Zhang et al., 2025a). In contrast, removing Lmono 
+
+disrupts temporal ordering (higher viol ) and often leads to semantic reversals or role/polarity mistakes (e.g., predicting “can tell the difference” instead of “cannot”). Removing Lcont fragments attention across disjoint regions, correlating with disfluent or incomplete outputs. Replacing structured routing with soft routing produces diffuse, high-entropy allocations and more generic translations that miss key details. Overall, these cases qualitatively sup-port that our chain-structured, regularized evidence allocation yields more faithful and grounded trans-lations, especially for longer sentences requiring multi-step semantic composition. These visual pat-terns correspond closely to linguistic coherence in the generated translations: without the regular-izers, models tend to swap event order or omit key arguments, confirming that chain-structured reasoning improves both alignment and semantic faithfulness (Jiang et al., 2026a).

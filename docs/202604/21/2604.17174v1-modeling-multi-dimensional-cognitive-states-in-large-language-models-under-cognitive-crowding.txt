@@ -1,0 +1,835 @@
+Title: Modeling Multi-Dimensional Cognitive States in Large Language Models under Cognitive Crowding
+
+URL Source: https://arxiv.org/pdf/2604.17174v1
+
+Published Time: Tue, 21 Apr 2026 01:07:42 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+## Modeling Multi-Dimensional Cognitive States in Large Language Models under Cognitive Crowding 
+
+Lin Zhong 1*, Siyu Zhu 1*, Zizhen Yuan 1, Jinhao Cui 1, Xinyang Zhao 1,Lingzhi Wang 1, Hao Chen 2, Qing Liao 1,3†
+
+> 1
+
+Harbin Institute of Technology, Shenzhen, China 2City University of Macau, Macao SAR, China 
+
+> 3
+
+Peng Cheng Laboratory, Shenzhen, China  
+
+> {zhonglin,siyuzhu,cuijinhao,25S151188,25S151205}@stu.hit.edu.cn {wanglingzhi,liaoqing}@hit.edu.cn ,sundaychenhao@gmail.com
+
+Abstract 
+
+Modeling human cognitive states is essential for advanced artificial intelligence. Existing Large Language Models (LLMs) mainly ad-dress isolated tasks such as emotion analysis or stance detection, and fail to capture inter-actions among cognitive dimensions defined in psychology, including emotion, thinking style, stance, and intention. To bridge this gap, we construct CognitiveBench, the first benchmark with unified annotations across the above four dimensions. Experiments on Cogni-tiveBench show that although LLMs perform well on single dimension tasks, their perfor-mance drops sharply in joint multi-dimensional modeling. Using Gromov δ-hyperbolicity analysis, we find that CognitiveBench ex-hibits a strong hierarchical structure. We at-tribute the performance bottleneck to “Cog-nitive Crowding”, where hierarchical cogni-tive states require exponential representational space, while the Euclidean space of LLMs grows only polynomially, causing representa-tion overlap and degraded performance. To ad-dress this mismatch, we propose HyCoLLM ,which models cognitive states in hyperbolic space and aligns LLM representations via Hyperbolic Guided Alignment Tuning. Re-sults show that HyCoLLM substantially im-proves multi-dimensional cognitive understand-ing, allowing 8B parameter model to outper-form strong baselines, including GPT-4o. Our code, dataset, and trained weights are available at https://github.com/Chips98/HyCoLLM_ for_ACL2026 .
+
+1 Introduction 
+
+Understanding human cognitive states is a funda-mental goal of artificial intelligence, with appli-cations in psychological counseling, social media analysis, and dialogue systemsc (Wang et al., 2025; Zhong et al., 2025). Although Large Language   
+
+> *Equal contribution.
+> †Corresponding author.
+
+Figure 1: Illustration of Alleviating Cognitive Crowd-ing in Euclidean Space through Hyperbolic Disentan-glement. 
+
+Models (LLMs) have shown promising capabilities in this area, most existing approaches treat psycho-logical dimensions in isolation. Prior work typi-cally focuses on single tasks such as stance detec-tion (Li et al., 2021), emotion analysis (Mohammad et al., 2016), or intent recognition (Mirzaei et al., 2023). This task specific perspective oversimplifies human cognition. Psychological research suggests that cognitive dimensions form an integrated sys-tem with interactions (Eagly, 1993; Breckler, 1984). For instance, an opposing stance may arise from a deliberative thinking style or from emotions such as anger. Ignoring these interactions prevents LLMs from capturing a complete cognitive state, which jointly involves emotion, thinking style (abbrevi-ated as thinking), stance, and intent (Shapira et al., 2024). This gap highlights the need for benchmarks that support holistic cognitive modeling across mul-tiple dimensions. Existing benchmarks fall short of this require-ment. Some datasets annotate two dimensions jointly, such as stance and emotion (Pu et al., 2025; 
+
+> arXiv:2604.17174v1 [cs.CL] 19 Apr 2026
+
+Upadhyaya et al., 2023; Gambini et al., 2024), or incorporate intent information in dialogue settings (Dönmez and Falenska, 2025; Mirzaei et al., 2023). However, they rarely cover the above four dimen-sions simultaneously. More importantly, most benchmarks lack explicit annotations for thinking, which plays a central role in linking emotion to stance. To address this limitation, we construct CognitiveBench, the first dataset with fine grained annotations for emotion, thinking, stance, and in-tent. CognitiveBench enables a systematic eval-uation of whether LLMs can capture the holistic cognitive state rather than isolated components. Using CognitiveBench, we first evaluate the per-formance of current LLMs on multi-dimensional cognitive understanding. The results reveal a clear limitation: while LLMs achieve strong perfor-mance on individual dimensions, their accuracy drops sharply when required to jointly predict all four dimensions. For example, GPT-4o performs reasonably well in a single dimension, but when it models four cognitive dimensions simultaneously, its accuracy drops to approximately 5.7%. This failure motivates a deeper analysis of the underly-ing data structure. We analyze CognitiveBench using Gromov δ-hyperbolicity, which measures the extent to which data exhibit tree like structure. The analysis shows that CognitiveBench has a pro-nounced intrinsic hierarchy, with relative δ ≈ 1% .Psychological studies also indicate that cognitive states exhibit a pronounced hierarchical structure (Shaver et al., 1987; Taylor et al., 2015), which is consistent with our findings from the Gromov 
+
+δ-hyperbolicity analysis. We therefore attribute the performance bottleneck of LLMs to this finding, which we term "Cognitive Crowding". It refers to the mismatch between the representational de-mands of cognitive states and the geometry of LLM embeddings. Hierarchical cognitive states require a space whose volume grows exponentially, whereas standard LLMs rely on Euclidean representation spaces with only polynomial growth. As a result, distinct cognitive states collapse and overlap in Eu-clidean space, preventing LLMs from effectively distinguishing them. To address this geometric mismatch, we pro-pose the HyCoLLM framework. HyCoLLM mod-els cognitive states in hyperbolic space, specifi-cally using the Poincaré ball model, which natu-rally supports exponential volume growth and hi-erarchical structure. We first design a Hyperbolic Cognitive Network (HCN) that separates cognitive states through a geometry aware contrastive loss. We then propose Hyperbolic Guided Alignment Tuning (HGAT), which aligns the internal repre-sentations of an LLM with the learned hyperbolic cognitive manifold via semantic-cognitive topology loss. The main contributions are as follows: • We introduce CognitiveBench, the first four-dimensional cognitive benchmark covering emotion, thinking, stance, and intent, enabling holistic evaluation of cognitive understanding. • We identify Cognitive Crowding as a key ob-stacle in multi-dimensional cognitive model-ing with LLMs, and provide empirical evi-dence through performance analysis and topo-logical characterization of the data. • We propose the HyCoLLM framework, which integrates hyperbolic geometric priors with an alignment based tuning strategy to mitigate cognitive crowding. • Experimental results show that HyCoLLM substantially improves cognitive understand-ing across both single and joint tasks, with an 8B parameter model outperforming strong baselines, including GPT-4o. 
+
+2 Related Work 
+
+Multi-dimensional Cognitive Benchmarks. 
+
+The landscape of cognitive dataset construction has evolved from single-task annotations, such as P-Stance (Li et al., 2021), MultiTarget (Sobhani et al., 2017), and ASTSD (Wan and Gao, 2015), toward multi-dimensional modeling. Recognizing the inherent correlations between mental states, some benchmarks have begun to bridge distinct dimensions. For instance, SemEval-16 (Mo-hammad et al., 2016) established a benchmark for the joint detection of stance and sentiment, while GunStance (Gyawali et al., 2024) and EcoVerse (Grasso et al., 2024) extended this synergy to controversial social topics. Similarly, in intent modeling, QID (Mirzaei et al., 2023) captured the intent behind questions , and datasets derived from ChangeMyView (Dönmez and Falenska, 2025) investigated persuasive intent. However, as presented in Table 1, although these datasets have attempted to cover two cognitive dimensions, they still cannot fully reflect the overall cognitive state of the speaker. For this reason, CognitiveBench has supplemented more dimensions. Dataset Size Domain Sta. Emo. Int. Thk.                                           
+
+> Covid19-Stance 7,122 Covid-19 ✓✓××
+> MultiTarget 4,455 Political ✓×××
+> SemEval-16 4,163 Political ✓✓××
+> GunStance 5,500 Gun Policy ✓×××
+> QID 2,084 Social Life ××✓×
+> ASTSD 12,864 Airline ×✓××
+> CognitiveBench 6,514 Pol./Eco./Cul. ✓✓✓✓
+
+Table 1: Comparison of CognitiveBench with exist-ing representative datasets. While existing datasets typically focus on one or two specific dimensions, CognitiveBench integrates four synergistic dimensions: Stance, Emotion, Intent, and Thinking. 
+
+Modeling Cognitive States in LLMs. Prior re-search has leveraged LLMs to model specific psy-chological dimensions, including emotion, stance, and intent (Amirizaniani et al., 2024). In Emotion Analysis , approaches have advanced from simple categorization to context-aware and multimodal modeling (Klüwer et al., 2025; Fazzi et al., 2025; Yu et al., 2024). For Stance Detection , methods largely mitigate data scarcity through background knowledge extraction (Zhang et al., 2024) and chain-of-thought augmentation (Zou et al., 2025). Similarly, intent Modeling has focused on user-centric benchmarks (Wang et al., 2024) and appli-cations in cognitive behavioral therapy (Na, 2024; Xu et al., 2025). Despite these advancements, these works typically model each dimension in isolation within Euclidean spaces (Yadav et al., 2024; Akash et al., 2025). Such approaches overlook the intrin-sic hierarchical synergy of complex mental states, failing to capture the structural dependencies that organize human cognition. 
+
+3 Dataset: CognitiveBench 
+
+To investigate the interaction between different cog-nitive dimensions, we need a benchmark that cap-tures the full complexity of human cognition. As shown in Table 1, existing datasets typically cover only one or two dimensions, which restricts the study of how these states influence each other. To address this, we construct CognitiveBench , the first dataset to jointly model emotion, thinking, stance, and intent. In this work, we define a “cogni-tive state” as the specific combination of these four dimensions. The taxonomy of each dimension is grounded in established cognitive theories. Emotions are or-ganized following Plutchik’s model (Plutchik and Kellerman, 1980), with positive, negative, and neu-tral categories and 9 basic emotions. Thinking is               
+
+> Dimension Category Labels
+> Emotion Positive Joy, Trust, Anticipation, Surprise Negative Anger, Disgust, Fear, Sadness Neutral Neutral Thinking Intuitive Subjective Evaluation, Identity Conformity, Emotional Judgment, Experience-Based Analytical Logical, Balanced Consideration, Evidence-Based, Critical Stance N/A Support, Oppose, Unclear Intent Representatives Information Sharing, Opinion Ex-pression Directives Information Seeking, Call to Ac-tion Expressives Connection, Conflict, Emotional Expression
+
+Table 2: Taxonomy of the four cognitive dimensions in CognitiveBench. 
+
+divided into intuitive and analytical types inspired by dual process theory (Kahneman, 2011), and fur-ther specified into 8 concrete thinking styles. User stance towards a target is defined based on social judgment theory (Sherif and Hovland, 1961) and adapted to each topic, since stance targets vary across domains. User intent is categorized into rep-resentatives, directives, and expressives based on speech act theory (Austin, 1975), yielding 7 fine grained intent labels. The overview of labels is provided in Table 2, with details in Appendix A.1. 
+
+3.1 Data Construction 
+
+We collect data from the Twitter (X) platform cen-tering on four distinct topics: China-United States Trade (CUT) , United States Election (UE) , Diver-sity, Equity, and Inclusion (DEI) , and Federal Re-serve Interest Rates (FRIR) . We select these diverse topics to verify model performance across different domains: CUT and FRIR represent the economic domain, UE represents the political domain, and DEI represents the cultural domain. Starting from a raw corpus of more than 48,000 posts, we con-duct systematic data filtering and cleaning to ensure sample validity and research reliability. We remove short texts with insufficient semantic content, de-fined as fewer than 10 tokens. All user information is anonymized to protect privacy. We then manu-ally review each remaining sample to assess topic relevance and remove off-topic content. After filter-ing, we obtain approximately 9,000 valid candidate samples. 
+
+Expert Annotation. To ensure high annotation quality, we recruit 29 domain experts with back-grounds in affective computing or psychology. The entire annotation campaign lasts for two months, with an hourly wage of $45. The annotation pro-cess consists of four stages. First, five annotators conduct pilot annotation on 1,000 samples. Based on their annotations and feedback, we iteratively revise the annotation guidelines and label bound-aries to establish clear and consistent definitions for all four dimensions. Second, all annotators re-ceive training based on the revised guidelines. Af-ter training, each annotator labels a designated set of samples, and the research team evaluates their performance on 100 samples and conducts follow up discussions to ensure agreement on annotation standards. Third, each sample is independently an-notated by three annotators across all four dimen-sions. Fourth, we retain only samples that reach majority agreement, defined as an agreement ratio of at least 2/3, and discard samples with substantial disagreement. 
+
+Dataset Statistics and Reliability. Starting from a raw corpus of 48,496 posts, our multi-stage fil-tering and expert-consensus pipeline retains 6,514 high-quality samples (overall retention ≈ 13 .4% ), distributed across the four topics as 1,445 (CUT), 2,090 (UE), 1,227 (DEI), and 1,752 (FRIR). As summarized in Table 3, the four domains differ in both raw volume and selectivity: the politically and economically charged UE and FRIR topics yield higher retention ( 18 .6% and 18 .0% ), while the more contested CUT and DEI topics are filtered more aggressively ( 9.8% and 9.6% ) to remove off-topic or low-signal utterances. The resulting corpus also spans a healthy breadth of contributors, with 283/309/82/317 unique users per topic and an aver-age of 5-15 posts per user, providing diverse expres-sions of emotion, thinking style, stance, and intent rather than being dominated by a handful of pro-lific accounts. We split each topic into training and test sets following an 8:2 ratio, with label propor-tions preserved within each split to keep evaluation representative. Annotation reliability is measured by Cohen’s 
+
+κ computed on the three-way expert annotations for every dimension and every topic. All κ val-ues fall within the “moderate” to “substantial” range ( 0.51 –0.79 ), indicating that even the finer-grained dimensions remain consistently identifiable by independent experts. The Stance dimension at-tains the highest agreement (up to κ = 0 .79 on CUT), reflecting the relatively unambiguous sup-port/oppose/unclear signals in political and eco-                                                      
+
+> Topic CUT UE DEI FRIR
+> (Domain) (Trade) (Politic) (Culture) (Economy)
+> Data Statistics
+> Raw Posts 14,773 11,234 12,759 9,730 Valid Samples †1,445 2,090 1,227 1,752 Retention 9.8% 18.6% 9.6% 18.0%
+> User Interaction
+> Unique Users 283 309 82 317 Posts/User 5.1 6.8 15.0 5.5
+> Reliability (Kappa κ)
+> Emotion 0.68 0.62 0.55 0.59 Thinking 0.61 0.58 0.64 0.61 Stance 0.79 0.71 0.51 0.63 Intent 0.66 0.63 0.60 0.65
+> Note: †Valid samples after filtering for length, toxicity, and consensus.
+> Table 3: Per-topic statistics and inter-annotator relia-bility of the CognitiveBench dataset. We report raw volume, retention after filtering, user-level diversity, and Cohen’s κfor each cognitive dimension across the four topics.
+> Figure 2: Gromov δhyperbolicity analysis across four datasets. Consistently low relative delta values of ap-proximately 1% indicate a strong intrinsic hierarchical structure.
+
+nomic discussions, whereas Emotion and Intent 
+
+show slightly lower but still substantial agreement due to the inherently more subjective nature of af-fect attribution. We view this combination of scale, topical diversity, multi-user coverage, and verified annotation quality as sufficient to support a rig-orous evaluation of multi-dimensional cognitive modeling. Additional breakdowns, including label-level distributions for each dimension, are provided in Appendix A. 
+
+3.2 Cognitive Crowding 
+
+Based on CognitiveBench, we first investigate the capability of current LLMs to model complex cog-nitive states. We evaluate state-of-the-art models, including GPT-4o and Claude-4.5. While these models perform reasonably well on single dimen-sions, they fail significantly on the joint prediction task. As shown in Table 14, the “all-correct” ac-curacy (requiring correct predictions for emotion, Figure 3: The overall framework of HyCoLLM. 
+
+thinking, stance, and intent simultaneously) is only 5.7% for GPT-4o and 3.4% for Claude-4.5. Analy-sis reveals that models frequently confuse concepts that are semantically related but hierarchically dis-tinct, such as misidentifying “intuitive thinking” as “emotional judgment.” We hypothesize that this failure stems from “Cognitive Crowding,” a phenomenon caused by a geometric mismatch. Cognitive theories indicate that mental states are hierarchical, where broad cat-egories branch into fine-grained concepts (Shaver et al., 1987; Taylor et al., 2015). To confirm this structure in our data, we apply Gromov δ-hyperbolicity analysis. As shown in Figure 2, the relative delta values across all domains are approximately 1%, which indicates a strong in-trinsic tree-like structure. Hierarchical structures require space that grows exponentially ( bd) to sep-arate branches, whereas the Euclidean space used by LLMs only grows polynomially ( Rd). Conse-quently, when LLMs attempt to embed this hierar-chy into Euclidean space, distinct cognitive states are forced into overlapping regions. This geomet-ric bottleneck creates the “Cognitive Crowding” effect, limiting the model’s ability to distinguish multi-dimensional states. 
+
+4 Method: HyCoLLM 
+
+To resolve the cognitive crowding problem ob-served in Section 3, we propose HyCoLLM (Hy-perbolic Cognitive Large Language Model). In-stead of forcing hierarchical cognitive states into Euclidean space, HyCoLLM grounds the under-standing capabilities of LLMs on a hyperbolic man-ifold. As illustrated in Figure 3, the framework operates in two phases: (1) disentangling multi-dimensional cognitive states using the Hyperbolic Cognitive Network (HCN), and (2) aligning LLM semantic representations with the cognitive geomet-ric prior via Hyperbolic-Guided Alignment Tuning (HGAT). 
+
+Preliminaries: The Poincaré Ball. We employ the Poincaré ball model (Ddc , g D) to capture hier-archical structures. The manifold is defined as 
+
+Ddc = {z ∈ Rd : ∥z∥ < 1/√c} with constant negative curvature −c. Operations between the Eu-clidean tangent space T0Ddc (approximated as Rd
+
+at the origin) and the hyperbolic manifold are medi-ated by exponential ( exp c
+
+> 0
+
+) and logarithmic ( log c
+
+> 0
+
+)maps. The induced Poincaré distance dD(zi, zj )
+
+grows exponentially as points approach the bound-ary, providing the necessary capacity to embed hi-erarchies without distortion. 
+
+4.1 Constructing the Cognitive Geometric Prior 
+
+The goal of this phase is to train the Hyperbolic Cognitive Network (HCN) as a "geometric teacher" that effectively disentangles cognitive states. 
+
+Hyperbolic Disentanglement. Given an input 
+
+X, an encoder extracts the hidden state henc .To decouple the four cognitive dimensions, we project dimension-specific base vectors into the hyperbolic space: zk = exp c
+
+> 0
+
+(Wkhenc ) for k ∈{emo, thk, stn, int }. These features are processed and aggregated via cross-dimensional attention in the tangent space to form a unified cognitive anchor 
+
+vcog .
+
+Geometry-Aware Optimization. To enforce structural separation, we optimize a composite ob-jective LHCN = Ltask + Lhyp . Here, Ltask is the multi-task cross-entropy loss for classification. Crucially, Lhyp is a hyperbolic geometric regular-ization loss based on the Poincaré distance. It plays the role of contrastive learning, bringing samples with the same cognitive features closer, while push-ing away those with different cognitive features: 
+
+Lhyp = X
+
+> i,j
+
+Iyi=yj dD(zi, zj )2
+
++Iyi̸ =yj max(0 , m − dD(zi, zj )) 2 (1) where m is the margin controlling the separation of distinct classes. This ensures the learned feature space reflects the intrinsic hierarchy of the data, resolving the crowding issue. 
+
+4.2 Hyperbolic-Guided Alignment Tuning 
+
+Hyperbolic-Guided Alignment Tuning (HGAT) can effectively disentangle cognitive states, and we need to inject this geometric prior knowledge into LLMs. Considering the inherent differences be-tween the Euclidean space used by LLMs and hy-perbolic space, we design HGAT to align these two topological structures. 
+
+Soft Prompt Injection. We construct a Cognitive Projection Network Pθ that maps the static anchor 
+
+vcog from the HCN to a sequence of dynamic soft prompt embeddings Eprior ∈ RL×dmodel , where 
+
+L is the prompt length. These embeddings are prepended to the input embeddings to guide the generation process:            
+
+> Eprior =Pθ(vcog ) = a·tanh ( W2·σ(LN( W1vcog ))) ,
+> (2)
+
+fX = Eprior ⊕ Emb( C) ⊕ Emb( T ), (3) where W1, W2 are projection weights, LN denotes LayerNorm applied to the projected features before the activation σ (consistent with Figure 3), and a
+
+is a scaling factor bounding the soft prompt values. Here C denotes the Context (e.g., the source tweet or topic information that frames a user’s speech) and T denotes the Target post (the user’s actual speech that we aim to analyze). fX is the model input formed by concatenating the soft prompt with the context and target embeddings; ⊕ denotes con-catenation along the sequence length dimension, ensuring the soft prompts serve as a prefix. 
+
+Semantic-Cognitive Topology Loss. To ensure the generated semantic representations remain topo-logically consistent with the intended cognitive goals, we propose the Semantic-Cognitive Topol-ogy (SCT) Loss. We extract the hidden state of the last token in the LLM’s generation sequence, 
+
+hlast . An alignment projector Aϕ maps this state back to the tangent space to obtain ˆvsem , which is then constrained to align with the cognitive anchor 
+
+vcog using cosine similarity: 
+
+LSCT = 1 − ˆvTsem · vcog 
+
+∥ˆvsem ∥2∥vcog ∥2 + ϵ . (4) Since the Poincaré ball model is conformal, the angular distance between vectors in the tan-gent space T0Ddc preserves the angular relations of geodesics emanating from the origin, ensuring that semantic directionality is maintained. LSCT math-ematically enforces a local isomorphism between the LLM’s semantic space and the HCN’s cognitive tangent space, penalizing any semantic drift that de-viates from the predetermined cognitive hierarchy. The final joint optimization objective combines the 
+
+LSF T and LSCT :
+
+Ltotal = − 
+
+> |Y|
+
+X
+
+> t=1
+
+log P (yt| fX, y <t )
+
+| {z }
+
+> LSF T
+
++λ · L SCT , (5) where LSF T represents the standard auto-regressive generation loss, λ is a hyperparameter balancing generation quality and structural con-straints. The LSCT loss incorporates geometric constraints into the LoRA parameters of the LLM. Consequently, there is no need to use HCN or 
+
+Eprior during inference, and compared with general LLMs, HyCoLLM exhibits no additional inference latency. 
+
+4.3 Geometric Capacity Analysis 
+
+We attribute cognitive crowding to a fundamental geometric mismatch between hierarchical cognitive structures and Euclidean representations. Empiri-cally, the labels in CognitiveBench exhibit strong hierarchy, as indicated by consistently low Gromov 
+
+δ values. This motivates a theoretical analysis of the embedding capacity required to represent such structures. 
+
+Proposition 1 (Geometric Capacity Mis-match). Let T be a hierarchical taxonomy with branching factor b > 1 and depth k. Embed-ding T into a d-dimensional Euclidean space Rdwith bounded distortion requires the embedding radius to grow exponentially with k. In contrast, a d-dimensional hyperbolic space admits a low-distortion embedding with radius growing only lin-early in k.
+
+This result shows that the polynomial volume growth of Euclidean space is insufficient to accom-modate the exponential expansion of hierarchical cognitive structures, inevitably leading to crowd-ing. Hyperbolic geometry, with exponential vol-ume growth, provides a principled solution by en-abling faithful separation of hierarchically related cognitive states. A formal proof is given in Ap-pendix C. 
+
+5 Experiment 
+
+Baselines. We compare our method against three groups of baselines: (1) Human Experts : Provid-ing an upper-bound reference for deep cognitive understanding; (2) Closed-Source LLMs : Includ-ing GPT-4o (Achiam et al., 2023), Gemini2.5 (Co-manici et al., 2025), etc., evaluated under Few-Shot and Chain-of-Thought (CoT) settings; (3) Open-Source LLMs : Including Llama-3.1-8B (Touvron et al., 2023), Qwen3-8B (Yang et al., 2025), etc., fine-tuned with Supervised Fine-Tuning (SFT) on the CognitiveBench. 
+
+Metrics. Beyond standard Accuracy (ACC) and 
+
+Macro-F1 for individual dimensions, we introduce holistic metrics to evaluate the synergy of cogni-tive state prediction: Partial Match Accuracy@ k
+
+(PMA@ k) measures the proportion of samples where the model correctly predicts at least k dimen-sions. Specifically, PMA@4 serves as the strictest metric (Exact Match), requiring correct predictions for emotion, thinking, stance, and intent simultane-ously. This metric captures the "overall cognitive state" consistency. Hamming loss (↓): The propor-tion of incorrectly predicted labels relative to the total number of labels. 
+
+Implementation Details. We train HyCoLLM using the trl framework (von Werra et al., 2020), along with 4-bit quantization and LoRA adapters. The training process runs for 3 epochs with a learn-ing rate set to 2e-4, and the weight of the SCT loss is fixed at λ = 1 .0 based on sensitivity analy-sis. During inference, the model is deployed using 
+
+vllm (Kwon et al., 2023), with a temperature of 0 and a max_token of 128. Both the baselines and HyCoLLM use identical settings during training and inference to ensure fair comparison. For more settings, please refer to Appendix D.1. 
+
+5.1 Main Results 
+
+Table 4 reports the averaged performance across CUT, UE and DEI datasets, with detailed sub-dataset results provided in Appendix D.8. The results highlight clear limitations in the holistic cog-nitive understanding of current LLMs and demon-strate the effectiveness of our approach. Despite strong reasoning capabilities, baseline models exhibit pronounced cognitive crowding. Even GPT-4o with CoT prompting attains only 5.69% PMA@4 accuracy, far below the human benchmark of 30.76%. This gap indicates that ex-isting LLMs can often predict individual dimen-sions, such as stance, but fail to maintain con-sistency across emotion, thinking, stance, and in-tent. Open-source models fine-tuned with stan-dard LoRA-based SFT show moderate gains, with Qwen3-8B reaching 10.91% PMA@4 , but still in-cur high Hamming Loss . We further find that zero-shot and few-shot Chain-of-Thought (CoT) prompt-ing alone is insufficient and can even degrade struc-tured multi-dimensional predictions, as LLMs fre-quently fail to adhere to the strict 4-dimensional schema (see Appendix D.5). More importantly, a scaling-law analysis across 1.7B, 8B, and 32B backbones (Appendix D.7) reveals a striking perfor-mance inversion: even Qwen3-32B under standard SFT (PMA@4 = 9.42%) underperforms our 8B Hy-CoLLM (13.96%), which directly rules out “task difficulty” or insufficient parameter capacity as the root cause and instead confirms that the bottleneck is geometric. These results together support our hypothesis that Euclidean representations entangle semantically related dimensions, leading to system-atic cognitive crowding. HyCoLLM substantially alleviates this issue. With Qwen3-8B, HyCoLLM achieves the strongest overall performance among automated evaluations, improving PMA@4 accuracy to 15.49%, nearly three times that of GPT-4o and over 40% higher than the best SFT baseline. Gains are particularly pronounced in difficult dimensions such as Think-ing and intent. HyCoLLM also yields the lowest 
+
+Hamming Loss of 0.1156, narrowing the gap to hu-man experts (0.0797). These results indicate that modeling cognitive structure in hyperbolic space enables small LLMs to surpass much larger LLMs. Model Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 Hamming Loss ↓                                                                                                                                                                                                        
+
+> ACC F1 ACC F1 ACC F1 ACC F1
+> Human
+> Averaged from 3 experts 0.7251 0.5348 0.6400 0.4816 0.8021 0.6713 0.7201 0.5762 0.9092 0.6836 0.3076 0.0797
+> Close-Source
+> Small-size Few-Shot & CoT GPT4o-mini 0.4519 0.3015 0.3060 0.2099 0.5466 0.5470 0.5541 0.4181 0.6436 0.2695 0.0442 0.1676 Gemini2.5-Flash-Lite 0.5382 0.3012 0.3229 0.2532 0.5554 0.5501 0.5750 0.4242 0.6814 0.3101 0.0618 0.1573 Grok-4-fast 0.4266 0.2904 0.3066 0.2516 0.5329 0.4967 0.5556 0.5153 0.6361 0.2499 0.0183 0.1702 Qwen-Turbo 0.4543 0.2641 0.3335 0.2277 0.4873 0.4248 0.5528 0.4002 0.6145 0.2485 0.0504 0.1694 Large-size Few-Shot & CoT GPT-4o 0.5156 0.2983 0.3259 0.2596 0.6596 0.6430 0.4834 0.4215 0.6870 0.2994 0.0569 0.1572 DeepSeek-V3.1 0.5293 0.3282 0.3196 0.2639 0.5713 0.5622 0.5327 0.4258 0.6719 0.2917 0.0588 0.1597 Claude-haiku-4.5 0.4424 0.3157 0.3024 0.2387 0.5234 0.5046 0.5459 0.3610 0.6375 0.2359 0.0335 0.1708 Qwen-Max 0.4531 0.3094 0.2689 0.2056 0.5780 0.5205 0.5630 0.4185 0.6489 0.2782 0.0286 0.1662
+> Open-Source
+> After SFT Llama3.1-8b 0.5270 0.3256 0.3703 0.1763 0.6392 0.5543 0.5366 0.3351 0.7047 0.3480 0.0795 0.1516 Qwen3-8B 0.5867 0.3228 0.4308 0.3099 0.6488 0.5332 0.6113 0.4995 0.7987 0.4001 0.1091 0.1349 Qwen2.5-7B 0.5416 0.3244 0.4876 0.2381 0.6207 0.5938 0.6053 0.4444 0.7610 0.4240 0.1101 0.1286 DeepSeek-R1-Qwen3 0.5286 0.2874 0.3378 0.2274 0.5755 0.4802 0.5421 0.4285 0.6665 0.3007 0.0639 0.1517 Mistral-7b 0.3526 0.1202 0.1978 0.0850 0.4402 0.3287 0.2530 0.1192 0.2741 0.1815 0.0135 0.2049
+> Ours
+> After SFT HyCoLLM-Qwen3-8b 0.6286 0.3505 0.5334 0.3867 0.7033 0.6585 0.6475 0.5473 0.8439 0.5359 0.1549 0.1156
+> HyCoLLM-Llama3.1-8b 0.6133 0.3289 0.5091 0.3771 0.6508 0.5543 0.6584 0.5392 0.8179 0.5047 0.1431 0.1215
+
+Table 4: Overall averaged performance across three datasets (CUT, UE, and DEI). The best results are highlighted in bold , and the second-best are underlined. For Hamming Loss, lower is better ( ↓). 
+
+Figure 4: Results of pairwise human evaluations on 100 randomly sampled instances. HyCoLLM here refers to the HyCoLLM-Qwen3-8B variant. Evaluators judged the overall quality and logical self-consistency of the predicted 4-dimensional cognitive states. 
+
+Human Evaluation. To complement automatic metrics, we conducted a blind pairwise human eval-uation to assess the holistic consistency of the pre-dicted cognitive states (emotion, thinking, stance, and intent). As shown in Figure 4, HyCoLLM consistently outperforms comparative models. No-tably, it achieves a 67% win rate against the Llama3.1-8b after SFT, validating the necessity of geometric alignment. Furthermore, HyCoLLM surpasses the proprietary model GPT-4o (42% wins vs. 34% losses), suggesting that a specialized hy-perbolic geometric prior captures the nuanced hi-erarchy of human cognition more effectively than merely scaling model parameters. The result in the pairwise human evaluation represents the av-erage values evaluated by three experts. For the evaluation manual, please refer to Figure 10. 
+
+5.2 Ablation Study 
+
+Table 5 summarizes the ablation results, with de-tailed analyses in Appendix D.10. Removing the hyperbolic geometry and reverting to Euclidean space leads to a sharp drop in PMA@4 accuracy, from 15.49% to 12.16%, despite retaining the same architecture and objectives. This confirms that Eu-clidean representations exacerbate cognitive crowd-ing and undermine holistic consistency. Removing geometric regularization increases Hamming Loss ,indicating that explicit topological constraints are necessary to preserve fine-grained cognitive distinc-tions. Removing cross-dimensional interaction pri-marily degrades thinking and stance performance, highlighting the intrinsic coupling among cogni-tive dimensions. In the alignment phase, both soft prompts and the Semantic Cognitive Topology loss are critical. Removing soft prompts, PMA@4 ac-curacy drops to 11.76%, while removing the align-ment loss also degrades performance. Finally, re-moving the cognitive anchor weakens overall con-sistency, confirming the importance of holistic cog-nitive representation for multi-dimensional reason-ing. A complementary two-path cumulative abla-tion, which successively removes the Soft Prompt and the SCT Loss in either order, is reported in Appendix D.6: regardless of order the removal of either module causes substantial degradation (15.49% → 12.52%/11.76% → 10.91%), and the Soft Prompt consistently shows a stronger stan-dalone effect, confirming the synergistic contribu-tion of the two modules. Method Emotion Thinking Stance intent PMA@2 PMA@3 PMA@4 H-Loss ↓                                                                                           
+
+> ACC F1 ACC F1 ACC F1 ACC F1
+> HyCoLLM (Full) 0.6286 0.3505 0.5334 0.3867 0.7033 0.6585 0.6475 0.5473 0.8439 0.5359 0.1549 0.1156
+> w/o Hyperbolic 0.6241 0.3175 0.4535 0.3246 0.6770 0.5992 0.6323 0.4760 0.8187 0.4829 0.1216 0.1257 w/o Geo-Regularization 0.6179 0.3516 0.4517 0.3260 0.6693 0.5861 0.6303 0.4980 0.8073 0.4714 0.1204 0.1275 w/o Cross-Interaction 0.6174 0.2898 0.4699 0.3417 0.6711 0.5910 0.6286 0.4810 0.8091 0.4884 0.1165 0.1260 w/o Soft Prompt 0.6164 0.2835 0.4536 0.3293 0.6561 0.5800 0.6335 0.4782 0.7998 0.4711 0.1176 0.1281 w/o SCT Loss 0.6228 0.3530 0.4795 0.3526 0.6852 0.6225 0.6243 0.4818 0.8149 0.4881 0.1252 0.1249 w/o Cognitive Anchor 0.6174 0.2859 0.4641 0.3153 0.6646 0.5877 0.6372 0.4782 0.8099 0.4788 0.1215 0.1261
+
+Table 5: Ablation analysis averaged across three datasets. We investigate the contribution of each component in the HCN and HGAT phases. 
+
+Figure 5: Visualization of the Semantic-Cognitive Alignment using UMAP. The Circles ( ◦) represent the cognitive anchors derived from the HCN, while the Stars (⋆) denote the LLM’s semantic features. 
+
+5.3 Qualitative Analysis 
+
+To intuitively verify the impact of HyCoLLM, we visualize the alignment between the cognitive ge-ometric prior and the LLM’s semantic space us-ing UMAP (Figure 5). Cognitive anchors form well-separated clusters corresponding to distinct cognitive states, while semantic features are drawn towards their associated anchors. This indicates that HyCoLLM achieves an optimal balance: it injects structural cognitive constraints to rectify the crowding in Euclidean space, while retaining the necessary semantic richness required for lan-guage generation. The anchors thus act as "seman-tic attractors," imposing a hierarchical order on the LLM’s representation space without stripping away linguistic nuance. 
+
+5.4 Generalization to Unseen Topics 
+
+To assess robustness, we evaluate models trained on CUT against the unseen FRIR dataset (See Ap-pendix D.9 for details). As shown in Table 6, HyCoLLM demonstrates superior cross-domain adaptability, achieving the lowest Hamming Loss 
+
+(12.5%) and leading PMA@4 accuracy (11.2%), significantly outperforming other baselines. This confirms that the hyperbolic prior effectively disen-                                                                
+
+> Model Emo. Thk. Stn. Int. PMA@2 PMA@3 PMA@4 H-Loss ↓
+> Human 57.3 51.1 39.7 64.6 92.7 71.8 33.3 6.9 Gemini2.5-Flash 36.6 25.1 49.7 47.6 68.9 33.9 6.2 14.6 GPT-4o 44.5 21.0 42.7 37.9 60.1 21.2 3.6 16.7 Qwen3-8B 33.6 34.8 33.1 39.1 72.6 38.2 9.2 13.8 Llama3.1-8b 20.7 20.4 27.3 32.8 61.2 24.9 5.3 15.9 HyCoLLM-Llama3.1 45.5 33.7 18.7 61.5 77.4 42.7 11.2 12.5
+> HyCoLLM-Qwen3 37.3 32.9 31.6 50.4 74.6 38.3 10.6 13.5
+
+Table 6: Generalization results (%) on FRIR (trained on CUT). 
+
+tangles intrinsic cognitive states across domains. However, the Stance dimension shows limited transferability, highlighting a boundary condition when targets are tied to surface semantics. 
+
+5.5 Supplementary Analysis 
+
+We provide additional analyses to examine the prac-ticality and robustness of HyCoLLM. Specifically, we show that HyCoLLM incurs only a modest train-ing overhead while introducing zero additional in-ference latency (Appendix D.2), exhibits stable performance across a wide range of hyperparam-eters with a clear optimum (Appendix D.3), and 
+
+consistently scales across model sizes from 1.7B to 32B parameters (Appendix D.7). Furthermore, detailed comparative and ablation studies on mul-tiple sub-datasets demonstrate that the proposed geometric prior yields robust improvements across diverse cognitive domains (Appendix D.8). 
+
+6 Conclusion 
+
+We construct CognitiveBench, a benchmark for joint modeling of emotion, thinking, stance, and intent, and show that current LLMs struggle with consistent multi-dimensional cognitive understand-ing. To address this limitation, we propose Hy-CoLLM, which aligns LLM representations with a structured cognitive manifold through hyperbolic geometry and geometry-aware tuning. Extensive experiments show that HyCoLLM significantly mit-igates cognitive crowding and achieves state-of-the-art performance on CognitiveBench. 7 Limitation 
+
+While HyCoLLM demonstrates clear advantages in multi-dimensional cognitive modeling, several directions remain open for future exploration. First, although most geometric operations are approxi-mated in the tangent space, training still involves Riemannian optimization on hyperbolic manifolds, including exponential and logarithmic mappings. Future work may investigate more efficient approx-imations or alternative optimization schemes that further reduce computational overhead, facilitat-ing deployment in large-scale or latency-sensitive settings. Second, the construction of the cognitive geomet-ric prior relies on high-quality, fine-grained anno-tations such as those provided by CognitiveBench. Extending this framework to low-resource lan-guages or domains without rich psychological an-notations remains an important direction. Promis-ing avenues include weakly supervised learning, cross-lingual transfer, or leveraging self-supervised signals to approximate cognitive structure with re-duced annotation cost. Finally, although soft prompts are adopted to limit interference with the base language model, the broader impact of geometry-guided alignment on general-purpose capabilities, such as code gen-eration or mathematical reasoning, warrants further investigation. Future studies could explore adap-tive or task-aware alignment strategies that preserve cognitive consistency while maintaining strong per-formance on purely logical tasks. 
+
+8 Ethical Considerations 
+
+By enabling deeper inference of human cognitive states, including latent intents and thinking pat-terns, HyCoLLM has the potential to improve hu-man–computer interaction and support more adap-tive language understanding. At the same time, such capabilities raise important ethical considera-tions, which we have actively addressed throughout data collection, model design, and deployment rec-ommendations. A primary concern is the risk of misuse. Models with enhanced theory-of-mind-like abilities could, if misused, generate persuasive or manipulative content that targets individual psychological vul-nerabilities. To reduce this risk, we restrict the release of model weights under controlled licenses and advocate for the use of application-level safety mechanisms, such as content moderation, usage monitoring, and access control, when deploying HyCoLLM in real-world systems. These measures aim to limit malicious exploitation while preserv-ing legitimate research and application use. Privacy protection is another critical consider-ation. Since HyCoLLM can infer emotional and cognitive patterns from text, there is a risk of unin-tentionally exposing sensitive personal information. To mitigate this, all data used in CognitiveBench were sourced from public platforms and processed with strict anonymization procedures, including the removal of user identifiers and personally iden-tifiable information. We further emphasize that downstream applications, particularly in sensitive domains such as mental health support, should com-ply with data protection regulations, obtain explicit user consent, and avoid over-interpretation of in-ferred cognitive states. Finally, since HyCoLLM encodes expert-annotated cognitive structures as geometric priors, biases present in the annotation process may be preserved or amplified. To address this risk, we em-ployed multiple annotators with relevant domain expertise and enforced consensus-based labeling to reduce individual bias. Looking ahead, we en-courage future expansions of CognitiveBench to incorporate more diverse populations and cultural contexts, as well as the development of systematic bias detection and mitigation techniques tailored to structured cognitive representations. These com-bined efforts reflect our commitment to minimizing ethical risks while advancing research on cognitive alignment in large language models. 
+
+Acknowledgments 
+
+This work was supported in part by the National Key Research and Development Program of China under Grant 2023YFB3107000. This work has also been supported by the New Cornerstone Science Foundation through the XPLORER PRIZE. 
+
+References     
+
+> Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, and 1 others. 2023. Gpt-4 techni-cal report. arXiv preprint arXiv:2303.08774 .Abu Ubaida Akash, Ahmed Fahmy, and Amine Trabelsi. 2025. Can large language models address open-target stance detection? In Findings of the Association for Computational Linguistics: ACL 2025 , pages 971– 985.
+
+Maryam Amirizaniani, Elias Martin, Maryna Sivachenko, Afra Mashhadi, and Chirag Shah. 2024. Can llms reason like humans? assessing theory of mind reasoning in llms for open-ended questions. In 
+
+Proceedings of the 33rd ACM International Confer-ence on Information and Knowledge Management ,pages 34–44. John Langshaw Austin. 1975. How to do things with words . Harvard university press. Steven J Breckler. 1984. Empirical validation of affect, behavior, and cognition as distinct components of at-titude. Journal of personality and social psychology ,47(6):1191. Gheorghe Comanici, Eric Bieber, Mike Schaekermann, Ice Pasupat, Noveen Sachdeva, Inderjit Dhillon, Mar-cel Blistein, Ori Ram, Dan Zhang, Evan Rosen, and 1 others. 2025. Gemini 2.5: Pushing the frontier with advanced reasoning, multimodality, long context, and next generation agentic capabilities. arXiv preprint arXiv:2507.06261 .Esra Dönmez and Agnieszka Falenska. 2025. “i under-stand your perspective”: Llm persuasion through the lens of communicative action theory. In Findings of the Association for Computational Linguistics: ACL 2025 , pages 15312–15327. Alice H Eagly. 1993. The psychology of attitudes. 
+
+Thomson Wadsworth .Gino Franco Fazzi, Julie Skoven Hinge, Stefan Hein-rich, and Paolo Burelli. 2025. Don’t get too excited-eliciting emotions in llms. In Proceedings of the Extended Abstracts of the CHI Conference on Hu-man Factors in Computing Systems , pages 1–9. Margherita Gambini, Caterina Senette, Tiziano Fagni, and Maurizio Tesconi. 2024. Evaluating large lan-guage models for user stance detection on x (twitter). 
+
+Machine Learning , 113(10):7243–7266. F Grasso, S Locci, G Siragusa, and L Di Caro. 2024. Ecoverse: An annotated twitter dataset for eco-relevance classification, environmental im-pact analysis, and stance detection. Preprint ,arXiv:2400.00000. Nikesh Gyawali, Iustin Sirbu, Tiberiu Sosea, Sarthak Khanal, and 1 others. 2024. Gunstance: Stance detec-tion for gun control and gun regulation. In Proceed-ings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Pa-pers) , pages 12027–12044. Daniel Kahneman. 2011. Thinking, fast and slow .macmillan. Nils Klüwer, Irina Nalis, and Julia Neidhardt. 2025. Context over categories: Implementing the theory of constructed emotion with llm-guided user analysis. In Proceedings of the Extended Abstracts of the CHI Conference on Human Factors in Computing Systems ,pages 1–7. Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, and Ion Stoica. 2023. Effi-cient memory management for large language model serving with pagedattention. In Proceedings of the ACM SIGOPS 29th Symposium on Operating Systems Principles .Yingjie Li, Tiberiu Sosea, Aditya Sawant, Ajith Jayara-man Nair, Diana Inkpen, and Cornelia Caragea. 2021. P-stance: A large dataset for stance detection in polit-ical domain. In Findings of the Association for Com-putational Linguistics: ACL-IJCNLP 2021 , pages 2355–2365. Maryam Sadat Mirzaei, Kourosh Meshgi, and Satoshi Sekine. 2023. What is the real intention behind this question? dataset collection and intention classifica-tion. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Vol-ume 1: Long Papers) , pages 13606–13622. Saif Mohammad, Svetlana Kiritchenko, Parinaz Sob-hani, Xiaodan Zhu, and Colin Cherry. 2016. Semeval-2016 task 6: Detecting stance in tweets. In Proceed-ings of the 10th international workshop on semantic evaluation (SemEval-2016) , pages 31–41. Hongbin Na. 2024. Cbt-llm: A chinese large lan-guage model for cognitive behavioral therapy-based mental health question answering. arXiv preprint arXiv:2403.16008 .Robert Plutchik and Henry Kellerman. 1980. Emotion, theory, research, and experience . Academic press. Qiumei Pu, Fangli Huang, Fude Li, Jieyao Wei, and Shan Jiang. 2025. Integrating emotional features for stance detection aimed at social network security: A multi-task learning approach. Electronics , 14(1):186. John R Searle. 1976. A classification of illocutionary acts1. Language in society , 5(1):1–23. Natalie Shapira, Mosh Levy, Seyed Hossein Alavi, Xuhui Zhou, Yejin Choi, Yoav Goldberg, Maarten Sap, and Vered Shwartz. 2024. Clever hans or neural theory of mind? stress testing social reasoning in large language models. In Proceedings of the 18th Conference of the European Chapter of the Associa-tion for Computational Linguistics (Volume 1: Long Papers) , pages 2257–2273. Phillip Shaver, Judith Schwartz, Donald Kirson, and Cary O’connor. 1987. Emotion knowledge: further exploration of a prototype approach. Journal of per-sonality and social psychology , 52(6):1061. Muzafer Sherif and Carl I Hovland. 1961. Social judg-ment: Assimilation and contrast effects in communi-cation and attitude change. Parinaz Sobhani, Diana Inkpen, and Xiaodan Zhu. 2017. A dataset for multi-target stance detection. In Pro-ceedings of the 15th Conference of the European Chapter of the Association for Computational Lin-guistics: Volume 2, Short Papers , pages 551–557. P Taylor, J Nicholas Hobbs, Javier Burroni, and Hava T Siegelmann. 2015. The global landscape of cogni-tion: hierarchical aggregation as an organizational principle of human cortical networks and functions. 
+
+Scientific reports , 5(1):18112. Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, and 1 others. 2023. Llama: Open and effi-cient foundation language models. arXiv preprint arXiv:2302.13971 .John C Turner and Penelope J Oakes. 1986. The sig-nificance of the social identity concept for social psychology with reference to individualism, interac-tionism and social influence. British journal of social psychology , 25(3):237–252. Apoorva Upadhyaya, Marco Fisichella, and Wolfgang Nejdl. 2023. A multi-task model for emotion and offensive aided stance detection of climate change tweets. In Proceedings of the ACM Web Conference 2023 , pages 3948–3958. Leandro von Werra, Younes Belkada, Lewis Tunstall, Edward Beeching, Tristan Thrush, Nathan Lambert, Shengyi Huang, Kashif Rasul, and Quentin Gal-louédec. 2020. Trl: Transformer reinforcement learn-ing. https://github.com/huggingface/trl .Yun Wan and Qigang Gao. 2015. An ensemble senti-ment classification system of twitter data for airline services analysis. In 2015 IEEE international con-ference on data mining workshop (ICDMW) , pages 1318–1325. Boran Wang, Yiming Liu, Haoyu Tian, Rui Hua, Kai Chang, Jianan Xia, Xinyu Dai, Zhuliang Gao, Sitong Liu, Rui Wang, and 1 others. 2025. Llm4deu: fine tuning large language model for medical diagnosis in outpatient and emergency department visits of neurosurgery. Tsinghua Science and Technology ,30(6):2487–2504. Jiayin Wang, Fengran Mo, Weizhi Ma, Peijie Sun, Min Zhang, and Jian-Yun Nie. 2024. A user-centric multi-intent benchmark for evaluating large language mod-els. arXiv preprint arXiv:2404.13940 .Fang Xu, Tianyu Zhou, Tri Nguyen, Haohui Bao, Chris-tine Lin, and Jing Du. 2025. Integrating augmented reality and llm for enhanced cognitive support in crit-ical audio communications. International Journal of Human-Computer Studies , 194:103402. Vikas Yadav, Zheng Tang, and Vijay Srinivasan. 2024. Pag-llm: Paraphrase and aggregate with large lan-guage models for minimizing intent classification errors. In Proceedings of the 47th international ACM SIGIR conference on research and development in information retrieval , pages 2569–2573. An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, and 1 others. 2025. Qwen3 technical report. arXiv preprint arXiv:2505.09388 .Tan Yu, Jingjing Wang, Jiawen Wang, Jiamin Luo, and Guodong Zhou. 2024. Towards emotion-enriched text-to-motion generation via llm-guided limb-level emotion manipulating. In Proceedings of the 32nd ACM International Conference on Multimedia , pages 612–621. Zhao Zhang, Yiming Li, Jin Zhang, and Hui Xu. 2024. Llm-driven knowledge injection advances zero-shot and cross-target stance detection. In Proceedings of the 2024 Conference of the North American Chap-ter of the Association for Computational Linguistics: Human Language Technologies (Volume 2: Short Papers) , pages 371–378. Lin Zhong, Lingzhi Wang, Xu Yang, and Qing Liao. 2025. Comapoi: A collaborative multi-agent frame-work for next poi prediction bridging the gap between trajectory and language. In Proceedings of the 48th International ACM SIGIR Conference on Research and Development in Information Retrieval , pages 1768–1778. Minghui Zou, Ronghui Guo, Sai Zhang, Xiaowang Zhang, and Zhiyong Feng. 2025. Tat: Improving stance detection on social media through thought alignment with llms. In Companion Proceedings of the ACM on Web Conference 2025 , pages 1558–1562. 
+
+A Construction Details of CognitiveBench 
+
+A.1 Theoretical Framework and Label Definitions 
+
+To ensure the validity and psychological depth of 
+
+CognitiveBench , we grounded our taxonomy in established theories from cognitive science, psy-chology, and linguistics. This section details the theoretical rationale behind each dimension and the definitions of the corresponding labels. 
+
+Emotion Dimension: Plutchik’s Evolutionary Model. We adopted Plutchik’s Wheel of Emo-tions (Plutchik and Kellerman, 1980) as our foun-dational framework. Unlike simple emotion analy-sis (positive/negative), Plutchik’s model provides a biologically grounded classification of emotions based on evolutionary survival functions (e.g., Fear 
+
+→ Escape, Anger → Attack). This granularity is essential for understanding the functional role of emotions in social media discourse—for in-stance, distinguishing whether a user is debating out of "Anger" (hostility) or "Disgust" (rejection). We categorize the 8 basic emotions into three va-lences— Positive , Negative , and Neutral —to align with the hierarchical structure of other cognitive dimensions. Category Label Definition Positive Joy A feeling of great pleasure and happiness (Functional role: Gain/Possession).           
+
+> Trust Reliance on the integrity or strength of a person/thing (Functional role: Acceptance).
+> Anticipation A state of looking forward to a future event (Functional role: Exploration).
+> Surprise A feeling of shock caused by the unexpected (Note: Can be valenced, cate-gorized here as mild astonishment).
+> Negative Anger A strong feeling of hostility due to frustration/injustice (Functional role: Destruction/Attack).
+> Disgust A feeling of revulsion or strong disapproval (Functional role: Rejec-tion/Expulsion).
+> Fear An intense emotion triggered by perceived threat (Functional role: Protec-tion/Escape).
+> Sadness An unpleasant state typically caused by loss (Functional role: Reintegration).
+> Neutral Neutral An objective state not showing clear emotional tendency (Functional role: Observation).
+> Table 7: Taxonomy of Emotion Labels (Based on Plutchik’s Evolutionary Model)
+
+Thinking Dimension: Dual-Process Theory. 
+
+We leverage Dual-Process Theory (Kahneman, 2011) to decode the cognitive depth of user posts. This theory distinguishes between System 1 (Intu-itive, fast, heuristic-based) and System 2 (Analyti-cal, slow, rule-based). Standard text classification often ignores this distinction. By explicitly model-ing "Thinking Style," we can differentiate between a user who supports a stance via Logical Deduction 
+
+(System 2) versus one who relies on Identity-driven Conformity (System 1). This is crucial for identi-fying the robustness of public opinion. We further granularize these systems into specific cognitive values derived from Social Identity Theory (Turner and Oakes, 1986) and Heuristics research .
+
+Intent Dimension: Speech Act Theory. To cap-ture the communicative goal behind a post, we employ Speech Act Theory (Austin, 1975; Searle, 1976). This theory posits that language is not just used to describe the world, but to perform actions (illocutionary acts). By mapping posts to categories like Representatives (stating facts), Directives (re-questing action), and Expressives (revealing state), we move beyond topic classification to understand user intent. For example, distinguishing between a user who is "Seeking Information" (Directive) versus one who is "Expressing Conflict" (Expres-sive) allows the AI to generate more appropriate and empathetic responses. 
+
+Stance Dimension. Stance annotation captures the user’s position relative to a specific target. Grounded in Social Judgment Theory (Sherif and Hovland, 1961), we define the stance not just as binary support/oppose, but consider the "Latitude of Non-Commitment" (Unclear/Neutral). • CUT (Trade War): Support US , Support China , or Unclear .• UE (US Election): Support Republican , Sup-port Democrat , or Unclear .• DEI (Social Issue): Support Abolition of DEI ,
+
+Oppose Abolition of DEI , or Unclear .• FRIR (Interest Rate): Support Interest Rate Cuts , Oppose Interest Rate Cuts , or Unclear .
+
+A.2 Recruitment and Quality Control 
+
+To ensure the depth and accuracy of cognitive label-ing, we recruited 25 graduate students with back-grounds in Psychology and Cognitive Science (21 Master’s candidates and 4 Ph.D. candidates). The annotation process spanned 84 days. We implemented a rigorous training and quality control pipeline: 1. Pilot Training: Before the main phase, an-notators underwent training with 50 "Gold Standard" samples. We iteratively refined the guidelines and conducted calibration sessions until the inter-annotator agreement (Cohen’s Kappa) exceeded 0.75 .2. Consensus Mechanism: Each sample in the dataset was independently labeled by three Category Label Theoretical Basis & Definition Intuitive Subjective Evaluation Overconfidence Effect: Irrational confidence stemming from a belief of full understanding without verification.               
+
+> Identity Conformity Social Identity Theory: Adopting values or attitudes primarily to signal membership in a specific group or allegiance to au-thority.
+> Emotional Judgment Affect Heuristic: Relying on current emotional states (e.g., "I feel bad about this") as valid evidence for judgment.
+> Experience-based Availability Heuristic: Basing judgments on immediate, per-sonal examples that come to mind easily, rather than statistical data.
+> Analytical Logical Deductive Reasoning: Systematically deriving conclusions from premises using valid logical structures.
+> Balanced Consideration Rational Choice Theory: Explicitly weighing pros and cons or comparing utilities before forming a preference.
+> Evidence-based Information Integration: Consciously citing and evaluating external facts, data, or sources to support a claim.
+> Critical Critical Thinking: Reflectively evaluating one’s own assump-tions or questioning the validity of external information.
+> Table 8: Taxonomy of Thinking Styles and Values (Based on Dual-Process Theory)
+
+annotators. We adopted a majority vote strat-egy: a label was accepted if at least 2 out of 3 annotators agreed. 3. Strict Filtering: To maintain high reliabil-ity, any sample where all three annotators dis-agreed (0/3 agreement) on any single dimen-sion was discarded. 
+
+A.3 Dataset Distribution Analysis 
+
+Figure 6 (see Appendix Figures) visualizes the com-prehensive distribution of cognitive labels across the three domains. Below, we provide a detailed analysis of the cognitive characteristics observed in each dataset. 
+
+CUT (China-US Trade). The discourse in the CUT domain is characterized by a relatively de-tached and observational tone. In terms of Emotion ,
+
+Neutral is the dominant category (48.72%), signif-icantly higher than Disgust (22.01%) and Anger 
+
+(12.04%), suggesting that users often approach trade policy discussions with less immediate af-fective intensity. This rational tendency is mir-rored in the Thinking dimension: while Subjective Evaluation (32.87%) remains the most common value, the dataset exhibits a notable presence of 
+
+Logical (16.33%) and Evidence-based (11.14%) reasoning compared to other topics. Regarding 
+
+Intent , Opinion Expression accounts for 51.70%, with a relatively low rate of Disagreement & Con-flict (13.77%). The Stance distribution reveals a high degree of ambiguity, with 56.33% of posts labeled as Unclear , while explicit support leans towards China (33.49%) over the US (10.17%). 
+
+UE (US Election). In contrast, the UE dataset exhibits strong affective polarization and intuitive cognition. The Emotion dimension is led by Dis-gust (39.62%), followed by Neutral (34.40%) and 
+
+Anger (10.10%), reflecting the intense aversion of-ten found in partisan politics. Cognitively, users rely heavily on System 1 thinking, with Subjec-tive Evaluation (41.00%) and Emotional Judgment 
+
+(21.72%) constituting the majority of thinking val-ues. The Intent distribution shows a significant rise in adversarial interaction, with Disagreement & Conflict reaching 25.45%, although Opinion Ex-pression (48.28%) remains the primary commu-nicative goal. In terms of Stance , the dataset shows a clear partisan divide, with 40.62% supporting the Republican Party, 22.01% supporting the Demo-cratic Party, and 37.37% remaining Unclear. 
+
+DEI (Diversity, Equity, and Inclusion). The DEI dataset represents the most intense conflict zone among the three topics. While Disgust 
+
+(42.22%) reaches its peak here—surpassing both CUT and UE— Neutral emotion is also substan-tial (36.76%). The Thinking patterns are diverse: Category Label Definition Representatives Info. Sharing Providing objective facts, data, or personal experiences to convey information.        
+
+> Opinion Exp. Expressing subjective views, judgments, or positions on a topic.
+> Directives Info. Seeking Attempting to obtain information or understand others’ views through questions.
+> Call to Action Explicitly instructing, urging, or persuading others to take specific offline or online actions.
+> Expressives Connection Expressing positive social attitudes, such as support, gratitude, or identification with others.
+> Conflict Expressing disagreement, criticism, sarcasm, or negation towards others’ views.
+> Emotional Exp. Directly revealing the speaker’s internal emotional state (catharsis) without necessarily targeting others.
+> Table 9: Taxonomy of Labels (Based on Speech Act Theory)
+
+Subjective Evaluation (31.87%) is lower than in the election topic, with users frequently employing 
+
+Experience-based (14.91%) and Critical (14.43%) thinking, likely due to the personal nature of social identity debates. Notably, this topic has the highest density of Disagreement & Conflict (32.84%) in the Intent dimension, confirming its highly contro-versial nature. The Stance distribution is heavily skewed towards the non-committed, with a massive 63.81% labeled as Unclear , while the remaining users are evenly split between opposing the aboli-tion of DEI (19.15%) and supporting it (17.03%). 
+
+FRIR (Federal Reserve Interest Rate). The FRIR dataset exhibits a unique blend of economic rationality and livelihood anxiety. In terms of 
+
+Stance , it is the most balanced domain, with users almost equally divided between Support Interest Rate Cuts (31.34%) and Oppose Interest Rate Cuts 
+
+(30.14%), reflecting the genuine complexity of the economic policy debate. The Emotion distribu-tion is dominated by Neutral (39.21%) and Dis-gust (31.74%), suggesting a tone that oscillates between objective analysis and dissatisfaction with the economic status quo. Cognitively, while Subjec-tive Evaluation (48.69%) is prevalent (likely driven by personal financial stress), there is a significant presence of analytical thinking, including Logical 
+
+(14.50%) and Evidence-based (10.45%) reasoning. Regarding Intent , the discourse is primarily focused on Opinion Expression (57.31%), with a moderate level of Disagreement (13.24%), indicating a con-structive yet divided discussion environment. 
+
+A.4 Intrinsic Hyperbolicity of Cognitive States 
+
+Before detailing our proposed method, we verify a fundamental hypothesis: Do complex cognitive states naturally reside in a hyperbolic manifold? 
+
+To answer this, we performed a topological analy-sis on our CognitiveBench dataset across its four distinct domains: CUT (China-U.S. Trade), DEI (Diversity, Equity, and Inclusion), UE (U.S. Elec-tion), and FRIR (Federal Reserve Interest Rates). We utilized the Gromov δ-hyperbolicity met-ric to quantify the "tree-likeness" of the semantic spaces formed by these discussions. In geomet-ric group theory, a metric space is δ-hyperbolic if, for any geodesic triangle, each side is contained within the δ-neighborhood of the other two sides. A value of δ → 0 indicates that the underlying data structure is mathematically isomorphic to a tree. As shown in Figure 2, the results are com-pelling. Across all four domains, the mean Gro-mov δ remains consistently low (Mean δ ≈ 0.015 ). More importantly, the Relative Delta (defined as 
+
+2δ/ diam (X ), where diam (X ) is the maximum geodesic distance between any pair of points in the dataset) is approximately 1.0% − 1.1% for all datasets (e.g., UE: 0.0101 , DEI: 0.0107 ). These low relative δ values provide strong empirical evidence that human cognitive states—characterized by hierarchical intentions, stances, and emotions—exhibit high hyperbolicity. When such tree-like data is embedded into the flat Euclidean space of standard LLMs, it inevitably suffers from significant distortion. This finding serves as the cornerstone of our HyCoLLM framework, empirically validating the necessity of a hyperbolic geometric prior. 
+
+B Global Notation System 
+
+To ensure consistency throughout the paper, we summarize the core mathematical notations and their corresponding definitions in Table 10. 
+
+B.1 The Basic Formula of the Poincaré Sphere 
+
+To capture the hierarchical structure of cognitive concepts (e.g., the intrinsic hierarchy from broad sentiments to specific emotions), we utilize the Poincaré ball model (Ddc , g D). The manifold is de-fined as Ddc = {z ∈ Rd : ∥z∥ < 1/√c}, where 
+
+c is the curvature (set to c = 1 in implementa-tion). We map points between the Euclidean space 
+
+x ∈ Rd and the hyperbolic space z ∈ Ddc using the exponential map (exp c
+
+> 0
+
+) and logarithmic map 
+
+(log c
+
+> 0
+
+) defined at the origin 0:
+
+z = exp c
+
+> 0
+
+(x) = tanh( √c∥x∥) x
+
+√c∥x∥ (6) 
+
+x = log c
+
+> 0
+
+(z) = 1
+
+√c arctanh( √c∥z∥) z
+
+∥z∥ (7) The induced distance between two points zi, zj
+
+in the hyperbolic space (where ∥z∥ < 1/√c) is defined as the Poincaré distance:              
+
+> dD(zi,zj) = 1
+> √carccosh
+> 
+> 1 + 2 c∥zi−zj∥2
+> (1 −c∥zi∥2)(1 −c∥zj∥2)
+> 
+> (8)
+
+C Theoretical Analysis: Geometric Capacity Mismatch 
+
+In this section, we provide a rigorous theoretical analysis supporting Proposition 1 in Section 4.3. We formalize the geometric capacity mismatch be-tween Euclidean and hyperbolic spaces when em-bedding hierarchical cognitive structures. 
+
+C.1 Preliminaries Definition A.1 (Hierarchical Cognitive Taxon-omy). A hierarchical cognitive taxonomy T is modeled as a rooted tree with branching factor 
+
+b > 1 and depth k. The number of nodes at depth 
+
+k is |T k| = bk.
+
+Definition A.2 (Bounded-Distortion Embed-ding). An embedding f : T → (M, d ) into a metric space (M, d ) is said to have bounded dis-tortion if there exists ϵ > 0 such that the pairwise distance between any two distinct nodes at the same depth is at least ϵ.
+
+Assumption A.1 (Finite Dimensionality). We consider embeddings into d-dimensional spaces, where d is fixed and finite. 
+
+C.2 Euclidean Embedding Capacity Lemma A.1 (Polynomial Volume Growth of Eu-clidean Space). Let BE(R) ⊂ Rd be a Euclidean ball of radius R. Its volume satisfies 
+
+Vol E(R) = CdRd, (9) 
+
+where Cd > 0 is a constant depending only on d.
+
+Theorem A.1 (Exponential Radius Require-ment in Euclidean Space). Let T be a hierar-chical taxonomy with branching factor b > 1 and depth k. Any bounded-distortion embedding of T
+
+into Rd requires the embedding radius R to grow exponentially with k, i.e., 
+
+R = Ω 
+
+
+
+bk/d 
+
+. (10) 
+
+Proof. At depth k, the taxonomy contains bk nodes. By Definition A.2, these nodes must be embedded within a ball of radius R such that each pair of nodes is separated by at least ϵ.Packing arguments imply that the maximum number of ϵ-separated points in a Euclidean ball of radius R is upper bounded by O(Rd). Therefore, we require: 
+
+Rd ≥ C · bk, (11) for some constant C > 0. Taking the d-th root yields: 
+
+R ≥ C1/d bk/d . (12) Thus, the embedding radius must grow exponen-tially with the hierarchy depth k, completing the proof. 
+
+C.3 Hyperbolic Embedding Capacity Definition A.3 (Poincaré Ball Model). Let 
+
+Ddc = {x ∈ Rd : ∥x∥ < 1/√c} denote the d-dimensional Poincaré ball with constant negative curvature −c, equipped with the standard hyper-bolic metric. 
+
+Lemma A.2 (Exponential Volume Growth of Hyperbolic Space). Let BH(R) ⊂ Ddc be a hyper-bolic ball of radius R. Its volume satisfies 
+
+Vol H(R) = Ω d−1
+
+Z R
+
+> 0
+
+sinh d−1(√cr ) dr, (13) Concept Symbol Description Space Property                                                             
+
+> Raw Input X= ( C, T )Context C+ Target Post TDiscrete Text Hyperbolic Manifold DdcPoincaré ball of dim dwith curvature −cHyperbolic Space Tangent Space (Origin) T0DdcTangent space at origin (local approximation) Euclidean Space Rd
+> Exponential Map exp c
+> 0(·)Map from Tangent Space →Manifold Rd→Ddc
+> Logarithmic Map log c
+> 0(·)Map from Manifold →Tangent Space Ddc→Rd
+> HCN Intermediate zkFeature for dimension k(e.g., emotion) ∈Ddc(On Manifold) HCN Final Output vcog Cognitive Anchor ∈T0Ddc∼=Rd(Tangent) LLM Hidden State hlast Last layer hidden state of LLM ∈Rdmodel (Euclidean) Semantic Projection ˆvsem Projected vector for alignment ∈Rd(Tangent Space) Soft Prompt Sequence Eprior Prompt Embeddings generated by Projector ∈RL×dmodel
+
+Table 10: Global Notation System and Geometric Properties. 
+
+and for sufficiently large R,
+
+Vol H(R) = Θ 
+
+
+
+e(d−1) √cR 
+
+. (14) 
+
+Theorem A.2 (Linear Radius Requirement in Hyperbolic Space). Let T be a hierarchical taxonomy with branching factor b > 1 and depth 
+
+k. There exists a bounded-distortion embedding of 
+
+T into Ddc whose embedding radius grows linearly with k, i.e., 
+
+R = O(k). (15) 
+
+Proof. At depth k, the taxonomy contains bk nodes. By Lemma A.2, the volume of a hyperbolic ball of radius R grows exponentially with R. To accom-modate bk ϵ-separated nodes, it suffices that: 
+
+e(d−1) √cR ≥ C′ · bk, (16) for some constant C′ > 0. Taking logarithms yields: 
+
+R ≥ k log b + log C′
+
+(d − 1) √c . (17) Thus, the required embedding radius grows linearly with the depth k, completing the proof. 
+
+C.4 Implications for Cognitive Crowding Corollary A.1 (Geometric Origin of Cognitive Crowding). Under bounded-distortion constraints, Euclidean space cannot embed deep hierarchical cognitive taxonomies without exponential growth in radius, leading to inevitable crowding of seman-tically distinct states. Hyperbolic space avoids this limitation due to its exponential volume growth. 
+
+This corollary establishes a necessary geometric condition underlying cognitive crowding and pro-vides formal justification for adopting hyperbolic representations in HyCoLLM. 
+
+D Supplementary Experiment 
+
+D.1 Detailed Experimental Setup D.1.1 Hyperbolic Cognitive Network (HCN) Configuration 
+
+The HCN serves as the geometric teacher and is composed of three key modules: • Hyperbolic Projection: We use a Poincaré ball manifold with curvature c = 1 .0. Input features (dim=4096) are projected to a hidden dimension of 512 using an exponential map. • Cognitive Transformer: The encoder con-sists of N = 4 layers with H = 8 attention heads and a dropout rate of 0.1. A learned dimension embedding is added to distinguish between the four cognitive states before cross-dimension attention. • Multi-Task Heads: We utilize separate Multi-Layer Perceptrons (MLPs) for each di-mension: Emotion (9 classes), Thinking (8 classes), Intent (7 classes), and Stance (3 classes). The HCN is pre-trained using a Riemannian Adam optimizer with a learning rate of 1e − 3 and a batch size of 32. The loss function combines task-specific cross-entropy losses with a hyperbolic geometric regularization ( λhyper = 0 .1) and contrastive loss (λcontrastive = 0 .1) with a temperature of τ = 0 .5.
+
+D.1.2 Hyperbolic-Guided Alignment Tuning (HGAT) 
+
+For the alignment phase, we freeze the HCN and tune the LLM (Llama3.1-8b/Qwen3-8b). • Projectors: The Cognitive Projector maps the 512-dim HCN anchor to the LLM’s em-bedding space via a 2-layer MLP with Tanh ac-tivation to bound the soft prompt values. The 
+
+Alignment Projector maps the LLM’s last hid-den state back to the 512-dim tangent space. • Training Hyperparameters: We employ 4-bit NormalFloat (NF4) quantization and QLoRA with rank r = 16 , α = 32 , and dropout 0.0. The model is trained for 3 epochs with a learning rate of 2e − 4, a batch size of 1, and gradient accumulation steps of 4. The SCT loss weight is set to λ = 1 .0 based on sensitivity analysis. • Environment: All experiments were con-ducted on a single NVIDIA H800 (80GB) GPU using PyTorch 2.1 and the vllm library for inference acceleration. 
+
+D.2 Computational Efficiency 
+
+As illustrated in Figure 7, HyCoLLM introduces a moderate training overhead due to the dual-optimization process, with training time increasing by approximately 10% ∼18%. Crucially, this over-head exhibits favorable scalability: as the model size increases from 1.7B to 32B, the relative time cost diminishes (from ∼21% to ∼10%), and the additional GPU memory usage remains roughly constant ( ≈ 3.7 ∼ 4.0 GB) rather than growing lin-early. This indicates that the geometric component acts as a fixed-cost module, making the method increasingly cost-effective for larger foundation models. Regarding deployment, HyCoLLM achieves 
+
+zero additional latency compared to vanilla SFT models (e.g., maintaining constant 30s inference time for Qwen3-8B). This is because the complex Riemannian computations are strictly confined to the training phase to construct the geometric prior. During inference, the HCN module is detached, and the structural constraints are implicitly pre-served within the optimized soft prompts and pa-rameters. Consequently, the model generates topo-logically consistent responses without requiring specialized Riemannian kernels or extra floating-point operations at runtime. 
+
+D.3 Hyperparameter Study 
+
+We investigate the sensitivity of the Semantic-Cognitive Topology loss weight ( λ) and soft prompt length ( L) in Figure 8, where both metrics exhibit a distinct inverted U-shape trend. Regard-ing the loss weight, performance peaks at λ = 1 .0,suggesting that geometric structural constraints and auto-regressive generation are of equal importance; lower values ( λ < 0.5) fail to sufficiently correct Euclidean crowding, while higher values ( λ > 2.0)over-regularize the semantic space, a stable balance further corroborated by the convergence curves in Appendix E. Simultaneously, for the prompt length, we observe that performance improves as L in-creases to 4 but degrades thereafter. This indicates that L = 4 offers the optimal trade-off, provid-ing sufficient token capacity to encode complex hyperbolic coordinates while avoiding the feature dilution and noise interference associated with ex-cessively long prompts. 
+
+D.4 Intuitive Explanation of Hyperbolic Space 
+
+To make the geometric intuition more accessible, we elaborate on the “tree-on-a-saddle” analogy introduced in the main text. Consider a deeply branching cognitive taxonomy T : emotions split into positive, negative, and neutral categories, each of which further branches into fine-grained labels such as Anger, Disgust, Fear, and Sadness; similar branching occurs for thinking styles, stances, and intents. The number of leaves grows exponentially with depth ( bk), while the “volume” available to separate these leaves in a d-dimensional Euclidean ball grows only polynomially ( Rd). Intuitively, as we try to embed this tree into flat space, deeper nodes are forced into overlapping regions: seman-tically distinct cognitive states collapse onto each other, yielding Cognitive Crowding .Hyperbolic space behaves very differently. The surface area of a hyperbolic ball grows exponen-tially with radius, mirroring the exponential growth of the taxonomy. A helpful visualization is the ruffled edge of a kale leaf or a saddle surface: as one moves outward from the center, there is always “more room” for new branches. When we place the cognitive taxonomy on such a surface, every leaf can be assigned a distinct region even for deep hi-erarchies. HyCoLLM’s Hyperbolic Cognitive Net-work plays the role of “embedding the tree on the saddle”, while the Hyperbolic-Guided Alignment Tuning aligns the LLM’s Euclidean representations with this more spacious geometry. The formal ver-sion of this intuition is provided in Section 4.3 and Appendix C. D.5 Vanilla and Few-shot CoT Baselines 
+
+To assess whether prompting strategies can close the gap to HyCoLLM without parameter updates, we evaluate Qwen3-8B and Llama3.1-8B under two additional settings: Vanilla (zero-shot) and 
+
+Vanilla+CoT (5-shot chain-of-thought), both using the same 4-dimensional prompt template. Table 11 summarizes the results. Two observations stand out. First, Vanilla+CoT yields only marginal gains on Qwen3-8B and is actually detrimental for Llama3.1-8B, where Stance ACC drops from 0.5081 (Vanilla) to 0.4513 (Vanilla+CoT). Error analysis shows that without parameter tuning, general-purpose 8B models fre-quently fail to respect the strict JSON schema re-quired for the 4-dimensional taxonomy, leading to parsing errors or hallucinated labels. Second, LoRA-SFT and especially HyCoLLM dominate both Vanilla and CoT variants on every holistic metric, with HyCoLLM reaching 13.96%/14.31% PMA@4 on Qwen3-8B/Llama3.1-8B versus at most 4.55%/0.97% for CoT prompting. This validates the necessity of geometric alignment over purely in-context strategies for strict multi-dimensional cognitive modeling. 
+
+D.6 Two-Path Cumulative Ablation 
+
+The ablation in Table 5 removes a single com-ponent at a time relative to the full model. To further disentangle how the Soft Prompt and the Semantic-Cognitive Topology (SCT) loss interact, we conduct a rigorous two-path cumulative abla-tion : starting from the full HyCoLLM-Qwen3-8B, we progressively remove one component and then the other, in two different orders. Table 12 reveals two effects. (i) Dominance of the Soft Prompt. Comparing the intermedi-ate states, the model with only the Soft Prompt (12.52%) outperforms the one with only the SCT loss (11.76%), indicating that injecting the hyper-bolic geometric prior at the input stage is more effective than the output-side alignment alone. (ii) 
+
+Synergistic effect. Removing either component causes a substantial drop from the full model (15.49%), and both paths converge to the same SFT baseline (10.91%) when both are removed. The drops are non-additive: the two modules are complementary, with the Soft Prompt providing the geometric context and the SCT loss enforcing structural consistency of the predictions. 
+
+D.7 Parameter Scalability Analysis 
+
+We investigate the scalability of our approach by applying HyCoLLM to the Qwen3 model family with varying parameter sizes: 1.7B, 8B, and 32B. We compare three settings: Vanilla (Base Model), SFT, and HyCoLLM. Table 13 details the perfor-mance across all metrics. 
+
+Analysis of Model Scale. As shown in Table 13, HyCoLLM consistently outperforms the SFT baseline across all parameter scales, validating the universality of the geometric prior. • Small Models (1.7B): The improvement is most substantial here. HyCoLLM nearly doubles the PMA@4 accuracy of SFT (from 0.0584 to 0.1071) and significantly reduces 
+
+Hamming Loss . This supports our hypothe-sis that hyperbolic geometry effectively "ex-pands" the embedding capacity of smaller models, allowing them to disentangle com-plex cognitive states that usually require larger parameter spaces. • Large Models (32B): Even with the power-ful Qwen3-32B, HyCoLLM maintains a clear edge over SFT ( Hamming Loss 0.1255 vs. 0.1340). While the base capabilities of 32B are strong, SFT still struggles with cognitive crowding (PMA@4 = 0.0942). HyCoLLM rectifies this, proving that geometric structural constraints provide value beyond simple pa-rameter scaling. 
+
+D.8 Results of the sub-dataset 
+
+To further verify the robustness of HyCoLLM across varying cognitive contexts, we analyze the performance on three distinct sub-datasets: CUT (Economic), UE (Politic), and DEI (Culture). 
+
+Performance on CUT (Table 14). The CUT dataset, characterized by rational economic dis-course, presents a unique challenge where "Stance" and "Thinking" are often subtly intertwined with objective data. As shown in Table 14, standard SFT models (e.g., Qwen3-8B) perform competitively, achieving the highest PMA@4 accuracy (13.96%). This suggests that in more structured and fact-based domains, Euclidean representations can cap-ture rigid cognitive patterns to some extent. How-ever, HyCoLLM still demonstrates superior over-all reliability. Specifically, our method achieves Backbone Setting Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 H-Loss ↓                                                                                                       
+
+> ACC F1 ACC F1 ACC F1 ACC F1 Qwen3-8B Vanilla 0.4123 0.1608 0.2630 0.1752 0.2370 0.2076 0.4448 0.4342 0.4286 0.1169 0.0097 0.1803 Vanilla+CoT 0.5617 0.1914 0.2922 0.1842 0.6623 0.6678 0.5130 0.4664 0.7110 0.3214 0.0455 0.1450 LoRA-SFT 0.5844 0.2525 0.4383 0.2484 0.6721 0.6582 0.5812 0.4294 0.7500 0.4286 0.1396 0.1272
+> HyCoLLM 0.6266 0.2485 0.4513 0.2813 0.7338 0.7425 0.5877 0.4640 0.8052 0.4903 0.1396 0.1183
+> Llama3.1-8B Vanilla 0.1466 0.0521 0.2378 0.0913 0.5081 0.5009 0.5000 0.1717 0.4365 0.1285 0.0098 0.1927 Vanilla+CoT 0.1851 0.1078 0.1623 0.1526 0.4513 0.3959 0.4838 0.2526 0.3669 0.1039 0.0097 0.1778 LoRA-SFT 0.5270 0.3256 0.3703 0.1763 0.6392 0.5543 0.5366 0.3351 0.7047 0.3480 0.0795 0.1516
+> HyCoLLM 0.6133 0.3289 0.5091 0.3771 0.6508 0.5543 0.6584 0.5392 0.8179 0.5047 0.1431 0.1215
+
+Table 11: Vanilla and Vanilla+CoT baselines compared with LoRA-SFT and HyCoLLM on the CognitiveBench test set. ACC and F1 are reported for each dimension; PMA@ k and Hamming Loss measure holistic consistency. Lower is better ( ↓) for Hamming Loss. 
+
+Step Model state PMA@4 ∆
+
+Path A: Remove Soft Prompt → Remove SCT 
+
+0 Full HyCoLLM 15.49 –1 w/o Soft Prompt (only SCT) 11.76 −3.73 
+
+2 w/o Soft Prompt & SCT (SFT) 10.91 −0.85 
+
+Path B: Remove SCT → Remove Soft Prompt 
+
+0 Full HyCoLLM 15.49 –1 w/o SCT (only Soft Prompt) 12.52 −2.97 
+
+2 w/o Soft Prompt & SCT (SFT) 10.91 −1.61 
+
+Table 12: Two-path cumulative ablation of the Soft Prompt and SCT loss, reported in PMA@4 (%). Both paths converge to the LoRA-SFT baseline when both components are removed. 
+
+the lowest Hamming Loss (0.1165) and signifi-cantly outperforms all baselines in Stance Accuracy 
+
+(73.70% vs. GPT-4o 66.88%) and PMA@2 consis-tency (81.49%). This indicates that while SFT may memorize specific patterns, HyCoLLM offers a more generalized understanding of the "Economic Stance," effectively decoupling the complex depen-dency between a user’s analytical thinking style and their support for trade policies. 
+
+Performance on UE (Table 15). In the US Elec-tion, the "Cognitive Crowding" phenomenon be-comes acute for baseline models. Table 15 re-veals that while closed-source giants like GPT-4o achieve a respectable Stance accuracy (69.01%), their holistic cognitive understanding collapses, with a PMA@4 score of only 5.05%. This im-plies they can classify who a user supports but fail to understand why (Thinking/Emotion) and what they want (Intent). In contrast, HyCoLLM thrives in this hierarchical cognitive environment. It im-proves the PMA@4 accuracy to 14.95%—nearly tripling the performance of GPT-4o—and achieves state-of-the-art results in Emotion (62.64%) and 
+
+Thinking (53.41%). This substantial gain verifies our hypothesis: political cognition, structured as "Ideology → Stance → Expression," is naturally isomorphic to hyperbolic geometry, allowing Hy-CoLLM to disentangle the deep-seated emotional logic from surface-level partisanship. 
+
+Performance on DEI (Table 16). The DEI dataset represents the most complex "value con-flict" zone, involving abstract social concepts and intense identity debates. Results in Table 16 high-light the most dramatic superiority of our approach. Standard SFT models struggle significantly here, with Qwen3-8B’s PMA@4 accuracy dropping to 7.77%. Conversely, HyCoLLM maintains excep-tional consistency, achieving a PMA@4 accuracy of 19.17%, which is 2.5 × higher than the strongest open-source baseline. Furthermore, HyCoLLM dominates the abstract Thinking dimension (Acc 58.55% vs. SFT 39.38%). This breakthrough sug-gests that purely semantic-based learning (SFT) falters when dealing with high-dimensional social values. By injecting geometric priors, HyCoLLM effectively constructs a "Cognitive Manifold" for diversity and inclusion, enabling it to navigate the intricate web of moral judgments and identity as-sertions with human-level nuance. 
+
+D.9 Detailed generalization analysis 
+
+The complete cross-dataset generalization results, where models trained on the CUT dataset are tested on the entirely unseen FRIR dataset, are detailed in Table 17. These comprehensive metrics strongly reinforce the core findings in the main text: Hy-CoLLM, which embeds cognitive geometric pri-ors, significantly enhances the model’s general-ization ability. Specifically, HyCoLLM-Llama3.1-8b achieves the lowest Hamming Loss (↓ 0.1248 )among all non-human models and performs excel-lently in all composite metrics (PMA@2, PMA@3, PMA@4). In particular, the leading position in the PMA@4 accuracy (0.1117), which measures Model Setting Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 H-Loss ↓
+
+ACC F1 ACC F1 ACC F1 ACC F1 Qwen3-1.7B Vanilla 0.2825 0.0854 0.2435 0.1348 0.4870 0.4301 0.3019 0.1741 0.4188 0.1331 0.0097 0.1984 SFT 0.4221 0.1741 0.3539 0.1077 0.5812 0.5430 0.5065 0.2111 0.6169 0.2857 0.0584 0.1576 
+
+HyCoLLM 0.5552 0.1959 0.4513 0.2040 0.6461 0.6422 0.5487 0.3270 0.7565 0.3961 0.1071 0.1329 
+
+Qwen3-8B Vanilla 0.4123 0.1608 0.2630 0.1752 0.2370 0.2076 0.4448 0.4342 0.4286 0.1169 0.0097 0.1803 SFT 0.5844 0.2525 0.4383 0.2484 0.6721 0.6582 0.5812 0.4294 0.7500 0.4286 0.1396 0.1272 
+
+HyCoLLM 0.6266 0.2485 0.4513 0.2813 0.7338 0.7425 0.5877 0.4640 0.8052 0.4903 0.1396 0.1183 
+
+Qwen3-32B Vanilla 0.4383 0.2803 0.2695 0.1741 0.5649 0.5699 0.5390 0.4078 0.6299 0.2662 0.0260 0.1617 SFT 0.5617 0.2559 0.3604 0.1977 0.7240 0.7380 0.5390 0.4367 0.7532 0.3766 0.0942 0.1340 
+
+HyCoLLM 0.5714 0.2893 0.4351 0.2312 0.7078 0.7127 0.5812 0.5002 0.7857 0.4448 0.1071 0.1255 
+
+Table 13: Performance comparison across different model sizes (Qwen3 family) on the CognitiveBench dataset. 
+
+Bold indicates the best performance within each model size group.                                                                                                                                                                                                                  
+
+> Model Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 Hamming Loss ↓
+> ACC F1 ACC F1 ACC F1 ACC F1
+> Human
+> Averaged from 3 experts 0.7619 0.5768 0.6524 0.5183 0.8235 0.6633 0.7437 0.6054 0.9223 0.7172 0.3527 0.0676
+> Close-Source
+> Small-size Few-Shot & CoT GPT4o-mini 0.4578 0.2082 0.2922 0.1615 0.6201 0.6297 0.5779 0.4262 0.6656 0.3117 0.0455 0.1504 Gemini2.5-Flash-Lite 0.5928 0.2928 0.2834 0.2085 0.6254 0.6411 0.5342 0.4408 0.7231 0.3225 0.0554 0.1453 Grok-4-fast 0.5010 0.2589 0.2908 0.2028 0.5541 0.5293 0.5180 0.4750 0.6503 0.2680 0.0196 0.1572 Qwen-Turbo 0.5714 0.1989 0.3019 0.2037 0.6331 0.6443 0.4773 0.4204 0.6948 0.3117 0.0552 0.1490 Large-size Few-Shot & CoT GPT-4o 0.5227 0.2146 0.3182 0.2262 0.6688 0.6902 0.4578 0.4564 0.7175 0.2727 0.0422 0.1500 DeepSeek-V3.1 0.5909 0.3154 0.3149 0.2466 0.5974 0.6035 0.4578 0.4342 0.6753 0.2857 0.0617 0.1503 Claude-haiku-4.5 0.5292 0.2676 0.2866 0.2120 0.5519 0.5404 0.5212 0.4063 0.6753 0.2662 0.0357 0.1550 Qwen-Max 0.4805 0.2212 0.2500 0.1887 0.6299 0.6398 0.4805 0.3938 0.6396 0.2630 0.0260 0.1596
+> Open-Source
+> After SFT Llama3.1-8b 0.5812 0.2504 0.4026 0.2060 0.6429 0.6568 0.5325 0.3335 0.7273 0.4026 0.0974 0.1362 Qwen3-8B 0.5877 0.2607 0.4481 0.2536 0.6656 0.6507 0.5714 0.4247 0.7532 0.4221 0.1396 0.1275 Qwen2.5-7B 0.5390 0.2025 0.4870 0.2087 0.6136 0.5925 0.5455 0.3567 0.7403 0.3929 0.0974 0.1332 DeepSeek-R1-Qwen3 0.5547 0.2352 0.2960 0.1795 0.6385 0.4728 0.4685 0.3975 0.6282 0.2852 0.0650 0.1356 Mistral-7b 0.3571 0.1519 0.1883 0.0991 0.4870 0.4950 0.2435 0.1728 0.0779 0.4058 0.0097 0.2002
+> Ours
+> After SFT HyCoLLM-Qwen3-8b 0.6169 0.2877 0.4805 0.2826 0.7370 0.7449 0.5844 0.4848 0.8149 0.5065 0.1234 0.1165
+> HyCoLLM-Llama3.1-8b 0.6526 0.2918 0.4643 0.2677 0.6753 0.6650 0.6201 0.4933 0.8117 0.5032 0.1364 0.1169
+
+Table 14: Performance comparison on the CUT Dataset . Rows are grouped by model type. The best results among all models are highlighted in bold , and the second-best results are underlined . Note that for Hamming Loss , lower is better ( ↓). 
+
+the model’s ability to correctly predict all four di-mensions simultaneously, strongly demonstrates that the Hyperbolic Cognitive Network (HCN) suc-cessfully decouples complex, multi-dimensional cognitive states using the Poincaré sphere. This provides large language models with a more es-sential, topic-independent cognitive understanding, thereby effectively resisting overfitting in cross-domain transfer. In terms of dimensional performance, Hy-CoLLM stands out in core mental state dimensions such as Emotion, Thinking, and Intent. For ex-ample, HyCoLLM-Llama3.1-8b leads in Thinking ACC (0.5978) and Intent F1 (0.6147), indicating that hyperbolic space effectively captures the hier-archical relationships between these mental states that are less dependent on topic semantics. How-ever, as discussed in the main text, the Stance di-mension is an exception, where HyCoLLM’s per-formance is relatively mediocre. This is an impor-tant and expected finding: unlike intrinsic mental states such as emotion and thinking, the stance labels in the FRIR dataset (specific claims regard-ing opposing topics) are semantically fundamen-tally different from those in the CUT training set, and their correct prediction is highly dependent on topic-specific semantic information. This di-vergence in the definition of target concepts high-lights the limitations of cognitive geometric priors, i.e., when the target dimension is primarily deter-mined by superficial, domain-specific semantics, the transferability of its structured understanding is restricted. Despite this shortcoming in the Stance dimension, HyCoLLM still outperforms all SFT baselines and most powerful closed-source LLMs (such as GPT-4o and DeepSeek-V3.1) in overall multi-dimensional alignment metrics (composite metrics and Hamming Loss ), confirming its struc-tural advantages in encoding human-like cognitive structures. Model Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 Hamming Loss ↓
+
+ACC F1 ACC F1 ACC F1 ACC F1 
+
+Human 
+
+Averaged from 3 experts 0.7099 0.5095 0.6627 0.4770 0.8040 0.6296 0.7161 0.5357 0.9121 0.6890 0.3073 0.0819 
+
+Close-Source 
+
+Small-size Few-Shot & CoT GPT4o-mini 0.4449 0.3160 0.3392 0.2467 0.6498 0.6300 0.5220 0.4162 0.6872 0.2885 0.0507 0.1514 Gemini2.5-Flash-Lite 0.5297 0.3857 0.2967 0.2145 0.6418 0.6090 0.5846 0.4697 0.7253 0.3385 0.0418 0.1442 Grok-4-fast 0.3538 0.3350 0.3077 0.2702 0.6352 0.5513 0.5582 0.4907 0.6725 0.2330 0.0198 0.1589 Qwen-Turbo 0.3407 0.3229 0.3099 0.2009 0.5077 0.3535 0.5385 0.3281 0.5736 0.1956 0.0132 0.1687 Large-size Few-Shot & CoT GPT-4o 0.5033 0.4679 0.3209 0.2349 0.6901 0.6826 0.4352 0.4116 0.6769 0.2923 0.0505 0.1519 DeepSeek-V3.1 0.4840 0.4272 0.3158 0.2632 0.6476 0.6086 0.5675 0.4416 0.7032 0.3356 0.0525 0.1468 Claude-haiku-4.5 0.3473 0.3867 0.3201 0.2744 0.6402 0.5774 0.5673 0.4100 0.6725 0.2549 0.0286 0.1569 Qwen-Max 0.4176 0.3693 0.2615 0.1797 0.5912 0.4319 0.5868 0.4171 0.6593 0.2505 0.0286 0.1566 
+
+Open-Source 
+
+After SFT Llama3.1-8b 0.5231 0.3297 0.4286 0.1923 0.6220 0.5972 0.6110 0.4803 0.7341 0.3978 0.1099 0.1342 Qwen3-8B 0.5714 0.3901 0.4505 0.3851 0.6176 0.5773 0.6615 0.5890 0.8088 0.4154 0.1099 0.1258 Qwen2.5-7B 0.5429 0.3853 0.4879 0.2528 0.6242 0.5944 0.6352 0.4883 0.7714 0.4396 0.1165 0.1263 DeepSeek-R1-Qwen3 0.4923 0.3607 0.3341 0.2227 0.5648 0.5487 0.5670 0.4848 0.6615 0.3165 0.0593 0.1509 Mistral-7b 0.3692 0.1025 0.1978 0.0632 0.2066 0.2104 0.1736 0.0865 0.2418 0.0352 0.0100 0.2025 
+
+Ours 
+
+After SFT HyCoLLM-Qwen3-8b 0.6264 0.4587 0.5341 0.3970 0.6527 0.6456 0.6637 0.5813 0.8308 0.5209 0.1495 0.1128 
+
+HyCoLLM-Llama3.1-8b 0.5604 0.4028 0.5033 0.2962 0.5516 0.4115 0.6505 0.5667 0.7560 0.4462 0.1011 0.1278 
+
+Table 15: Performance comparison on the UE Dataset . The best results are highlighted in bold , and the second-best are underlined. For Hamming Loss , lower is better ( ↓). 
+
+Model Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 Hamming Loss ↓
+
+ACC F1 ACC F1 ACC F1 ACC F1 
+
+Human 
+
+Averaged from 3 experts 0.7036 0.5182 0.6050 0.4494 0.7789 0.7211 0.7004 0.5874 0.8932 0.6447 0.2627 0.0896 
+
+Close-Source 
+
+Small-size Few-Shot & CoT GPT4o-mini 0.4531 0.3803 0.2865 0.2214 0.3698 0.3814 0.5625 0.4120 0.5781 0.2083 0.0365 0.2009 Gemini2.5-Flash-Lite 0.4922 0.2251 0.3886 0.3366 0.3990 0.4002 0.6062 0.3621 0.5959 0.2694 0.0881 0.1825 Grok-4-fast 0.4249 0.2772 0.3212 0.2817 0.4093 0.4096 0.5907 0.5801 0.5855 0.2487 0.0155 0.1946 Qwen-Turbo 0.4508 0.2706 0.3886 0.2785 0.3212 0.2767 0.6425 0.4521 0.5751 0.2383 0.0829 0.1906 Large-size Few-Shot & CoT GPT-4o 0.5208 0.2124 0.3385 0.3178 0.6198 0.5563 0.5573 0.3965 0.6667 0.3333 0.0781 0.1698 DeepSeek-V3.1 0.5130 0.2420 0.3281 0.2818 0.4688 0.4746 0.5729 0.4016 0.6373 0.2539 0.0622 0.1820 Claude-haiku-4.5 0.4508 0.2928 0.3005 0.2296 0.3782 0.3960 0.5492 0.2668 0.5648 0.1865 0.0363 0.2005 Qwen-Max 0.4611 0.3376 0.2953 0.2485 0.5130 0.4899 0.6218 0.4445 0.6477 0.3212 0.0311 0.1825 
+
+Open-Source 
+
+After SFT Llama3.1-8b 0.4767 0.3968 0.2798 0.1306 0.6528 0.4088 0.4663 0.1915 0.6528 0.2435 0.0311 0.1845 Qwen3-8B 0.6010 0.3175 0.3938 0.2911 0.6632 0.3717 0.6010 0.4848 0.8342 0.3627 0.0777 0.1514 Qwen2.5-7B 0.5429 0.3853 0.4879 0.2528 0.6242 0.5944 0.6352 0.4883 0.7714 0.4396 0.1165 0.1263 DeepSeek-R1-Qwen3 0.5389 0.2664 0.3834 0.2799 0.5233 0.4192 0.5907 0.4033 0.7098 0.3005 0.0674 0.1687 Mistral-7b 0.3316 0.1061 0.2073 0.0927 0.6269 0.2807 0.3420 0.0983 0.5026 0.1036 0.0207 0.2120 
+
+Ours 
+
+After SFT HyCoLLM-Qwen3-8b 0.6425 0.3052 0.5855 0.4805 0.7202 0.5849 0.6943 0.5759 0.8860 0.5803 0.1917 0.1176 
+
+HyCoLLM-Llama3.1-8b 0.6269 0.2920 0.5596 0.5674 0.7254 0.5863 0.7047 0.5577 0.8860 0.5648 0.1917 0.1198 
+
+Table 16: Performance comparison on the DEI Dataset . The best results are highlighted in bold , and the second-best are underlined. For Hamming Loss , lower is better ( ↓). Model Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 Hamming Loss ↓                                                                                                                                                                                                        
+
+> ACC F1 ACC F1 ACC F1 ACC F1
+> Human
+> Averaged from 3 experts 0.6663 0.5732 0.7236 0.5113 0.7871 0.3971 0.7882 0.6456 0.9266 0.7178 0.3331 0.0688
+> Close-Source
+> Small-size Few-Shot & CoT GPT4o-mini 0.5559 0.4182 0.2514 0.1846 0.4637 0.4382 0.4888 0.3853 0.6089 0.2123 0.0335 0.1659 Gemini2.5-Flash-Lite 0.5574 0.3663 0.3389 0.2513 0.5070 0.4973 0.6275 0.4768 0.6891 0.3389 0.0616 0.1458 Grok-4-fast 0.5475 0.5089 0.3101 0.2718 0.4804 0.4763 0.5112 0.4659 0.6229 0.2486 0.0559 0.1593 Qwen-Turbo 0.4665 0.2721 0.3575 0.2217 0.4777 0.3208 0.4441 0.3422 0.6006 0.2430 0.0559 0.1653 Large-size Few-Shot & CoT GPT-4o 0.5866 0.4445 0.2654 0.2097 0.4665 0.4274 0.4218 0.3789 0.6006 0.2123 0.0363 0.1674 DeepSeek-V3.1 0.5359 0.4271 0.3725 0.3057 0.4874 0.4689 0.4678 0.4341 0.6779 0.3137 0.0532 0.1508 claude-haiku-4.5 0.4510 0.3745 0.3417 0.2848 0.4650 0.4657 0.5686 0.4057 0.6162 0.2717 0.0504 0.1610 Qwen-Max 0.5279 0.3383 0.2598 0.2046 0.4832 0.3412 0.5140 0.3780 0.6006 0.2430 0.0447 0.1626
+> Open-Source (SFT Baseline)
+> After SFT Llama3.1-8b 0.4944 0.2067 0.3799 0.2040 0.3911 0.2734 0.5279 0.3280 0.6117 0.2486 0.0531 0.1592 Qwen3-8B 0.5084 0.3363 0.5782 0.3484 0.4218 0.3305 0.6229 0.3911 0.7263 0.3827 0.0922 0.1384 Qwen2.5-7B 0.4637 0.2604 0.4749 0.2141 0.4162 0.3279 0.5140 0.3229 0.6257 0.2849 0.0782 0.1575 DeepSeek-R1-Qwen3 0.5439 0.3774 0.2885 0.2049 0.4638 0.3306 0.4137 0.3433 0.4811 0.1950 0.0409 0.1401 Mistral-7b 0.3240 0.1061 0.1285 0.0521 0.3631 0.2812 0.2318 0.1298 0.2961 0.0223 0.0028 0.2187
+> Ours (HyCoLLM)
+> After SFT HyCoLLM-Qwen3-8b 0.5838 0.3726 0.5056 0.3285 0.4190 0.3162 0.6704 0.5042 0.7458 0.3827 0.1061 0.1349 HyCoLLM-Llama3.1-8b 0.5978 0.4546 0.5978 0.3371 0.3743 0.1867 0.6983 0.6147 0.7737 0.4274 0.1117 0.1248
+
+Table 17: Full cross-dataset generalization performance, trained on CUT and tested on the unseen FRIR dataset. The best results among non-human models are highlighted in bold , and the second-best are underlined . For Hamming Loss , lower is better ( ↓). 
+
+D.10 Detailed Ablation Study on Sub-datasets 
+
+In this section, we provide a granular analysis of the ablation studies for the CUT, UE, and DEI datasets. The results (Tables 18, 19, and 20) reveal that the contribution of each component varies sig-nificantly depending on the cognitive complexity of the domain. 
+
+D.10.1 Ablation on CUT Dataset (Table 18) 
+
+The CUT dataset represents a relatively rational and structured domain. Consequently, the impact of geometric priors is more subtle but still critical for consistency. 
+
+Phase I: Geometry vs. Structure. Interestingly, replacing the Poincaré ball with Euclidean space (w/o Hyperbolic ) results in a minimal drop in 
+
+PMA@4 accuracy (maintained at 0.1234) and even a slight increase in Intent Accuracy. This sug-gests that for economic debates with clearer logi-cal boundaries, Euclidean space is partially suffi-cient. However, the Thinking F1 score drops no-tably (0.2826 → 0.2633), indicating that even in rational discourse, the hierarchical nature of cog-nitive processes (System 1 vs. System 2) is bet-ter preserved in hyperbolic space. The removal of Cross-Interaction leads to the lowest Stance F1 (0.7058), confirming that economic stance is heav-ily dependent on the interplay between thinking style and emotion. 
+
+Phase II: The Necessity of Alignment. The Soft Prompt proves indispensable here. Its removal causes the sharpest decline in PMA@4 accuracy (to 0.1136) among all variants. This implies that even if the geometric prior is well-constructed, the LLM requires explicit "soft guidance" to map these struc-tured features into its generation space. Without the 
+
+SCT Loss , the model fails to maintain the topologi-cal consistency of the Intent dimension (F1 drops from 0.4848 to 0.4841), proving that alignment tuning is crucial for precise intent recognition. 
+
+D.10.2 Ablation on UE Dataset (Table 19) 
+
+In the polarized political domain, the "Cognitive Crowding" is more severe, and the benefits of our framework become more pronounced. 
+
+Phase I: Hierarchy Matters. Unlike CUT, the 
+
+w/o Hyperbolic setting in UE leads to a clear degra-dation in PMA@4 accuracy (0.1495 → 0.1275) and a significant drop in Thinking F1 (0.3970 →
+
+0.3488). This validates our hypothesis that political ideologies form a latent hierarchy (e.g., broad lib-eral values branching into specific policy stances). Euclidean space suffers from crowding when mod-eling these trees, causing the model to lose track of the nuanced thinking patterns underpinning politi-cal stances. 
+
+Phase II: Bridging the Gap. The absence of 
+
+Soft Prompts causes a substantial performance drop (PMA@4 → 0.1407). Furthermore, removing the SCT Loss leads to a higher Hamming Loss 
+
+(0.1128 → 0.1206), suggesting that without topo-logical constraints, the LLM tends to generate se-mantically plausible but cognitively misaligned re-Method Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 H-Loss ↓
+
+ACC F1 ACC F1 ACC F1 ACC F1 
+
+HyCoLLM (Full) 0.6169 0.2877 0.4805 0.2826 0.7370 0.7449 0.5844 0.4848 0.8149 0.5065 0.1234 0.1165 Phase I Ablations (HCN) 
+
+w/o Hyperbolic 0.6136 0.2223 0.4188 0.2633 0.7305 0.7338 0.5974 0.4753 0.7955 0.4643 0.1234 0.1212 w/o Geo-Regularization 0.6169 0.2455 0.4416 0.2551 0.7078 0.7110 0.5974 0.5028 0.7987 0.4708 0.1266 0.1209 w/o Cross-Interaction 0.6039 0.2257 0.4416 0.2811 0.7045 0.7058 0.5942 0.4924 0.7922 0.4578 0.1169 0.1224 
+
+Phase II Ablations (HGAT) 
+
+w/o Soft Prompt 0.6104 0.2281 0.4318 0.2705 0.7045 0.7080 0.5942 0.4841 0.7955 0.4610 0.1136 0.1227 w/o SCT Loss 0.6364 0.2472 0.4643 0.2879 0.7143 0.7252 0.5877 0.4940 0.7987 0.4708 0.1266 0.1209 w/o Cognitive Anchor 0.6039 0.2208 0.4351 0.2829 0.7078 0.7089 0.5942 0.4793 0.8052 0.4481 0.1201 0.1227 
+
+Table 18: Ablation study on the CogBiasESC dataset. Bold indicates the best performance (Full Model). 
+
+Method Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 H-Loss ↓
+
+ACC F1 ACC F1 ACC F1 ACC F1 
+
+HyCoLLM (Full) 0.6264 0.4587 0.5341 0.3970 0.6527 0.6456 0.6637 0.5813 0.8308 0.5209 0.1495 0.1128 Phase I Ablations (HCN) 
+
+w/o Hyperbolic 0.5956 0.3567 0.4945 0.3488 0.6374 0.6165 0.6571 0.5284 0.8110 0.4923 0.1275 0.1197 w/o Geo-Regularization 0.5890 0.3877 0.4835 0.3682 0.6264 0.6053 0.6615 0.5401 0.8044 0.4615 0.1363 0.1214 w/o Cross-Interaction 0.5956 0.3976 0.5121 0.3843 0.6352 0.6184 0.6440 0.5171 0.7956 0.4945 0.1341 0.1195 
+
+Phase II Ablations (HGAT) 
+
+w/o Soft Prompt 0.6066 0.3839 0.4835 0.3365 0.6110 0.5944 0.6637 0.5276 0.7956 0.4703 0.1407 0.1211 w/o SCT Loss 0.6154 0.4437 0.4923 0.3834 0.6264 0.6124 0.6374 0.5150 0.8066 0.4703 0.1297 0.1206 w/o Cognitive Anchor 0.5956 0.3840 0.5011 0.3023 0.6176 0.6034 0.6593 0.5175 0.7956 0.4703 0.1407 0.1205 
+
+Table 19: Ablation study on the UE dataset. 
+
+Method Emotion Thinking Stance Intent PMA@2 PMA@3 PMA@4 H-Loss ↓
+
+ACC F1 ACC F1 ACC F1 ACC F1 
+
+HyCoLLM (Full) 0.6425 0.3052 0.5855 0.4805 0.7202 0.5849 0.6943 0.5759 0.8860 0.5803 0.1917 0.1176 Phase I Ablations (HCN) 
+
+w/o Hyperbolic 0.6632 0.3736 0.4473 0.3616 0.6632 0.4473 0.6425 0.4244 0.8497 0.4922 0.1140 0.1361 w/o Geo-Regularization 0.6477 0.4216 0.4301 0.3548 0.6736 0.4421 0.6321 0.4510 0.8187 0.4819 0.0984 0.1403 w/o Cross-Interaction 0.6528 0.2461 0.4560 0.3596 0.6736 0.4487 0.6477 0.4335 0.8394 0.5130 0.0984 0.1361 
+
+Phase II Ablations (HGAT) 
+
+w/o Soft Prompt 0.6321 0.2384 0.4456 0.3808 0.6528 0.4375 0.6425 0.4228 0.8083 0.4819 0.0984 0.1406 w/o SCT Loss 0.6166 0.3680 0.4819 0.3866 0.7150 0.5299 0.6477 0.4363 0.8394 0.5233 0.1192 0.1331 w/o Cognitive Anchor 0.6528 0.2528 0.4560 0.3608 0.6684 0.4508 0.6580 0.4377 0.8290 0.5181 0.1036 0.1352 
+
+Table 20: Ablation study on the DEI dataset. sponses (e.g., predicting the correct Stance but the wrong underlying Emotion). 
+
+D.10.3 Ablation on DEI Dataset (Table 20) 
+
+The DEI dataset, characterized by abstract values and high conflict, serves as the strongest proof of concept for HyCoLLM. 
+
+Phase I: The Criticality of Hyperbolic Space. 
+
+The results here are striking. Removing the hy-perbolic geometry ( w/o Hyperbolic ) causes a catas-trophic collapse in holistic understanding: PMA@4 
+
+accuracy plummets by nearly 40% (0.1917 →
+
+0.1140), and Thinking F1 drops massively (0.4805 
+
+→ 0.3616). It is worth noting that while w/o Hy-perbolic achieves higher Emotion accuracy, it fails to connect this emotion to the correct thinking style and stance (hence the low PMA@4). This phe-nomenon perfectly illustrates the "crowding prob-lem": Euclidean models may cluster surface-level sentiments well but fail to disentangle the complex, deep-seated value systems that drive DEI debates. Only hyperbolic space provides the exponential vol-ume required to organize these entangled cognitive states. 
+
+Phase II: Alignment under Complexity. In this complex domain, the Soft Prompt is the lifeline of the model. Its removal reduces the PMA@4 accu-racy to single digits (0.0984), comparable to the baseline models. This confirms that for abstract so-cial concepts, the LLM cannot effectively infer the cognitive context from raw text alone; it heavily re-lies on the high-fidelity geometric signals injected via our soft prompts to navigate the "value maze" of DEI discussions. 
+
+E Training Dynamics Analysis 
+
+To further validate the stability of our Hyperbolic-Guided Alignment Tuning (HGAT), we visualize the training loss curves in Figure 9. The data is recorded from the training process of HyCoLLM-Qwen3-8B with the optimal hyperparameters ( λ =1.0, L = 4 ). 
+
+Convergence Stability. As shown in the top panel of Figure 9, the Total Loss (green line) ex-hibits a steep initial descent followed by a smooth convergence, indicating that the optimization land-scape is stable despite the complexity of the hyper-bolic constraints. Notably, both the SFT Loss (blue) and SCT Loss (orange) decrease synchronously. This synchronization confirms that the geometric alignment goal does not conflict with the seman-tic generation objective; rather, they are mutually compatible, allowing the model to learn cognitive structures without sacrificing language fluency. 
+
+Persistent Geometric Guidance. The bottom panel illustrates the evolution of the loss composi-tion ratios. An interesting pattern emerges: while the SFT loss drops rapidly in the early stages (as the model quickly adapts to the output format), the SCT loss ratio (purple line) gradually rises and sta-bilizes around 60-70%. This phenomenon suggests that as the model masters the basic textual patterns, the Semantic-Cognitive Topology loss becomes the dominant gradient signal. This ensures that in the later stages of fine-tuning, the model focuses heav-ily on refining the subtle topological alignment of its feature space, preventing the "feature collapse" often seen in standard SFT. 
+
+F Human Evaluation Prompt 
+
+Figure 10 presents the detailed instructions and cri-teria used for the human evaluation. Experts were explicitly instructed to evaluate the "holistic com-bination" of the four cognitive dimensions rather than individual labels. 
+
+G Inference Prompt 
+
+Prompting Strategies. To ensure a fair compar-ison, we tailored the prompting strategies based on the model type: Since we cannot access the weights of models like GPT-4o and Gemini, we employed a robust Few-shot + CoT prompt (illus-trated in Figure 11). This prompt includes detailed task definitions, strict output constraints, and three domain-specific examples with step-by-step rea-soning paths to mitigate cognitive crowding and enforce label consistency. For HyCoLLM and other open-source baselines, we applied Supervised Fine-Tuning (SFT). During the inference phase for these models, we utilized a Zero-shot prompt struc-ture. We stripped the few-shot examples and ex-plicit reasoning instructions, retaining only the task description and label taxonomy. This approach validates the effectiveness of the fine-tuning pro-cess, demonstrating that HyCoLLM has success-fully internalized the cognitive geometric prior and alignment constraints without needing lengthy in-context guidance. Figure 6: Distribution of labels across Emotion, Thinking, Stance, and Intent dimensions for the four datasets (CUT, UE, DEI, and FRIR). Figure 7: Computational Cost Analysis across different model sizes. While HyCoLLM introduces a marginal increase in training time and memory usage due to the additional optimization of geometric priors, it incurs zero additional latency during inference compared to SFT, ensuring deployment efficiency. 
+
+Figure 8: Hyperparameter sensitivity analysis averaged across three datasets. The plots illustrate the impact of the SCT loss weight λ (Left) and the soft prompt length L (Right) on dimension-specific F1 scores and the holistic PMA@4 accuracy. Both parameters exhibit a distinct inverted U-shape trend, demonstrating that 
+
+λ = 1 .0 and L = 4 provide the optimal balance for HyCoLLM. 
+
+Figure 9: Visualization of training dynamics. Top: The raw and smoothed loss curves for SFT (generation), SCT (alignment), and Total Loss. Bottom: The relative ratio (%) of the SFT and SCT loss components over time. The curves demonstrate stable convergence and persistent geometric guidance. Figure 10: The instruction interface provided to human evaluators for pairwise comparison. Figure 11: The prompt template used for closed-source LLMs (e.g., GPT-4o, Claude-4.5). The prompt employs a Chain-of-Thought (CoT) and Few-Shot strategy to guide the model in reasoning across four cognitive dimensions. Note that for our fine-tuned models (HyCoLLM and SFT baselines), the "Few-shot Examples" and detailed "CoT Requirements" sections were removed during inference to rely on the models’ internalized parameter knowledge and to optimize inference latency.
