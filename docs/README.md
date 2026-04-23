@@ -6,71 +6,77 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-22
-- 运行时间：2026-04-22 20:14:26 UTC
+- 最新运行日期：2026-04-23
+- 运行时间：2026-04-23 20:29:46 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：6
+- 本次总论文数：19
+- 精读区：8
 - 速读区：11
 
 ### 今日简报（AI）
-深入研究阅读时间建模与对话语境对齐，共完成 17 篇论文阅读。值得关注的是语言模型在语义推理与眼动事件检测等认知层面上的应用突破。建议读者下步聚焦大模型在真实交互场景中的理解与行为预测能力。
-- 详情：[/202604/22/README](/202604/22/README)
+聚焦语言模型的隐性理解力与跨文化适应，今日共精速读 19 篇研究。重点发现模型在隐含信息解释和文化语境迁移上已接近人类推理边界。建议关注人工智能语义理解的社会语言学维度，探索更自然的交互方式。
+- 详情：[/202604/23/README](/202604/23/README)
 
 ### 精读区论文标签
-1. [Probing for Reading Times](/202604/22/2604.18712v1-probing-for-reading-times)  
-   标签：评分：9.5/10、query:q5
-   evidence：探测语言模型表示中的人类阅读时间与眼动数据
-2. [Aligning Backchannel and Dialogue Context Representations via Contrastive LLM Fine-Tuning](/202604/22/2604.16622v1-aligning-backchannel-and-dialogue-context-representations-via-contrastive-llm-fine-tuning)  
-   标签：评分：9.0/10、query:q8
-   evidence：反馈信号中的词汇形式和韵律共同传达语用含义
-3. [Do LLMs Use Cultural Knowledge Without Being Told? A Multilingual Evaluation of Implicit Pragmatic Adaptation](/202604/22/2604.17718v1-do-llms-use-cultural-knowledge-without-being-told-a-multilingual-evaluation-of-implicit-pragmatic-adaptation)  
+1. [Comparing Human and Large Language Model Interpretation of Implicit Information](/202604/23/2604.17085v1-comparing-human-and-large-language-model-interpretation-of-implicit-information)  
+   标签：评分：9.0/10、query:q3
+   evidence：隐含意义的解释与语用推理
+2. [Do LLMs Use Cultural Knowledge Without Being Told? A Multilingual Evaluation of Implicit Pragmatic Adaptation](/202604/23/2604.17718v1-do-llms-use-cultural-knowledge-without-being-told-a-multilingual-evaluation-of-implicit-pragmatic-adaptation)  
    标签：评分：9.0/10、query:q6
-   evidence：大语言模型中的隐性语用适配与语境敏感性
-4. [An Existence Proof for Neural Language Models That Can Explain Garden-Path Effects via Surprisal](/202604/22/2604.18293v1-an-existence-proof-for-neural-language-models-that-can-explain-garden-path-effects-via-surprisal)  
+   evidence：隐性语用适应和情境线索的评估
+3. [Exploring Concreteness Through a Figurative Lens](/202604/23/2604.18296v1-exploring-concreteness-through-a-figurative-lens)  
+   标签：评分：9.0/10、query:q7
+   evidence：在LLM隐藏表示中区分名词的字面与比喻用法
+4. [Probing for Reading Times](/202604/23/2604.18712v1-probing-for-reading-times)  
+   标签：评分：9.0/10、query:q5
+   evidence：利用眼动追踪语料库探测语言模型的阅读时间表征
+5. [Working Memory Constraints Scaffold Learning in Transformers under Data Scarcity](/202604/23/2604.20789v1-working-memory-constraints-scaffold-learning-in-transformers-under-data-scarcity)  
+   标签：评分：9.0/10、query:q5
+   evidence：与人类阅读时间数据和认知约束的对齐
+6. [Rapid Orthographic and Delayed Phonological Processing: ERP and Oscillatory Evidence from Masked Priming in Korean](/202604/23/biorxiv-10-64898-2026-03-05-709970-v2-rapid-orthographic-and-delayed-phonological-processing-erp-and-oscillatory-evidence-from-masked-priming-in-korean)  
    标签：评分：9.0/10、query:profile-1
-   evidence：计算心理语言学与人类句子加工难度
-5. [Time-resolved hemodynamic responses to sentence-level speech perception, production, and self-monitoring](/202604/22/biorxiv-10-64898-2026-04-13-715885-v1-time-resolved-hemodynamic-responses-to-sentence-level-speech-perception-production-and-self-monitoring)  
-   标签：评分：9.0/10、query:q1
-   evidence：句子级语音感知与产生的神经机制
-6. [Rapid Orthographic and Delayed Phonological Processing: ERP and Oscillatory Evidence from Masked Priming in Korean](/202604/22/biorxiv-10-64898-2026-03-05-709970-v2-rapid-orthographic-and-delayed-phonological-processing-erp-and-oscillatory-evidence-from-masked-priming-in-korean)  
-   标签：评分：8.5/10、query:q1
-   evidence：视觉词汇识别中正字法和语音加工的ERP和振荡证据
+   evidence：视觉词汇识别中正字法和语音加工的脑电证据
+7. [Expectation triggers a change-like EEG response without acoustic change](/202604/23/biorxiv-10-64898-2026-04-13-718093-v2-expectation-triggers-a-change-like-eeg-response-without-acoustic-change)  
+   标签：评分：9.0/10、query:q10
+   evidence：听觉系统中对预期的预测性加工和脑电反应
+8. [Slow-Rate Temporal Sampling Deficits During Naturalistic Speech Listening in Children with Developmental Language Disorder](/202604/23/biorxiv-10-64898-2026-04-16-718920-v1-slow-rate-temporal-sampling-deficits-during-naturalistic-speech-listening-in-children-with-developmental-language-disorder)  
+   标签：评分：9.0/10、query:q8
+   evidence：语言障碍中韵律结构的神经追踪和言语理解
 
 ### 速读区论文标签
-1. [Lazy or Efficient? Towards Accessible Eye-Tracking Event Detection Using LLMs](/202604/22/2604.13243v1-lazy-or-efficient-towards-accessible-eye-tracking-event-detection-using-llms)  
-   标签：评分：8.0/10、query:q5
-   evidence：用于眼动追踪事件检测和数据清洗的LLM驱动流水线
-2. [Learning the Cue or Learning the Word? Analyzing Generalization in Metaphor Detection for Verbs](/202604/22/2604.13713v1-learning-the-cue-or-learning-the-word-analyzing-generalization-in-metaphor-detection-for-verbs)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：语言模型中的比喻识别与泛化
-3. [Revisiting a Pain in the Neck: A Semantic Reasoning Benchmark for Language Models](/202604/22/2604.16593v1-revisiting-a-pain-in-the-neck-a-semantic-reasoning-benchmark-for-language-models)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：语义短语加工，包括习语表达和多词表达
-4. [Detecting Alarming Student Verbal Responses using Text and Audio Classifier](/202604/22/2604.16717v1-detecting-alarming-student-verbal-responses-using-text-and-audio-classifier)  
-   标签：评分：8.0/10、query:q8
-   evidence：利用韵律标记检测回答的音频分类器
-5. [NVBench: A Benchmark for Speech Synthesis with Non-Verbal Vocalizations](/202604/22/2604.16211v1-nvbench-a-benchmark-for-speech-synthesis-with-non-verbal-vocalizations)  
-   标签：评分：7.5/10、query:q8
-   evidence：语音合成中的笑、叹息等非言语发声
-6. [Prosody as Supervision: Bridging the Non-Verbal--Verbal for Multilingual Speech Emotion Recognition](/202604/22/2604.17647v1-prosody-as-supervision-bridging-the-non-verbal--verbal-for-multilingual-speech-emotion-recognition)  
-   标签：评分：7.5/10、query:q8
-   evidence：利用非言语发声来挖掘以韵律为中心的情感线索
-7. [Expectation triggers a change-like EEG response without acoustic change](/202604/22/biorxiv-10-64898-2026-04-13-718093-v2-expectation-triggers-a-change-like-eeg-response-without-acoustic-change)  
+1. [VIVA Stimuli: A Web-Based Platform for Eye Tracking Stimuli](/202604/23/2604.19397v1-viva-stimuli-a-web-based-platform-for-eye-tracking-stimuli)  
+   标签：评分：8.5/10、query:q5
+   evidence：用于标准化眼动追踪刺激呈现和认知负荷任务的网页平台
+2. [Learning the Cue or Learning the Word? Analyzing Generalization in Metaphor Detection for Verbs](/202604/23/2604.13713v1-learning-the-cue-or-learning-the-word-analyzing-generalization-in-metaphor-detection-for-verbs)  
+   标签：评分：8.0/10、query:q7
+   evidence：隐喻识别作为非字面语言的泛化分析
+3. [Learning to Think Like a Cartoon Captionist: Incongruity-Resolution Supervision for Multimodal Humor Understanding](/202604/23/2604.15210v1-learning-to-think-like-a-cartoon-captionist-incongruity-resolution-supervision-for-multimodal-humor-understanding)  
+   标签：评分：8.0/10、query:q7
+   evidence：幽默理解背后的结构化推理过程和不一致性建模
+4. [Brain Score Tracks Shared Properties of Languages: Evidence from Many Natural Languages and Structured Sequences](/202604/23/2604.15503v1-brain-score-tracks-shared-properties-of-languages-evidence-from-many-natural-languages-and-structured-sequences)  
+   标签：评分：8.0/10、query:q1
+   evidence：利用语言模型预测阅读过程中的fMRI激活
+5. [Expectation triggers a change-like EEG response without acoustic change](/202604/23/biorxiv-10-64898-2026-04-13-718093-v1-expectation-triggers-a-change-like-eeg-response-without-acoustic-change)  
    标签：评分：7.5/10、query:q10
-   evidence：预测加工理论以及在没有声学变化的情况下对预期的EEG反应
-8. [Causal Drawbridges: Characterizing Gradient Blocking of Syntactic Islands in Transformer LMs](/202604/22/2604.13950v1-causal-drawbridges-characterizing-gradient-blocking-of-syntactic-islands-in-transformer-lms)  
+   evidence：关于预测加工和听觉预期内源性神经反应的脑电研究
+6. [Causal Drawbridges: Characterizing Gradient Blocking of Syntactic Islands in Transformer LMs](/202604/23/2604.13950v1-causal-drawbridges-characterizing-gradient-blocking-of-syntactic-islands-in-transformer-lms)  
    标签：评分：7.0/10、query:q1
-   evidence：通过因果干预洞察英语句法与人类判断
-9. [Cognition does not automatically influence perception: Evidence from neural encoding of colours belonging to different categories](/202604/22/biorxiv-10-64898-2025-12-31-697186-v2-cognition-does-not-automatically-influence-perception-evidence-from-neural-encoding-of-colours-belonging-to-different-categories)  
-   标签：评分：6.5/10、query:profile-1
-   evidence：不同语言使用者认知对感知影响的脑电证据
-10. [Late Integration of Prior Expectations During Precision Weighted Perceptual Decisions](/202604/22/biorxiv-10-64898-2026-04-13-718329-v1-late-integration-of-prior-expectations-during-precision-weighted-perceptual-decisions)  
-   标签：评分：6.5/10、query:profile-1
-   evidence：感知决策中结合先验预期和感觉似然性的神经机制
-11. [Enhance-then-Balance Modality Collaboration for Robust Multimodal Sentiment Analysis](/202604/22/2604.12518v1-enhance-then-balance-modality-collaboration-for-robust-multimodal-sentiment-analysis)  
-   标签：评分：6.0/10、query:q8
-   evidence：整合文本、音频和视觉信号的多模态情感分析
+   evidence：英语句法中的认知和语言过程以及人类对可接受性的判断
+7. [VoxSafeBench: Not Just What Is Said, but Who, How, and Where](/202604/23/2604.14548v2-voxsafebench-not-just-what-is-said-but-who-how-and-where)  
+   标签：评分：7.0/10、query:q8
+   evidence：评估声学语境、韵律和说话人身份的社会对齐
+8. [NVBench: A Benchmark for Speech Synthesis with Non-Verbal Vocalizations](/202604/23/2604.16211v1-nvbench-a-benchmark-for-speech-synthesis-with-non-verbal-vocalizations)  
+   标签：评分：7.0/10、query:q8
+   evidence：评估语音合成中的笑声、叹息等非言语发声
+9. [Pupil size reveals the perceptual quality and effortless nature of synesthesia](/202604/23/biorxiv-10-1101-2025-11-24-690102-v2-pupil-size-reveals-the-perceptual-quality-and-effortless-nature-of-synesthesia)  
+   标签：评分：6.5/10、query:q9
+   evidence：瞳孔测量法作为阅读中跨模态感知过程的生理测量手段
+10. [Eccentricity Confound in EEG-based Visual Attention Decoding from Gaze-Fixated Neural Tracking of Motion in Natural Videos](/202604/23/2604.15223v1-eccentricity-confound-in-eeg-based-visual-attention-decoding-from-gaze-fixated-neural-tracking-of-motion-in-natural-videos)  
+   标签：评分：6.0/10、query:q5
+   evidence：在控制眼动伪影的同时研究基于脑电的视觉注意力解码
+11. [Learning to Look before Learning to Like: Incorporating Human Visual Cognition into Aesthetic Quality Assessment](/202604/23/2604.15853v1-learning-to-look-before-learning-to-like-incorporating-human-visual-cognition-into-aesthetic-quality-assessment)  
+   标签：评分：6.0/10、query:q5
+   evidence：将类人视觉认知和眼动追踪数据整合到审美评估中
 
 
 <div class="dpr-home-promo-card">

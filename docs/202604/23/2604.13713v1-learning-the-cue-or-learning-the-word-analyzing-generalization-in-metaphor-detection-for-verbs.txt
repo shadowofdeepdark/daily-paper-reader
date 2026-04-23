@@ -1,0 +1,223 @@
+Title: Learning the Cue or Learning the Word? Analyzing Generalization in Metaphor Detection for Verbs
+
+URL Source: https://arxiv.org/pdf/2604.13713v1
+
+Published Time: Thu, 16 Apr 2026 00:47:44 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Learning the Cue or Learning the Word? Analyzing Generalization in Metaphor Detection for Verbs 
+
+## Sinan Kurtyigit 1,2 Sabine Schulte im Walde 2 Alexander Fraser 11School of Computation, Information and Technology, Technical University of Munich 
+
+> 2
+
+## Institute for Natural Language Processing, University of Stuttgart   
+
+> sinan.kurtyigit@tum.de schulte@ims.uni-stuttgart.de alexander.fraser@tum.de
+
+## Abstract 
+
+Metaphor detection models achieve strong benchmark performance, yet it remains unclear whether this reflects transferable generaliza-tion or lexical memorization. To address this, we analyze generalization in metaphor detec-tion through RoBERTa, the shared backbone of many state-of-the-art systems, focusing on En-glish verbs using the VU Amsterdam Metaphor Corpus. We introduce a controlled lexical hold-out setup where all instances of selected target lemmas are strictly excluded from fine-tuning, and compare predictions on these Held-out lem-mas against Exposed lemmas (verbs seen dur-ing fine-tuning). While the model performs best on Exposed lemmas, it maintains robust performance on Held-out lemmas. Further anal-ysis reveals that sentence context alone is suffi-cient to match full-model performance on Held-out lemmas, whereas static verb-level embed-dings are not. Together, these results suggest that generalization is primarily driven by "learn-ing the cue" (transferable contextual patterns), while "learning the word" (verb-specific mem-orization) provides an additive boost when lex-ical exposure is available. 
+
+## 1 Introduction 
+
+Metaphors allow abstract concepts to be expressed through concrete terms (cf. Conceptual Metaphor Theory (Lakoff and Johnson, 1980)), creating se-mantic tension between a verb and its arguments (e.g., grasp the meaning ). While state-of-the-art models (Su et al., 2020; Chen et al., 2020; Choi et al., 2021) achieve strong performance on bench-marks (Leong et al., 2020), it remains unclear whether this reflects genuine understanding or re-liance on lexical memorization. In this work, we analyze the generalization ca-pabilities of a RoBERTa-based metaphor detec-tion model on English verbs, targeting the back-bone shared by many state-of-the-art systems (Su et al., 2020; Gong et al., 2020; Choi et al., 2021; Wang et al., 2023). We specifically investigate whether the model generalizes by "learning the cue" (leveraging transferable contextual patterns), or merely relies on "learning the word" (recall-ing verb-specific associations observed during fine-tuning). This distinction is critical, as models rely-ing on lexical exposure will struggle to handle the creative, novel expressions characteristic of real-world language. Our contributions are threefold: (1) we introduce a controlled lexical hold-out setup on the VUA corpus (Steen et al., 2010) to assess performance on Held-out lemmas entirely absent from fine-tuning; (2) we analyze whether sentence context alone or verb-level embeddings alone are sufficient to solve the task; and (3) we analyze the geometric structure of the embedding space to determine whether task-relevant organization extends to held-out lexical items. Our experiments reveal that while performance is highest for Exposed lemmas, the model main-tains robust performance on Held-out lemmas. This capability does not correlate with pre-training fre-quency, and Context-only experiments demonstrate that the model can detect metaphors even when the target verb is masked, whereas verb-level em-beddings in isolation are insufficient. Geometric analysis further confirms that Held-out instances are projected into similar semantic subspaces as Exposed instances. Crucially, when verb identity is removed, performance on Exposed lemmas drops to match that of Held-out lemmas, suggesting a shared reliance on contextual cues while verb iden-tity provides a supplementary boost. We structure the remainder of this paper as fol-lows: § 2 reviews related work in metaphor detec-tion. § 3 describes the experimental framework and the construction of the Exposed and Held-out splits. Our core analysis is presented in § 4. Finally, § 5 explores the implications of our findings, followed by concluding remarks in § 6. 1
+
+> arXiv:2604.13713v1 [cs.CL] 15 Apr 2026
+
+## 2 Related Work 
+
+The VUA shared tasks (Leong et al., 2018, 2020) provide the primary benchmark datasets and a refer-ence point for the progress in token-level metaphor detection. Complementary datasets that are also widely used are TroFi (Birke and Sarkar, 2006) and MOH-X (Mohammad et al., 2016). From a modeling perspective, transformer-based architectures (Vaswani et al., 2017) now dominate the field, particularly encoder-only models such as BERT (Devlin et al., 2019) and its variants. A simple yet effective baseline is obtained by at-taching a classification head to an encoder (Leong et al., 2020; Chen et al., 2020). More sophisti-cated approaches incorporate additional informa-tion or modeling techniques. Su et al. (2020), for example, frame metaphor detection as a reading comprehension problem, leveraging both global and local textual context as well as part-of-speech features. Chen et al. (2020) enhance BERT with out-of-domain fine-tuning and auxiliary idiom de-tection, a task closely related to metaphorical lan-guage. Other approaches (Choi et al., 2021; Zhang and Liu, 2022; Li et al., 2023), explicitly integrate linguistic metaphor identification theories such as 
+
+Metaphor Identification Theory (Crisp et al., 2007) and Selectional Preference Violation (Wilks, 1975, 1978), to further guide detection. More recently, large language models have been explored for metaphor detection, reflecting their broader adoption across NLP tasks. Xu et al. (2024) incorporate chain-of-thought prompting, while Fuoli et al. (2025) investigate retrieval-augmented generation and prompt engineering in addition to classical fine-tuning strategies. Liang et al. (2025) experiment with alternative prompting techniques to improve metaphor identification in LLMs. 
+
+## 3 Experimental Setup 
+
+3.1 Task 
+
+We define metaphor detection as a binary classi-fication task at the word level. Given a sentence and a marked target word, the goal is to determine whether the target is used literally (0) or metaphor-ically (1) in context. For example, in "The com-mittee absorbed the cost" , the target absorbed is metaphorical because it describes an abstract finan-cial event using a physical process. While applicable to all parts of speech, we focus exclusively on verbs , as they act as the structural core of sentences. Metaphors frequently arise from the semantic tension between a verb and its argu-ments, making verbs ideal for analyzing structural generalization. Following standard practice (Leong et al., 2018, 2020), we evaluate performance using the binary F1 score for the metaphorical class. 
+
+3.2 Data 
+
+We conduct our experiments on the VU Amsterdam Metaphor Corpus (Steen et al., 2010, VUA), which serves as the standard benchmark for metaphor de-tection in the field. We rely on the VUA Verbs benchmark to establish model validity, and con-struct custom splits to assess generalization. 
+
+3.2.1 VUA 
+
+To ensure comparability with prior research, we adhere to the protocols of the VUA Shared Tasks (Leong et al., 2018, 2020), focusing on the Verbs track . We use the official gold labels to reconstruct the standard train and test splits, explicitly filtering the training set to remove any remaining non-verb samples to ensure strict alignment with our task definition. Metaphoricity in the VUA corpus is annotated following the MIPVU procedure (Steen et al., 2010). A verb is labeled as metaphorical when its contextual meaning differs from a more basic or concrete sense, covering both salient figurative usages such as devour in "She devoured the book" 
+
+and conventionalized expressions such as rise in 
+
+"Inflation has risen" , where the figurative nature may no longer be consciously perceived by speak-ers. 
+
+3.2.2 Lexical Hold-out 
+
+To systematically evaluate generalization capabili-ties, we derive two parallel diagnostic sets from the VUA Verbs datasets: a Held-out set (target lem-mas excluded from fine-tuning) and an Exposed 
+
+set (target lemmas included in fine-tuning). We ex-plicitly distinguish between the verb lemma (the lexical type) and the verb instance (the specific usage in context). Metaphoricity is a property of the instance and is evaluated at that level, while the split into Exposed and Held-out sets is defined at the lemma level, such that all instances targeting a given lemma are either consistently excluded from or included in fine-tuning. 
+
+Held-out Lemmas We select 30 target lemmas to be completely excluded from fine-tuning. Can-didates are drawn from the training split (min. frequency 20) and stratified into three categories: 2Exposed Set (n = 10 per lemma) Held-out Set (n = 20 per lemma)                                                                                                                                                                                                                             
+
+> Lemma NVUA Met.% VUA Met.% Eval Lemma NVUA Met.% VUA Met.% Eval
+> Metaphorical-biased Metaphorical-biased
+> face 11 91% 90% break 25 92% 90% base 10 90% 90% share 21 86% 85% consider 13 85% 80% feel 82 82% 80% follow 13 85% 80% lose 29 79% 80% cover 14 79% 80% reduce 38 79% 80% set 12 75% 80% regard 23 78% 80% show 36 67% 70% link 22 77% 75% give 76 64% 60% add 44 77% 75% take 108 62% 60% make 256 77% 75% assume 13 62% 60% rise 26 77% 75%
+> Balanced Balanced
+> design 10 60% 60% change 33 55% 55% run 19 58% 60% keep 70 54% 55% leave 33 55% 50% manage 32 53% 55% cut 11 55% 50% allow 42 52% 50% fail 13 54% 50% hold 69 52% 50% see 99 45% 50% find 130 49% 50% move 18 44% 40% bring 73 48% 50% turn 35 43% 40% put 109 48% 50% open 17 41% 40% offer 23 43% 45% come 121 40% 40% produce 37 43% 45%
+> Literal-biased Literal-biased
+> meet 10 40% 40% play 45 24% 25% decide 11 36% 40% carry 43 23% 25% include 15 33% 30% call 65 23% 25% work 37 32% 30% go 660 22% 20% involve 12 25% 20% identify 25 20% 20% achieve 10 20% 20% look 196 20% 20% mean 91 16% 20% send 21 19% 20% talk 26 15% 20% stay 38 18% 20% write 10 10% 10% collect 28 14% 15% try 32 9% 10% expect 53 8% 10%
+
+Table 1: Target lemmas selected for the Exposed (left) and Held-out (right) evaluation sets. NVUA indicates the original instance count in the VUA Verbs train split. Met.% VUA and Met.% Eval report the percentage of metaphorical instances before and after stratified downsampling, respectively. 
+
+10 predominantly metaphorical, 10 predominantly literal, and 10 balanced. The selection process is systematic: we first rank all lemmas by their metaphoricity ratio in the training set (see Ta-ble 1). The 10 highest-ranked lemmas form the 
+
+Metaphorical-biased subset; the Literal-biased sub-set mirrors its inverse distribution (e.g., a lemma with 90% metaphorical usage is paired with one at 10%); and the Balanced subset comprises the 10 lemmas closest to a 50/50 split. 1 All instances tar-geting these lemmas are removed from the training data to create the Filtered Train Set . The with-held instances form the Held-out Evaluation Set ,serving as a strict benchmark for generalization to novel verbs. 
+
+Exposed Lemmas We select a parallel control set of 30 lemmas following the same systematic 
+
+> 1Due to limited data size, lemma selection is deterministic.
+
+ranking approach. To measure the benefit of lexical exposure without testing on memorized instances, these lemmas appear in the training split (min. fre-quency 10), 2 but are evaluated on distinct instances from the test split. All training instances remain in the Filtered Train Set, while distinct test instances form the Exposed Evaluation Set .
+
+Evaluation Set Downsampling To prevent fre-quent lemmas such as go from dominating the re-sults, we downsample the evaluation data. We draw 20 instances per lemma for the Held-out set (Total: 600) and 10 instances per lemma for the Exposed set (Total: 300). Downsampling is stratified to pre-serve the original class distribution of each lemma. 3
+
+> 2The threshold is lowered from 20 to 10 due to insufficient candidates in the training-test vocabulary intersection.
+> 3Downsampling is the only stochastic step in dataset con-struction and is seeded for reproducibility.
+
+3Dataset Split NSamples Met. % NLemmas 
+
+Standard VUA 
+
+Train 17240 28% 2190 Test 5873 30% 1111 
+
+Lexical Hold-out 
+
+Filtered Train 14882 26% 2163 Exposed Eval. 300 49% 30 Held-out Eval. 600 50% 30 
+
+> Table 2: Statistics for the VUA Verbs datasets, report-ing the number of samples, proportion of metaphorical labels, and count of unique target lemmas. The top sec-tion displays the standard benchmark splits, while the bottom section displays the constructed lexical hold-out splits.
+
+Selected Lemmas Table 1 presents the selected target lemmas and their distribution statistics. For the Held-out set, the categories are distinctly strati-fied: metaphorical-biased verbs range from 92% to 77% metaphoricity, balanced verbs cluster tightly between 55% and 43%, and literal-biased verbs range from 24% down to 8%. In the Exposed set, however, data scarcity within the intersection of training and test vocabularies necessitates looser thresholds. Consequently, the category boundaries are less distinct. Metaphorical-biased verbs extend down to 62%, and balanced verbs span from 60% down to 40%. This creates a slight overlap with the literal-biased category, which begins at 40% (e.g., meet) and extends down to 9%. For instance, come falls into the balanced category with 40% metaphoricity, matching the upper bound of the literal category. 
+
+3.2.3 Dataset Statistics 
+
+Table 2 summarizes the dataset statistics. The stan-dard VUA Verbs datasets are large but imbalanced (approx. 28–30% metaphorical). Our filtering pro-cess removes 2,358 samples (13%) from the train-ing data to create the Filtered Train Set (14,882 samples), retaining sufficient data for learning the task. In contrast, our diagnostic sets are strictly bal-anced. Both the Held-out (600 samples) and Ex-posed (300 samples) evaluation sets approximate a 50/50 class distribution. This balance establishes a clear Random Baseline : a model predicting uni-formly at random yields a binary F1 of approxi-mately .500. We use this threshold to distinguish genuine signal from chance during the analysis.     
+
+> Figure 1: Model architecture. The input sentence is tokenized and passed through the RoBERTa encoder. Hidden states corresponding to the target verb’s sub-word tokens (e.g., unravel +ed ) are aggregated via mean pooling into a Contextualized Target Represen-tation , which is passed to a linear classifier to predict metaphoricity.
+
+3.3 Model Architecture 
+
+We use a pre-trained RoBERTa (Liu et al., 2019) encoder paired with a single linear classification head. RoBERTa is widely used as the shared back-bone across metaphor detection systems (Su et al., 2020; Gong et al., 2020; Choi et al., 2021; Wang et al., 2023), many of which extend it with auxiliary tasks, external knowledge, or specialized interac-tion layers. Analyzing the generalization behavior of the backbone itself is therefore directly relevant to the field, and keeping the architecture minimal avoids confounding factors, enabling a transparent and interpretable analysis. As illustrated in Figure 1, given an input sen-tence such as "The debate unraveled into chaos" ,the text is tokenized into sub-word units, where the target verb may be decomposed into multiple tokens (e.g., unravel and ed ). These tokens and their surrounding context are passed through the encoder, generating a sequence of contextualized hidden states. To derive a fixed-size input for the classifier, we apply mean pooling over the hidden states cor-responding to the target verb’s sub-word tokens, producing the Contextualized Target Represen-tation . This representation encapsulates the target verb’s meaning as shaped by its surrounding con-text. It is passed as the sole input to the linear classification layer, which produces logits normal-ized via Softmax into final probabilities for the literal (0) and metaphorical (1) classes. 43.4 Fine-Tuning 
+
+Our fine-tuning procedure consists of two distinct phases: first, we establish model stability and select a representative configuration using the Standard VUA benchmark; and second, we apply this con-figuration to the Filtered train set for analysis. 
+
+Stability and Seed Selection We perform a mod-est hyperparameter search on the standard VUA Verbs train set to identify a reliable configuration. For all training runs, we reserve 10% of the train-ing data as a validation split and apply a weight of 3.0 to the metaphorical class to address label imbalance. Using the obtained set of parameters (5 epochs, batch size 32, learning rate 4e-5, weight decay 0.02, linear scheduler with 0.1 warmup), we fine-tune 10 models from scratch, each initialized with a different random seed. For each run, we retain the checkpoint that achieves the highest F1 score on the validation split. Table 3 summarizes the model’s performance across ten independent runs on the validation set. We observe a narrow performance range, with F1 scores between .706 and .734 ( μ = .717 , σ =
+
+.009 ). This minimal variance confirms that the model architecture and fine-tuning process are ro-bust to random initialization. To ensure that our subsequent analysis reflects representative behav-ior rather than a performance outlier, we select the median-performing run. As seeds 42 and 5555 are tied for the median F1 score, we select seed 42 as the representative model for our study based on its superior validation performance. 
+
+Application to Hold-Out Experiments For the generalization experiments described in §4, we re-initialize the model using the selected seed 42 and fine-tune it from scratch on the Filtered Train Set ,following the same validation protocol to select the best checkpoint. This consistency ensures that any performance drops we observe are due to the data filtering (the hold-out), not due to switching to a less stable random seed. 
+
+3.5 Validation on Standard Benchmarks 
+
+Before analyzing generalization, we verify the va-lidity of our framework. First, we evaluate our representative model on the official VUA Verbs test set (Table 4). Our F1 score of .716 is lower than systems that build on top of the RoBERTa backbone with additional com-ponents, such as DeepMet (.804) (Su et al., 2020) 
+
+Seed Prec. Rec. F1 
+
+9999 .738 .676 .706 314 .760 .667 .710 999 .736 .689 .712 7 .706 .721 .713 5555 .674 .763 .716 
+
+42 .681 .755 .716 
+
+8765 .740 .696 .717 2025 .750 .692 .719 1234 .743 .718 .731 777 .719 .749 .734 
+
+Mean .725 .712 .717 
+
+Std .029 .034 .009 
+
+> Table 3: Model performance across 10 random seeds on the validation split. The table reports Precision, Recall, and F1 scores for each run, sorted by F1. Summary statistics (Mean, Std) are provided at the bottom, and the selected median seed (42) is highlighted.
+
+Model Prec. Rec. F1 
+
+Shared Task Baselines 
+
+DeepMet .789 .819 .804 Go Figure! .732 .823 .775 
+
+Our Models 
+
+Ours (Standard) .681 .755 .716 Ours (Filtered) .754 .663 .706 
+
+> Table 4: Performance on the VUA Verbs Test Set re-porting Precision, Recall, and F1. The top section lists results from the 2020 VUA Shared Task. The bottom section displays our model trained on the full dataset (Standard) and the filtered train set (filtered).
+
+and GoFigure (.775) (Chen et al., 2020), but re-mains competitive within the Shared Task context (Leong et al., 2020). Since our goal is to analyze the backbone itself rather than to maximize per-formance, we consider this sufficient to serve as a valid testbed. Second, we assess the impact of removing the 30 Held-out lemmas, or more specifically, the in-stances targeting them, from the training data. As shown in Table 4, the model trained on the Filtered Train Set maintains performance nearly identical to the full model ( ∆ .010). This confirms that de-spite reduced lexical exposure, the model retains the necessary predictive capability for our general-ization experiments. 54 Analysis of Generalization Mechanism 
+
+Having established the experimental setup, we use the Exposed and Held-out evaluation sets to ana-lyze the extent and nature of the model’s general-ization behavior. Our goal is to determine whether the model exhibits generalization capabilities to novel lexical items and to investigate whether this performance reflects the acquisition of transferable contextual cues ("learning the cue") or a reliance on verb-specific associations learned through lexical exposure ("learning the word"). The analysis proceeds in three steps. First, we compare performance on Exposed and Held-out verbs and examine whether performance on Held-out verbs can be explained by pre-training fre-quency (§ 4.1). Second, we isolate sentence context and verb identity to test whether either source of information is sufficient on its own for metaphor de-tection (§ 4.2). Finally, we analyze the geometry of the learned representation space to assess whether task-relevant structure is present in the Contextu-alized Target Representations, and whether this structure extends to Held-out verbs (§ 4.3). 
+
+4.1 Generalization Performance and Pre-training Frequency 
+
+We begin by comparing model performance on the Held-out set against performance on the Ex-posed set and the Random Baseline established in § 3. The Exposed set contains verbs that were included during fine-tuning and therefore reflects performance when the model has direct lexical su-pervision. The Random Baseline (.500) represents performance in the absence of any task-relevant signal. On the Exposed set, the model achieves an F1 score of .817, indicating strong performance when the target verbs have been observed during fine-tuning. Performance on the Held-out set decreases to .672 but remains well above the random baseline. This shows that the model retains access to task-relevant signal even when verb-specific supervision is unavailable. At the same time, the gap between Exposed and Held-out performance highlights the clear benefit of "learning the word" during fine-tuning. While these results suggest that Held-out perfor-mance cannot be explained by fine-tuning memo-rization alone, they do not rule out the possibility that it is driven by lexical knowledge acquired dur-ing large-scale pre-training. To investigate this, we 
+
+Evaluation Set Prec. Rec. F1 
+
+Full Model 
+
+Exposed .864 .776 .817 Held-out .811 .573 .672 
+
+Context-only 
+
+Exposed .743 .748 .746 Held-out .714 .650 .681 
+
+Word-only 
+
+Exposed .586 .837 .689 Held-out .533 .570 .551 Random .500 .500 .500 
+
+> Table 5: Performance on the Exposed and Held-out eval-uation sets, reporting Precision, Recall, and F1. The table is divided by model variant to isolate information sources: the Full Model (top) serves as the primary benchmark; Context-only (middle) assesses the suffi-ciency of structural cues; and Word-only (bottom) eval-uates the predictive power of lexical identity alone. The bottom row presents the Random Baseline.
+
+analyze the relationship between verb frequency and model performance, using frequency as a proxy for the strength of pre-training priors. We assume that verbs encountered more frequently during pre-training are associated with higher-quality repre-sentations. As exact pre-training statistics are un-available, we rely on frequency estimates from the wordfreq library (Speer, 2022), which aggregates counts across multiple large-scale corpora. We compute the Spearman correlation between per-lemma F1 scores and frequency estimates. For verbs in the Exposed set, we observe a moderate positive correlation ( ρ = .420 , p = .021 ), con-sistent with the intuition that more frequent verbs are easier to fine-tune. For verbs in the Held-out set, however, the correlation is negligible and sta-tistically non-significant ( ρ = −.127 , p = .504 ). This lack of correlation indicates that performance on novel verbs does not systematically increase with pre-training frequency, suggesting that gen-eralization is not driven by frequency bias in the pre-trained encoder. Taken together, these findings indicate that the model’s performance on Held-Out verbs goes beyond memorized verb-specific information ac-quired during fine-tuning and does not simply scale with pre-training frequency. 64.2 Sufficiency of Context and Verb Identity 
+
+Since verb frequency does not appear to account for performance on the Held-out set, we next examine which information sources are sufficient to support prediction. We focus on two questions: (1) whether sentence context alone can support metaphor detec-tion ("learning the cue"), and (2) whether verb-level representations encode a reusable signal indepen-dent of context. We compare the full fine-tuned model against two controlled variants: 1. Context-only: We evaluate the fine-tuned model with the target verb replaced by a 
+
+<mask> token. This removes access to verb identity, allowing us to test whether contex-tual cues alone are sufficient. 2. Word-only: We train a logistic regression classifier on static embeddings extracted from the token lookup layer (Layer 0) of the fine-tuned model. Unlike the Contextualized Tar-get Representation used by the full model, these embeddings are not passed through the encoder and thus contain no contextual infor-mation. This tests whether verb identity alone is predictive, independent of context. Table 5 reports F1 scores under these conditions. On the Exposed set, performance decreases step-wise from the Full model (.817) to Context-only (.746) to Word-only (.689). This demonstrates that when lexical exposure is available, both contextual information and verb-level representations are suf-ficient to support reasonably strong performance. For Held-out verbs, the pattern changes dras-tically. The Context-only model (.681) matches the performance of the full model (.671), showing that contextual information alone is sufficient to recover predictive performance in the absence of verb-specific supervision. In contrast, the Word-only variant drops to .551, close to chance level. This indicates that while "learning the word" aids exposed verbs, it does not provide a sufficient sig-nal for generalization. Instead, the model’s ability to handle Held-out verbs appears driven primarily by transferable contextual cues. Overall, these results show a clear asymmetry be-tween the two information sources: verb-level rep-resentations support prediction only for Exposed verbs, whereas contextual cues generalize robustly to Held-out verbs and are sufficient to drive model performance when verb identity is unavailable. 
+
+4.3 Geometric Structure of the Representation Space 
+
+Finally, we investigate whether the model’s reliance on context is reflected in the geometry of its in-ternal Contextualized Target Representations, ask-ing whether task-relevant organization exists inde-pendently of the learned classifier weights. If the model encodes transferable cues, instances with the same label should occupy similar regions of the representation space, even for verbs withheld during fine-tuning. To address this, we pass each training sample through the fine-tuned model and extract its Con-textualized Target Representation (as described in § 3.3), forming a reference space. Evaluation sam-ples are embedded in the exact same way to al-low direct geometric comparison. For each eval-uation instance, we retrieve its k = 10 nearest neighbors using cosine similarity and assess the representational structure with two measures: (1) 
+
+Neighborhood Purity , the proportion of neighbors sharing the same label as the target instance; and (2) a k-Nearest Neighbor ( k-NN) classifier , probing whether label information is recoverable without a learned decision boundary. We mirror the condi-tions in § 4.2 by comparing the Full model and a 
+
+Context-only variant. Table 6 reports the results. For the Full model, purity is high for Exposed verbs (.789) and remains substantial for Held-out verbs (.690). This mirrors the trends in § 4.1: although lexical exposure pro-vides a clear advantage, Held-out instances are still embedded near training examples with the same la-bel, indicating that the model successfully projects novel verbs into task-relevant neighborhoods. Crucially, in the Context-only condition, pu-rity scores for Exposed (.638) and Held-out (.624) verbs converge, suggesting that a transferable ge-ometric organization exists independently of verb identity. The k-NN classification results reveal a related distinction. For the Full model, the probe achieves F1 scores of .788 on Exposed verbs and .637 on Held-out verbs, closely tracking the trained clas-sifier’s performance and indicating that the em-bedding geometry captures the essential decision boundary. In contrast, performance drops sharply for the Context-only variant (.505 Exposed; .544 Held-out), suggesting that while context is suffi-cient for local label consistency (purity), verb iden-tity is required to sharpen the global separation of 7Evaluation Set Purity k-NN F1 
+
+Full Model 
+
+Exposed .789 .788 Held-out .690 .637 
+
+Context-only 
+
+Exposed .638 .505 Held-out .624 .544    
+
+> Table 6: Geometric analysis of the Contextualized Tar-get Representations using a k-Nearest Neighbor probe (k= 10 ). We report Neighborhood Purity and k-NN F1 score for Exposed and Held-out verbs, comparing the Full Model (top) against the Context-only variant (bottom) to assess the impact of verb identity on the embedding space structure.
+
+the space. Without this lexical signal, the represen-tations are less distinctly partitioned, requiring the learned linear classifier to effectively extract the task-relevant signal. Overall, this geometric analysis suggests that contextual cues provide a shared structural base-line for generalization, while verb identity acts as a complementary signal that strengthens class sepa-rability. 
+
+## 5 Discussion 
+
+Across all three analyses, a consistent pattern emerges. Performance is highest on the Exposed set, lower but still noticeably above the random baseline on the Held-out set. This hierarchy ap-pears not only in classification metrics but also in representation-level measures such as neighbor-hood purity and k-NN performance. This suggests that while the model benefits from "learning the word" (lexical exposure), it successfully general-izes by "learning the cue" (transferable contextual patterns), preventing performance from collaps-ing to chance on novel verbs. The Context-only (masked) condition provides the key to disentan-gling these factors. By masking the target verb, we force the model to rely solely on "the cue," re-moving access to "the word." Under this condition, results across all metrics converge: performance on Exposed verbs drops to match that of Held-out verbs, and the gap largely disappears. This con-vergence is observed consistently for classification performance, embedding purity, and k-NN probing. This "downward convergence" indicates that the su-perior performance on Exposed verbs is driven by the additive benefit of verb identity, rather than fun-damentally different contextual processing. When verb identity is unavailable, the model processes Exposed and Held-out verbs similarly, relying on the same shared contextual cues. Taken together, these results characterize the model as a hybrid system. It builds a robust floor of generalization through contextual representations ("learning the cue"), which allows it to handle unseen verbs. Si-multaneously, it exploits specific lexical associa-tions ("learning the word") to boost performance when the target verb has been observed during fine-tuning. The masking analysis demonstrates that while verb identity is a powerful performance am-plifier, it is not a strict prerequisite for metaphor detection. 
+
+## 6 Conclusion 
+
+We presented a systematic analysis of the general-ization capabilities of a RoBERTa-based metaphor detection model on verbs not observed during fine-tuning. Using a controlled lexical hold-out setup on the VU Amsterdam Metaphor Corpus, we demon-strated that while lexical exposure consistently im-proves performance, the model maintains robust performance on Held-out verbs through contextual information alone. This pattern holds across multi-ple analyses, including classification performance and representation-level probes. Our results indicate that generalization cannot be explained solely by fine-tuning memorization, nor does it correlate with verb frequency as a proxy for pre-training exposure. Crucially, when verb identity is masked, performance on Exposed verbs drops to the level of Held-out verbs, causing the performance gap to disappear. This convergence suggests that the underlying contextual signal is shared across both conditions, while verb identity serves as an additive, rather than essential, source of information. Geometric analysis supports this interpretation. Contextualized Target Representations of Held-out verbs exhibit task-relevant structure similar to that of Exposed verbs, confirming that the encoder projects novel metaphors into meaningful semantic subspaces. Overall, our findings characterize the model as a hybrid system that generalizes by "learning the cue" (relying on transferable contextual patterns to handle novel verbs) while simultaneously "learning the word" to refine predictions when specific lexical associations are available. 8Limitations 
+
+Our study has several limitations. First, we rely on a single, standard encoder-based architecture; it re-mains unclear whether our findings regarding struc-tural generalization extend to more complex state-of-the-art approaches or the decoder-only models increasingly dominant in NLP. Second, our analysis is restricted to English verbs. Future work should expand to other languages and parts of speech, ide-ally utilizing datasets with more fine-grained con-trol over verb-object relations to enable a more robust analysis of selectional preferences. Finally, while our masking experiments demonstrate that context is sufficient for performance, we do not decompose the contextual signal to determine ex-actly which features (and to what extent) drive the model’s predictions. 
+
+## References 
+
+Julia Birke and Anoop Sarkar. 2006. A clustering ap-proach for nearly unsupervised recognition of nonlit-eral language. In 11th Conference of the European Chapter of the Association for Computational Lin-guistics , pages 329–336, Trento, Italy. Association for Computational Linguistics. Xianyang Chen, Chee Wee (Ben) Leong, Michael Flor, and Beata Beigman Klebanov. 2020. Go fig-ure! multi-task transformer-based architecture for metaphor detection using idioms: ETS team in 2020 metaphor shared task. In Proceedings of the Second Workshop on Figurative Language Processing , pages 235–243, Online. Association for Computational Lin-guistics. Minjin Choi, Sunkyung Lee, Eunseong Choi, Heesoo Park, Junhyuk Lee, Dongwon Lee, and Jongwuk Lee. 2021. MelBERT: Metaphor detection via contextual-ized late interaction using metaphorical identification theories. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Tech-nologies , pages 1763–1773, Online. Association for Computational Linguistics. Peter Crisp, Raymond Gibbs, Alice Deignan, Gra-ham Low, Gerard Steen, Lynne Cameron, Elena Semino, Joe Grady, Alan Cienki, Zoltán Kövecses, and The Group. 2007. Mip: A method for identifying metaphorically used words in discourse. Metaphor and Symbol , 22. Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of deep bidirectional transformers for language under-standing. In Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Tech-nologies, Volume 1 (Long and Short Papers) , pages 4171–4186, Minneapolis, Minnesota. Association for Computational Linguistics. Matteo Fuoli, Weihang Huang, Jeannette Littlemore, Sarah Turner, and Ellen Wilding. 2025. Metaphor identification using large language models: A com-parison of rag, prompt engineering, and fine-tuning. 
+
+Preprint , arXiv:2509.24866. Hongyu Gong, Kshitij Gupta, Akriti Jain, and Suma Bhat. 2020. IlliniMet: Illinois system for metaphor detection with contextual and linguistic information. In Proceedings of the Second Workshop on Figura-tive Language Processing , pages 146–153, Online. Association for Computational Linguistics. George Lakoff and Mark Johnson. 1980. Metaphors we live by . University of Chicago press. Chee Wee (Ben) Leong, Beata Beigman Klebanov, Chris Hamill, Egon Stemle, Rutuja Ubale, and Xi-anyang Chen. 2020. A report on the 2020 VUA and TOEFL metaphor detection shared task. In Proceed-ings of the Second Workshop on Figurative Language Processing , pages 18–29, Online. Association for Computational Linguistics. Chee Wee (Ben) Leong, Beata Beigman Klebanov, and Ekaterina Shutova. 2018. A report on the 2018 VUA metaphor detection shared task. In Proceedings of the Workshop on Figurative Language Processing ,pages 56–66, New Orleans, Louisiana. Association for Computational Linguistics. Yucheng Li, Shun Wang, Chenghua Lin, and Frank Guerin. 2023. Metaphor detection via explicit basic meanings modelling. In Proceedings of the 61st An-nual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers) , pages 91–100, Toronto, Canada. Association for Computational Lin-guistics. Jiahui Liang, Aletta G. Dorst, Jelena Prokic, and Stephan Raaijmakers. 2025. Using gpt-4 for con-ventional metaphor detection in english news texts. 
+
+Computational Linguistics in the Netherlands Jour-nal , 14:307–341. Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-dar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, and Veselin Stoyanov. 2019. Roberta: A robustly optimized bert pretraining ap-proach. Preprint , arXiv:1907.11692. Saif Mohammad, Ekaterina Shutova, and Peter Tur-ney. 2016. Metaphor as a medium for emotion: An empirical study. In Proceedings of the Fifth Joint Conference on Lexical and Computational Seman-tics , pages 23–33, Berlin, Germany. Association for Computational Linguistics. Robyn Speer. 2022. rspeer/wordfreq: v3.0. Gerard Steen, Lettie Dorst, J. Herrmann, Anna Kaal, Tina Krennmayr, and Trijntje Pasma. 2010. A method for linguistic metaphor identification: From MIP to MIPVU .
+
+9Chuandong Su, Fumiyo Fukumoto, Xiaoxi Huang, Jiyi Li, Rongbo Wang, and Zhiqun Chen. 2020. DeepMet: A reading comprehension paradigm for token-level metaphor detection. In Proceedings of the Second Workshop on Figurative Language Processing , pages 30–39, Online. Association for Computational Lin-guistics. Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Ł ukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. In Advances in Neural Information Pro-cessing Systems , volume 30. Curran Associates, Inc. Shun Wang, Yucheng Li, Chenghua Lin, Loic Barrault, and Frank Guerin. 2023. Metaphor detection with effective context denoising. In Proceedings of the 17th Conference of the European Chapter of the As-sociation for Computational Linguistics , pages 1404– 1409, Dubrovnik, Croatia. Association for Computa-tional Linguistics. Yorick Wilks. 1975. A preferential, pattern-seeking, semantics for natural language inference. Artificial Intelligence , 6(1):53–74. Yorick Wilks. 1978. Making preferences more active. 
+
+Artificial Intelligence , 11(3):197–223. Yanzhi Xu, Yueying Hua, Shichen Li, and Zhongqing Wang. 2024. Exploring chain-of-thought for multi-modal metaphor detection. In Proceedings of the 62nd Annual Meeting of the Association for Compu-tational Linguistics (Volume 1: Long Papers) , pages 91–101, Bangkok, Thailand. Association for Compu-tational Linguistics. Shenglong Zhang and Ying Liu. 2022. Metaphor detec-tion via linguistics enhanced Siamese network. In 
+
+Proceedings of the 29th International Conference on Computational Linguistics , pages 4149–4159, Gyeongju, Republic of Korea. International Com-mittee on Computational Linguistics. 
+
+10
