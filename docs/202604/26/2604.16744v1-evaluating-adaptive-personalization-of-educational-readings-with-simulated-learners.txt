@@ -1,0 +1,208 @@
+Title: Evaluating Adaptive Personalization of Educational Readings with Simulated Learners
+
+URL Source: https://arxiv.org/pdf/2604.16744v1
+
+Published Time: Tue, 21 Apr 2026 00:24:02 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Evaluating Adaptive Personalization of Educational Readings with Simulated Learners 
+
+Ryan T. Woo * Anmol Rao * Aryan Keluskar Yinong Chen 
+
+School of Computing and Augmented Intelligence Arizona State University 
+
+{rtwoo,arao75,akeluska,yinong.chen}@asu.edu 
+
+Abstract 
+
+We present a framework for evaluating adap-tive personalization of educational reading ma-terials with theory-grounded simulated learn-ers. The system builds a learning-objective and knowledge-component ontology from open textbooks, curates it in a browser-based On-tology Atlas, labels textbook chunks with on-tology entities, and generates aligned reading– assessment pairs. Simulated readers learn from passages through a Construction–Integration-inspired memory model with DIME-style reader factors, KR EC-style misconception revi-sion, and an open New Dale–Chall readabil-ity signal. Answers are produced by score-based option selection over the learner’s ex-plicit memory state, while BKT drives adapta-tion. Across three sampled subject ontologies and matched cohorts of 50 simulated learners per condition, adaptive reading significantly im-proved outcomes in computer science, yielded smaller positive but inconclusive gains in in-organic chemistry, and was neutral to slightly negative in general biology. 
+
+1 Introduction 
+
+With more students entering higher education, in-structors increasingly face a familiar mismatch: stu-dents are expected to learn the same material at the same pace even though their understanding of particular concepts can vary widely. In an introduc-tory course, one student may already understand a subset of the target concepts, while another may still hold robust misconceptions about those same concepts. When both students are given identical readings, examples, and explanations, one may be under-challenged while the other is overwhelmed. Addressing this in a real classroom typically re-quires instructors to rewrite materials, manually identify which concepts students struggle with, and 
+
+> *equal contribution.
+
+provide individualized support. Those interven-tions are difficult to scale. Intelligent tutoring systems (ITSs) aim to ad-dress this problem by adapting instruction to the learner. Recent reviews suggest that ITSs often improve learning and performance, but that their impact depends strongly on the instructional set-ting, the adaptation mechanism, and the way sys-tems are evaluated (Huang et al., 2025; Létourneau et al., 2025). In many ITS settings, however, the core intervention is an item sequence, a hint policy, or post-hoc feedback. Our setting is different: the primary intervention is reading material . Ques-tions are still important, but mainly because they reveal evidence about what the learner knows af-ter reading and provide observations for mastery tracking. To evaluate whether adaptive reading policies help, we need simulated learners that can (i) learn from text, (ii) differ in reading-related character-istics, (iii) preserve misconceptions rather than merely lacking knowledge, and (iv) later answer multiple-choice questions from what they remem-ber rather than from unrestricted access to the source passage. Simulated learners have long been proposed as tools for teachers, for learners, and for instructional designers conducting formative evaluation (VanLehn et al., 1994). More recently, a systematic review across AIED-related fields found uses spanning teacher training, adaptive algorithm development, virtual collaborators, and testing of learning environments, while also concluding that realism and validity are often under-tested (Käser and Alexandron, 2024). Off-the-shelf LLM prompt-ing is a poor fit for that requirement because power-ful LLMs often answer beyond the intended ability of a partially knowledgeable learner. Yuan et al. (2026) characterize this problem as a competence paradox and argue for constrained student simula-1
+
+> arXiv:2604.16744v1 [cs.CL] 17 Apr 2026
+
+tion under an explicit epistemic state specification. We therefore present a theory-grounded simu-lated reader for adaptive reading personalization. The system builds a learning-objective (LO) and knowledge-component (KC) ontology from open textbooks, tracks KC mastery with BKT (Corbett and Anderson, 1994), generates ontology-driven reading and assessment variants, and simulates reading via a comprehension model grounded in the Construction–Integration (CI) theory of discourse comprehension (Kintsch, 1988). Learner hetero-geneity is parameterized with DIME-style reader factors (Cromley and Azevedo, 2007; Cromley et al., 2010), misconceptions are revised through the Knowledge Revision Components framework (KR EC) (Kendeou and O’Brien, 2014; Kendeou, 2024), and later answer selection is performed through score-based option selection over an ex-plicit epistemic boundary. Although the broader architecture is designed to integrate with learning-management systems such as Canvas by Instructure, the present paper focuses on the simulation layer so that the instructional policy can be studied before any full classroom deployment. This separation allows us to compare adaptive and non-adaptive reading policies under matched simulated cohorts, while keeping the con-tent pipeline, question format, and mastery tracker fixed. Our main contributions are as follows: • We formulate adaptive reading personalization as a closed-loop problem in which reading is the primary intervention and assessment is the observation channel for KC-level mastery track-ing. • We present an ontology-grounded content pipeline that links open textbook chunks, read-ing variants, and assessment items to shared LOs and KCs. • We develop a simulated reader that combines CI, DIME, KR EC, and an open New Dale–Chall readability signal to model what a learner com-prehends, revises, retains, and later retrieves. • We report multi-subject experimental results showing that adaptive reading yields domain-dependent gains: statistically reliable improve-ments in the sampled computer-science setting, positive but inconclusive gains in inorganic chemistry, and neutral to slightly negative out-comes in general biology. 
+
+2 Related Work 
+
+2.1 Adaptive tutoring and knowledge tracing 
+
+Knowledge tracing estimates latent mastery from observed responses, and BKT remains attractive because it is interpretable at the level of individ-ual KCs (Corbett and Anderson, 1994). Although deep models can improve prediction, interpretabil-ity remains important for deployment and diagnosis (Ding and Larson, 2021). We therefore use BKT so that the state driving adaptation remains under-standable. Most ITS personalization focuses on problem selection, hints, or feedback. By contrast, we center on explanatory reading material. Because reading can change knowledge without explicit responses, we separate the learner’s hidden true knowledge from the tutor’s BKT-based estimate , and only the latter drives adaptation. 
+
+2.2 Simulated learners in educational technology 
+
+Simulated learners have long been used in educa-tional technology. VanLehn et al. (1994) categorize their use for teachers, learners, and instructional designers; our setting aligns most closely with for-mative evaluation of instructional policies before deployment. Recent work highlights broader uses, including teacher training, hypothesis generation, adaptive al-gorithm development, virtual collaborators, and en-vironment testing, while also noting that many sim-ulators remain under-validated for their intended decisions (Käser and Alexandron, 2024). This mo-tivates our emphasis on explicit learner state, in-spectable memory, and theory-grounded reading dynamics. 
+
+2.3 Reading comprehension and computational reader models 
+
+Our model is grounded in the Construction– Integration framework (Kintsch, 1988), where read-ers form a propositional textbase and a richer sit-uation model integrating prior knowledge. This supports modeling partial retention, revision, and distortion of information. We extend CI with DIME, which captures reader differences in background knowledge, vo-cabulary, and inference (Cromley and Azevedo, 2007; Cromley et al., 2010), and KR EC, which models revision of incorrect prior knowledge (Kendeou and O’Brien, 2014; Kendeou, 2024). 2This matters because many systematic wrong an-swers reflect stable misconceptions rather than ran-dom noise (van den Broek and Kendeou, 2008; Gierl et al., 2017). Prior work has implemented CI-like automated readers (Lemaire et al., 2006); our contribution is to embed such a reader in a KC-level adaptive instructional loop. 
+
+2.4 Epistemic boundaries and answer modeling 
+
+Recent work argues that valid student simula-tion should expose an explicit epistemic state and bounded competence (Yuan et al., 2026). We adopt that principle, but do not use free-form generation for answer choice. Instead, answers are selected by scoring options from the learner’s memory state, in-cluding mastery, misconceptions, retrieved traces, and item difficulty. This design is efficient, au-ditable, and consistent with constrained learner be-havior. 
+
+2.5 Readability and reader–text matching 
+
+Reader–text fit is important but should remain sim-ple to operationalize. We use the New Dale–Chall readability formula (Chall and Dale, 1995), com-puted via textstat (Bansal and Aggarwal, 2026), as a reproducible measure of text difficulty com-bined with learner parameters. 
+
+3 System Overview 
+
+The overall system converts open educational con-tent into a grounded personalization loop. The pipeline can be summarized in five stages: (1) on-tology construction and authoring, (2) chunk la-beling and retrieval indexing, (3) ontology-driven reading and assessment generation, (4) theory-grounded simulated reading and score-based an-swer selection, and (5) BKT-based adaptation. 
+
+3.1 Ontology Atlas and ontology construction 
+
+We first build an ontology of learning objectives and knowledge components from open textbooks. Each LO maps to one or more KCs. The ontology is created with an LLM-assisted workflow that pro-poses candidate LOs and KCs from source material and then consolidates them into a course-specific YAML schema. We use the ontology as a com-mon representational layer for retrieval, generation, mastery tracking, and simulation. To make this layer inspectable, we built Ontol-ogy Atlas, a browser-based ontology workspace backed directly by the YAML files used elsewhere in the system. Atlas exposes a coverage inventory showing chapter, LO, and KC counts; a searchable navigator over IDs, statements, labels, and descrip-tions; a D3 relationship graph for the chapter →
+
+LO → KC hierarchy; and a details panel for edit-ing entries, importing/exporting YAML, validating fields, and saving back to disk. Atlas is therefore not just a visualization layer; it is the authoring interface for the ontology that the generation and experiment services consume. In the current codebase, Ontology Atlas surfaces multiple full-course ontologies, including the three used in the experiments reported here: foundations of computer science (16 chapters, 53 LOs, 131 KCs), general biology (20 chapters, 60 LOs, 172 KCs), and introductory inorganic chemistry (12 chapters, 57 LOs, 177 KCs). This coverage view was useful when selecting sampled LOs for the experiments and when checking whether KC gran-ularity was comparable across subjects. 
+
+3.2 Chunk labeling and retrieval indexing 
+
+The textbook corpus is segmented into fine-grained chunks and coarser context chunks. Fine-grained chunks serve as the primary evidence units for labeling, while coarser chunks provide broader context during downstream generation. Each fine-grained chunk is labeled with one or more LOs and KCs using a three-stage LLM-as-judge pipeline: 1. encode the chunk as a semantic embedding, 2. retrieve candidate LO and KC labels with nearest-neighbor search in a vector database, and 3. prompt an LLM to adjudicate among the candi-dates and return the final label set. The result is a grounded index in which every retained content unit is tied to the ontology and remains linked to its surrounding context. Because Atlas edits the same YAML that the labeling and generation services read, ontology revisions imme-diately propagate to retrieval and generation. 
+
+3.3 Ontology-driven reading and assessment generation 
+
+Using the labeled corpus, we generate paired read-ings and assessments that comprehensively cover one LO at a time. Each generated reading is grounded in retrieved fine-grained chunks and 3optional coarser context chunks; generation pa-rameters control explanation depth, example den-sity, misconception refutation, and target difficulty. Each assessment is a fresh isomorphic multiple-choice variant aligned to the same LO and KCs rather than an exact reuse of the same item surface form. This choice is important for two reasons. First, exact question reuse would make policy evalua-tion more sensitive to item wording than to learner state. Second, our simulated learners do not learn from assessment interactions; only reading updates their hidden semantic state. Using fresh isomorphic variants therefore preserves comparability across iterations without allowing assessment exposure to become an unintended instructional channel. 
+
+4 Methodology 
+
+4.1 Separating hidden learning from observed mastery 
+
+The simulated learner maintains two distinct states. The first is a hidden true learning state that governs what the learner actually knows, misunderstands, and remembers. The second is the tutor-visible BKT estimate that is updated only from observed answers. This separation prevents the simulation from becoming self-fulfilling: the personalization policy acts on what the tutor infers , not on hidden ground truth. For learner i and KC k, we represent hidden state as 
+
+zi = {m∗
+
+> i,k
+
+, w i,k, 1: M , r i, s i, e i}, (1) where m∗ 
+
+> i,k
+
+is the strength of correct knowledge for KC k, wi,k, 1: M are strengths of KC-specific mis-conceptions, ri is a reader profile, si is a revision-and-response profile, and ei stores recent episodic traces from readings. The tutor only observes a separate KC mastery estimate ˆmi,k maintained by BKT. 
+
+4.2 Reader profiles and readability matching 
+
+We do not use vague “learning styles.” Instead, learner heterogeneity is parameterized through theory-grounded reader profiles. Following DIME, each learner has parameters for background knowl-edge, vocabulary, inferencing, and strategy use (Cromley and Azevedo, 2007; Cromley et al., 2010). Because the cohort is intended to ap-proximate college freshmen who have completed secondary school, basic decoding is assumed to be near ceiling; the meaningful variability is in comprehension-relevant factors and in misconcep-tion prevalence. We combine these learner-side parameters with a reader–text fit term based on the New Dale–Chall score. For passage j, let dj be the readability score computed with textstat . Let ai be a scalar readability-ability parameter for learner i. We de-fine match ij = 1 − |ai − dj |
+
+6 , (2) clipped to [−1, 1] , so higher values indicate a better match between learner and text. This term does not replace the richer reader profile; it provides a compact difficulty signal that can be integrated into the comprehension update. 
+
+4.3 From passages to proposition-like teaching events 
+
+We model reading at the level of comprehension and memory, not time. Each generated passage is segmented into short teaching events, which serve as proposition-like units for the simulation. The current implementation uses a lean operational schema rather than full semantic parsing: each event stores its surface text, linked KC IDs, a clar-ity score, a refutation-strength score, and a refresh flag. These fields have direct roles in the simulation. 
+
+KC links determine which latent mastery variables and misconception weights the event can update. 
+
+Clarity approximates how easy the event is to en-code; in the current implementation it is estimated from event length, so shorter events are treated as easier to encode than longer ones. Refutation strength approximates how explicitly the event con-fronts a likely misconception; in the current im-plementation it is triggered by lexical cues such as misconception , incorrectly , rather than ,
+
+instead of , or do not , and it scales miscon-ception reduction during learning. Refresh marks lower-gain reinforcement events when review KCs are included in a passage; operationally, refresh is a lightweight heuristic rather than a discourse parser. This representation keeps learner memory close to the CI notion of a textbase while remaining sim-ple enough to generate, score, and inspect at scale. Encoded events create episodic traces that preserve the event text, KC links, clarity, refutation strength, readability score, and later distortion, making sub-sequent answer behavior inspectable. When prove-nance is needed, it is retained at the reading-asset 4State component Meaning Role in the simulation               
+
+> m∗
+> i,k Hidden strength of correct knowledge for KC kGoverns durable support for correct answers and future learning from related readings
+> wi,k,m Hidden strength of misconception mfor KC kAttracts misconception-consistent distractors and resists revision when refutation is weak
+> riReader profile (background knowledge, vocabulary, inferencing, strategy use, readability ability) Determines how well teaching events are encoded from text
+> siRevision and response profile (skepticism, revision willingness, detail preference, noise) Controls how new text changes prior beliefs and how answers are emitted
+> eiEpisodic traces of recently read teaching events Supports short-term retrieval even when durable KC mastery is still weak
+> ˆmi,k Tutor-visible BKT mastery estimate Drives reading adaptation but does not directly change hidden learning
+
+Table 1: Learner-state variables. Hidden learning and tutor-visible mastery are kept separate throughout the simulation. 
+
+level through source chunk identifiers rather than per-event source spans. A passage such as “Plants do not get food from soil. They make food through photosynthesis.” would yield an event record like 
+
+> {proposition_id: "prop_001", text: "Plants do not get food from soil. They make food through photosynthesis.", kc_ids: {"KC_photosynthesis_food_source"}, clarity: 0.92, refutation_strength: 1.00, is_refresh: false }
+
+This is best understood as an operational, proposition-like teaching event. 
+
+4.4 Comprehension as textbase construction and situation-model integration 
+
+The reading update proceeds in two stages. First, the learner encodes teaching events into a textbase-like episodic memory. Second, the learner inte-grates those events with prior knowledge to update correct knowledge and misconception weights. Op-erationally, the encoding strength of event p for learner i reading passage j is modeled as enc i,p = σ α + 1 .1 clarity p + 0 .55 match ij 
+
++ β⊤ri + 0 .3(1 − ¯mi,p )+ 0 .35 attention i
+
+.
+
+(3) Here, ¯mi,p is mean prior mastery over the event’s target KCs and β⊤ri collects vocabulary, inference, strategy, and background-knowledge effects. If an event is encoded, it creates an episodic trace whose later activation depends on recency, rehearsal, lexi-cal overlap with the question, and distortion noise. Once encoded, an event updates KC state by increasing correct knowledge and reducing mis-conception weight. In the implementation, correct-knowledge gain is stronger for clearer events, bet-ter reader–text matches, and learners with higher revision willingness and detail preference. Miscon-ception reduction is scaled by the event’s refuta-tion strength, consistent with KR EC’s emphasis on how prior incorrect knowledge is confronted dur-ing reading (Kendeou and O’Brien, 2014; Kendeou, 2024). Refresh events receive a smaller gain multi-plier than new target events. 
+
+4.5 Score-based answer option selection from learner memory 
+
+At assessment time, the learner does not receive the original passage. Instead, the simulator retrieves relevant traces from memory and computes a score for each item from hidden mastery, misconception weight, retrieved-trace support, and response-style variables. The guiding principle is still epistemic boundedness in the sense of Yuan et al. (2026): the learner answers only from what it has encoded and retained. However, the current implementation uses score-based option selection rather than free-form generative reasoning. For item q, let ¯miq be mean correct knowledge over the target KCs, ¯wiq the mean misconception weight, and τiq the mean activation of retrieved 5traces. The item’s response utility is 
+
+uiq = − bq + 2 .2 ¯ miq + 0 .38 τiq 
+
+− 1.25 ¯ wiq + 0 .35 attention i
+
+− 0.25 guess i,
+
+(4) where bq is a difficulty offset derived from the item’s difficulty band. The probability of a cor-rect answer is then 
+
+P (yiq = 1) = σ(uiq ), (5) clipped to a small interior interval to avoid degen-erate probabilities. If the learner answers incorrectly, the selected distractor is not sampled uniformly. Instead, dis-tractors are scored by lexical overlap between the retrieved trace text and the distractor text/rationale, plus learner-specific guessing bias. This makes misconception-consistent wrong options more likely than random errors when the learner’s mem-ory traces support them. The simulator also records an explicit epistemic-state summary for each re-sponse, including target KCs, correct-knowledge support, misconception support, and the IDs of the retrieved traces used during scoring. 
+
+5 Adaptive Personalization with Bayesian Knowledge Tracing 
+
+The tutor maintains a separate BKT model for each KC. After each question response, the tutor up-dates the KC-specific mastery estimate ˆmi,k using standard BKT parameters for initial mastery, learn-ing, guess, and slip (Corbett and Anderson, 1994). These estimates drive reading adaptation but do not directly modify hidden learner state. The adaptation policy maps low estimated mas-tery to more supportive readings. In the adaptive condition, a low ˆmi,k can trigger: • greater explanatory depth, • higher example density, • more explicit misconception refutation, • repeated coverage of weak KCs within the cur-rent LO, and • a tighter reader–text match through the target readability signal. A higher ˆmi,k leads to leaner explanations and less redundant scaffolding. The control condition uses             
+
+> Subject Ch. LOs KCs
+> Computer Science 16 53 131 General Biology 20 60 172 Inorganic Chemistry 12 57 177
+> Table 2: Ontology sizes shown in the Ontology Atlas coverage view for the three ontologies used in the ex-periments.
+
+the same ontology, source corpus, and assessment machinery, but the reading variant is held at a fixed default configuration rather than being conditioned on ˆmi,k .
+
+6 Experimental Setup 
+
+We ran fixed-iteration experiments in three subject ontologies: foundations of computer science, gen-eral biology, and introductory inorganic chemistry. Table 2 summarizes the ontology sizes surfaced in Ontology Atlas for those three subjects. For each subject, we sampled four LOs across two chapters, created 50 matched simulated learn-ers per condition, ran three reading–assessment cycles per LO, and generated three KC-aligned multiple-choice items per cycle. This yields 1,800 item-level responses per condition per subject. The adaptive and control runs were matched at initialization: each control run reused the same learner seeds and initial hidden states as its adap-tive counterpart. Assessment delivery context was set to summative , so quiz answers updated tutor-visible BKT state but did not directly change hid-den semantic knowledge. This keeps reading as the sole instructional intervention in the reported experiments. We report four outcome families: (1) Observed assessment accuracy : mean item ac-curacy over each condition. (2) Tutor-side BKT gain : change in tutor-visible KC mastery estimates. 
+
+(3) Hidden mastery gain : descriptive change in hidden correct-knowledge strength. (4) Miscon-ception reduction : descriptive decrease in hidden misconception weight. Because the saved experiment artifacts preserve learner-level paired trajectories for accuracy and BKT gain, but aggregate hidden mastery and mis-conception endpoints at the condition level, infer-ential tests are reported only for the first two out-comes. 67 Results 
+
+7.1 Subject-level outcomes 
+
+Figure 1 and Table 3 summarizes the adaptive-minus-control deltas across subjects. The strongest evidence for adaptive benefit appears in computer science. Adaptive reading improved mean accu-racy from 0.834 to 0.865 ( ∆ = +0 .031 , 95% CI [+0 .004 , +0 .058 ], p = 0 .026 , dz = 0 .325 ) and improved learner-level BKT gain from 0.416 to 0.454 ( ∆ = +0 .038 , 95% CI [ +0 .002 , +0 .074 ], 
+
+p = 0 .037 , dz = 0 .304 ). In inorganic chemistry, adaptive reading also pro-duced positive deltas, but they were smaller and not statistically reliable in this sample: accuracy rose from 0.834 to 0.853 ( ∆ = +0 .019 , 95% CI [−0.004 , +0 .042 ], p = 0 .104 ), while BKT gain rose from 0.418 to 0.427 ( ∆ = +0 .009 , 95% CI [−0.021 , +0 .040 ], p = 0 .540 ). In general biology, adaptive and control were effectively tied on ob-served performance, with a slight edge to control: accuracy moved from 0.850 to 0.845 ( ∆ = −0.005 ,95% CI [ −0.030 , +0 .020 ], p = 0 .691 ) and BKT gain from 0.383 to 0.369 ( ∆ = −0.014 , 95% CI [−0.054 , +0 .025 ], p = 0 .468 ). The lower panel of Figure 1 and Table 4 shows the hidden-state endpoints descriptively. Adaptive reading produced larger hidden mastery gains in all three subjects, with deltas of +0 .048 in com-puter science, +0 .026 in biology, and +0 .053 in inorganic chemistry. Misconception reduction also favored adaptation in computer science and chem-istry, though control was slightly better in biology by 0.003 .Subject Cycle Observed Accuracy Tutor-side BKT gain Adaptive Control ∆ Adaptive Control ∆                                                      
+
+> Computer Science 10.802 0.760 +0.042 0.180 0.157 +0.024 20.890 0.853 +0.038 0.168 0.146 +0.023 30.904 0.890 +0.014 0.106 0.114 -0.008 General Biology 10.794 0.795 -0.001 0.174 0.167 +0.007 20.864 0.849 +0.015 0.122 0.111 +0.011 30.877 0.906 -0.029 0.073 0.106 -0.033 Inorganic Chemistry 10.807 0.797 +0.010 0.190 0.190 +0.000 20.868 0.828 +0.040 0.146 0.136 +0.010 30.885 0.878 +0.007 0.092 0.092 +0.000
+
+Table 3: Subject-level adaptive versus control outcomes. Accuracy and BKT gain are reported from matched learner-level analyses. 
+
+7.2 Cycle-level trajectories 
+
+Figure 2 shows mean accuracy by cycle for all three subjects. In computer science, adaptive reading led control in every cycle: 0.802 vs. 0.760 in cycle 1, 0.890 vs. 0.853 in cycle 2, and 0.904 vs. 0.890 
+
+Figure 1: Subject-level adaptive-minus-control deltas. The upper panel shows paired learner-level accuracy and BKT gain deltas with 95% confidence intervals. The lower panel shows descriptive hidden-gain and misconception-reduction deltas from the condition sum-maries. 
+
+in cycle 3. In inorganic chemistry, adaptive also led in every cycle, with the largest margin in cycle 2 (0.868 vs. 0.828). In general biology, the two conditions were nearly tied in cycle 1 (0.794 vs. 0.795), adaptive moved ahead in cycle 2 (0.864 vs. 0.849), and control pulled ahead in cycle 3 (0.906 vs. 0.877). This cycle pattern suggests that the adaptive pol-icy is not uniformly better or worse; rather, its effect depends on how the generated readings, item bank, and learner model interact in a given sub-ject. The biology run is especially informative because it shows that the policy can appear helpful mid-sequence while still ending slightly behind on observed metrics. 
+
+8 Discussion 
+
+The clearest result is that adaptive personaliza-tion is promising but domain-dependent. Figure 1 shows that the adaptive policy improved both ob-served accuracy and tutor-side mastery in the sam-7Subject Hidden mastery gain Misconception reduction Adapt. Ctrl. ∆ Adapt. Ctrl. ∆                  
+
+> Computer Science 0.521 0.473 +0.049 0.072 0.056 +0.016 General Biology 0.388 0.362 +0.026 0.045 0.048 -0.003 Inorganic Chemistry 0.509 0.456 +0.053 0.061 0.056 +0.005
+
+Table 4: Descriptive hidden-state outcomes from the saved experiment summaries. These endpoints are not tested inferentially because the current result format does not preserve learner-level paired trajectories for them. 
+
+Figure 2: Mean learner-level quiz accuracy by fixed iteration cycle for each subject, with 95% confidence intervals. Adaptive reading shows a clear and consistent advantage in computer science, a smaller but positive advantage in inorganic chemistry, and a mixed pattern in general biology. 
+
+pled computer-science setting, and it also produced the largest descriptive gains in hidden knowledge and misconception reduction. This is the strongest evidence in the current paper that adapting explana-tion depth, example density, and refutation strength to estimated mastery can improve outcomes when the ontology, generated readings, and assessment items are well aligned. The inorganic-chemistry run is more tentative. Its positive deltas suggest that the same policy fam-ily can generalize beyond computer science, but the confidence intervals remain too wide to claim a reliable effect with the present sample. The general-biology run is more cautionary: adaptive reading slightly improved hidden mastery descriptively, yet it did not improve observed accuracy or tutor-side BKT gain. That mismatch matters because it sug-gests that a personalization policy can move the latent learner state in a favorable direction without that change being fully visible through the current assessment and scoring layer. This divergence between hidden and observed outcomes is one of the main takeaways from the results. In the current simulator, answers depend not only on hidden KC knowledge but also on re-trieved episodic traces, misconception weight, item difficulty, attention stability, and distractor overlap. A learner can therefore end a reading cycle with somewhat higher hidden knowledge but still per-form similarly on observed items if the item bank is noisy, if retrieval is brittle, or if distractors remain highly competitive. The cycle-level results in Figure 2 reinforce the same point. Computer science shows a stable adap-tive advantage from cycle 1 onward, suggesting that the reading variants are helping early and con-sistently. In contrast, biology shows a crossover pattern: adaptive is slightly ahead mid-sequence but behind by the final cycle. That kind of crossover is exactly the kind of behavior that an offline simu-lator should surface before live deployment. The results also clarify why the Ontology At-las is useful. Adaptive benefit varied by LO and by subject, which means ontology quality and KC granularity are not merely upstream bookkeeping issues. If an LO is too broad, if its KCs are diffuse, or if retrieved evidence does not align tightly with the target KCs, both personalization and evalua-tion become harder to interpret. Atlas helped us in-spect ontology scale, sample comparable objectives across subjects, and revise the LO/KC hierarchy without changing the downstream code paths. 
+
+9 Conclusion 
+
+We presented a full-stack framework for evaluat-ing adaptive personalization of educational read-ings with theory-grounded simulated learners. The framework links ontology-grounded content gener-ation, KC-level BKT mastery tracking, a browser-based Ontology Atlas for ontology authoring, CI-based comprehension, DIME-style reader het-erogeneity, KR EC-style misconception revision, and score-based answer selection over an explicit learner memory state. Across three sampled subject ontologies, adaptive reading yielded statistically reliable gains in the computer-science condition, smaller positive but inconclusive gains in inorganic chemistry, and neutral to slightly negative observed outcomes in general biology while still improving hidden mastery descriptively. We view this as a practical bridge between NLP-based content gener-ation and cognitively plausible learner simulation for educational personalization, and as an offline testbed for screening adaptive reading policies be-fore live classroom deployment. 8Limitations 
+
+This work has several limitations. First, simulated learners are not substitutes for real students. Even with explicit misconceptions and inspectable mem-ory, a simulated reader remains a model of plau-sible learning dynamics rather than a direct mea-surement of human learning. This caution is con-sistent with the validity gap highlighted by Käser and Alexandron (2024). Second, the current design focuses on comprehension and memory, not read-ing time, attention shifts during reading, or fatigue over long sessions. Third, the present implementation uses a simpli-fied score-based answer model rather than a richer generative answerer. This keeps runs fast and repro-ducible, but it may under-represent some reasoning phenomena that would matter in more open-ended assessments. Fourth, the quality of the ontology and proposition-like teaching-event extraction di-rectly affects the quality of both generation and simulation; errors in LO/KC labeling can propa-gate downstream. Fifth, the New Dale–Chall score is intentionally simple and open, but it is still only one aspect of reader–text fit. Finally, because the saved result format aggregates hidden-state end-points at the condition level, inferential testing is currently limited to observed accuracy and tutor-side BKT outcomes. 
+
+Ethics Statement 
+
+The system described here uses open educational content and simulated rather than human learn-ers. The main ethical motivation for the simula-tion framework is to reduce the cost of evaluating personalization policies before classroom deploy-ment. Even so, simulation-based evidence should not be overstated: decisions that materially affect real students should ultimately be validated with human-subject studies under appropriate institu-tional review and privacy safeguards. 
+
+References 
+
+Shivam Bansal and Chaitanya Aggarwal. 2026. text-stat: Calculate statistical features from text. Python package, version 0.7.13. Accessed 2026-03-30. Jeanne Sternlicht Chall and Edgar Dale. 1995. Read-ability Revisited: The New Dale–Chall Readability Formula . Brookline Books, Cambridge, MA. Albert T. Corbett and John R. Anderson. 1994. Knowl-edge tracing: Modeling the acquisition of procedural knowledge. User Modeling and User-Adapted Inter-action , 4(4):253–278. Jennifer G. Cromley and Roger Azevedo. 2007. Test-ing and refining the direct and inferential mediation model of reading comprehension. Journal of Educa-tional Psychology , 99(2):311–325. Jennifer G. Cromley, Lindsey E. Snyder-Hogan, and Ulana A. Luciw-Dubas. 2010. Reading comprehen-sion of scientific text: A domain-specific test of the direct and inferential mediation model of reading comprehension. Journal of Educational Psychology ,102(3):687–700. Xinyi Ding and Eric C. Larson. 2021. On the inter-pretability of deep learning based models for knowl-edge tracing. Preprint , arXiv:2101.11335. Mark J. Gierl, Okan Bulut, Qi Guo, and Xinxin Zhang. 2017. Developing, analyzing, and using distractors for multiple-choice tests in education: A compre-hensive review. Review of Educational Research ,87(6):1082–1116. Xiaoli Huang, Wei Xu, and Ruijia Liu. 2025. Effects of intelligent tutoring systems on educational outcomes: Evidence from a comprehensive analysis. Interna-tional Journal of Distance Education Technologies ,23(1):1–25. Tanja Käser and Giora Alexandron. 2024. Simulated learners in educational technology: A systematic liter-ature review and a turing-like test. International Jour-nal of Artificial Intelligence in Education , 34(2):545– 585. Panayiota Kendeou. 2024. A theory of knowledge revi-sion: The development of the krec framework. Edu-cational Psychology Review , 36(2):44. Panayiota Kendeou and Edward J. O’Brien. 2014. The knowledge revision components (krec) framework: Processes and mechanisms. In David N. Rapp and Jason L. G. Braasch, editors, Processing Inaccurate Information: Theoretical and Applied Perspectives from Cognitive Science and the Educational Sciences ,pages 353–377. MIT Press, Cambridge, MA. Walter Kintsch. 1988. The role of knowledge in dis-course comprehension: A construction-integration model. Psychological Review , 95(2):163–182. Benoît Lemaire, Guy Denhière, Cédrick Bellissens, and Sandra Jhean-Larose. 2006. A computational model for simulating text comprehension. Behavior Re-search Methods , 38(4):628–637. Angélique Létourneau, Marion Deslandes Martineau, Patrick Charland, John Alexander Karran, Jared Boasen, and Pierre-Majorique Léger. 2025. A sys-tematic review of AI-driven intelligent tutoring sys-tems (ITS) in K-12 education. npj Science of Learn-ing , 10(1):29. 
+
+9Paul van den Broek and Panayiota Kendeou. 2008. Cog-nitive processes in comprehension of science texts: The role of co-activation in confronting misconcep-tions. Applied Cognitive Psychology , 22(3):335–351. Kurt VanLehn, Stellan Ohlsson, and Rod Nason. 1994. Applications of simulated students: An explo-ration. Journal of Artificial Intelligence in Education ,5(2):135–175. Zhihao Yuan, Yunze Xiao, Ming Li, Weihao Xuan, Richard Tong, Mona T. Diab, and Tom Mitchell. 2026. Towards valid student simulation with large language models. Preprint , arXiv:2601.05473. 
+
+10
