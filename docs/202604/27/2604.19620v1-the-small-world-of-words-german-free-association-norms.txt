@@ -1,0 +1,488 @@
+Title: The "Small World of Words" German Free-Association Norms
+
+URL Source: https://arxiv.org/pdf/2604.19620v1
+
+Published Time: Wed, 22 Apr 2026 01:28:36 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+# The “Small World of Words” German Free-Association Norms 
+
+# Samuel Aeschbach 1, 2 , Rui Mata 1, Kaidi Lõo 3, Simon De Deyne 4, and Dirk U. Wul ff 2, 1 
+
+> 1
+
+Center for Cognitive and Decision Sciences, Faculty of Psychology, University of Basel, Switzerland 
+
+> 2
+
+Center for Adaptive Rationality, Max Planck Institute for Human Development, Berlin, Germany 
+
+> 3
+
+Institute of Estonian and General Linguistics, University of Tartu, Estonia 
+
+> 4
+
+Melbourne School of Psychological Sciences, University of Melbourne, Australia 
+
+Free-association norms provide essential empirical data for investigating linguistic, semantic, and cultural phenomena in the cognitive sciences. Although large-scale norms exist for lan-guages such as English, Dutch, Spanish, and Mandarin Chinese, no comparable resource has been available for German. To address this gap, we present free-association norms for 5,877 German cue words as part of the German version of the multilingual Small World of Words (SWOW) project. We describe the data collection procedures, participant characteristics, and our comprehensive preprocessing pipeline before introducing the resulting SWOW-DE data set. Using data from three established psycholinguistic paradigms, we show that SWOW-DE norms robustly predict performance in lexical decision tasks, relatedness judgments, and psy-cholinguistic word ratings. Furthermore, we demonstrate that SWOW-DE responses compare favorably with existing German resources and provide a preliminary cross-linguistic compar-ison revealing both shared and language-specific association patterns, highlighting promising directions for future research. Overall, SWOW-DE represents the largest collection of German free associations to date and o ff ers a unique resource for linguistic, psychological, and cross-cultural research. 
+
+Keywords: Free Association, Norms, Data Set, German, Word Embedding 
+
+Free association has served as a window into human thought since the earliest days of psychology (Galton, 1883; Jung, 1910). In contemporary cognitive science, it has be-come a central tool for probing linguistic structure (Brochha-gen et al., 2023), mapping the organization and dynamics of semantic memory (Steyvers & Tenenbaum, 2005; Wul ff 
+
+et al., 2019), studying (second) language learning (Fitz-patrick & Thwaites, 2020; Hills et al., 2009), and examining cross-cultural variation in conceptual representations (Wul ff 
+
+& Mata, 2022). Progress in these areas increasingly relies on large, high-quality free-association norms, which support the generation of empirically grounded experimental stim-uli and simulations (e.g., Aeschbach et al., 2025b; Herault et al., 2024), enable comparisons of semantic representa-tions across individuals and populations (e.g., Dubossarsky 
+
+Samuel Aeschbach, Rui Mata, Kaidi Lõo Simon De Deyne, Dirk U. Wul ff ,Correspondence concerning this article should be addressed to Samuel Aeschbach, University of Basel, Faculty of Psychology, Center for Cognitive and Decision Sciences, Missionsstrasse 60 /62, 4055 Basel, Switzerland, email: samuel.aeschbach@unibas.ch, and Dirk U. Wul ff , Max Planck Institute for Human Develop-ment, Lentzeallee 94, 14195 Berlin, Germany, email: wul ff @mpib-berlin.mpg.de 
+
+et al., 2017; Wul ff & Mata, 2022), and provide benchmarks for evaluating the alignment between humans and machines (e.g., Abramski et al., 2025; De Deyne, 2024; De Deyne et al., 2017; Hussain, Mata, Newell, & Wul ff , 2024). Although several free-association norm data sets exist (e.g., Kiss et al., 1973; Nelson et al., 2004), like many foundational resources in psychology and linguistics, they remain concentrated on a small set of languages (e.g., Bates et al., 2001). Given the language-specific nature of linguis-tic units, semantic memory, and conceptual structure, there is a clear need for parallel resources across more diverse linguistic populations (Bergho ff & Bylund, 2025). German is an especially important case: As an o ffi cial language in several European countries and spoken by an estimated 140 million people worldwide (Eberhard et al., 2026a, 2026b), it represents a sizable and widely studied linguistic popula-tion. However, existing German free-association data sets (Jonauskaite et al., 2025; Russell, 1970; Schulte Im Walde & Borgwaldt, 2015; Schulte Im Walde et al., 2008; Wul ff ,Aeschbach, et al., 2022) are relatively small in scale, cover-ing at most a few hundred cue words based on limited partic-ipant samples. The Small World of Words (SWOW) project (https: // smallworldofwords.org /) addresses this need by collecting extensive, methodologically comparable free-association norms across multiple languages, including 
+
+> arXiv:2604.19620v1 [cs.CL] 21 Apr 2026
+
+2 AESCHBACH 
+
+German. Previously published SWOW data sets include Dutch (De Deyne et al., 2013), English (De Deyne et al., 2019), Rioplatense Spanish (Cabana et al., 2023), Mandarin Chinese (Li et al., 2024), and Slovene (Brglez et al., 2024; Vintar et al., 2025). In the present work, we expand this multilingual e ff ort by introducing the German Small World of Words data set (SWOW-DE). We introduce the largest resource of German free-association norms to date. SWOW-DE comprises 5,877 cue words, o ff ering a unique resource for psychological, linguis-tic, and computational research into German-speaking popu-lations and in cross-linguistic comparison. In the following sections, we describe the methods used to collect and pro-cess the raw free associations, provide an overview of par-ticipant characteristics and the resulting data, and demon-strate the utility of SWOW-DE in two major domains: (a) cross-linguistic comparisons of free associations and seman-tic network structure, and (b) predictions of lexical deci-sion times, word-relatedness judgments, and psycholinguis-tic word properties relative to fastText, an established text-based language model available in German (Grave et al., 2018). We conclude by discussing the implications of this data set for the field and outlining directions for future re-search. 
+
+Method Materials and Procedure 
+
+The free-association data reported on here were col-lected as part of the multilingual Small World of Words (SWOW) online citizen science project. When potential par-ticipants visited the study website, they were presented with a short description of the SWOW project that motivates free-association research. Fluency in German is stated as a con-dition for participation, and links to versions of the SWOW project in other languages are provided. Upon entering the study and agreeing to the use of their anonymous data for re-search purposes, participants first provided demographic in-formation, including their age, gender, native language, and education, and optionally their approximate geographic loca-tion. Participants then entered the free-association task, de-scribed in more detail in the next paragraph. After complet-ing the free-association task, participants were thanked for their contribution to the project and, since the introduction of the feature in 2024, were o ff ered the opportunity to compare their own associations to the most frequent ones for the same cues. 
+
+Free-Association Task 
+
+Participants first saw a brief instruction about the free-association task, prompting them to respond with the first three words that came to mind when thinking about the cue word displayed at the top of the screen. Appendix A provides 
+
+Figure 1 
+
+Free-association task. One trial showing the cue word “Kälte” (cold) in the top center, and three text fields be-low for free-association responses. In the screenshot, the first two, “Nässe” (wettness) and “Winter” (winter), have already been filled out by the participant, the third is to be filled out next. Shown below are a progress bar and buttons to enter the next word or move on without a further response. 
+
+the full German instructions and an English translation. Fig-ure 1 shows one trial of the free-association task, presenting a cue word in written form at the top of the screen, along with three text fields to enter associations. If a cue word was unknown to the participant, that could be indicated by clicking an appropriate button. After entering an association, it remained on screen in gray color until the next trial began with a new cue word. If a participant was unable to pro-duce three associations, this could be indicated by clicking a button. Participants completed 14 to 18 trials, with each trial presenting a di ff erent cue word. Although the number of trials per participant and the visual appearance of the user interface evolved slightly throughout the project, the free-association task and its functions remained unchanged. 
+
+Cue Words 
+
+The cue set was expanded iteratively throughout data col-lection. Cue words were initially selected based on high fre-quency in language, use as stimuli in other studies, part of speech, and, with increasing progress of the study, to include frequent responses to previous cues. Starting with a set of 1,036 cue words in 2012, sets of 1,642, 1,741, and 1,592 SWOW-DE 3
+
+Figure 2 
+
+Cue word set illustration. The figure shows a uniform manifold approximation and projection (UMAP) (McInnes et al., 2020) of cue words based on cue word embeddings derived from the positive pointwise mutual information (PPMI)-weighted co-occurrence matrix including all responses given at least five times, reduced via singular value decomposition (SVD) (see Figure 4D) using the associatoR package for R (Aeschbach et al., 2025a). Color indicates clusters found using the Louvain algorithm (Blondel et al., 2008). Only the top 15% most frequent cue words among responses are labeled; larger points and labels indicate cue words more frequent among responses. 4 AESCHBACH 
+
+words were added whenever previous sets reached responses to each cue from at least 60 participants. Eight cues were excluded from the data set due to typographical errors and duplications, leading to an initial total set of 6,003 cue words. The final set of cue words in SWOW-DE is still smaller due to the exclusion of cues with too few responses, see section 
+
+Data Filtering and Preprocessing . However, the full data are also being made available (see Availability of Data and Materials ). Figure 2 presents a two-dimensional illustration of the fi-nal SWOW-DE cue words organized by semantic similarity, with colors indicating clusters and larger points and label font size indicating higher frequency of the cue word among the responses. Cue word labels were machine-translated into English for this figure; Figure D1 shows the same illustration with the original German labels. 
+
+Data Collection 
+
+Data collection for SWOW-DE took place over more than a decade, from 2012 to 2025. The website running the study is publicly accessible at https: // smallworldofwords.org /de. The study was advertised through various channels, includ-ing institutional press releases, radio interviews, newspaper articles, advertising on public transport in multiple German cities, social media advertising, newsletters, university lec-tures, and mailing lists. Participation was fully voluntary and did not require any form of registration. Participants were not financially compensated; however, a small portion received course credit. Overall, these data collection e ff orts yielded a raw sample of 23,999 participants by August 25, 2025, the cut-o ff date for the data set shared with this article. Note that, because data collection was anonymous, participants could complete the task more than once, meaning the number of unique in-dividuals is likely somewhat smaller. 
+
+Data Filtering and Preprocessing 
+
+The open nature of the data collection, the free-text re-sponses, and the intricacies of German orthography, includ-ing regional variations, warranted a multistep filtering and preprocessing pipeline. This involved excluding participants who provided lower-quality responses, checking and correct-ing response spelling, and setting a minimum criterion for the number of trials per cue. We applied a set of filtering criteria to exclude participants with too many invalid responses from the data. These criteria are similar to those employed in other SWOW projects. First, we excluded participants whose responses contained more than one word in more than 30% of their responses (2.20% of participants). Second, we excluded participants whose re-sponses contained more than 20% repeated responses (1.10% of participants). Third, we excluded participants whose re-sponses passed an initial spell-check in fewer than 60% of cases (2.13% of participants). And fourth, we excluded par-ticipants whose responses were “unknown word” or miss-ing in more than 60% of cases (5.97% of participants). In total, 22,047 (91.87%) participants, representing 367,454 (92.25%) trials, fulfilled all four criteria. Appendix B pro-vides additional details on participant inclusion. To address misspellings and orthographic variation, we applied standard text data cleaning procedures, including the removal of most special characters and extra whitespace, and spellchecks in our data preprocessing pipeline, initially whitelisting 84.47% of responses using an implementation of the Hunspell spell checker for R (hunspell, 2022; Ooms, 2025). To improve the remaining responses, we implemented three main steps. First, we normalized the use of umlauts (ä, ö, ü), which are often written as “ae”, “oe”, and “ue”, of “Eszett” (ß) and double “s”, which are often used inconsis-tently, and improved the casing of responses, which in Ger-man is more complex than in other languages covered by di ff erent SWOW projects. This was implemented by testing whether any of the possible combinations of these changes led to a correct German word. This stage also unified or-thographic variations across German-speaking countries to the spelling rules valid in Germany in 2025 and increased whitelisted responses to 94.36%. Second, as the remain-ing non-whitelisted responses included many proper nouns, such as movie titles, consumer brands, and public figures that Hunspell did not recognize, we evaluated their validity in the following way: For each response, we tested whether there is a German Wikipedia article with the response as a title, or a Wikipedia article with a related, possibly slightly di ff erently spelled, article title that the Wikipedia’s search API directs to when using the response as the search term. Whitelisting all responses for which a German Wikipedia article can be found and using the related article titles as spelling improvements increased whitelisted responses to 97.17%. To evaluate and improve the spelling of the remain-ing 27,959 non-whitelisted responses, we employed open-weight, locally hosted large language models (LLM), specif-ically Meta’s “Llama 4 Scout (17Bx16E)” (Meta Llama, 2025) and OpenAI’s “gpt-oss-120b” (OpenAI et al., 2025). We prompted the LLMs to return a correctly spelled version of the potentially misspelled response, given the context of the cue word and the other two responses provided by the same participant in the same trial. Appendix C provides a full report of the prompts used and model settings. To evalu-ate the model and prompt, we created a test set of human-spelling improvements for 1,000 cases of non-whitelisted, potentially misspelled responses: 500 cases for model and prompt selection, and 500 cases to evaluate model perfor-mance. The better model of the two, “gpt-oss-120b”, showed an accuracy of .66. Applying the LLM-correction to the re-maining 2.83% responses further increased the whitelisted responses to a final 98.79%. Note that SWOW-DE includes SWOW-DE 5the raw responses, as well as a variable indicating the stage at which a response was corrected, allowing users to revert LLM-based or other corrections. Finally, we set a minimum criterion for the number of tri-als per cue, which is important for several analyses, as other-wise cue representations or statistics would be informed by uneven amounts of information. We set a minimum of 55 responses, maximizing the minimum criterion and data re-tention. This led to the exclusion of 126 cue words (2.10%) for which fewer than 55 response trials were available. For the remaining 5,877 cue words, we randomly sampled 55 response trials where more were available. In total, these two steps—the removal of cues with few responses and ex-tra trials from cues with more than 55 responses—led to the exclusion of 44,219 trials (12.03%) and the removal of 21 participants (0.10%) from contributing any trials. Note that a version of the data, including all cues and all responses collected, is also available (see Availability of Data and Ma-terials ). 
+
+Characterizing SWOW-DE 
+
+In the following, we characterize SWOW-DE by analyz-ing participant demographics and basic cue and response statistics. 
+
+Demographic Characteristics 
+
+Of the 22,026 participants in SWOW-DE, 15,590 (70.78%) indicated “female” gender, 6,212 (28.20%) indi-cated “male” gender, and 224 (1.02%) indicated another, not further specified, gender labeled “X”. The option to indicate a non-binary gender was not present at the start of data col-lection but was added at a later point. Participants were be-tween 16 and 91 years of age ( M = 37 .03 , S D = 16 .03) at the time of participation. Figure 3A presents the partici-pants’ age distribution compared with demographic data for Germany (Statistisches Bundesamt [German Federal Statis-tical O ffi ce], n.d.), separately for men and women. Although SWOW-DE includes contributions from a broader set of indi-viduals than most empirical studies, women and younger par-ticipants are overrepresented—a pattern also found in other SWOW samples. The native language of participants was predominantly German (n = 20,701; 93.98%). The majority of the partic-ipants (n = 16,606; 75.39%) indicated “German (Germany)” as native language, followed by German variants from Switzerland and Liechtenstein (n = 3,222; 14.63%), Austria (n = 723; 3.28%), Belgium (n = 94; 0.43%), Luxembourg (n = 47; 0.21%), and Italy (n = 9; 0.04%). These propor-tions broadly align with those of the German-speaking pop-ulations in these countries, though the Swiss /Liechtenstein variant is somewhat overrepresented. Figure 3B shows the approximate geographical locations reported by some of the participants. The reported native languages largely match the predominant German variant spoken in each region, and the spatial distribution of participants broadly tracks geographic population densities. Information on participants’ education level is available for 16,385 participants (74.39%). Of these participants, 10,589 (64.63%) report a higher education degree, 4,613 (28.15%) a high school diploma, 1,049 (6.40%) a secondary school diploma, 68 (0.42%) elementary school only, and 66 (0.40%) no formal degree. The sample is thus highly ed-ucated, more so than the general populations of German-speaking countries (cf. 33% of adults aged above 15 years with a higher education degree in Germany, 43.8% of work-ing adults with higher education degree in Switzerland, and 21% of adults aged 25–64 years with higher education degree in Austria; Bach et al., 2024; Bundesamt für Statistik [Swiss Federal Statistical O ffi ce], 2025; Statistik Austria [Statistics Austria], 2025). 
+
+Cue Part-of-Speech, Response Types and Tokens 
+
+The 5,877 SWOW-DE cue words consist of 3,921 nouns, 870 adjectives, 700 verbs, 292 adverbs, and 112 other parts of speech, according to an implementation of the Stanford Log-linear Part-of-Speech Tagger (Schramm, n.d.; The Stanford Natural Language Processing Group, n.d.). SWOW-DE comprises 868,814 responses, or tokens ;318,104 in first, 291,914 in second, and 258,796 in third re-sponse position. These text responses contain 85,227 unique responses, or types ; 49,002 of which (57.50%) appear only once in the data set. Such one-o ff types, although a con-siderable part of all types, only amount to 5.64% of all to-kens. These fractions are comparable to other SWOW data sets. For example, in the English data set, 57.3% of types and 2.3% of tokens appeared only once (De Deyne et al., 2019). Among all responses, 66.76% (580,010 tokens) are them-selves cue words in SWOW-DE, which we refer to as cover-age . This coverage is somewhat lower than in other, larger SWOW data sets—the English data set, for instance, has a coverage of 87% (De Deyne et al., 2019)—but is su ffi cient to support important analyses, especially concerning the con-struction of networks and embeddings. 
+
+Demonstrating Utility in Applications of Free Associations 
+
+In this section, we demonstrate the utility of SWOW-DE in two sets of analyses: comparing SWOW-DE to other languages and using SWOW-DE to predict psycholinguis-tic experimental results. These analyses showcase several transformations of SWOW-DE that produce representations emphasizing di ff erent properties of the associations and en-abling di ff erent applications. Figure 4 provides an overview of these transformations and representations, to which we will refer in the upcoming demonstrations. These analyses also showcase the performance users can expect, relative to 6 AESCHBACH 
+
+Figure 3 
+
+Participant demographics. (A) Participants’ age distribution (horizontal bars) compared to the population of Germany in 2023 (lines and area) by gender. Note that population data are only available up to 89 years of age. (B) Approximate participant location and native German variant of participants included in SWOW-DE. 
+
+Figure 4 
+
+Overview of transformations applied to free-association data. (A) Raw cue–response frequency matrix, with cues as rows and responses as columns; each cell contains the number of times a response was produced for a cue. This standard repre-sentation can predict word similarity using response covariance. (B) Summary vector derived from (A), aggregating response frequencies across all cues, with responses as columns and total frequencies as values. This representation is used to predict response times in lexical decision tasks and to compare frequent responses across languages. (C) Matrix after applying a positive pointwise mutual information (PPMI) transformation to A, emphasizing informative cue–response associations, which improves word similarity predictions over raw counts. (D) Dimensionality-reduced cue representation obtained via singular value decomposition (SVD); cues are rows, latent dimensions are columns, and values indicate each cue’s magnitude on a dimension. This representation further improves on the predictiveness of word similarity and is well-suited to predict word-level features, such as ratings on arousal or valence. (E) Cue–cue similarity matrix computed from representations in (A), (B), or (C) using a similarity function (here, cosine similarity; Cos). (F) Network representation inferred (NW) from cue–cue similarities in (E) or from cue–response associations in (A), with cues as nodes and association strengths as edges. SWOW-DE 7alternative approaches (e.g., text-based word embeddings) and to SWOW data sets in other languages, when employing SWOW-DE in psycholinguistic and cognitive research. A starting point for all transformations and analyses is the cue response matrix shown in Panel A in Figure 4. It tab-ulates the frequency of response types (columns) across all cues (rows). For SWOW-DE, this matrix comprises 5,877 rows and 85,227 columns. 
+
+Comparing Free Associations Across Languages 
+
+The SWOW project collects free-association data in 20 languages across multiple continents using a shared study design, enabling larger-scale cross-linguistic comparisons of associative patterns and semantic structure than were previ-ously possible. Here, we compare SWOW-DE with publicly available data from other language projects, analyzing the most frequent responses and the semantic network structure in each language. 
+
+Comparison of Response Frequencies 
+
+Response frequency in free-association tasks can be un-derstood as a measure of cultural importance. We evalu-ated the most frequent responses in SWOW-DE against all publicly available SWOW data sets (in English, Dutch, Rio-platense Spanish, Mandarin Chinese, and Slovene; Brglez et al., 2024; Cabana et al., 2023; De Deyne et al., 2013, 2019; Li et al., 2024), by summing the frequency of re-sponse types across all cues (Panel B in Figure 4). Table 1 shows the 10 most frequent words in each language. De-spite geographic and cultural di ff erences, the most frequent responses largely overlapped. Responses such as money, wa-ter, food, work, and love are top responses across many of the languages; however, the ordering and entries of the top 10 responses vary. In the German top 10, for instance, the second most frequent response, music, is listed much higher than in other languages, whereas the fourth most frequent response, school, appears only in two other languages. More systematic analyses of word-frequency di ff erences could un-cover general trends across languages and possible culture and language-specific di ff erences. 
+
+Comparison of Semantic Networks 
+
+Semantic networks capture the structure of relationships among words and can be characterized in terms of their con-nectedness, structure, and e ffi ciency (Borge-Holthoefer & Arenas, 2010; Kumar et al., 2022; Siew et al., 2019). Se-mantic networks have been used to model the structural un-derpinnings of semantic cognition (Steyvers & Tenenbaum, 2005), and elucidate cognitive di ff erences across individu-als (Morais et al., 2013), and people of di ff erent ages (Du-bossarsky et al., 2017; Wul ff , De Deyne, et al., 2022) or cre-ativity (Benedek et al., 2017; Kenett et al., 2014). Here, we use semantic networks to analyze di ff erences in the semantic organization of languages. There are several methodological approaches for con-structing semantic networks from free-association data (see Figure 4). We chose a direct approach by constructing a cue–cue network with directed edges reflecting the number of times that a cue produced other cues as responses (direct path from Panel A in Figure 4). This resulted in a directed network with 5,877 nodes and 242,330 edges (Panel F in Figure 4). We used the igraph package version 2.1.4 for R (Csárdi et al., 2025) for all network calculations. Table 2 shows the network measures for the matched Ger-man, Dutch, English, Rioplatense Spanish, and Mandarin Chinese semantic networks. Focusing on SWOW-DE, shown in the first row, we observe a small-world network structure (Watts & Strogatz, 1998) characterized by high clustering compared to a weighted, directed random network of the same size ( Avg .CC S WOW −DE = 0.14, Avg .CC Random = 0.01) and a short average path length compared to a weighted, directed regular lattice of similar size ( AS PL S WOW −DE =
+
+111 .45, AS PL Regular = 1683 .06). Small-world structure has been repeatedly observed for semantic networks (Steyvers & Tenenbaum, 2005; Wul ff , Hills, & Mata, 2022), is a feature of many naturally occurring networks, and is thought to fa-cilitate e ffi cient information transmission (Watts & Strogatz, 1998). How does the structure of the SWOW-DE network com-pare to those of other languages? For meaningful compar-isons, the size of the networks must be held constant; in the chosen approach, this is determined by the number of cues. As SWOW projects di ff er substantially in the num-ber of cues that they include, we had to equate the networks across all languages. To do this, we selected the cue words most frequently mentioned in the responses in each language, matching the number of cues (5,877) in the German data, and sampled 55 response triplets per selected cue. This sampling approach reduced the networks to the most important 5,877 words in each data set and mirrors the cue word selection process in SWOW project expansions. Due to their much smaller size, the Slovene data (Brglez et al., 2024; Vintar et al., 2025) could not be equated in this way and were therefore excluded from this comparison. Table 2 shows the network measures for all included lan-guages, revealing striking similarities: Number of edges, av-erage strength, average shortest path-length (ASPL; directed, weighted), and average local clustering coe ffi cient (Average CC; directed, unweighted) were all within 24% of the largest value. These results show that despite geographic, cultural, and demographic di ff erences, free-association language net-works exhibit similar small-world-like structures, suggesting a strong universal component. We hope that these prelim-inary analyses motivate future investigations into the com-monalities and di ff erences between associations and seman-8 AESCHBACH 
+
+Table 1 
+
+Top 10 Free-Association Responses in SWOW Datasets 
+
+R German English a Dutch b Rioplatense Spanish c Slovene d Mandarin Chinese e
+
+1 Geld (money) money water (water) agua (water) denar (money) 人 (person) 
+
+2 Musik (music) food geld (money) comida (food) delo (work) 钱 (money) 
+
+3 Arbeit (work) water eten (food) amor (love) avto (car) 水 (water) 
+
+4 Schule (school) car pijn (pain) trabajo (work) šola (school) 工作 (work) 
+
+5 Wasser (water) music auto (car) dolor (pain) šport (sport) 可爱 (cute) 
+
+6 Essen (food) green lekker (tasty) dinero (money) služba (job) 红色 (red) 
+
+7 Auto (car) red muziek (music) música (music) knjiga (book) 老师 (teacher) 
+
+8 Liebe (love) love mooi (beautiful) animal (animal) ˇcas (time) 游戏 (game) 
+
+9 alt (old) work kinderen (children) vida (life) ˇclovek (person) 时间 (time) 
+
+10 Familie (family) old school (school) casa (house) ljubezen (love) 朋友 (friend)       
+
+> Note. Top 10 responses of SWOW-DE-2025-R55 cue words compared to English, Dutch, Rioplatense Spanish, Slovene, and Mandarin Chinese SWOW datasets. R: Rank. aDe Deyne et al. (2019) bDe Deyne et al. (2013) cCabana et al. (2023) dBrglez et al. (2024) eLi et al. (2024)
+
+Table 2 
+
+Semantic Network Properties of Multiple Languages’ SWOW Free Associations 
+
+Dataset Language Number of Edges Average Strength ASPL a Average CC b
+
+SWOW-DE German 242,330 197.38 111.45 0.14 SWOW-NL Dutch 296,052 253.98 109.03 0.14 SWOW-EN English 311,682 246.39 100.85 0.11 SWOW-RP Rioplatense Spanish 272,948 202.88 108.71 0.13 SWOW-ZH Mandarin Chinese 280,764 192.79 108.82 0.12   
+
+> Note. Properties of semantic networks generated from the German, English, Rioplatense Spanish, and Mandarin Chiniese SWOW free-association data. Results of non-German networks are based on subsets matching the Ger-man data in numbers of cues and responses per cue. All semantic networks have 5,877 nodes. aweighted, directed
+> bunweighted, directed
+
+tic networks across languages, leveraging the unique oppor-tunities o ff ered by the international SWOW project. 
+
+Predicting Psycholinguistic Data using Free Associations 
+
+Free association is a primary approach to estimating the representational underpinnings of semantic cognition (De Deyne et al., 2019; Wul ff , De Deyne, et al., 2022) in the form of semantic networks, word embeddings, or response frequency distributions. Here, we show that these represen-tations can be used to accurately predict key psycholinguis-tic measures, including reaction times in recognizing words among pseudo-words, judgments of the relatedness of word pairs, and ratings of word properties such as valence. 
+
+Predicting Lexical Decision Task Reaction Times using Re-sponse Frequencies 
+
+The lexical decision task (LDT) tests word recognition by presenting participants with a mix of words and pseudo-words. Participants then decide, as quickly as possible, whether a presented string of letters is a word in a given language. It is widely established that response times in LDT are correlated with corpus-based word frequency (e.g., Balota et al., 2006; Brysbaert et al., 2011; Gerhand & Barry, 1999). Moreover, in other languages, free-association re-sponse frequencies have been found to match or exceed pre-dictive accuracy of corpus-based word frequencies (Cabana et al., 2023; De Deyne et al., 2013, 2019; Li et al., 2024). Here, we test the predictive accuracy of free associations for LDT response times against corpus-based German word frequencies. As the benchmark, we use the “DeveL” data (Schröter & Schroeder, 2017) containing LDT responses to SWOW-DE 9
+
+Figure 5 
+
+Validation with lexical decision task response times. Absolute Pearson correlation coe ffi cients |r| for LDT reaction times of 1,152 (576 for Grade 1) German words (Schröter & Schroeder, 2017) and SUBTLEX-DE word frequency (Brysbaert et al., 2011) as well as SWOW-DE free-association response frequency. Correlations are shown for each of the age groups in Schröter and Schroeder (2017). SUBTLEX-DE and SWOW-DE frequency measures are log-transformed using base 10. Error bars indicate 95% confidence intervals, p-values between SUBTLEX-DE and SWOW-DE correlations are based on Z tests for equality of pairwise dependent correlations proposed by Steiger (1980). 
+
+1,152 (576 for Grade 1) German words and pseudo-words collected from a total of 782 German-speaking schoolchil-dren in Grades 1 to 6, as well as younger (20–30 years) and older (65–75 years) adults. To predict LDT response time, we aggregated response frequencies over all cues in SWOW-DE (cf. Panel B in Figure 4). As a comparison baseline, we used German SUBTLEX word frequencies derived from a German subtitle corpus (Brysbaert et al., 2011). The SUB-TLEX data have previously been shown to correlate more strongly with LDT response times than other available Ger-man word-frequency sources (Brysbaert et al., 2011). Word frequencies from both SWOW-DE and SUBTLEX were log-transformed (base-10) before correlating them with LDT re-sponse time. We report the absolute Pearson correlation as a measure of predictive accuracy. Figure 5 shows correlations ( |r|) with LDT response times for each age group, separately for SUBTLEX and SWOW-DE. Except for very young schoolchildren (Grade 1), we ob-served high correlations between .5 and .6 for SWOW-DE, comparable to those found in analyses of English, Dutch, Ri-oplatense Spanish, and Mandarin Chinese SWOW data (Ca-bana et al., 2023; De Deyne et al., 2013, 2019; Li et al., 2024). These correlations were 12.48% to 47.51% higher than those observed for SUBTLEX (Brysbaert et al., 2011); all comparisons p ≤ 0.001 using the method proposed by Steiger (1980). Note that the German SUBTLEX seems to correlate less with LDT response time ( .22 < r < . 53) than SUBTLEX in other languages (e.g., .55 < r < . 65 for En-glish and Spanish SUBTLEX, Cabana et al., 2023; De Deyne et al., 2019), which may be due to the di ff erences between SUBTLEX variants or the German LDT data set employed in our analysis. Either way, SWOW-DE appears to provide the best available predictions of LDT data in German to date. 
+
+Predicting Relatedness Judgments and Word-Ratings using Free Associations 
+
+A particular form of representation that can be extracted from free associations is word embeddings (Cabana et al., 2023; Hussain, Mata, Newell, & Wul ff , 2024; Hussain, Mata, & Wul ff , 2024; Li et al., 2024). Word embeddings represent the meaning of words as high-dimensional numerical vec-tors, which can be used to evaluate semantic similarity be-tween words or to directly decode semantic features, such as valence, using predictive models. Here, we explore the util-ity of SWOW-DE embeddings for predicting human word-relatedness judgments and psycholinguistic word ratings. 
+
+Word Relatedness Judgments. The relatedness judg-ment task presents participants with two words and asks them to judge their relatedness on a numerical rating scale (e.g., Benedek et al., 2017; Kraemer et al., 2021; Wul ff , Hills, 10 AESCHBACH 
+
+Figure 6 
+
+Predictions of Relatedness Judgments and Psycholinguistic Word Attributes. (A) Pearson correlation coe ffi cients (r) between six data sets of empirical relatedness judgments and SWOW-DE-based relatedness (blue bars) as well as comparison (large) language model-based relatedness (gray bars). Error bars indicate 95% confidence intervals of correlation coe ffi cients. (B) Explained variance (R 2) of German word norms by three language models using 10-fold cross-validated ridge regression trained on 80% of the data and evaluated on 20% of the data. Ordered left to right by decreasing SWOW-DE R 2. Vertical lines indicate bootstrapped 95% confidence intervals for R 2.SWOW-DE 11 & Mata, 2022). We compiled relatedness judgment data sets from several sources: 350 German word pairs from the Multilingual WS 353 data set 1 (Wordsim 353 ) described in Leviant and Reichart (2015), 999 German word pairs from an adaption of the SimLex-999 2 (SimLex 999 ) described in Leviant and Reichart (2015), two German-only relatedness judgment data sets with 222, and 350 words 3 (Gurevych 222 ,
+
+Gurevych 350 ) described in Gurevych (2005, 2020), and two German-only relatedness judgment data sets on 63 animals from younger and older adults ( Wul ff et al. (18–32) , Wul ff 
+
+et al., (65–78) ) described in Wul ff , Hills, and Mata (2022). Together, the data cover multiple parts of speech and words from diverse categories and levels of concreteness; however, they are somewhat biased towards concrete nouns, and, in the case of Wul ff , Hills, and Mata (2022), a specific category (animals). To predict word-relatedness judgments, we extracted four word embeddings from SWOW-DE that represent di ff erent levels of inference. The baseline embedding is the matrix of cues × responses containing cue-specific response type frequencies ( SWOW ; Panel A in Figure 4). The second embedding applies a positive pointwise mutual information (PPMI) transformation that accounts for overall variability of cue and response type frequencies and has been shown to outperform the raw frequencies of the baseline embed-ding (e.g., Bullinaria & Levy, 2007; Salle & Villavicencio, 2019) ( SWOW + PPMI ; Panel C in Figure 4). The third embedding applies singular value decomposition (SVD) to the PPMI-transformed frequencies to compress the column dimensionality to 300 dimensions and infer unobserved re-lationships between cues ( SWOW + PPMI + SVD ; Panel D in Figure 4). The fourth approach is technically not an em-bedding but instead estimates relatedness directly using a de-caying random-walk process (Abbott et al., 2015). Specifi-cally, this approach first extracts a strongly connected com-ponent that includes all cues appearing in the responses and then applies PPMI, random-walk (RW) inference, and PPMI again ( SWOW + PPMI + RW + PPMI ). For details on this approach, see De Deyne et al. (2019). As benchmarks for the free-association-based embed-dings, we also obtained two text-based language models’ embeddings; the German fastText model ( fastText ; Grave et al., 2018) and the multilingual BGE-M3 model ( BGE-M3 ;Chen et al., 2024). These models serve as representative examples of non-contextual (fastText) and contextual (BGE-M3) text-based embedding approaches. We extracted non-contextualized embeddings from BGE-M3 by inputting the words in isolation (Tikhomirova & Wul ff , 2026). To gener-ate predictions across all embedding models, we computed the cosine similarity between the embeddings of each word pair for each model. Figure 6A shows Pearson correlation ( r) between human-relatedness judgments and the five embedding models. SWOW-DE embeddings showed high correlations, with an average ¯ r = .66 across data sets and embedding types. High-inference SWOW-DE embeddings based on singular value decomposition and random-walk inference performed best, with singular value decomposition achieving a slightly higher average performance of ¯ rS WOW +PPMI +S V D = .73 as compared to random-walk inference ¯ rS WOW +RW +PPMI = .71. The performance of both far exceeded that of the text-based embeddings (¯ rBGE −M3 = .52; ¯r f astT ext = .49); however, the advantage of SWOW-DE varies considerably across data sets. These results are consistent with similar results for En-glish, Rioplatense Spanish, and Mandarin Chinese SWOW data (Cabana et al., 2023; De Deyne et al., 2019; Li et al., 2024). Together, they show that SWOW-DE permits accurate estimation of semantic relatedness, exceeding those of much larger text corpus-based language models, including mod-ern transformer-based language models (for an overview, see Hussain, Binz, et al., 2024). 
+
+Psycholinguistic Word Ratings. Another application of embedding models is to decode from them features of the embedded words by means of predictive models. Here, we test how well SWOW-DE embeddings can be used to predict psycholinguistic word norms (e.g., Hussain, Mata, Newell, & Wul ff , 2024; Vankrunkelsven et al., 2018) relative to text-based models. We obtained word norms on valence (Kanske & Kotz, 2010; Schmidtke et al., 2014), dominance (Schmidtke et al., 2014), arousal (Kanske & Kotz, 2010; Schmidtke et al., 2014), concreteness (Kanske & Kotz, 2010), age of acqui-sition (Birchenough et al., 2017), imageability (Schmidtke et al., 2014), and potency (Schmidtke et al., 2014). Each source included word ratings for about 1,000 German words, with age-of-acquisition ratings available for 3,259 words. For each word, we then extracted embedding vectors from the best-performing SWOW-DE-based and text-based lan-guage models ( SWOW + PPMI + SVD and fastText ). Next, we L2-normalized the vectors in each embedding to align their lengths, and then predicted each word rating from the z-standardized embedding dimensions using ridge regression; we evaluated performance using R2 values obtained from predicting a held-out set of test data (20%) using a model fitted on training data (80%) with 10-fold cross-validation (for a similar approach, see Hussain, Mata, Newell, & Wul ff ,2024; Hussain, Mata, & Wul ff , 2024). In addition to eval-uating each embedding model separately, we also tested a concatenation of the models to evaluate whether SWOW-DE can add to the predictive accuracy of the text-based     
+
+> 1retrieved from https: // github.com /nmrksic /eval-multilingual-simlex /tree /master /evaluation /ws-353
+> 2retrieved from https: // github.com /iraleviant /eval-multilingual-simlex /blob /master /evaluation /simlex-german.txt
+> 3retrieved from https: // tudatalib.ulb.tu-darmstadt.de /handle /tudatalib /2440
+
+12 AESCHBACH 
+
+model (see also, Hussain, Mata, Newell, & Wul ff , 2024). Note that we extracted 300-dimensional embeddings from SWOW-DE, matching the dimensionality of fastText, so that both embeddings are weighted equally in the concatenated 600-dimensional embedding. Figure 6B shows the predictive performance by word norms ordered according to R2 
+
+> S WOW
+
+. Psycholinguistic word norms were overall accurately captured with an average R2 =
+
+.67 and performances ranging from .40 to .85. The SWOW-DE ¯R2S WOW = .60 ( R2 
+
+> S WOW
+
+∈ [.40 , . 76]) embedding per-formed overall slightly worse than the fastText embeddings ¯R2 f T = .67 ( R2 
+
+> f T
+
+∈ [.50 , . 82]); however, this di ff erence ap-pears to be driven by a subset of norms, especially con-creteness and age of acquisition. The concatenated model consistently outperformed each individual embedding with ¯R2S WOW + f T = .72 ( R2  
+
+> S WOW +f T
+
+∈ [.55 , . 85]). Together, these results show that SWOW-DE enables accurate decoding of key psycholinguistic variables at a level almost comparable to that of a text-based language model trained on orders of magnitude more data. Moreover, the fact that the concate-nated embedding outperformed the individual models further suggests that SWOW-DE contains psycholinguistic informa-tion not encoded in the text-based model (cf De Deyne et al., 2021; Hussain, Mata, & Wul ff , 2024). These results coincide with other results highlighting the value of combining repre-sentations from di ff erent data sources (e.g., De Deyne et al., 2021; Hussain, Mata, Newell, & Wul ff , 2024). Overall, our demonstrations show that SWOW-DE is a powerful resource that extends the German psycholinguistic toolkit by improv-ing predictions of psycholinguistic data, both as a standalone resource and alongside other resources. 
+
+Discussion 
+
+We presented the Small World of Words free-association norms for the German language. This ongoing, multifaceted data-collection e ff ort has produced the largest set of German free-association norms to date. The resulting SWOW-DE data set comprises 5,877 German cue words, each presented to at least 55 respondents who provided three responses per cue, yielding just under one million free-association re-sponses. Our open, web-based recruitment strategy led to a heterogeneous sample of German-speaking adults, spanning a wide age range and representing both urban and rural re-gions across multiple European countries. As a result, the data set not only broadens the linguistic and cultural diver-sity available in psychological research but also o ff ers a rich representation of the German-speaking population. We demonstrated the utility of our free-association data in multiple applications. First, we compared the German free associations with those in other languages in the Small World of Words project for which similar data sets using the same general methodology have been assessed. Initial com-parisons of most frequent responses showed high similar-ity between German, English, Dutch, Rioplatense Spanish, Mandarin Chinese, and Slovene data, despite the large geo-graphical and cultural distance among some of the compared populations. Specifically, free-association networks derived from cue–response relationships showed comparable struc-tural properties across languages, including small-world or-ganization, demonstrating that patterns observed in earlier SWOW data sets extend to German, and suggesting a uni-versal structure of semantic networks from free associations. Second, we demonstrated utility in predicting psycholin-guistic empirical data on the word and word-pair level. This included showing that our free-association responses corre-late more strongly with lexical decision response times than SUBTLEX word frequency (Brysbaert et al., 2011). We next demonstrated that language models created from the cue-specific response frequencies in our data correlate highly with human-relatedness judgments of word pairs and outper-form standard corpus-based language models (BGE-M3 and fastText; Chen et al., 2024; Grave et al., 2018). Finally, we showed that a ridge regression based on a free-association embedding model results in a prediction of psycholinguis-tic word properties comparable to a standard corpus-based language model (fastText; Grave et al., 2018), with few ex-ceptions. It is important to note that these results have been achieved using a considerably smaller data set than was avail-able in previous analyses of SWOW data in other languages (Cabana et al., 2023; De Deyne et al., 2013, 2019; Li et al., 2024), and with a fraction of the data used to train text-based models. All in all, these applications highlight that SWOW-DE ef-ficiently captures meaningful aspects of human behavior, es-tablishing SWOW-DE as a multipurpose window into human semantic knowledge and cognition in general. 
+
+Implications 
+
+SWOW-DE provides several benefits for psychological, linguistic, and related research. First, the data set o ff ers a comprehensive set of German free-association norms that can be used directly in studies with German-speaking par-ticipants, eliminating the need to rely on translated norms or proxy estimates from other languages. Using language-specific norms reduces translation-related artifacts and better reflects the linguistic and experiential background of the pop-ulation under study. Second, the availability of a large-scale German data set contributes to greater linguistic diversity in behavioral and psycholinguistic research, which remains dominated by evidence from a small number of languages (Bergho ff & Bylund, 2025). Third, because SWOW-DE fol-lows the same study design as other SWOW data sets, it facil-itates systematic cross-linguistic analyses of free-association data, increasing the interpretability and scope of comparative work as additional data sets become available. Fourth, vali-dation analyses show that SWOW-DE norms perform favor-SWOW-DE 13 ably compared to text-corpus-based language models in pre-dicting empirical psycholinguistic data. Using SWOW-DE instead of alternative sources of word frequencies or embed-dings may therefore improve predictions of human behav-ior. In addition, unlike text-corpus-based language models, SWOW-DE provides detailed information about its underly-ing data, including participant demographics, time of data collection, and location data, enabling transparent reporting of potential biases and, where necessary, targeted filtering by time period, participant characteristics, or geographic region. 
+
+Limitations 
+
+There are some important limitations to the data and anal-yses presented here. First, although SWOW-DE is the largest collection of German free associations to date, it is smaller than most other published SWOW data sets (e.g., English: 12,292 cues, 100 participants per cue; Dutch: 12,571 cues, 100 participants per cue). By prioritizing words that occur frequently in text corpora and association responses during cue set expansion, SWOW-DE optimizes usefulness for its size, and as the evaluation results demonstrate, its current scale is su ffi cient to match or exceed the performance of al-ternative models in many applications. Because data collec-tion is ongoing, future releases will further expand the data set. Second, the long data-collection period and iterative cue set expansion introduce potential confounds, including period e ff ects. We have not explicitly tested for such ef-fects; however, SWOW-DE includes timing information that would allow such analyses in future work. Third, the cross-linguistic network comparisons required equating data set sizes by selecting the most frequent cues from larger SWOW projects and sampling 55 response trials per cue. Although this controlled for di ff erences in word frequency, future re-search should explore more refined matching strategies, such as cue-by-cue, translation-based alignment. Finally, compar-isons of predictive performance with other SWOW valida-tion studies are potentially a ff ected by smaller German LDT and relatedness judgment data sets than those available in other languages. Nonetheless, the replication of similar ef-fects across languages and the common inclusion of Sim-Lex data (Hill et al., 2015; Leviant & Reichart, 2015), which was previously used to validate data sets in other languages, strengthen overall confidence in free-association norms as robust predictors of psycholinguistic outcomes. 
+
+Future Work 
+
+Several directions for future work follow from the present study. At the level of data collection, SWOW-DE could be expanded by increasing both the number of responses per cue and the number of cue words, bringing it closer in scope to larger SWOW data sets available for other languages. In ad-dition, greater harmonization of cue selection across SWOW languages, for example, with respect to psycholinguistic di-mensions or conceptual coverage, could further improve the comparability of data sets in cross-linguistic analyses. How-ever, such e ff orts should be balanced with e ff orts to cover the most important words in each language. Beyond data expansion, SWOW-DE invites a range of analytic extensions. These include assessing whether free-association-based models improve predictions of human be-havior in additional experimental paradigms and exploring how alternative sampling or aggregation strategies a ff ect de-rived representations. Further, examining subsets of SWOW-DE defined by participant characteristics or time periods may yield more accurate predictions for corresponding outcomes, providing insights into semantic structure and conceptual variation. The cross-linguistic comparisons presented here are intentionally limited in scope; more systematic compar-ative analyses across languages could help identify shared and language-specific patterns in free associations, with im-plications for theories of language processing and semantic memory. Finally, SWOW-DE o ff ers opportunities to evaluate and better align text-corpus-based language models, includ-ing large language models, with human semantic behavior. In sum, we introduced the SWOW-DE free-association data set, documented its collection and preprocessing, and demonstrated its utility across a range of applications, in-cluding cross-linguistic comparisons and the prediction of empirical psycholinguistic data. Together, these results es-tablish SWOW-DE as a robust, transparent, and versatile re-source for research into German language processing, se-mantic memory, and cross-linguistic variation. By making the data set openly available, we aim to support both method-ologically grounded stimulus selection and the development and evaluation of models of human semantic knowledge. De-tails about data access are provided in the section Availability of Data and Materials .
+
+Acknowledgments 
+
+We thank all the numerous volunteers who contributed to the project through participation in the free-association task and dissemination of the project. We thank Harald Baayen for contributions early in the project. Finally, we thank Laura Wiles for editing the manuscript. 
+
+Declarations Funding 
+
+This work was supported by a grant from the Swiss National Science Foundation to Dirk U. Wul ff (197315). Kaidi Lõo acknowledges funding from the Estonian Re-search Council grant PSG743 (PI: Kaidi Lõo). 14 AESCHBACH 
+
+Conflicts of Interest /Competing Interests 
+
+The authors declare to have no conflicts of interest or com-peting interests. 
+
+Ethics Approval 
+
+This study was performed in line with the principles of the Declaration of Helsinki and was reviewed and approved by the institutional review board of the Faculty of Psychol-ogy at the University of Basel with the identifier 012-14-2. The project was further reviewed and approved by the insti-tutional review board of the KU Leuven with the identifier G-2020-2140-R3(AMD). 
+
+Consent to Participate 
+
+Consent to participate was obtained by showing partici-pants a page with information about the goals of the project, contents and duration of the web-based free-association task, and responsible researchers including links to contact them, followed by a button labeled “I want to participate”, which all participants clicked prior to participation. Additionally, participants were informed that any data they provided would be stored anonymously and used for research purposes only. 
+
+Availability of Data and Materials 
+
+The data set generated and analyzed in this study is available for non-commercial purposes from the Small World of Words research website https: // smallworldofwords.org /de /project /research. The “SWOW-DE” data set analyzed here can be downloaded as “SWOW-DE 2025 R55” and includes three responses from exactly 55 participants for each of 5,877 cue words. In addition, a data set “SWOW-DE 2025 RAW” including all collected responses from included participants for 6,003 cue words (including some with few responses) is available. We recommend using the data found in “SWOW-DE 2025 R55” for most applications and would like to encourage the explicit mentioning of the exact data set used as well as citing this article when using it. 
+
+Code Availability 
+
+The code to perform preprocessing of the raw data and all analyses performed for this paper are available in the GitHub repository https: // github.com /samuelae /SWOW-DE-2025-Code. 
+
+Authors’ Contributions 
+
+Conceptualization: S.A., S.D.D., K.L. R.M., D.U.W.; Data curation: S.A., S.D.D., D.U.W.; Formal analysis: S.A.; Funding acquisition: R.M., S.D.D., D.U.W.; Investigation: S.A., R.M., D.U.W.; Methodology: S.A., K.L., S.D.D., D.U.W.; Project administration: S.A., R.M., S.D.D., D.U.W.; Resources: S.A., K.L., S.D.D., D.U.W.; Software: S.A., S.D.D., D.U.W; Supervision: R.M., D.U.W.; Visualization: S.A., D.U.W.; Writing – original draft: S.A.; Writing – re-view & editing: S.A., R.M., K.L., S.D.D., D.U.W. 
+
+References 
+
+Abbott, J. T., Austerweil, J. L., & Gri ffi ths, T. L. (2015). Ran-dom walks on semantic networks can resemble op-timal foraging. Psychological Review , 122 (3), 558– 569. https: // doi.org /10.1037 /a0038693 Abramski, K., Improta, R., Rossetti, G., & Stella, M. (2025). The “LLM World of Words” English free associ-ation norms generated by large language models. 
+
+Scientific Data , 12 (1), Article 803. https: // doi.org /
+
+10.1038 /s41597-025-05156-9 Aeschbach, S., Mata, R., & Wul ff , D. U. (2025a). Mapping mental representations with free associations: A tu-torial using the R package associatoR. Journal of Cognition , 8(1), Article 3. https: // doi.org /10.5334 /
+
+joc.407 Aeschbach, S., Mata, R., & Wul ff , D. U. (2025b). Measuring individual semantic networks: A simulation study. 
+
+PLoS ONE , 20 (8), Article e0328712. https : / / doi . org /10.1371 /journal.pone.0328712 Bach, M., Gawronski, K., Ho ff mann, S., & Mudi-appa, M. (2024, November). Bildungsniveau der Bevölkerung [Educational level of the popula-tion]. In Sozialbericht 2024 [Social report 2024] 
+
+(pp. 118–119). Bundeszentrale für politische Bil-dung [Federal Agency for Civic Education]. Re-trieved October 21, 2025, from https: // www.bpb. de / kurz- knapp / zahlen- und- fakten / sozialbericht-2024 /553121 /bildungsniveau-der-bevoelkerung /
+
+Balota, D. A., Yap, M. J., & Cortese, M. J. (2006, January). Visual word recognition: The journey from features to meaning (a travel update). In M. J. Traxler & M. A. Gernsbacher (Eds.), Handbook of Psycholin-guistics (Second Edition) (2nd ed, 285–375). Aca-demic Press. https : / / doi . org / 10 . 1016 / B978 -012369374-7 /50010-9 Bates, E., Devescovi, A., & Wulfeck, B. (2001). Psycholin-guistics: A cross-language perspective. Annual Re-view of Psychology , 52 (1), 369–396. https: // doi.org /
+
+10.1146 /annurev.psych.52.1.369 Benedek, M., Kenett, Y. N., Umdasch, K., Anaki, D., Faust, M., & Neubauer, A. C. (2017). How semantic mem-ory structure and intelligence contribute to creative thought: A network science approach. Thinking &
+
+Reasoning , 23 (2), 158–183. https : / / doi . org / 10 . 1080 /13546783.2016.1278034 Bergho ff , R., & Bylund, E. (2025). Diversity in research on the psychology of language: A large-scale exam-ination of sampling bias. Cognition , 256 , Article SWOW-DE 15 106043. https: // doi.org /10.1016 /j.cognition.2024. 106043 Birchenough, J. M. H., Davies, R., & Connelly, V. (2017). Rated age-of-acquisition norms for over 3,200 Ger-man words. Behavior Research Methods , 49 (2), 484–501. https : / / doi . org / 10 . 3758 / s13428 - 016 -0718-0 Blondel, V. D., Guillaume, J.-L., Lambiotte, R., & Lefebvre, E. (2008). Fast unfolding of communities in large networks. Journal of Statistical Mechanics: Theory and Experiment , 2008 (10), Article P10008. https : 
+
+// doi.org /10.1088 /1742-5468 /2008 /10 /P10008 Borge-Holthoefer, J., & Arenas, A. (2010). Semantic net-works: Structure and dynamics. Entropy , 12 (5), 1264–1302. https: // doi.org /10.3390 /e12051264 Brglez, M., Vintar, Š., & De Deyne, S. (2024, November). 
+
+Word association norms for Slovenian SWOW-SL 1.0 [Data set] . Faculty of Arts, University of Ljubl-jana. Retrieved October 1, 2025, from http : / / hdl . handle.net /11356 /1980 Brochhagen, T., Boleda, G., Gualdoni, E., & Xu, Y. (2023). From language development to language evolution: A unified view of human lexical creativity. Science ,
+
+381 (6656), 431–436. https : / / doi . org / 10 . 1126 /
+
+science.ade7981 Brysbaert, M., Buchmeier, M., Conrad, M., Jacobs, A. M., Bölte, J., & Böhl, A. (2011). The word frequency eff ect. Experimental Psychology , 58 (5), 412–424. https: // doi.org /10.1027 /1618-3169 /a000123 Bullinaria, J. A., & Levy, J. P. (2007). Extracting semantic representations from word co-occurrence statistics: A computational study. Behavior Research Meth-ods , 39 (3), 510–526. https : / / doi . org / 10 . 3758 /
+
+BF03193020 Bundesamt für Statistik [Swiss Federal Statistical O ffi ce]. (2025, February). Bildungsniveau der Erwerbs-bevölkerung [Educational level of the economically active population] [Data set] . Schweizerische Ar-beitskräfteerhebung [Swiss Labour Force Survey]. Retrieved October 29, 2025, from https: // www.bfs. admin.ch /asset /de /34027538 Cabana, Á., Zugarramurdi, C., Valle-Lisboa, J. C., & De Deyne, S. (2023). The "Small World of Words" free association norms for Rioplatense Spanish. Behav-ior Research Methods , 56 , 968–985. https: // doi.org /
+
+10.3758 /s13428-023-02070-z Chen, J., Xiao, S., Zhang, P., Luo, K., Lian, D., & Liu, Z. (2024, June). BGE M3-embedding: Multi-lingual, multi-functionality, multi-granularity text embed-dings through self-knowledge distillation . arXiv. https: // doi.org /10.48550 /arXiv.2402.03216 Csárdi, G., Nepusz, T., Traag, V., Horvát, S., Zanini, F., Noom, D., & Müller, K. (2025). Igraph: Network analysis and visualization in R . Zenodo. https: // doi. org /10.5281 /zenodo.7682609 De Deyne, S. (2024). Evaluating human-like similarity bi-ases at every scale in Large Language Models: Evi-dence from remote and basic-level triads. Proceed-ings of the Annual Meeting of the Cognitive Science Society , 46 (0). Retrieved April 7, 2026, from https: 
+
+// escholarship.org /uc /item /45v7s17g De Deyne, S., Navarro, D. J., & Storms, G. (2013). Bet-ter explanations of lexical and semantic cognition using networks derived from continued rather than single-word associations. Behavior Research Meth-ods , 45 (2), 480–498. https : / / doi . org / 10 . 3758 /
+
+s13428-012-0260-7 De Deyne, S., Navarro, D. J., Collell, G., & Perfors, A. (2021). Visual and a ff ective multimodal models of word meaning in language and mind. Cognitive Sci-ence , 45 (1), Article e12922. https : / / doi . org / 10 . 1111 /cogs.12922 De Deyne, S., Navarro, D. J., Perfors, A., Brysbaert, M., & Storms, G. (2019). The “Small World of Words” English word association norms for over 12,000 cue words. Behavior Research Methods , 51 (3), 987– 1006. https: // doi.org /10.3758 /s13428-018-1115-7 De Deyne, S., Perfors, A., & Navarro, D. J. (2017). Predict-ing human similarity judgments with distributional models: The value of word associations. Proceed-ings of the Twenty-Sixth International Joint Confer-ence on Artificial Intelligence , 4806–4810. https: // 
+
+doi.org /10.24963 /ijcai.2017 /671 Dubossarsky, H., De Deyne, S., & Hills, T. T. (2017). Quan-tifying the structure of free association networks across the life span. Developmental Psychology ,
+
+53 (8), 1560–1570. https : / / doi . org / 10 . 1037 /
+
+dev0000347 Eberhard, D. M., Simons, G. F., & Robinson, A. J. (Eds.). (2026a). German, Standard (29th ed.). Retrieved October 15, 2025, from https: // www.ethnologue. com /language /deu /
+
+Eberhard, D. M., Simons, G. F., & Robinson, A. J. (Eds.). (2026b). German, Swiss (29th ed.). Retrieved Octo-ber 15, 2025, from https: // www.ethnologue.com /
+
+language /gsw /
+
+Fitzpatrick, T., & Thwaites, P. (2020). Word association research and the L2 lexicon. Language Teaching ,
+
+53 (3), 237–274. https : / / doi . org / 10 . 1017 /
+
+S0261444820000105 Galton, F. (1883). Inquiries into human faculty and its devel-opment . MacMillan. Gerhand, S., & Barry, C. (1999). Age of acquisition, word frequency, and the role of phonology in the lexi-cal decision task. Memory & Cognition , 27 (4), 592– 602. https: // doi.org /10.3758 /BF03211553 16 AESCHBACH 
+
+Grave, E., Bojanowski, P., Gupta, P., Joulin, A., & Mikolov, T. (2018, March). Learning word vectors for 157 languages . arXiv. https: // doi.org /10.48550 /arXiv. 1802.06893 Gurevych, I. (2005). Using the structure of a concep-tual network in computing semantic relatedness. In R. Dale, K.-F. Wong, J. Su, & O. Y. Kwong (Eds.), Natural Language Processing – IJCNLP 2005 (pp. 767–778). Springer. https: // doi.org /10. 1007 /11562214_67 Gurevych, I. (2020, July). German relatedness datasets [Data set] . Technical University Darmstadt. Re-trieved June 26, 2025, from https: // tudatalib.ulb.tu-darmstadt.de /handle /tudatalib /2440 Herault, C., Ovando-Tellez, M., Lebuda, I., Kenett, Y. N., Beranger, B., Benedek, M., & Volle, E. (2024). Cre-ative connections: The neural correlates of semantic relatedness are associated with creativity. Commu-nications Biology , 7(1), 810. https : / / doi . org / 10 . 1038 /s42003-024-06493-y Hill, F., Reichart, R., & Korhonen, A. (2015). SimLex-999: Evaluating semantic models with (genuine) simi-larity estimation. Computational Linguistics , 41 (4), 665–695. https: // doi.org /10.1162 /COLI_a_00237 Hills, T. T., Maouene, M., Maouene, J., Sheya, A., & Smith, L. (2009). Longitudinal analysis of early seman-tic networks: Preferential attachment or preferen-tial acquisition? Psychological Science , 20 (6), 729– 739. https: // doi.org /10.1111 /j.1467- 9280.2009. 02365.x hunspell. (2022). Hunspell . (Version 1.7.2) [Source code]. Github. https: // github.com /hunspell /hunspell Hussain, Z., Binz, M., Mata, R., & Wul ff , D. U. (2024). A tutorial on open-source large language models for behavioral science. Behavior Research Methods ,
+
+56 (8), 8214–8237. https: // doi.org /10.3758 /s13428-024-02455-8 Hussain, Z., Mata, R., Newell, B. R., & Wul ff , D. U. (2024, December). Probing the contents of semantic repre-sentations from text, behavior, and brain data using the psychNorms metabase . arXiv. https: // doi.org /
+
+10.48550 /arXiv.2412.04936 Hussain, Z., Mata, R., & Wul ff , D. U. (2024). Novel embed-dings improve the prediction of risk perception. EPJ Data Science , 13 (1), Article 38. https: // doi.org /10. 1140 /epjds /s13688-024-00478-x Jonauskaite, D., Epicoco, D., Meziane, M. B., Burton, B., Corona, V., Fonseca-Pedrero, E., González-Dávila, C., Havelka, J., Laurent, E., Lenggen-hager, B., Loetscher, T., Castiñeira, S. L., Manni, L., Mefoh, P., Oberfeld, D., Oguz, M., Özduran, R. Y., Perchtold-Stefan, C., Quant, P., . . . Mohr, C. (2025). Free association database for a 62-word dataset including emotion and colour terms in En-glish, Estonian, French, German, Italian, Lithua-nian, and Spanish: Data from 14 countries. Journal of Open Psychology Data , 13 (1), Article 4. https : 
+
+// doi.org /10.5334 /jopd.140 Jung, C. G. (1910). The association method. The American Journal of Psychology , 21 (2), 219–269. https: // doi. org /10.2307 /1413002 Kanske, P., & Kotz, S. A. (2010). Leipzig A ff ective Norms for German: A reliability study. Behavior Research Methods , 42 (4), 987–991. https: // doi.org /10.3758 /
+
+BRM.42.4.987 Kenett, Y. N., Anaki, D., & Faust, M. (2014). Investigating the structure of semantic networks in low and high creative persons. Frontiers in Human Neuroscience ,
+
+8, Article 407. https: // doi.org /10.3389 /fnhum.2014. 00407 Kiss, G. R., Armstrong, C., Milroy, R., & Piper, J. (1973). An associative thesaurus of English and its com-puter analysis. In A. J. Aitken, R. W. Bailey, & N. Hamilton-Smith (Eds.), The Computer and Literary Studies (pp. 153–165, Vol. 153). Edinburgh Univer-sity Press. Kraemer, P. M., Wul ff , D., & Gluth, S. (2021). A sequential sampling account of semantic relatedness decisions. 
+
+Proceedings of the Annual Meeting of the Cognitive Science Society , 43 (43). Retrieved March 22, 2026, from https: // escholarship.org /uc /item /9616g51h Kumar, A. A., Steyvers, M., & Balota, D. A. (2022). A criti-cal review of network-based and distributional ap-proaches to semantic memory structure and pro-cesses. Topics in Cognitive Science , 14 (1), 54–77. https: // doi.org /10.1111 /tops.12548 Leviant, I., & Reichart, R. (2015, December). Separated by an un-common language: Towards judgment language informed vector space modeling . arXiv. https: // doi.org /10.48550 /arXiv.1508.00106 Li, B., Ding, Z., De Deyne, S., & Cai, Q. (2024). A large-scale database of Mandarin Chinese word associa-tions from the Small World of Words Project. Be-havior Research Methods , 57 (1), 34. https : / / doi . org /10.3758 /s13428-024-02513-1 McInnes, L., Healy, J., & Melville, J. (2020, September). 
+
+UMAP: Uniform manifold approximation and pro-jection for dimension reduction . arXiv. https: // doi. org /10.48550 /arXiv.1802.03426 Meta Llama. (2025, April). Llama-4-Scout-17B-16E-Instruct . [Large language model] Hugging Face. Retrieved March 9, 2026, from https: // huggingface. co /meta-llama /Llama-4-Scout-17B-16E-Instruct Morais, A. S., Olsson, H., & Schooler, L. J. (2013). Map-ping the structure of semantic memory. Cognitive SWOW-DE 17 
+
+Science , 37 (1), 125–145. https: // doi.org /10.1111 /
+
+cogs.12013 Nelson, D. L., McEvoy, C. L., & Schreiber, T. A. (2004). The University of South Florida free association, rhyme, and word fragment norms. Behavior Re-search Methods, Instruments, & Computers , 36 (3), 402–407. https: // doi.org /10.3758 /BF03195588 Ooms, J. (2025, March). Hunspell: High-performance stem-mer, tokenizer, and spell checker . Version 3.0.6. [Software] CRAN. Retrieved October 19, 2025, from https : / / cran . r - project . org / web / packages /
+
+hunspell /index.html OpenAI, Agarwal, S., Ahmad, L., Ai, J., Altman, S., Apple-baum, A., Arbus, E., Arora, R. K., Bai, Y., Baker, B., Bao, H., Barak, B., Bennett, A., Bertao, T., Brett, N., Brevdo, E., Brockman, G., Bubeck, S., Chang, C., . . . Zhao, S. (2025, August). Gpt-oss-120b &
+
+gpt-oss-20b Model Card . arXiv. https : / / doi . org /
+
+10.48550 /arXiv.2508.10925 Russell, W. A. (1970). The complete German language norms for responses to 100 words from the Kent-Rosano ff Word Association Test. In L. Postman & G. Keppel (Eds.), Norms of Word Association 
+
+(pp. 53–94). Academic Press. https : / / doi . org / 10 . 1016 /B978-0-12-563050-4.50006-6 Salle, A., & Villavicencio, A. (2019, August). Why so down? The role of negative (and positive) pointwise mu-tual information in distributional semantics . arXiv. https: // doi.org /10.48550 /arXiv.1908.06941 Schmidtke, D. S., Schröder, T., Jacobs, A. M., & Conrad, M. (2014). ANGST: A ff ective norms for German sen-timent terms, derived from the a ff ective norms for English words. Behavior Research Methods , 46 (4), 1108–1118. https: // doi.org /10.3758 /s13428- 013-0426-y Schramm, S. (n.d.). Wortarten.Info: Wortarten bestimmen .[Web app]. Retrieved October 31, 2025, from https: 
+
+// wortarten.info /
+
+Schröter, P., & Schroeder, S. (2017). The Developmental Lexicon Project: A behavioral database to investi-gate visual word recognition across the lifespan. Be-havior Research Methods , 49 (6), 2183–2203. https: 
+
+// doi.org /10.3758 /s13428-016-0851-9 Schulte Im Walde, S., & Borgwaldt, S. R. (2015). Associa-tion norms for German noun compounds and their constituents. Behavior Research Methods , 47 (4), 1199–1221. https: // doi.org /10.3758 /s13428- 014-0539-y Schulte Im Walde, S., Melinger, A., Roth, M., & Weber, A. (2008). An empirical characterisation of response types in german association norms. Research on Language and Computation , 6(2), 205–238. https: 
+
+// doi.org /10.1007 /s11168-008-9048-4 Siew, C. S. Q., Wul ff , D. U., Beckage, N. M., & Kenett, Y. N. (2019). Cognitive network science: A review of re-search on cognition through the lens of network rep-resentations, processes, and dynamics. Complexity ,
+
+2019 , Article e2108423. https: // doi.org /10.1155 /
+
+2019 /2108423 Statistik Austria [Statistics Austria]. (2025, September). Bil-dungsstand der Bevölkerung [Educational attain-ment of the pupulation] . [Data set]. Bundesanstalt Statistik Österreich [Federal Statistical O ffi ce Aus-tria]. Retrieved October 29, 2025, from https : / / 
+
+www . statistik . at / statistiken / bevoelkerung - und -soziales /bildung /bildungsstand-der-bevoelkerung Statistisches Bundesamt [German Federal Statistical Of-fice]. (n.d.). Bevölkerung: Bundesländer, Stich-tag, Geschlecht, Altersjahre [Population: Federal states, reference date, gender, age] . [Data set] Bundesrepublik Deutschland. Retrieved August 26, 2024, from https : / / www . govdata . de / suchen / -
+
+/details / bevolkerung - bundeslander - stichtag -geschlecht-altersjahre Steiger, J. H. (1980). Tests for comparing elements of a cor-relation matrix. Psychological Bulletin , 87 (2), 245– 251. https: // doi.org /10.1037 /0033-2909.87.2.245 Steyvers, M., & Tenenbaum, J. B. (2005). The large-scale structure of semantic networks: Statistical analy-ses and a model of semantic growth. Cognitive Sci-ence , 29 (1), 41–78. https : / / doi . org / 10 . 1207 /
+
+s15516709cog2901_3 The Stanford Natural Language Processing Group. (n.d.). 
+
+Stanford log-linear part-of-speech tagger . [Soft-ware]. Retrieved October 31, 2025, from https : / / 
+
+nlp.stanford.edu /software /tagger.shtml Tikhomirova, T., & Wul ff , D. U. (2026, January). Where meaning lives: Layer-wise accessibility of psy-cholinguistic features in encoder and decoder lan-guage models . arXiv. https : / / doi . org / 10 . 48550 /
+
+arXiv.2601.03798 Vankrunkelsven, H., Verheyen, S., Storms, G., & De Deyne, S. (2018). Predicting lexical norms: A comparison between a word association model and text-based word co-occurrence models. Journal of Cognition ,
+
+1(1), Article 45. https: // doi.org /10.5334 /joc.50 Vintar, Š., Brglez, M., Novak, E., & Deyne, S. D. (2025). The SWOW-SL project: Building the word asso-ciation data set for Slovene. Slovenšˇ cina 2.0: em-piriˇ cne, aplikativne in interdisciplinarne raziskave [Slovenian 2.0: Empirical, Applied, and Interdisci-plinary Research] , 13 (1), 104–119. https: // doi.org /
+
+10.4312 /slo2.0.2025.1.104-119 Watts, D. J., & Strogatz, S. H. (1998). Collective dynam-ics of ‘small-world’ networks. Nature , 393 (6684), 440–442. https: // doi.org /10.1038 /30918 18 AESCHBACH 
+
+Wul ff , D. U., Aeschbach, S., Deyne, S. D., & Mata, R. (2022). Data from the MySWOW proof-of-concept study: Linking individual semantic networks and cognitive performance. Journal of Open Psychology Data , 10 (1), Article 5. https: // doi.org /10.5334 /jopd. 55 Wul ff , D. U., De Deyne, S., Aeschbach, S., & Mata, R. (2022). Using network science to understand the aging lexicon: Linking individuals’ experience, se-mantic networks, and cognitive performance. Top-ics in Cognitive Science , 14 (2022), 93–110. https: 
+
+// doi.org /10.1111 /tops.12586 Wul ff , D. U., De Deyne, S., Jones, M. N., & Mata, R. (2019). New perspectives on the aging lexicon. Trends in Cognitive Sciences , 23 (8), 686–698. https: // doi.org /
+
+10.1016 /j.tics.2019.05.003 Wul ff , D. U., Hills, T. T., & Mata, R. (2022). Structural di ff erences in the semantic networks of younger and older adults. Scientific Reports , 12 (1), Article 21459. https: // doi.org /10.1038 /s41598-022-11698-4Wul ff , D. U., & Mata, R. (2022). On the semantic repre-sentation of risk. Science Advances , 8(27), Article eabm1883. https: // doi.org /10.1126 /sciadv.abm1883 SWOW-DE 19 
+
+Appendix A Free-Association Task Instructions 
+
+Figure A1 
+
+Free-association instructions. Original instructions in Ger-man, see English translation. 
+
+Figure A1 shows original German instructions for the free-association task. English translation of the instruc-tions for the free-association task: 
+
+Instruction This is how it works 
+
+On the top of the screen, a cue word will appear. Enter the first word that spontaneously comes to mind, when seeing this cue word. If you do not know the cue word, click on “unknown word”. Press Enter , to add a second and third association, or click “no further entries”, if no further associations come to mind. 
+
+Tipps 
+
+Only enter associations to the cue word at the top of the screen (not to your own entries). Avoid complete sentences as entries. Enter a word and press Enter to advance to the next entry. 
+
+Appendix B Participant selection 
+
+Figure B1 details each participant inclusion criterion’s e ff ect on the number of chosen participants. Note that some of the participants will fall short of multiple criteria. 02500 5000 7500 10000     
+
+> 0.00 0.25 0.50 0.75 1.00
+> count  < 0.3
+> FALSE
+> TRUE
+> Participants: 23145/23665 (97.80%) | Responses: 385212/392325 (98.19%)
+
+N−gram (proportion n > 1)     
+
+> 03000 6000 9000 12000
+> 0.00 0.25 0.50 0.75 1.00
+> count  > 0.8
+> FALSE
+> TRUE
+> Participants: 23400/23665 (98.88%) | Responses: 390183/392325 (99.45%)
+
+Unique responses (proportion unique)     
+
+> 01000 2000 3000
+> 0.00 0.25 0.50 0.75 1.00
+> count  > 0.6
+> FALSE
+> TRUE
+> Participants: 23161/23665 (97.87%) | Responses: 385648/392325 (98.30%)
+
+Spelling (proportion hunspell check passed)     
+
+> 02500 5000 7500
+> 0.00 0.25 0.50 0.75 1.00
+> count  < 0.6
+> FALSE
+> TRUE
+> Participants: 22250/23665 (94.02%) | Responses: 369252/392325 (94.12%)
+
+Unknown word or missing response (proportion unknown | missing) 
+
+Figure B1 
+
+Participant inclusion criteria. The e ff ect of individual par-ticipant inclusion criteria on participant selection. 
+
+Appendix C LLM Spelling Improvement Prompts Model and Settings 
+
+We implemented the LLM-based spelling improve-ments using the models and settings in Table C1. Please note that while both models were used in model evaluation, only “gpt-oss:120b” was used to improve the spelling in the SWOW-DE data. 20 AESCHBACH 
+
+Table C1 
+
+LLM Settings and Evaluation 
+
+Model Temperature Accuracy llama4:16x17b "Scout" 0 .45 gpt-oss:120b 0 .66 
+
+Note. Except for temperature, both models were used with standard parameters. Find implemen-tations at https: // ollama.com /library /llama4 and https: // ollama.com /library /gpt-oss. 
+
+Prompts 
+
+Prompts were developed in an iterative process using a ran-dom sample of 1,000 trials containing at least one misspelled response for which human corrections were obtained. Half of the sample was used to test di ff erent prompts and LLMs, while the other half served as an evaluation set to estimate the chosen setup’s agreement with the human corrections independently of the sample originally used to develop the prompts. The prompts were all written in German, to keep the language of instructions in line with the contents. 
+
+System Prompt 
+
+The following system prompt was used for all spelling im-provement LLM queries: 
+
+Du hilfst mir potenziell falsch geschriebene Responses in einer Studie mit freien Assoziationen zu korrigieren. Ändere so wenig wie möglich und folge den Regeln. WICHTIG: Antworte ausschließlich mit der korrigierten Response, ohne Anführungszeichen oder Zusatztext. REGELN: 1. Wenn eine Response a) richtig geschrieben ist auf Deutsch, b) richtig geschrieben ist in einer anderen Sprache und kein typisches, deutsches falsch geschriebenes Wort ist, oder c) ein korrekt geschriebener Eigenname ist: Die originale Response verwenden. Beispiele: Cue: Mensch; Response: Homo sapiens; Korrigiert: Homo sapiens Cue: Theorie; Response: The Big Bang Theory; Korrigiert: The Big Bang Theory 2. Wenn eine Response falsch geschrieben ist und (in Betracht des Cues und der anderen Assoziationen) die richtige Schreibweise zugerordnet werden kann: Die korrekt geschriebene Response verwenden. Beispiele: Cue: Argument; Response: Diskussoin; Korrigiert: Diskussion Cue: Marketing; Response: Werbungh; Korrigiert: Werbung 3. Wenn eine Response Wortkonstrukte enthält die auf mehrere Responses in einem Antwortfeld hinweisen: Die erste Response verwenden. Beispiele: Cue: hören; Response: sehen, fühlen, riechen; Korrigiert: sehen Cue: Schleifpapier; Response: feinkörnig/grobkörnig; Korrigiert: feinkörnig 4. Wenn eine Assoziation Wortkonstrukte enthält, die den Cue wiederholen und eine zusätzliche, eigenständige Komponente enthalten: Die korrekt geschriebene eigenständige Komponente verwenden. Beispiele: Cue: lokal; Response: Lokal/Bar; Korrigiert: Bar 5. Wenn eine Response ein unvollständiges Wort ist aber in Kombination mit dem Cue Sinn macht: Die sinnvolle Kombination verwenden. Beispiele: Cue: Gebiet; Response: Hohheits; Korrigiert: Hoheitsgebiet Cue: notwendig; Response: keit; Korrigiert: Notwendigkeit 
+
+English translation of the system prompt: 
+
+You help me correct potentially misspelled responses in a free association study. Change as little as possible and follow the rules. IMPORTANT: Reply exclusively with the corrected response, without quotation marks or additional text. RULES: 1. If a response a) is correctly spelled in German, b) is correctly spelled in another language and is not a typical, misspelled German word, or c) is a correctly spelled proper name: Use the original response. Examples: Cue: Mensch; Response: Homo sapiens; Corrected: Homo sapiens Cue: Theorie; Response: The Big Bang Theory; Corrected: The Big Bang Theory 2. If a response is misspelled and (considering the cue and the other associations) the correct spelling can be assigned: Use the correctly spelled response. SWOW-DE 21 
+
+Examples: Cue: Argument; Response: Diskussoin; Corrected: Diskussion Cue: Marketing; Response: Werbungh; Corrected: Werbung 3. If a response contains word constructs that indicate multiple responses in one answer field: Use the first response. Examples: Cue: hören; Response: sehen, fühlen, riechen; Corrected: sehen Cue: Schleifpapier; Response: feinkörnig/grobkörnig; Corrected: feinkörnig 4. If an association contains word constructs that repeat the cue and contain an additional, independent component: Use the correctly spelled independent component. Examples: Cue: lokal; Response: Lokal/Bar; Corrected: Bar 5. If a response is an incomplete word but makes sense in combination with the cue: Use the meaningful combination. Examples: Cue: Gebiet; Response: Hohheits; Corrected: Hoheitsgebiet Cue: notwendig; Response: keit; Corrected: Notwendigkeit 
+
+User Prompt 
+
+For each incorrectly spelled response, the following prompt template was used to obtain a correction. 
+
+Responses zum Cue '{cue} ' von dieser Person sind: 1. 
+
+'{resp_1} ', 2. '{resp_2} ', 3. '{resp_3} '.Die Person hat statt der Maske 'WORD ' ursprünglich die Response '{incorrect} ' hingeschrieben. Wie sollte die Response '{incorrect} ' korrigiert lauten? Antworte nur mit der korrigierten Response! 
+
+English translation of the user prompt: 
+
+Responses to the cue '{cue} ' from this person are: 1. 
+
+'{resp_1} ', 2. '{resp_2} ', 3. '{resp_3} '.The person, instead of the mask 'WORD ', originally wrote the response '{incorrect} '.How should the response '{incorrect} ' be corrected? Respond exclusively with the corrected response! 
+
+For each LLM call, the user prompt was populated with the respective cue and responses of the trial where the prompt template contains variable names (e.g., {resp_2} ). For con-text the cue and all three responses are provided, but with the position containing the misspelled word masked using “WORD”. Then the correction for the incorrectly spelled re-sponse (i.e., {incorrect} ) is requested. 
+
+Appendix D SWOW-DE Word Embedding with German Labels 22 AESCHBACH 
+
+Figure D1 
+
+Cue word embedding. Projection of cue word embedding based on response frequencies using PPMI and SVD. Projection using UMAP (McInnes et al., 2020) and colored by clusters detected with the Louvain clustering algorithm (Blondel et al., 2008). Larger points and labels indicate words more frequent among the SWOW-DE responses.
