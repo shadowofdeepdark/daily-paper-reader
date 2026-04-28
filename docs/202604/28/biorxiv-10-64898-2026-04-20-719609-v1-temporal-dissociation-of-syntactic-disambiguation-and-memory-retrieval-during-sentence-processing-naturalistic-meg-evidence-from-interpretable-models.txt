@@ -1,0 +1,1635 @@
+Title: Temporal Dissociation of Syntactic Disambiguation and Memory Retrieval during Sentence Processing: Naturalistic MEG Evidence from Interpretable Models
+
+URL Source: https://www.biorxiv.org/content/10.64898/2026.04.20.719609v1.full.pdf
+
+Number of Pages: 84
+
+Markdown Content:
+TEMPORAL DISSOCIATION 1
+
+Temporal Dissociation of Syntactic Disambiguation and Memory Retrieval during Sentence Processing: Naturalistic MEG Evidence from Interpretable Models 
+
+Donald Dunagan 1, Dylan Scott Low 1, Shisen Yue 1, Lars Meyer 2,3,4 , and John T. Hale 11Department of Cognitive Science, Johns Hopkins University, Baltimore, USA 5
+
+> 2
+
+Johannes Gutenberg University Mainz, Mainz, Germany 
+
+> 3
+
+Max Planck Institute for Human Cognitive and Brain Sciences, Leipzig, Germany 
+
+> 4
+
+Clinic for Phoniatrics and Pediatric Audiology, University Hospital Münster, Münster, Germany 
+
+Author Note 10 
+
+Correspondence concerning this article should be addressed to Donald Dunagan, Department of Cognitive Science, Johns Hopkins University, 3400 N. Charles Street, Baltimore, MD 21218. E-mail: ddunaga1@jh.edu We would like to thank the attendees of the 2026 University of Maryland Winter Storm for discussion and feedback related to this work. 15 
+
+This work was supported by the Advanced Research Computing at Hopkins (ARCH) core facility (rockfish.jhu.edu), which is supported by the National Science Foundation (NSF) grant number OAC1920103. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 2
+
+Abstract 
+
+Human sentence comprehension proceeds word-by-word, with prior research proposing two 20 
+
+central sources of cognitive demand during incremental processing: forward-looking disambiguation of the incoming information stream, and backward-looking retrieval of information associated with previous words from working memory. Recent work has shown that Transformer-based language models successfully generate predictions about sentence processing load in human psycho- and neurolinguistic data by operationalizing 25 
+
+disambiguation cost as next-token surprisal, and memory retrieval cost as normalized attention entropy (NAE). Such models, however, remain difficult to interpret as it is not well understood what factors play causally into the decision to assign a cost value to a given word in such artificial neural networks. Here, we present interpretable and cognitively grounded models of disambiguation and memory retrieval and evaluate their 30 
+
+neural alignment and spatio-temporal correlates using human magnetoencephalography responses to naturalistic narrative speech. Multivariate temporal response function modeling demonstrates firstly that these human-bias-informed models fare equally well in accounting for observed human language processing data as their Transformer counterparts. This same modeling framework then suggests that surprisal and NAE 35 
+
+temporally dissociate in the cortical language network — surprisal being predictive of bilateral superior temporal gyrus and supramarginal gyrus activation ∼300–500 ms, and NAE being predictive of activity in the same regions, but later ∼750–850 ms. By demonstrating that interpretable neurocomputational models can achieve meaningful brain alignment while maintaining explanatory transparency, this work offers a methodological 40 
+
+blueprint for bridging the gap between algorithmic theory and neural implementation. 
+
+Keywords: sentence processing, parsing, cue-based memory retrieval, syntax, MEG, computational neurolinguistics 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 3
+
+Temporal Dissociation of Syntactic Disambiguation and Memory Retrieval during Sentence Processing: Naturalistic MEG Evidence from Interpretable 45 
+
+Models Introduction 
+
+Sentence comprehension involves deriving an understanding from an incoming stream of linguistic information. In order to perform this incremental cognitive task, however, the human sentence processor must both be able to handle ambiguity, as well as 50 
+
+have a working memory for the storage and later retrieval of perceived information. Thus, two central sources of cognitive demand during sentence processing are disambiguation and memory retrieval. Disambiguation involves arriving at the correct analysis when multiple alternative analyses are consistent with the input encountered thus far. With each structural and/or lexical analysis being associated with a probability, word-by-word 55 
+
+processing difficulty can be quantified via information-theoretical complexity metrics (e.g., surprisal: Hale, 2001; R. Levy, 2008; entropy reduction: Hale, 2003, 2006, 2011; see Hale, 2016 for a review). Such “rightward-looking” processes are only one half of the story, however; the other being memory demand — which may be considered “leftward-looking.” One influential theory of memory demand is cue-based retrieval (Lewis and Vasishth, 2005; 60 
+
+Lewis et al., 2006; Van Dyke, 2007; Van Dyke and Lewis, 2003; Van Dyke and McElree, 2006, 2011, inter alia; see Vasishth and Engelmann, 2021 for a monograph-length discussion and review). Under this account, an incoming word triggers a retrieval operation over information associated with previous words in order to resolve grammatical dependencies between the current word and the preceding context. 65 
+
+Research has found that word-by-word metrics — of both disambiguation and memory retrieval difficulty — derived from neural language models (LMs) are predictive of data recorded during human sentence processing (disambiguation: Frank, 2013; Frank et al., 2015; Hao et al., 2020; Heilbron et al., 2022; Oh and Schuler, 2023; Pimentel et al., 2023, inter alia; memory retrieval: Oh and Schuler, 2022; Ryu and Lewis, 2021, 2025; 70 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 4Yoshida et al., 2025). Yet, neural LM accounts — owing to their diminished degree of interpretability — shed little light on the mechanisms proposed to underlie human sentence comprehension. Here, we present interpretable, cognitively grounded models of disambiguation and memory retrieval and demonstrate: 1) that they fare just as well in accounting for observed human language processing data as their neural LM counterparts; 75 
+
+and 2) that they, when combined, elucidate components of a staged processing (Sternberg, 1969; cf. McClelland, 1979) account of incremental 1 sentence processing (Bornkessel & Schlesewsky, 2006; Forster, 1979; Frazier & Fodor, 1978; Friederici, 2002) in which syntactically-informed lexical disambiguation occurs prior to cue-based retrieval from working memory. 80 
+
+We use a publicly available magnetoencephalography (MEG) dataset collected by Brodbeck et al. (2022) to probe the spatio-temporal correlates of disambiguation and memory retrieval during naturalistic language comprehension. Following Gwilliams et al. (2025), we distinguish cognitive operations from cognitive functions. We treat both disambiguation and memory retrieval as operations subserving the overall function of 85 
+
+syntactic-level sentence processing. That is, in terms of Marr’s (1982) tri-level framework for cognitive science, disambiguation and memory retrieval are algorithmic-level proposals. By probing the neurological and temporal loci of these algorithms via naturalistic MEG, we thus seek to bridge the gap between algorithmic-level proposals and implementation-level evidence. 90 
+
+With an eye toward the twin goals of both explainability and neurocomputational alignment, in the present study, we evaluate two interpretable models against the much less transparent GPT-2 (Generative Pre-trained Transformer; Radford et al., 2019). As an algorithmic theory of disambiguation, we consider surprisal derived from the dependency parser introduced by Dunagan (2025, Subsection Incremental Left-Corner Generative 95  
+
+> 1
+
+We presently set aside consideration of sentence processing following the “parallel” presentation of a complete, sentence-length stimulus, although the reader is referred to e.g., Asano and Yokosawa (2011), Dunagan et al. (2025), Massol and Grainger (2025). 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 5Dependency Parsing). In regard to memory retrieval, we consider normalized attention entropy derived from the cue-based retrieval model of Yue (2026, Subsection Grammar-Bilinear Asymw2v) — a specific implementation of Van Dyke’s (2007) theory of interference effects. We use the multivariate temporal response function modeling technique (Brodbeck et al., 2023; David et al., 2007; Lalor et al., 2006, Subsection 100 
+
+Multivariate Temporal Response Function Modeling) for the neurocomputational modeling of naturalistic MEG data. 
+
+Incremental Left-Corner Generative Dependency Parsing 
+
+Language models calculate probabilities over word strings, where the probability of a sequence of words p(w1: n) = p(w1, w 2, ..., w n) can be calculated using the chain rule of 105 
+
+probability: 
+
+p(w1: n) = p(w1) p(w2|w1) p(w3|w1:2 ), ..., p (wn|w1: n−1) = 
+
+> n
+
+∏
+
+> i=1
+
+p(wn|w1: n−1) (1) Whereas GPT-2-caliber LMs make use of the Transformer neural network architecture (Vaswani et al., 2017) and semi-large-scale pre-training 2 to learn such probabilities, LMs can also be designed and trained with alternative inductive biases in mind. Here, we focus on one such model, the Incremental Left-Corner Generative Dependency Parser (ILCGDP) 110 
+
+presented in Dunagan (2025, Ch. 2). In doing so, we take parsing — i.e., the assignment of grammatical structure to an inputted sentence string — to be a fundamental component of disambiguation during human sentence processing. Indeed, it has been demonstrated neurally (Brennan et al., 2016, 2020; Hale et al., 2015; Shain et al., 2020; Wolfman et al., 2024), electrophysiologically (Brennan & Hale, 2019; Hale et al., 2018), and in self-paced 115 
+
+reading (Fernandez Monsalve et al., 2012), that surprisal derived from syntactically-informed language models can improve model quality or better fit human  
+
+> 2
+
+With this statement, we set aside state-of-the-art models which receive mid-training, post-training, instruction fine-tuning, reinforcement learning from human feedback, reinforcement learning from verifiable rewards, etc., and pick out this specific class of large language model. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 6language processing data than surprisal derived from syntactically-uninformed language models. The ILCGDP operates as a dependency parser, mapping an input sentence to a 120 
+
+dependency graph under some dependency grammar — a formal framework for the notion of linguistic dependency (de Marneffe & Nivre, 2019; Gaifman, 1965; Hays, 1964, 1965; Robinson, 1967; Tesnière, 1959). As compared to familiar constituency-based phrase structure grammars, in which elements hierarchically combine to form constituents (phrases), in a dependency grammar, the words of a sentence relate to one another via 125 
+
+binary asymmetric (directed) dependencies, which are commonly, but not necessarily, typed, i.e., labeled. Each dependency has a head, or governing word, and a dependent (child), or governed word. The constraint is often imposed that each word may have only a single head. The main verb of a sentence serves as the head of the sentence and can be thought of as being governed by an artificial utility element ROOT (Ballesteros & Nivre, 130 
+
+2013). From the position of the main verb, all other words in the sentence can be reached by traversing dependencies. Sentence-final punctuation, when it is included, is governed by the main verb. It is this collection of dependencies for a sentence — here, assigned by the ILCGDP — which make up a dependency graph and the sentence’s assigned grammatical structure. 135 
+
+Fig. 1 gives a labeled dependency graph for example (1). (1) The coach of the player was frustrated. Dependency graphs draw dependencies as directed edges (arcs; from head to dependent), often labeled with the tag of the relation. For example, in Fig. 1, the word frustrated is labeled by root because it is the main verb; frustrated in turn governs coach via an nsubj 140 
+
+(nominal subject) relation, as well as was via an aux (auxiliary) relation. The ILCGDP (Fig. 2) is of interest here because it is a grounded and transparent model of disambiguation, assigning labeled dependencies to natural language in a manner which incorporates cognitively plausible biases: 1) it operates incrementally, with only 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 7marginal lookahead; 2) it is generative, modeling both explicit syntactic structure as well 145 
+
+as word probability; and 3) it is left-corner, making predictions about grammatical relations for as of yet unseen words, and operating with working memory demands that mimic those of the human sentence processor. 
+
+Incremental Transition-Based Dependency Parsing 
+
+Like an autoregressive language model — and a human sentence processor, for that 150 
+
+matter — the ILCGDP operates in a left-to-right manner, with a single pass through the input string. 3 Indeed, it is an instantiation of transition-based dependency parsing (Kudo and Matsumoto, 2002; Nivre, 2003; Yamada and Matsumoto, 2003; see Kübler et al., 2009; Nivre, 2006 for reviews). Transition-based dependency parsing implements an abstract machine in which a configuration represents the current state of affairs, while collections of 155 
+
+rules describe transitions between configurations which build structure and process incoming information. Two special states are defined: an initial state and a terminal state. In the initial state, no structure has yet been built and all of the input information remains ready to be processed; in the terminal state, a complete dependency parse has been constructed and the entirety of the input string has been read in. In this paradigm, the 160 
+
+parsing task is the selection of a good sequence of transitions, which traverse from the initial state to the terminal state while constructing the correct dependency parse. 
+
+Left-Corner Parsing 
+
+Building off of the work of Noji and Miyao (2014, 2016), the ILCGDP implements a left-corner transition system. Classically, transition-based dependency parsing operates 165 
+
+bottom-up (Kuhlmann et al., 2011; Nivre, 2003, 2004; see also Johnson-Laird, 1983 and Aho and Ullman, 1972), with nodes (tokens) — owing to a lack of non-terminal nodes that would be predicted top-down — being enumerated as they are read from the input string, and with dependencies only capable of being established once the associated governing and  
+
+> 3
+
+This incremental nature is in contrast to both bidirectional masked language modeling, as well as the parsing scenario in which the entirety of the input string is made available from the onset, e.g., graph-based parsing. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 8governed words are both available for consideration (see Nivre, 2004, p. 6). 170 
+
+Related to the observation that bottom-up phrase structure parsing has space (memory) complexity which grows proportionally with right-branching depth (Abney & Johnson, 1991; Resnik, 1992), Noji and Miyao (2014, 2016) show that the traditional bottom-up dependency parsing transition sets cannot guarantee constant space complexity for right-branching constructions. This memory demand profile is unaligned with human 175 
+
+sentence processors, who have no difficulty processing right-branching structures (Miller & Chomsky, 1963). A more cognitively realistic transition system for dependency parsing is thus motivated. With the aim of developing a dependency parser with constant memory demands for left- and right-branching structures, but non-constant memory demands for 180 
+
+center-embedding structures — in line with human processing difficulty (Abney & Johnson, 1991; Miller & Chomsky, 1963; Resnik, 1992) — Noji and Miyao (2014, 2016) draw inspiration from the left-corner parsing automaton of Resnik (1992) to develop a left-corner transition set for dependency parsing which combines true top-down prediction with bottom-up composition. In order to accommodate the idea of predicted nodes as in 185 
+
+left-corner constituency parsing, they introduce dummy nodes, which serve as subtrees to hold the place of words which are yet to be processed. The parser utilized here — the ILCGDP — was presented in Dunagan (2025) and further develops this framework in two significant ways: 1) it modifies and expands upon the Noji and Miyao (2014, 2016) transition set so that the dependencies assigned between 190 
+
+words can be labeled (e.g., subject, direct object, conjunction, adverbial modifier; the complete ILCGDP transition set is given in Fig. 2A); and 2) it is generative, modeling both explicit syntactic structure as well as word probability. 
+
+Generative Modeling 
+
+A generative parsing model is one which defines a joint distribution on words x and 195 
+
+parses y: p(x, y). Transition-based models — like the ILCGDP — are amenable to 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 9generative modeling, simply requiring that: 1) transitions are scored probabilistically, given a configuration (see Fig. 2B); 2) the probabilities for transitions which generate the next word are multiplied by the probability of generating the next word, given a configuration; and 3) forward lookahead is restricted such that information “from the future” cannot be 200 
+
+used to make decisions regarding the set of circumstances in the present. Because the parser state in transition-based parsing encodes information about the collection of previously applied transitions — i.e., it is a form of history-based parsing (Black et al., 1993) — the chain rule of probabilities can be applied to decompose the probability of a sentence x and a parse y into a sequence of actions ( a1, ... , aT ), where aT is the action that 205 
+
+completes the tree: 
+
+p(x, y ) = 
+
+> T
+
+∏
+
+> t=1
+
+p(at | a<t ) (2) While surprisal — our present operationalization of disambiguation — is calculated from beads-on-a-string language models such as GPT-2 as negative log conditional probability (R. Levy, 2008): 
+
+−log p (wn|w1, ..., w n−1) (3) surprisal from generative models like the ILCGDP is calculated as the log ratio of the 210 
+
+prefix probabilities before and after a word, where the prefix probability at a word is the sum over the probabilities of compatible structures at that word (Hale, 2001, see Fig. 2C): 
+
+log 
+
+( αn−1
+
+αn
+
+)
+
+= −log 
+
+( αn
+
+αn−1
+
+)
+
+(4) It should be noted that parsers like the ILCGDP that are guided by a generative model face an imbalance regarding the probabilities of lexical and structural actions. This imbalance is well known in natural language processing (Buys & Blunsom, 2015a; Crabbé 215 
+
+et al., 2019; Fried et al., 2017; Stanojević & Steedman, 2020; Stern et al., 2017) and carries consequences for neurobiology (see Hale et al., 2018 for EEG or Franzluebbers et al., 2024 for fMRI). It arises because the probabilities of word generation actions are so much 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 10 smaller than the probabilities of dependency forming actions. Concretely, the ILCGDP has available to it a total of 179 structural operations — a stark contrast to the output 220 
+
+vocabulary of 39,552. Thus, when calculating word-by-word surprisal, the change in beam prefix probability which is attributable to syntactic structure building is minuscule in comparison to the change attributable to next token generation. So while the predictor combines both types of disambiguation, it is the syntactically-informed disambiguation of the next word choice that shows up most strongly in the derived complexity metric. This 225 
+
+sort of disambiguation is roughly comparable to that performed by opaque language models (i.e., GPT-2). 
+
+Grammar-Bilinear Asymw2v 
+
+Apart from disambiguation, we also take word-by-word language comprehension to involve retrieval from working memory for the establishment of dependencies with the 230 
+
+current word. Cue-based retrieval theory proposes: 1) that memory access is content-addressable, with morphological, syntactic, and semantic cues from the current word probing working memory for compatible candidates; and 2) that partially matching distractors are responsible for similarity-based interference effects (Lewis et al., 2006; Van Dyke & McElree, 2006). Recent work has drawn an analogy between cue-based 235 
+
+retrieval and diffuseness of self-attention in neural LMs (Oh & Schuler, 2022; Ryu & Lewis, 2021, 2025; Timkey & Linzen, 2023; Yoshida et al., 2025) — the more diffuse an attention pattern, the greater the interference inherent in a retrieval operation (caused by the presence of distractor items similar to the true target). We operationalize memory retrieval burden as normalized attention entropy (NAE; 240 
+
+Oh & Schuler, 2022). For a sequence of words w1, w 2, ..., w n, where wn is the word currently being processed (i.e., the one generating the retrieval cue), NAE is calculated based on attention scores assigned to all of the preceding words w1, w 2, ..., w n−1. While previous work has used attention scores from GPT-2 (Oh & Schuler, 2022; Ryu & Lewis, 2021, 2025), we use the Grammar-Bilinear Asymw2v (“asymmetric word to vector;” GBA) model 245 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 11 presented in Yue (2026). This model was developed from the outset: 1) with transparency in mind; and 2) to consider the roles played by both syntax as well as semantics in memory retrieval (Van Dyke, 2007; Van Dyke & McElree, 2011). 
+
+Normalized Attention Entropy 
+
+The NAE complexity metric is an extension of the attention entropy complexity 250 
+
+metric proposed by Ryu and Lewis (2021, 2025). Interpreting the self-attention mechanism of the Transformer architecture as implementing cue-based retrieval of the sort theorized by Lewis et al. (2006), attention entropy is intended to measure similarity-based interference during such retrievals, with the presence of distractor items similar to the true target causing a greater spread in the self-attention pattern. In Ryu and Lewis (2025), the 255 
+
+attention entropy at word wn is defined as: 
+
+−
+
+> n−1
+
+∑
+
+> i=1
+
+Attn (wn, w i) × logAttn (wn, w i) (5) This “vanilla” attention entropy metric, however, suffers the drawback that entropy systematically tends to be higher over longer sequences. It is thus confounded by sentence length, meaning that sentences of different lengths are not directly comparable. Furthermore, Ryu & Lewis attention entropy operates on improperly normalized 260 
+
+probability distributions, as attention weights over previous tokens w1, ..., w n−1 sum to less than 1. NAE corrects for both problems by: 1) re-normalizing the attention weights over the previous tokens w1, ..., w n−1 to sum to 1; and 2) calculating the observed attention entropy proportionate to the maximum possible entropy at wn (Oh & Schuler, 2022): 
+
+− 1
+
+log (n − 1) 
+
+> n−1
+
+∑
+
+> i=1
+
+Attn (wn, w i)
+
+∑n−1 
+
+> k=1
+
+Attn (wn, w k) × log Attn (wn, w i)
+
+∑n−1 
+
+> k=1
+
+Attn (wn, w k) (6) Fig. 3 provides a graphical demonstration of attention diffuseness in the context of 265 
+
+example (1). At the word frustrated , a retrieval is made for the subject of the sentence in order to form the nsubj dependency relation. As an aside, in the Universal Dependencies 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 12 framework (UD; de Marneffe et al., 2014, 2021; Nivre et al., 2016) used by the GBA for triggering retrieval operations, the nsubj dependency relation governing the nominal subject originates from the main verb, rather than from the auxiliary (see Fig. 1). 270 
+
+Regardless, a portion of attention is pulled away from the true subject ( coach ) by the distractor ( player ). Under the present proposal, this attention entropy is expected to be correlated with similarity-based interference. 
+
+The Mixed Grammar-Bilinear Asymw2v Model 
+
+The GBA (Fig. 4) is a lightweight linear model that factors syntactic and semantic 275 
+
+contributions to interference while staying close to the retrieval computation, itself. The approach treats dependency arcs (following Hofmeister and Vasishth, 2014; Van Dyke and McElree, 2006) as retrieval traces and models retrieval as an asymmetric linear transformation from a cue representation into the target’s representational space. Additional details immediately follow, but in brief: 1) the syntactic submodel (the 280 
+
+grammar-bilinear component) uses Combinatory Categorial Grammar supertags (CCG; Steedman & Baldridge, 2011) and a bilinear parameter W to score cue–target compatibility and capture similarity-based syntactic competition; and 2) the semantic submodel (the asymmetric word to vector component) adapts dependency-based embeddings (O. Levy & Goldberg, 2014) to learn distinct input (cue) and output (relation-bound target) spaces, 285 
+
+optimizing proximity for words and their dependency-labeled contexts, while repelling unrelated items. By separating these two sources of competition within a linear retrieval framework, the model provides an interpretable parametrization of interference that can be analyzed directly in terms of syntactic structure and lexical compatibility. 
+
+The Syntactic, Grammar-Bilinear Component. In the syntactic, 290 
+
+grammar-bilinear (GB) component (Fig. 4A), syntactic information is approximated using one-hot CCG supertags. CCG is a lexicalist grammatical formalism in which the lexicon assigns each word a richly specified category — a supertag — which encodes its base syntactic type (e.g., noun phrase, sentence/clause), as well as its combinatory potential, 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 13 including subcategorization and argument structure. Thus, the information encoded in 295 
+
+word-by-word supertags is akin to an “almost parse” (Bangalore & Joshi, 1999, p. 237) and provides a rich feature space for modeling fine-grained combinatory constraints in machine learning models (Kasai et al., 2019). The syntactic environment of word n, hn, is represented as the concatenation of the supertags of that word as well as the two preceding words: hn = [ Gn−2; Gn−1; Gn], where Gi300 
+
+is a one-hot vector over the vocabulary of supertags. Given this syntactically-informed representation, a learned matrix W projects the current word’s representational “cue” into the candidate space, allowing for the calculation of bilinear dot product, softmax-normalized retrieval scores for the words of the preceding context: 
+
+p(wi|wn) = hiW h n
+
+∑n−1 
+
+> k=1
+
+hkW h n
+
+(7) Because supertags encode detailed combinatory constraints, the model learns to assign 305 
+
+higher scores to candidates occupying syntactically compatible positions, with structurally incompatible candidates receiving lower retrieval probabilities. 
+
+The Semantic, Asymmetric Word to Vector Component. The semantic, asymmetric word to vector component (Fig. 4B; Asymw2v) constitutes a dependency-aware Skip-Gram word2vec variant. Vector-embedding models such as 310 
+
+word2vec (Mikolov, Sutskever, et al., 2013; Mikolov, Chen, et al., 2013) capture the intuition that words occurring in similar contexts should have similar representations (Firth, 1957; Harris, 1954; Wittgenstein, 1953, see Lenci, 2018 for a computational perspective). In a standard word2vec model, a word’s context is simply the linear window of words surrounding it. The Dependency-Based Word Embeddings model (O. Levy & 315 
+
+Goldberg, 2014) used here, however, extends this idea such that context is derived not from surface adjacency, but from syntactic dependency relations — i.e., a word’s context consists of the dependency-labeled words to which it is attached in a dependency graph. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 14 This allows for the learning of verb-argument co-occurrence preferences, as well as for the discernment of attribute-level cues such as animacy, in an indirect manner. 320 
+
+In Fig. 1, for example, the word coach would have as context not only the adjacent 
+
+the (“ the /det ”), but also the nonadjacent player (“ player /nmod ”) and frustrated 
+
+(“ frustrated /nsubj -1”) — where “-1” indicates that the dependency-labeled context word is the governor in the relation, thus adding even richer detail. As in the Skip-Gram framework, Asymw2v learns two parameter matrices: an input matrix representing words 325 
+
+when they serve as “cues,” and an output matrix representing relation-bound contexts. This separation allows the same lexical item to occupy different positions in the embedding space depending on its syntactic role, thus providing a natural way to distinguish circumstances in which a word functions as a retrieval cue versus when it appears as a candidate target within a dependency relation. Retrieval is simulated by using the input 330 
+
+embedding for the current word as the cue, and calculating dot product similarity, softmax-normalized retrieval scores using the relation-bound output embeddings for each word in the preceding context. 
+
+An Interpretable Mixed Model. The full mixed model combines syntactic and lexical retrieval signals via an equally-weighted linear combination of the pre-normalization 335 
+
+retrieval scores from the GB and Asymw2vec components, before performing softmax normalization to create the final retrieval probability distribution over the preceding context. This late-fusion formulation reflects cue-based retrieval accounts in which syntactic constraints provide the primary retrieval cues while semantic compatibility contributes graded competition among candidates (Van Dyke & Lewis, 2003; Van Dyke & 340 
+
+McElree, 2011). By combining the two signals at the scoring stage, the model preserves strong syntactic filtering while allowing lexical-semantic similarity to modulate retrieval interference. Having laid out the operating mechanisms of the GBA, we now turn to the sources of the attention patterns analyzed in the current and related work, as well as how these 345 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 15 sources relate to cognitive interpretability, or lack thereof. The present GBA model, as applied, is actually an aggregate of individual instances of the mixed GBA model separately trained to predict the correct retrieval target — given an applicable cue word — for many different dependency relations from UD (e.g., nominal subject– nsubj , direct object– obj , case marker– case ; see Paragraph GBA NAE). This is in stark contrast to Oh 350 
+
+and Schuler (2022) who calculate NAE separately for each of the 12 GPT-2 Small attention heads of the final model layer, before taking the sum across heads — this providing essentially no cognitive interpretability. More grounded, however, is the work of Ryu and Lewis (2021, 2025), who argue that individual GPT-2 attention heads may approximate cue-based retrieval processes through specialization for particular dependency relations — 355 
+
+this approach still identifying retrieval-like behavior post hoc within pretrained networks. Another response has been to build smaller models that parameterize retrieval computations more explicitly. Timkey and Linzen (2023), for example, train compact recurrent models with — in keeping with realistic working-memory limits — a single self-attention head. However, because retrieval signals are still implemented through 360 
+
+distributed neural dynamics, the mapping between model parameters and specific linguistic constraints remains difficult to characterize mechanistically. In contrast, the GBA model directly parameterizes the retrieval computation, itself. 
+
+Multivariate Temporal Response Function Modeling 
+
+One classic way to perform psycho- or neurolinguistic experiments is to present 365 
+
+participants with carefully designed stimuli in different conditions and then perform statistical analyses (e.g., ANOVA) to test whether or not the outcome variable (e.g., reading time, fMRI BOLD, EEG μV) differs between conditions. This is not well-compatible with a naturalistic stimulus presentation paradigm, however, where participants simply listen to an audiobook story while their brain data is recorded. While 370 
+
+epochs could be constructed for each word and analyzed via single-trial linear regression, this naive approach does not account for (potentially short) temporal spacing between 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 16 items of interest. For example, a (slightly slow) English spoken word rate of 120 words per minute corresponds to a word onset every 500 ms, on average. If one were to attempt to elucidate the N400 ERP (event-related potential) using some predictor of interest using 375 
+
+naturalistic spoken stimuli and single-trial linear regression, they would be forced to face off against variable fluctuations in the target signal attributable just to hearing the next word. Instead, when using continuous stimuli, observed brain data can be modeled as the linear convolution of some predictor derived from the stimulus with a learned kernel (impulse response), or response function (Brodbeck, Hong, & Simon, 2018; Brodbeck, 380 
+
+Presacco, & Simon, 2018; Brodbeck et al., 2020, 2022, 2023; Broderick et al., 2018; Daube et al., 2019; Di Liberto et al., 2015, 2021; Ding & Simon, 2012a, 2012b; Ding et al., 2014; Lalor & Foxe, 2010; Lalor et al., 2006, 2009; Lesenfants et al., 2019; Sohoglu & Davis, 2020, inter alia). Indeed, when multiple predictors are simultaneously considered during response function estimation, the resulting artifact is known as a multivariate temporal response 385 
+
+function (mTRF). mTRF analysis allows for the decomposition of a singular brain signal into distinct responses associated with the different predictors entered into the model. In this way, target signal fluctuations which are attributable to aspects of non-interest (e.g., word onset, as in our working example) can be controlled for by adding an associated predictor into the mTRF model. 390 
+
+Mathematical Formulation 
+
+Under the mTRF approach, the target data y is modeled as the convolution — i.e., linear filtering — of one or more predictors x with a predictor-specific filter kernel, or TRF, 
+
+h. In the case of a single predictor, the value of channel y at time point t is given by: 
+
+yt =
+
+> τmax
+
+∑ 
+
+> τ=τmin
+
+hτ xt−τ (8) where xt is the value of predictor time series x at time point t, h is the filter kernel for x,395 
+
+and τ indexes the temporal lag at which x can have an effect on y. The extension to an 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 17 arbitrary number of predictors n simply involves the summation of filter responses: 
+
+yt =
+
+> n
+
+∑
+
+> i=1
+> τmax
+
+∑ 
+
+> τ=τmin
+
+hi,τ xi,t −τ (9) In electrophysiological analysis, y and x are known, but h is not. The encoding or forward modeling task, then, is to estimate the mTRF h which best predicts observed brain data from the predictors included in the model. This is algorithmically performed by 400 
+
+minimizing the difference between the true brain data yt and the model-predicted brain data ˆyt. While there exist other software packages for mTRF estimation — such as the 
+
+mTRF toolbox for MATLAB (Crosse et al., 2016), which uses ridge regression — we focus on the details of the Eelbrain package for Python (Brodbeck et al., 2023), which uses the boosting algorithm (David and Shamma, 2013; David et al., 2007, see also Friedman et al., 405 
+
+2000; T. Zhang and Yu, 2005). This algorithm is: 1) resistant to overfitting; 2) biased to find sparse mTRF solutions; and 3) is able to handle correlated predictors containing potentially redundant information (David & Shamma, 2013). 
+
+Eelbrain mTRF Estimation via Boosting 
+
+First, data are partitioned into separate training and validation splits and an 410 
+
+all-zeros mTRF (the h term) is created. Then, training data prediction error is measured when each predictor-lag component of the mTRF is independently adjusted both up and down by some small, fixed value, delta. The mTRF is updated to the adjusted mTRF with the greatest error reduction, or, in the case that no improvement was found, delta is either reduced, or training ends if delta has dropped below some prespecified cutoff. After each 415 
+
+mTRF update, validation set error is calculated as well, with training ending once validation error stops decreasing. Because only a single predictor-lag component is adjusted at each step, predictors must compete among themselves in order to explain variance in the observed signal. In this regard, this algorithm can be viewed as coordinate descent, traversing mTRF parameter 420 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 18 space in right angles with each update step. As most predictor-lag components stay zero throughout the model estimation process, the algorithm favors sparse solutions. Further, while early stopping based upon validation error serves to prevent overfitting, it additionally promotes sparsity in the final solution by ensuring that no more update steps are taken than are necessary. 425 
+
+While mTRF estimation could be performed once with the entirety of a subject’s available data, in practice — in the tradition of Brodbeck and colleagues (2020, 2022, 2023) — cross-validation is used to calculate “an unbiased estimate of the predictive power of the given predictors” (Brodbeck et al., 2023, p. 22). Under this procedure, each fold, in turn, is used as an independent, held-out test set for the evaluation of an mTRF model 430 
+
+estimated on the remaining data. In more detail, for each test fold, each non-test fold is used as the validation fold once, and then the average of these mTRF model estimations is used to make predictions for the held-out test fold. Model fit metrics — i.e., correlation and proportion of variation explained between y and ˆy — are calculated just once, by concatenating the predictions made for the independent, held-out test folds, while the final 435 
+
+returned mTRF model is the mean of all of the mTRF models estimated during cross-validation. 
+
+mTRF Analysis Methods 
+
+mTRF modeling can be used for computational neurolinguistic analysis in at least two different ways. One technique takes a model comparison approach to identifying 440 
+
+whether or not some feature (i.e., predictor) of interest significantly predicts brain activity. The second involves fitting a single, comprehensive model and then analyzing the characteristics of the component TRFs associated with the predictor(s) under consideration. 
+
+Model Comparison. The predictive power of minimally differing collections of predictors can be used to probe the unique predictivity of some feature of interest, while 445 
+
+still controlling for correlated features and features of non-interest. The goodness of an mTRF model — i.e., set of features — can be evaluated by calculating how well its 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 19 predictions align with the true observed data, as calculated by correlation, r, or proportion of variation explained. In this way, hierarchical model comparison can be performed based upon model goodness: a “full” model is estimated with a collection of predictors and then 450 
+
+a “reduced” model is estimated containing all of the predictors from the full model, except for the predictor under investigation. If model prediction is better in the full model than in the reduced model, then the conclusion can be drawn that the predictor of interest — present in the full model, but not in the reduced model — contributes to explaining the observed data above and beyond the predictors contained in the diminished model. 455 
+
+TRF Analysis. As estimates of the neural response to input impulses of magnitude 1, TRFs can be used to investigate the temporal dynamics associated with the predictors of a model. Thus, they can be thought of as being similar to ERPs or event-related fields (ERFs), but estimated from naturalistic rather than experimental stimuli. Like ERP/Fs, they can similarly be statistically analyzed via mass-univariate tests 460 
+
+(e.g., ANOVA to test for a difference among means, t-test to test for a difference from 0). They can also be thought of as being similar to the beta coefficient time series resulting from participant-level single-trial linear regression. 
+
+The Present Study 
+
+In light of prior work which has correlated disambiguation and memory retrieval 465 
+
+complexity metrics derived from broad-coverage neural language models with observed human language processing data, the present project pursues both neural predictivity as well as mechanistic interpretability. To this end, we use source-localized naturalistic MEG data and the mTRF modeling framework. First, a collection of model-goodness comparisons are performed, asking how well do surprisal (derived from the ILCGDP) and 470 
+
+NAE (derived from the GBA) perform at modeling observed brain activity, relative to their GPT-2-derived counterparts. Second, taking advantage of the high temporal and moderate spatial resolutions afforded by the MEG neuroimaging modality, we then probe the spatio-temporal dynamics of these predictors when jointly considered within a single 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 20 comprehensive mTRF model, interpreting the results through the larger scheme of 475 
+
+language as a multi-step cognitive process implemented in the human brain. 
+
+Materials and Methods MEG Dataset 
+
+The MEG dataset used for the present analyses was originally generated as part of the study by Brodbeck et al. (2022). The stimuli comprised 11 excerpts from the 480 
+
+audiobook version of The Botany of Desire , a non-fiction book by Michael Pollan (2001). Each excerpt had a duration between 210 and 332 seconds, for a total of 46 minutes and 44 seconds. The excerpts were presented in chronological order. 
+
+Participants and Acquisition 
+
+Magnetoencephalograms were recorded from 12 native speakers of English (6 485 
+
+female, 6 male; 1 left-handed; mean age = 21 years) with a 157 axial gradiometer KIT MEG system (Kanazawa, Japan) at the University of Maryland, College Park, as they listened to the audiobook excerpts while lying in a supine position. All subjects provided written informed consent in accordance with the University of Maryland Institutional Review Board. Subjects either received course credit (n = 4) or were paid for their 490 
+
+participation (n = 8). Each participant answered two to three comprehension questions after each excerpt and was given the opportunity to take a short break. The recordings were made with a sampling rate of 1000 Hz, an online low-pass filter of 200 Hz, and a notch filter at 60 Hz. Further details concerning the data acquisition process can be found in the original paper for this dataset (Brodbeck et al., 2022). 495 
+
+Preprocessing and Source Localization 
+
+Preprocessing of the MEG data was accomplished within the MNE-Python 
+
+ecosystem (Gramfort et al., 2013, Version 1.9.0) through a near-fully automated pipeline designed to minimize reliance on manual visual inspection steps and to maximize reproducibility. Initial bad channel selection simply followed the bad channels previously 500 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 21 identified by Brodbeck et al. (2022). External noise and artifacts were removed through spatiotemporal signal space separation, with a 10 second buffer duration (Taulu & Simola, 2006; Taulu et al., 2004). Data was then filtered 1–40 Hz with a zero-phase FIR filter (MNE-Python default settings). Independent component analysis (ICA; Bell & Sejnowski, 1995) was then performed 505 
+
+with the PICARD algorithm (Ablin et al., 2018) to remove ocular and cardiac artifacts. Following Ferrante et al. (2022), the data were downsampled to 200 Hz prior to ICA for faster convergence. Ocular independent components (ICs) were selected for each participant in a semi-automated manner with mne.preprocessing.corrmap , which used manually selected ICs for one participant (R2614) as a template to select artifactual 510 
+
+components for all other participants. Cardiac ICs were automatically detected with the Pearson correlation method. Statistically outlying ICs were then automatically detected with the find_bad_components function from the mne-faster package (van Vliet et al., 2025, Version 1.2.2), a Python implementation of the FASTER artifact rejection pipeline for EEG (Nolan et al., 2010), using the metrics of kurtosis, power gradient, Hurst 515 
+
+exponent, and median gradient. Bad channels were interpolated using spherical spline interpolation (Perrin et al., 1989). Each participant’s digitized head shape was co-registered with the “fsaverage” brain from Freesurfer (Fischl, 2012) using rotation, translation, and uniform scaling. A source space was generated via fourfold icosahedral subdivision of the white matter surface 520 
+
+(“ico4”), yielding a total of 2,562 source dipoles per hemisphere. Source dipoles were oriented perpendicularly to the cortical surface. A forward solution was calculated using a single layer boundary element model. Regularized minimum l2 norm current estimates (Dale & Sereno, 1993; Hämäläinen & Ilmoniemi, 1994) were computed for all data using an empty room noise covariance ( λ = 1/6), yielding signed source time courses which were 525 
+
+morphed to fsaverage space. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 22 
+
+Predictor Variables 
+
+Fig. 5 provides a visual summary of the linguistic predictors presented below and elucidates the temporal alignment between brain data, the audio storybook stimulus, acoustic predictors, and word-level predictors. 530 
+
+Baseline Predictors of Non-Interest 
+
+In the modeling of brain data collected during naturalistic language comprehension, it is paramount that low-level predictors of non-interest (viz., acoustics, word rate, lexical frequency) be controlled for. 
+
+Acoustics. As part of their dataset release, Brodbeck et al. (2022) include acoustic 535 
+
+features extracted from the audiobook stimulus. Eight features were extracted from an eight band gammatone spectrogram, and eight features were extracted from an eight band acoustic onset spectrogram, “both covering frequencies from 20 to 5000 Hz in equivalent rectangular bandwidth space (Heeris, 2018) and scaled with exponent 0.6 (Biesmans et al., 2017)” (Brodbeck et al., 2022, p. 19). Gammatone filters model peripheral auditory system 540 
+
+response characteristics, and acoustic onset spectrogram calculations model acoustic onset detection (Fishbach et al., 2001). 
+
+Word Rate and Annotating Word-Level Predictors. Brodbeck et al. (2022) also include Praat TextGrids (Boersma & Weenink, 2026) for the audiobook, which were generated by combining the Carnegie Mellon University pronunciation dictionary with the 545 
+
+Montreal Forced Aligner (McAuliffe et al., 2017). Following Brodbeck et al. (2023), word-level predictors are annotated at word-onset. Word rate is a particular instantiation which marks word onset with value 1 and which is meant to account for variance attributable just to hearing words. 
+
+Lexical Frequency. The log-transformed frequency of each word in the audiobook 550 
+
+was calculated relative to a subset of the Open American National Corpus (American National Corpus Project, 2015). The sub-corpus contained 4,491,322 tokens across 61,341 documents. Log frequency was calculated by taking the logarithm of each token’s 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 23 frequency count. Following Brodbeck (2024), we further imposed an inverse transform on the log frequency values by computing 17 minus log frequency, creating an inverse 555 
+
+frequency measure where higher values correspond to less frequent words. 
+
+Predictors of Interest 
+
+We now turn our attention to the predictors which are of interest to the current project: 1) surprisal — our operationalization of disambiguation — derived from the ILCGDP and GPT-2; and 2) normalized attention entropy — our operationalization of 560 
+
+memory retrieval — derived from the GBA and GPT-2, as well. 
+
+ILCGDP Surprisal. Audiobook sentences were parsed with the ILCGDP using basic Stanford Dependencies (de Marneffe & Manning, 2008a, 2008b; de Marneffe et al., 2006), a beam size of 64, and part of speech (POS) tags predicted by spaCy (Honnibal et al., 2020). Because the ILCGDP does not include POS tag in the joint probability 565 
+
+distribution — i.e., it does not predict POS tags (cf. Buys & Blunsom, 2015a, 2015b) — it is simply a case of a natural language processing pipeline to utilize the POS tags predicted by spaCy as features. Word-by-word surprisal was calculated as the log ratio of the prefix probabilities before and after a word, with the first word of a each sentence being assigned a surprisal value of 0. 570 
+
+GPT-2 Surprisal. Following the finding by Oh and Schuler (2023) and Oh et al. (2022) that the efficacy of a large Transformer LM to predict reading times decreases as model size and quality increases, we follow the trend in the recent computational psycho-and neurolinguistic literature (Goldstein et al., 2022; Hu et al., 2020; Huang et al., 2024; Wilcox et al., 2020, inter alia) of calculating surprisal from GPT-2 Small (Radford et al., 575 
+
+2019). We calculated GPT-2 surprisal values with code using Hugging Face Transformers (Wolf et al., 2020). First, log softmax was applied over output logits to derive token-wise log probabilities. These were then used to compute token-wise surprisals by taking their negative logarithm. Following the approach of Ryu (2025), whenever GPT-2’s byte-pair encoding tokenizer recognized a word as a combination of multiple sub-lexical tokens, we 580 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 24 took the maximum surprisal of the sub-lexical tokens as representative of the surprisal of the word. The first word of each sentence was assigned a surprisal value of 0. 
+
+GBA NAE. In the current implementation, mixed GBA models were trained to implement cue-based memory retrieval for the 23 UD dependency relations listed in Table 1. The selected relations are of the sort that have been used in previous computational 585 
+
+neurolinguistic work (Kumar et al., 2024; Lopopolo et al., 2021). For each relation, both governors and governees were allowed to serve as retrieval cues, targeting their grammatical counterpart if it occurred in the prior context of the sentence. For example, under the 
+
+nsubj relation, a verb may retrieve its subject noun from prior context, while in constructions such as passives, a subject noun may retrieve its governing verb if that verb 590 
+
+precedes it. Each GBA instance is therefore relation-specific: it assigns retrieval scores only to tokens participating in the dependency it was trained to model. It should be noted that, unlike GPT-2, which distributes attention over all prior tokens regardless of grammatical type, the GBA model does not attempt to model retrieval operations beyond the scope of the grammatical relation it is trained for. The GBA nsubj instance, then, is only able to 595 
+
+assign an NAE value to verbs and nouns. On all other tokens, it assigns an unconsidered 
+
+NA value. Aggregating across GBA instances for all 23 dependencies, results in the annotation of approximately 37.6% of the audiobook with NAE values. This is close to the theoretical maximum coverage that is achievable with the constraint that retrievals only go leftward 600 
+
+(3,053 possible cue tokens, 7,743 total tokens, theoretical maximum coverage = 39.4%). Aggregation was simply implemented as summing across the NAE values assigned by each GBA instance to a word. 
+
+GPT-2 NAE. As introduced, there exist multiple possible ways to derive NAE values from GPT-2, each operationalizing a different Transformer LM-based hypothesis. In 605 
+
+this study, we are concerned with two such approaches, both involving the aggregation of 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 25 NAE values from a set of GPT-2 Small attention heads, with each head analogous to a GBA instance as described above. Likewise, then, aggregation is implemented as simply summing across the NAE values calculated by the attention heads. The first approach, following Oh and Schuler (2022), is to hypothesize that the 610 
+
+attention heads most relevant to memory retrieval in human sentence processing are those of the topmost layer (layer 12), since this is the layer which directly informs GPT-2’s next-token predictions. Under this account, the retrieval operations implemented by the 12 heads of layer 12 are sufficient to explain cue-based memory retrieval in humans. It remains uninterpreted, however, what the targets being retrieved in the operations 615 
+
+conducted by these heads are. The second approach is to aggregate across only those attention heads whose attention patterns have been demonstrated to correlate with expected retrieval operations for specific grammatical relations. Following a method proposed by Voita et al. (2019), Ryu (2025) identified GPT-2 heads across different layers whose attention patterns 620 
+
+correlated with retrieval operations along particular grammatical relations. This implements the hypothesis that only some attention heads contribute meaningfully to memory retrieval whereas irrelevant heads contribute noise (Ryu, 2025, p. 22). It remains unclear, though, what is being retrieved when a grammatically-specialized head encounters a token for which its grammatical specialty is irrelevant. 625 
+
+These two approaches bear out two different configurations of GPT-2 Small, and we refer to the NAE values extracted from each configuration as GPT-2_Top_NAE and GPT-2_Dep_NAE respectively. With regard to annotation coverage, for fairness of comparison, we zero-masked both GPT-2_Top_NAE and GPT-2_Dep_NAE to the same 37.6% of words annotated by the GBA implementation. 630 
+
+mTRF Model Estimation 
+
+In the present project, our goals are twofold. First, we seek to evaluate whether surprisal and NAE derived from our interpretable models — the ILCGDP and the GBA — 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 26 are as equally adept at explaining naturalistic MEG source space data as their counterparts from GPT-2. In other words, are our bespoke algorithmic models at least as 635 
+
+aligned with the brain as GPT-2 is during naturalistic listening? Second, we wish to elucidate the spatio-temporal dynamics of surprisal and NAE effects in sentence comprehension when they are jointly considered. That is, are the effects of ILCGDP surprisal and those of GBA NAE dissociable in space and/or time? To these two ends, we estimated a number of mTRF models for our analyses. 640 
+
+Model Estimation 
+
+mTRF models were estimated using the TRF-Tools extension (version 11; Brodbeck and Hyde, 2025) for the Eelbrain package (version 0.41; Brodbeck, 2025; Brodbeck et al., 2023). For mTRF estimation, the source-localized MEG data were downsampled to 50 Hz and the 11 separate excerpt sections were concatenated together. mTRFs were computed 645 
+
+independently for each subject and each virtual source dipole (full ico4 source space) using 50 ms wide Hamming window basis functions at time lags from τmin = −100 ms to τmax =1000 ms. All responses and predictors were standardized by centering and dividing by the standard deviation. TRF kernels were estimated using the boosting algorithm in a fourfold cross validation regimen, with the training objective of minimizing L2 error. Selective 650 
+
+stopping was employed — whenever a training step caused an increase in error in the validation segment, the TRF for the specific predictor responsible for the increase was frozen, while training continued for the remaining predictors. Training continued until all individual predictor TRFs were frozen. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 27 Seven separate mTRF models were fitted for the following seven sets of predictors: 655 
+
+Baseline = Gammatone + Acoustic_Onset + Word_Onset + Log_Freq (10) Baseline + ILCGDP_Surprisal (11) Baseline + GPT-2_Surprisal (12) Baseline + GBA_NAE (13) Baseline + GPT-2_Top_NAE (14) Baseline + GPT-2_Dep_NAE (15) Baseline + ILCGDP_Surprisal + GBA_NAE (16) where Gammatone and Acoustic_Onset indicate the eight-band gammatone spectrogram and eight-band acoustic onset spectrogram predictors from Brodbeck et al. (2022), respectively; GPT-2_Top_NAE indicates GPT-2 NAE derived from the topmost Transformer layer; and GPT-2_Dep_NAE indicates GPT-2 NAE derived from the grammatically-specialized attention heads described in Ryu (2025). Model comparison 660 
+
+analyses relied on formulae 10–15, while the model specified in formula 16 was used in the spatio-temporal TRF analysis. 
+
+Model Comparison Analyses 
+
+First Level (Within-Subject Analysis) 
+
+We quantified the goodness-of-fit of an mTRF model — i.e., its predictive power 665 
+
+over the brain data — as the proportion of variation explained (PVE) for the true response by the predicted response. To isolate a specific predictor of interest’s unique contribution to PVE, we take a “reduced” baseline model (formula 10; containing the baseline predictors of non-interest) and a minimally different “full” model containing baseline predictors plus the predictor of interest, and then compute the gain in PVE that results from including the 670 
+
+predictor of interest (following Crabbé et al., 2019; Franzluebbers et al., 2024; Wolfman 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 28 et al., 2024). This is done per source-space vertex and collapses over the time dimension — yielding a scalar PVE gain value at each vertex. For each participant, we computed how much each predictor of interest (model formulae 11–15) increased PVE over the baseline model. 675 
+
+Next, the PVE gain maps for the predictors derived from GPT-2 were subtracted from the PVE gain maps derived from the ILCGDP and the GBA, setting up 3 contrasts: PVE-Gain ILCGDP_Surprisal − PVE-Gain GPT-2_Surprisal (17) PVE-Gain GBA_NAE − PVE-Gain GPT-2_Top_NAE (18) PVE-Gain GBA_NAE − PVE-Gain GPT-2_Dep_NAE (19) Under this setup: a positive value (at a vertex) would indicate that the predictor derived from the interpretable model is more well-aligned with the observed brain data than the Transformer model (GPT-2); a value of 0 would indicate that both models are equally 680 
+
+brain-aligned; and a negative value would indicate that the Transformer model is more aligned with the brain than the cognitive model. Thus, at the first level, each participant contributes 3 contrast brain maps, where each map is a high-dimensional data point that tells us how much more a interpretable predictor increases PVE compared with a GPT-2 predictor. 685 
+
+Second Level (Group Analysis) and Statistical Evaluation 
+
+At the second (group) level, using Eelbrain , these contrast maps were submitted to two-tailed, mass-univariate, one-sample t-tests to find source-space clusters where the contrast between the interpretable predictor and the GPT-2 predictor is statistically significant. First, t-tests were computed at each vertex to determine whether their contrast 690 
+
+value was significantly different from a population mean of 0 across participants. This produces a t-map of t-values at each vertex (along with corresponding p-values). To estimate significance at the group level, spatial cluster-based permutation testing was 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 29 performed over the resulting t-maps (Maris & Oostenveld, 2007). This non-parametric method first identifies clusters of significant responses that are contiguous in space, then 695 
+
+bootstraps a null distribution from the data to estimate cluster statistics. Adjacent vertices (of the same sign) were clustered together if their uncorrected p-value was p < 0.05 .4 The 
+
+t-values within each cluster were summed to calculate a cluster-level statistic. A null cluster distribution was estimated by repeating this procedure for 4,095 permutations 5 in which the spatial values of each participant were randomly shuffled with 0, simulating data 700 
+
+under the null hypothesis. Cluster p-values were determined by the position in the null distribution, with clusters in the bottom or top 2.5% considered statistically significant. This method accounts for multiple (within-analysis) comparisons (through the permutation-based null distribution) while acknowledging the non-independence of adjacent vertices in source space. 705 
+
+Analysis Regions 
+
+While mTRF models were fit to all vertices in the ico4 source space, statistical analysis was limited to the dorsal and ventral streams of the bilateral language network (Bornkessel-Schlesewsky & Schlesewsky, 2013; Friederici & Gierhan, 2013; Hickok & Poeppel, 2007; Matchin & Hickok, 2020). Using the “aparc” parcellation scheme in 710 
+
+Freesurfer, otherwise known as the Desikan-Killiany (DK) atlas (Desikan et al., 2006), the dorsal stream was defined to include the inferior frontal gyrus (IFG; DK parcels: pars opercularis, pars orbitalis, pars triangularis), the posterior superior temporal gyrus (pSTG; DK parcels: superior temporal gyrus, banks of superior temporal sulcus, transverse temporal gyrus), and the inferior parietal lobule (DK parcels: inferior parietal lobe, 715 
+
+supramarginal gyrus). The ventral stream comprised the same IFG and pSTG regions plus  
+
+> 4
+
+The cluster-forming p-threshold is a parameter that controls cluster size in space, rather than determining statistical significance.  
+
+> 5
+
+While 10,000 permutations is the accepted standard for cluster-based permutation testing in electrophysiological data analysis, the number of permutations is limited by the number of participants — with 12 participants, the procedure is limited to 4,095 possible permutations. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 30 the anterior temporal lobe (DK parcels: temporal pole, middle temporal gyrus, inferior temporal gyrus). 
+
+Spatio-Temporal TRF Analysis 
+
+To investigate the spatio-temporal dynamics of ILCGDP surprisal and GBA NAE, 720 
+
+we statistically analyzed the TRFs estimated by the large mTRF model specified in formula 16. At the group level, the surprisal and NAE TRFs (analogous to subject-level ERP/Fs or single-trial linear regression beta coefficient time series) were submitted to two-tailed, mass-univariate, one-sample t-tests to determine, at each vertex and time point, whether their values are significantly different from a population mean of 0 across 725 
+
+participants. This produces a t-value at each vertex and time point. While the mTRF models were estimated across a time window spanning −100 to 1000 ms, we constrain our TRF analysis to the 200 –1000 ms window, since high-level language-related cognitive processes are unlikely to be associated with true effects at earlier latencies. For estimating significance at the group level, spatio-temporal cluster-based 730 
+
+permutation testing was then performed over the resulting vertex × time t-maps. Clusters of significant responses that were contiguous in space and time were first identified before bootstrapping a null distribution from the data to estimate cluster-level statistics. Adjacent time points and vertices (of the same sign) were clustered together if their uncorrected p-value was p < 0.05 . T -values were summed to calculate a cluster-level 735 
+
+statistic. A null cluster distribution was estimated by repeating this procedure for 4,095 permutations in which the spatio-temporal values of the TRF of each participant were randomly shuffled with 0, simulating data under the null hypothesis. Cluster p-values were determined by the position in the null distribution, with clusters in the bottom or top 2.5% considered statistically significant. Like the model comparison analyses, the TRF analysis 740 
+
+was constrained to vertices falling within the bilateral language network. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 31 
+
+Data and Code Availability 
+
+The MEG data and predictors provided by Brodbeck et al. (2022) are available at https://datadryad.org/dataset/doi:10.5061/dryad.nvx0k6dv0. The remaining predictors, model estimation code, and statistical analysis code are available at 745 
+
+https://osf.io/prv45/overview?view_only=ea1da7be5a2142ae9fff43ee667a46f4. 
+
+Results 
+
+We present our results with uncorrected, cluster-level p-values. However, to account for multiple analyses of the same underlying data, we apply a conservative Bonferroni correction for the interpretation of significance. Specifically, we perform three analyses to 750 
+
+compare increases in the proportion of variation explained — once for surprisal and twice for normalized attention entropy. Additionally, we analyze the TRFs associated with ILCGDP surprisal and GBA NAE in a large singular model. To correct for these multiple analyses, we consider cluster-level results significant only at a corrected threshold of α =0.05 / 4, which corresponds to an uncorrected p < 0.0125. 755 
+
+Model Comparison Analyses 
+
+Model comparisons revealed that complexity metrics derived from the ILCGDP and GBA models presented here are no less well-aligned with the brain than their counterparts derived from the Transformer model GPT-2 Small. Specifically, we tested whether PVE gains induced by our interpretable model predictors differed significantly from those 760 
+
+induced by GPT-2-derived predictors across language network source space. All clusters failed to reach significance, not only at the corrected threshold, but even at a more lax uncorrected p < 0.05 threshold. This indicates that, in no cortical language network region, does ILCGDP surprisal predict brain activity any worse than GPT-2 surprisal, nor does GBA NAE predict brain activity any worse than either of the GPT-2-derived NAE 765 
+
+predictors. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 32 
+
+Spatio-Temporal TRF Analysis 
+
+A number of ILCGDP surprisal and GBA NAE TRF clusters reached the corrected threshold of p < 0.0125 . These are shown in Figs. 6 and 7, respectively. 
+
+ILCGDP Surprisal 770 
+
+Four clusters were identified for surprisal derived from the ILCGDP: 1) a negative-correlation cluster consisting of 37 vertices in the left superior temporal gyrus (STG) 340–600 ms ( p < 0.001 ); 2) a negative-correlation cluster consisting of 27 vertices in the right STG 240–580 ms ( p < 0.001 ); 3) a positive-correlation cluster consisting of 24 vertices in the right STG 320–500 ms ( p = 0 .003 ); and 4) a positive-correlation cluster 775 
+
+consisting of 16 vertices in the left supramarginal gyrus (SMG) 380–520 ms ( p = 0 .009 ). 
+
+GBA NAE 
+
+Three clusters were identified for GBA NAE: 1) a positive-correlation cluster consisting of 22 vertices in the left STG 700–840 ms ( p < 0.001 ); 2) a negative-correlation cluster consisting of 18 vertices in the left SMG 760–840 ms ( p < 0.001 ); and 3) a 780 
+
+positive-correlation cluster consisting of 8 vertices in the right STG 780–860 ms ( p = 0 .005 ). 
+
+Early Responses 
+
+Noticeable in both Fig. 6 as well as Fig. 7 are early TRF responses in the 0–200 ms time window which was excluded from group-level statistical analysis. While the boosting algorithm for mTRF estimation (David & Shamma, 2013; David et al., 2007) has been 785 
+
+argued to be robust to correlated predictors containing potentially redundant information and biased toward sparse (i.e., flat, zero-valued) mTRF solutions (Brodbeck et al., 2023), we attribute these peaks to “contamination” resulting from predictor correlation between surprisal and NAE with word rate (the response to simply encountering a word onset). While it was not known a priori that this would be observed, the 0–200 ms time window 790 
+
+was excluded beforehand from group-level statistical analysis on the assumption that true word-conditioned effects from cognitive operations like disambiguation and memory 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 33 retrieval should not occur that early. 
+
+TRF Signedness 
+
+As introduced, the mTRF models were fitted to signed source space data following 795 
+
+the recommendation of Brodbeck, Presacco, and Simon (2018, p. 165): “when analyzing continuous responses, where high pass filtering replaces baseline correction, a change of the sign in the current estimate is important information. Hence, directional (‘fixed orientation’) source estimates, which preserve information about the dipole orientation, are preferable.” This means that spatio-temporal cluster interpretation requires care because 800 
+
+anatomical features “lead to source estimates with alternating sign across gyri and sulci due to alternating cortical surface orientation” (ibid., p. 166). To illustrate the point, it is likely the case that the two right hemisphere surprisal clusters shown in Fig. 6 belong to the same underlying brain response, but owing to perpendicular, fixed dipole orientation, the sign of the minimum norm current estimate switches between the superior temporal 805 
+
+gyrus and the superior temporal sulcus, thus leading to two temporally overlapping and spatially adjacent clusters with opposite sign (see also Brodbeck, Presacco, and Simon, 2018 Fig. 3 and surrounding discussion). For this reason, the discussion section emphasizes spatio-temporal TRF cluster timing more so than location (moderate emphasis), and directionality (no emphasis). 810 
+
+Discussion 
+
+By reaching “for the goal of scientific explanation using computational models that are by and large interpretable,” the present project has taken up the neurocomputational modeling call to action put forth by Hale et al. (2022, p. 9). We first remark on the demonstration that — despite the prominence of neural large language models (LLMs) in 815 
+
+the contemporary psycho- and neurolinguistic literature — smaller models containing human-grounded inductive biases can be just as well aligned with language network brain activity recorded during narrative listening. In other words, the computational cognitive models presented here achieve equal ability as LLMs, with the benefits of both 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 34 interpretability as well as data and compute efficiency. 820 
+
+Following this, we discuss a staged processing (Sternberg, 1969) account of word-by-word sentence processing based upon our results correlating ILCGDP surprisal and GBA NAE with naturalstic MEG data. While the idea that incremental sentence comprehension proceeds as an ordered collection of operations is not a novel one (see Bornkessel & Schlesewsky, 2006; Frazier & Fodor, 1978; Friederici, 2002), the present 825 
+
+project does, however, demonstrate the applicability of such lines of reasoning at an unprecedented scale — owing to the broad-coverage statistical nature of the computational models used, as well as the naturalness of the analyzed data. 
+
+Equivalence in Predictive Power 
+
+Within computational cognitive neuroscience, models of cognition are often judged 830 
+
+by the merits of their predictive power — how well they are able to predict neural data — quantified by “brain score” metrics such as correlation or proportion of variation explained. Yet, predictive power does not an explanatory model make. As emphasized by Shmueli (2011), predictive modeling and explanatory modeling are different (but mutually supportive) activities. Prediction is concerned with capturing statistical associations while 835 
+
+explanation involves inferring causal relations. Notably, neither necessarily entails the other. Here, we adopt the ideal that a good scientific model should be both predictive as well as explanatory — that is, the model should provide an interpretable mapping between the theory that it implements as well as the predictions that it makes (Guest & Martin, 2021). On this point, the mechanistic interpretability of a given neurocomputational 840 
+
+model, along with its alignment with brain data, are both paramount, neither sufficient on their own (Hale et al., 2022). This is not to say that LLMs lack any explanatory power, however. For example, recent work by Ryu and Lewis (2021, 2025) proposes that specific attention heads in GPT-2 implement cue-based memory retrieval for specific grammatical dependency 845 
+
+relations (e.g., a verb retrieving its subject). Yet, gaps in interpretability do remain. For 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 35 example, it is unclear what such a grammar-specialized attention head is attempting to retrieve when the cue token is unrelated to its specialty. In other words, the GPT-2 theory underspecifies what features are targeted in retrieval operations. This is not to downplay the progress made in regard to “unblackboxing” GPT-2. Nevertheless, it must be 850 
+
+acknowledged that GPT-2 has yet to yield an adequately specified explanatory account of the human sentence processor. In contrast, the ILCGDP and GBA are fully interpretable models. As a scientific principle, between any two models with equal predictive power but unequal explanatory power, it should be concluded that the model with superior explanatory power is to be preferred. 855 
+
+A Staged Theory of Sentence Processing 
+
+While there has been much work theorizing and investigating disambiguation and memory retrieval as separate accounts, less work has considered both of these aspects of language comprehension jointly (although see Campanelli et al., 2018; Tung & Brennan, 2023). In temporally dissociating surprisal and NAE, we build off of recent work by Ryu 860 
+
+and Lewis (2025), and advocate for a staged theory of sentence processing. Without excluding other potentially relevant dimensions, and focusing just on those investigated here, one stage — indexed by surprisal — reflects early lexical disambiguation, while another later stage — indexed by normalized attention entropy — reflects memory retrieval and integration, i.e., dependency construction. 865 
+
+Surprisal 
+
+A number of spatio-temporal clusters were observed for ILCGDP surprisal in the bilateral STG and left SMG ∼300–550 ms. While the N400 is technically an EEG ERP, the results of previous research lead to an interpretation of the present collection of MEG effects as homologous. The N400 is a negative-going, centro-parietal ERP, peaking 870 
+
+approximately 400 ms following stimulus onset. While once thought to be found for words which are semantically anomalous, given a context (Kutas & Hillyard, 1980; Osterhout & Holcomb, 1992; Osterhout & Mobley, 1995), the N400 is now thought to be observed for all 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 36 content words and to reflect inverse Cloze probability (Phillips et al., 2005). Regarding previous staged processing proposals, the N400 fall under Phase 2 of the model presented 875 
+
+in Friederici (2002) — which involves lexical-semantic and morphosyntactic processing for thematic role assignment — and Phase 2 in the Extended Argument Dependency Model (eADM) of Bornkessel and Schlesewsky (2006) — which involves the establishment of both inter-argument as well as argument-verb relations. Previous computational modeling work has associated neural network language 880 
+
+model-derived surprisal with the N400 both in EEG (Chen et al., 2025; Frank et al., 2013, 2015; Heilbron et al., 2022) and in MEG (Heilbron et al., 2022), thus positively linking surprisal with the processing difficulty of a word, given context. Other EEG results have had less N400-typical spatial distributions, while remaining within the temporal range identified here. Hale et al. (2018), for example, find that surprisal derived from Recurrent 885 
+
+Neural Network Grammar (Dyer et al., 2016) is associated with an early frontal positivity 
+
+∼250 ms, while Brennan and Hale (2019) find that probabilistic context-free grammar-derived surprisal is associated with an anterior negativity (216–554 ms) for content words, and an anterior positivity (210–310 ms) for grammatical function words. From the temporal domain, now, to the spatial domain, it has been shown that 890 
+
+language network (e.g., Matchin & Hickok, 2020) activation, broadly, correlates with surprisal (Oh et al., 2021, 2022; Shain et al., 2020). More specifically, however, the clusters identified here are in alignment with results which have associated surprisal with activation in left posterior temporal (Brennan et al., 2016, 2020; Willems et al., 2016), left inferior parietal (Brennan et al., 2016, 2020; Lopopolo et al., 2017; Willems et al., 2016), and 895 
+
+bilateral superior temporal (Franzluebbers et al., 2024; Lopopolo et al., 2017; Stanojević et al., 2023; Wolfman et al., 2024) cortex. Two additional interpretations are worth briefly considering. The first is that the observed surprisal clusters are correlating not with the N400, but with the left anterior negativity (LAN; Coulson et al., 1998; Hoen & Dominey, 2000; Kaan & Swaab, 2003a; 900 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 37 Kluender & Kutas, 1993; Molinaro et al., 2011; Neville et al., 1991; Osterhout & Mobley, 1995, inter alia), an ERP which is associated with morphoysyntactic expectance violation, and which also falls under Phase 2 of both the Friederici (2002) model and the eADM (Bornkessel & Schlesewsky, 2006). While this cannot be ruled out, it seems less likely, as previous work investigating the ability of surprisal to predict various ERP components 905 
+
+shows reliable effects for the N400 only, and not for the LAN (Frank et al., 2015). The second is that surprisal is indexing the M350 ERF (Embick et al., 2001; Pylkkänen & Marantz, 2003; Pylkkänen et al., 2002, 2004; Solomyak & Marantz, 2010; Stockall et al., 2004; Zipse et al., 2006, inter alia), a component which is associated with lexical processing and which has been investigated using properties such as lexical frequency, neighborhood 910 
+
+density, and phonotactic probability. The commonly applied single-item presentation paradigm, however, is a far cry from the continuous, naturalistic speech stimulus used here. While is has been shown that M350 latency correlates with lexical frequency (Embick et al., 2001), this is included as a predictor of non-interest in the large mTRF model specified in formula 16. Taken together, it seems unlikely that surprisal is correlating with 915 
+
+this component. 
+
+Normalized Attention Entropy 
+
+More interesting are the spatio-temporal clusters observed for GBA NAE in the bilateral STG and left SMG ∼750–850 ms. While deviations from zero were also observed in these clusters ∼300–500 ms (Fig. 7), no clusters falling within this early time window 920 
+
+reached significance, even at a lax uncorrected p < 0.05 . The only other work investigate NAE in the context of neuroimaging is that of Terpstra et al. (2025), who find that NAE is predictive of N400 amplitude in naturalistic reading above and beyond surprisal. It should be noted, however, that their analysis investigates only N400 amplitude, i.e., they do not entertain later time windows, like we do here. 925 
+
+Once again, while the P600 is technically an EEG ERP, the results of previous research (expounded upon below) lead to an interpretation of the present collection of 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 38 MEG effects as homologous. The P600 is a positive-going, centro-parietal ERP which begins approximately 500 ms after the presentation of the stimulus and is thought to index retrieval and/or integration difficulty (Aurnhammer et al., 2021; Fiebach et al., 2001, 2002; 930 
+
+Kaan & Swaab, 2003b; Kaan et al., 2000; Molinaro et al., 2011; Phillips et al., 2005). In terms of previous staged processing accounts, the P600 corresponds to Phase 3 of the model presented in Friederici (2002) — which involves information integration — and Phase 2 in the eADM (Bornkessel & Schlesewsky, 2006) — i.e., argument-argument and argument-verb relation establishment. 935 
+
+With regard to localization, strong evidence for involvement of the STG in cue-based memory retrieval comes from Glaser et al. (2013), who adapt the 2 x 2 high vs. low, semantic vs. syntactic interference during subject retrieval experiment of Van Dyke (2007) to fMRI. They find increased activation in left STG for both high compared to low, syntactic as well as semantic interference. Less direct support comes from implications of 940 
+
+the posterior temporal lobe in antecedent retrieval (Hammer et al., 2011; S. Zhang et al., 2022) and work which casts memory demand in the maintenance more so than retrieval light (Fiebach et al., 2001, 2005, 2007). Next, we present a number of carefully developed associations to relate: 1) normalized attention entropy; 2) similarity-based interference during cue-based memory 945 
+
+retrieval; and 3) late electrophysiological effects. Interference occurs during memory retrieval when multiple elements in memory match, to some degree, the retrieval cues — with the non-target interfering elements known as distractors (see Vasishth & Engelmann, 2021, for a book-length treatment). The psycholinguistic consensus is that ungrammatical sentences like (2a) are easier to process than those like (2b; Dillon et al., 2013; Jäger et al., 950 
+
+2017, 2020; Lago et al., 2015; Pearlmutter et al., 1999; Tanner et al., 2014, 2017; Tucker et al., 2015; Wagers et al., 2009, inter alia; examples adapted from Bock and Miller, 1991, p. 45). (2) a. *The cost { +SU BJ 
+
+> +SIN G
+
+}
+
+of the improvements { −SU BJ 
+
+> +P LU R
+
+}
+
+have { +SU BJ 
+
+> +P LU R
+
+}
+
+not yet been 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 39 estimated. 955 
+
+b. *The cost { +SU BJ 
+
+> +SIN G
+
+}
+
+of the improvement { −SU BJ 
+
+> +SIN G
+
+}
+
+have { +SU BJ 
+
+> +P LU R
+
+}
+
+not yet been estimated. This phenomenon — also known as agreement attraction 6 — is thought to result from facilitatory interference, i.e., a reduction in the cost of processing an ungrammatical sentence due to the presence of an interfering distractor. In both (2a) as well as (2b), at 960 
+
+the verb have , a retrieval is made for the subject of the sentence using the cues {+SU BJ }
+
+and {+P LU R }. In both, have will partially match the true subject cost on {+SU BJ }.Only in (2a), however, will have additionally partially match improvements on {+P LU R },thus leading to an amelioration of the effect of ungrammaticality. Further consideration of the possible cognitive-psychological details causing facilitatory interference in 965 
+
+ungrammatical stimuli are beyond the scope of the present project, however the reader is referred to Dillon et al. (2013), Wagers et al. (2009), and Vasishth and Engelmann (2021). Having introduced the the phenomenon of facilitatory interference during the processing of ungrammatical agreement attraction constructions, we now associate self-attention diffuseness with late electrophysiological effects. First, EEG results show that 970 
+
+P600 effects elicited for ungrammatical subject-verb number trials are reduced when an intervening attractor agrees in number with the verb (Tanner et al., 2014, 2017). Second, Ryu and Lewis (2021) propose and demonstrate self-attention diffuseness as a proxy for degree of similarity-based interference, i.e., show that when a distractor matches the verb in number, attention is paid not only to the target, but to the distractor as well (see also 975 
+
+Ryu & Lewis, 2025; Timkey & Linzen, 2023). The joint consideration of these results then leads to the association of attention diffuseness with the P600, at least in the specific case of ungrammatical number agreement attraction sentences.  
+
+> 6
+
+We set aside agreement attraction in production (“proximity concord,” Quirk et al., 1972; “attraction error,” Zandvoort, 1961), and limit attention strictly to comprehension, although the reader is directed toward the extensive literature in the domain of production (Bock & Cutting, 1992; Bock & Eberhard, 1993; Bock & Miller, 1991; Eberhard, 1997; Eberhard et al., 2005; Fayol et al., 1994; Hartsuiker et al., 2003, inter alia). 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 40 While the fact is immediately apparent that the naturalistic storybook stimulus used here consists of grammatical material rather than ungrammatical material, it is the 980 
+
+case, however, that cue-based retrieval theory also makes the prediction that sentences like (3b) are more difficult than sentences like (3a; examples adapted from Bock and Miller, 1991, p. 45). (3) a. The cost { +SU BJ 
+
+> +SIN G
+
+}
+
+of the improvements { −SU BJ 
+
+> +P LU R
+
+}
+
+has { +SU BJ 
+
+> +SIN G
+
+}
+
+not yet been estimated. 985 
+
+b. The cost { +SU BJ 
+
+> +SIN G
+
+}
+
+of the improvement { −SU BJ 
+
+> +SIN G
+
+}
+
+has { +SU BJ 
+
+> +SIN G
+
+}
+
+not yet been estimated. In both (3a) as well as (3b), the {+SU BJ } and {+SIN G } cues for the verb has match perfectly the features for the subject cost . In (3b), but not (3a), however, improvement also has the {+SIN G } feature, making it more difficult for has to retrieve the correct target. 990 
+
+This is known as inhibitory interference, and like facilitatory interference, we will not here get into the possible cognitive-psychological causal details, although the reader is directed to Vasishth and Engelmann (2021). As compared to facilitatory interference in ungrammatical sentences, experimentally, inhibitory interference in grammatical trials is less borne out (see Jäger 995 
+
+et al., 2017; Vasishth & Engelmann, 2021), with some studies failing to observe inhibitory interference (Dillon et al., 2013; Lago et al., 2015; Tanner et al., 2014, 2017; Wagers et al., 2009) — and thus labeling agreement attraction an asymmetrical phenomenon — but others indeed observing inhibitory interference effects (Franck et al., 2015; Lee & Garnsey, 2015; Martin et al., 2012, 2014). Concerned, however, that previous interference studies 1000 
+
+were under powered, Nicenboim et al. (2018) conduct a high-powered investigation and indeed do find evidence for inhibitory interference. Important for the present project is the fact that the proposal of Ryu and Lewis (2021) — i.e., of attention diffuseness as a proxy for degree of similarity-based interference — extends to inhibitory interference, as well. Thus, we now take one step forward — from 1005 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 41 ungrammatical stimuli to grammatical stimuli — to associate (normalized) attention entropy with electrophysiological effects. Martin et al. (2012) analyze EEG responses to Spanish sentences in which a noun must be retrieved as antecedent of a nominal-ellipsis-allowing determiner, while an inaccessible noun intervenes: (4) a. Marta se compró la camiseta {+F EM } que estaba al lado de la falda {+F EM }1010 
+
+y Miren cogió otra {+F EM } _ para salir de fiesta. ‘Marta bought the t-shirt {+F EM } that was next to the skirt {+F EM } and Miren took another {+F EM } _ to go to the party.’ b. Marta se compró la camiseta {+F EM } que estaba al lado de la vestido {+M ASC } y Miren cogió otra {+F EM } _ para salir de fiesta. 1015 
+
+‘Marta bought the t-shirt {+F EM } that was next to the dress {+M ASC } and Miren took another {+F EM } _ to go to the party.’ Analyzing all electrodes, and in a 400–1000 ms time window after critical word onset, they find more positive μV when the attractor is the same grammatical gender as the determiner (4a), then when it is not (4b). Martin et al. (2014) perform a follow-up 1020 
+
+study using similarly structured, but object-extracted relative clause stimuli. They find: 1) greater negativity in anterior channels 100–400 ms after critical word onset when the attractor is the same gender as the determiner (cf. Terpstra et al., 2025 and Fig. 7); and 2) a larger P600 in posterior channels 1200–1400 ms after critical (700–900 ms after post-critical) word onset when the attractor was different in gender than the determiner. 1025 
+
+Two of these three electrophysiological results pattern with the operating hypothesis that the presence of a gender-agreeing distractor leads to more diffuse attention (greater NAE) and greater difficulty retrieving the target antecedent, and that is observed as greater deviance in the electrophysiological signal compared to the non-interference condition. Indeed, this is what is indicated in the clusters in Fig. 7: increases in GBA NAE associated 1030 
+
+with beta coefficients (both positive and negative) of greater magnitude linking to signed 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 42 source data. While the EEG results of Tanner et al. (2014, 2017) are only indirectly applicable to the present investigation, and while the EEG results of Martin et al. (2012, 2014) are murky, they both, in conjunction with the computational modeling work connecting 1035 
+
+diffuseness of self-attention to similarity based interference during cue-based memory retrieval (Ryu & Lewis, 2021, 2025; Timkey & Linzen, 2023), support a preliminary association between normalized attention entropy and the electrophysiological results observed here. An important point that has not yet been raised, however, and which also makes direct comparison more difficult, is the fact that the discussed similarity-based 1040 
+
+interference studies involve either nominal retrieval for a subject or nominal retrieval for an antecedent — only two types linguistic dependency. This is in stark contrast to the 23 distinct Universal Dependency dependency types covered by the aggregate mixed GBA model. Thus, while the present work makes an interesting first pass, much more work will be needed in order to flesh out the details. 1045 
+
+We end this portion of the discussion on a pair of notes. The first is that the idea of attention entropy as retrieval difficulty bears some resemblance to the notion of referential ambiguity (Nieuwland & Van Berkum, 2006, 2008; Nieuwland et al., 2007; Van Berkum et al., 1999, 2003, 2007, inter alia). Similar to how attention cannot be concentrated entirely on the true target in the presence of a distractor, in the case of referential 1050 
+
+ambiguity, a discourse entity cannot be uniquely selected from the situation model. While the (sustained) frontal negative shift (Nref; referentially induced frontal negativity) EEG component associated with this phenomenon onsets ∼300 ms, the shift can be sustained through 900 (Van Berkum et al., 2003) or even 1500 ms (Nieuwland & Van Berkum, 2006; Nieuwland et al., 2007) post-stimulus onset, thus bringing it closer in range of the late 1055 
+
+effects identified here. While this phenomenon and framework would be an interesting domain for future computational modeling, it is not a likely interpretation of the MEG effects found for normalized attention entropy for three reasons: 1) if anything, the 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 43 temporal response functions shown in Fig. 7 are biphasic, and certainly not sustained shifts; 2) the GBA cue-based retrieval model from which NAE is derived considers only the 1060 
+
+current sentence; i.e., it has no knowledge of or even ability to consider the larger, preceding, situational context; and 3) the Universal Dependencies framework underlying the GBA does not consider anaphora, i.e., assign dependencies or draw arcs between coreferring entities. Lastly, recent work by Brouwer and colleagues (Aurnhammer et al., 2023; Brouwer 1065 
+
+& Hoeks, 2013; Brouwer et al., 2012, 2017; Delogu et al., 2019, 2021, 2025, inter alia) has developed the Retrieval-Integration (RI) theory of language processing. Seeking a parsimonious account for “semantic” P600 effects like those observed for stimuli such as 
+
+The hearty meal was devouring... (Kim & Osterhout, 2005, p. 207), the RI framework recasts N400 and P600 amplitude as indexing: context-sensitive, word meaning retrieval 1070 
+
+from long-term memory; and new information integration for mental representation update, respectively. The RI account states that every word should be associated with a biphasic N400-P600 complex for lexical activation/retrieval, and subsequent integration/update (Delogu et al., 2025). Indeed, by annotating surprisal and NAE for all applicable words — 100.0% and 37 .6%, respectively — and then observing N400- and 1075 
+
+P600-like effects, respectively, the present results are quite consistent with the RI proposal. 
+
+Conclusion 
+
+The present project demonstrates that, even in the age of ever larger and more powerful artificial neural network models for language, there still remains a place in cognitive neuroscience for interpretable, human-bias-informed models of sentence 1080 
+
+comprehension. Our work extends recent behavioral investigations into attention diffuseness as similarity-based interference to the neural domain, and contributes to an ever-growing foundation for understanding how algorithmic-level proposals of sentence processing map onto implementation-level neural mechanisms. The temporal dissociation observed for disambiguation and memory retrieval 1085 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 44 provides crucial evidence that these theoretically motivated cognitive processes have distinct neural substrates, supporting their treatment as separate components within algorithmic theories of sentence processing. Moreover, by demonstrating that interpretable neurocomputational models can achieve meaningful brain alignment while maintaining explanatory transparency, this work offers a methodological blueprint for bridging the gap 1090 
+
+between algorithmic proposals and neural implementation. Overall, this research contributes to the unification of disambiguation and memory retrieval theories of human sentence processing, opening up a number of interesting future directions to develop better, more interpretable, more neurologically plausible models of the systems that power the human mind. 1095 
+
+A couple of directions present themselves as interesting avenues for future research. The first involves integrating disambiguation and memory retrieval into a single unified model. This follows clearly in the footsteps of Lewis and Vasishth (2005), who construe left-corner phrase structure parsing as cue-based memory retrieval. Benefits to starting from a neural network-parameterized transition-based dependency parser and using parse 1100 
+
+state embedding representations for retrieval calculation, however, include: 1) the maintenance of the ability to calculate disambiguation metrics over beams of parse states; and 2) broad coverage applicability for free — i.e., applicability to arbitrary (grammatical) language like that found in audiobook stories. As has already been an undercurrent in the present project, incremental dependency parsing and cue-based memory retrieval pose an 1105 
+
+elegant pairing, with retrieval triggered whenever a dependency is assigned by the parser. The second direction — which could either be integrated into a unified model or implemented separately — involves properly accounting for degree of disambiguation work attributable to syntax — the surprisal measure calculated in the present project being lexical in nature and only syntactially informed (see Franzluebbers et al., 2024, for an 1110 
+
+example of decomposing surprisal from a generative dependency parser into lexical and syntactic components, however). Indeed, several recent proposals have attempted to get at 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 45 this quantity by calculating the dissimilarity, incompatibility, or divergence between probability distributions over syntactic analyses (Wang et al., 2024, 2025; Dunagan, 2025, Ch. 3), the idea being that a large change in syntactic analysis distribution is associated 1115 
+
+with a large degree of syntactic processing work. 
+
+.CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint TEMPORAL DISSOCIATION 46 
+
+References 
+
+Ablin, P., Cardoso, J.-F., & Gramfort, A. (2018). Faster independent component analysis by preconditioning with Hessian approximations. IEEE Transactions on Signal Processing , 66 (15), 4040–4049. 1120 
+
+https://doi.org/https://doi.org/10.1109/TSP.2018.2844203 Abney, S. P., & Johnson, M. (1991). Memory requirements and local ambiguities of parsing strategies. Journal of Psycholinguistic Research , 20 , 233–250. https://doi.org/https://doi.org/10.1007/BF01067217 Aho, A. V., & Ullman, J. D. (1972). The theory of parsing, translation, and compiling 1125 
+
+(Vol. 1). Prentice-Hall. https://dl.acm.org/doi/book/10.5555/578789 American National Corpus Project. (2015). Open American National Corpus .https://anc.org/data/oanc/ Asano, M., & Yokosawa, K. (2011). Rapid extraction of gist from visual text and its influence on word recognition. The Journal of General Psychology , 138 (2), 127–154. 1130 
+
+https://doi.org/https://doi.org/10.1080/00221309.2010.542510 Aurnhammer, C., Delogu, F., Brouwer, H., & Crocker, M. W. (2023). The p600 as a continuous index of integration effort. Psychophysiology , 60 (9), e14302. https://doi.org/https://doi.org/10.1111/psyp.14302 Aurnhammer, C., Delogu, F., Schulz, M., Brouwer, H., & Crocker, M. W. (2021). Retrieval 1135 
+
+(N400) and integration (P600) in expectation-based comprehension. Plos One ,
+
+16 (9), e0257430. https://doi.org/https://doi.org/10.1371/journal.pone.0257430 Ballesteros, M., & Nivre, J. (2013). Going to the roots of dependency parsing. 
+
+Computational Linguistics , 39 (1), 5–13. https://doi.org/https://doi.org/10.1162/COLI_a_00132 1140 
+
+Bangalore, S., & Joshi, A. K. (1999). Supertagging: An approach to almost parsing (J. Hirschberg, Ed.). Computational Linguistics , 25 (2), 237–265. https://aclanthology.org/J99-2004/ 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 47 Bell, A. J., & Sejnowski, T. J. (1995). An information-maximization approach to blind separation and blind deconvolution. Neural Computation , 7 (6), 1129–1159. 1145 
+
+https://doi.org/https://doi.org/10.1162/neco.1995.7.6.1129 Biesmans, W., Das, N., Francart, T., & Bertrand, A. (2017). Auditory-inspired speech envelope extraction methods for improved EEG-based auditory attention detection in a cocktail party scenario. IEEE Transactions on Neural Systems and Rehabilitation Engineering , 25 (5), 402–412. 1150 
+
+https://doi.org/https://doi.org/10.1109/TNSRE.2016.2571900 Black, E., Jelinek, F., Lafrerty, J., Magerman, D. M., Mercer, R., & Roukos, S. (1993). Towards history-based grammars: Using richer models for probabilistic parsing. 31st Annual Meeting of the Association for Computational Linguistics , 31–37. https://doi.org/https://doi.org/10.3115/981574.981579 1155 
+
+Bock, K., & Cutting, J. C. (1992). Regulating mental energy: Performance units in language production. Journal of Memory and Language , 31 (1), 99–127. https://doi.org/https://doi.org/10.1016/0749-596X(92)90007-K Bock, K., & Eberhard, K. M. (1993). Meaning, sound and syntax in English number agreement. Language and Cognitive Processes , 8 (1), 57–99. 1160 
+
+https://doi.org/https://doi.org/10.1080/01690969308406949 Bock, K., & Miller, C. A. (1991). Broken agreement. Cognitive Psychology , 23 (1), 45–93. https://doi.org/https://doi.org/10.1016/0010-0285(91)90003-7 Boersma, P., & Weenink, D. (2026). Praat: Doing phonetics by computer .https://praat.org/ 1165 
+
+Bornkessel, I., & Schlesewsky, M. (2006). The extended argument dependency model: A neurocognitive approach to sentence comprehension across languages. Psychological Review , 113 (4), 787. https://doi.org/https://doi.org/10.1037/0033-295X.113.4.787 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 48 Bornkessel-Schlesewsky, I., & Schlesewsky, M. (2013). Reconciling time, space and function: A new dorsal–ventral stream model of sentence comprehension. Brain and Language ,1170 
+
+125 (1), 60–76. https://doi.org/https://doi.org/10.1016/j.bandl.2013.01.010 Brennan, J. R., Dyer, C., Kuncoro, A., & Hale, J. T. (2020). Localizing syntactic predictions using recurrent neural network grammars. Neuropsychologia , 146 ,107479. https://doi.org/https://doi.org/10.1016/j.neuropsychologia.2020.107479 Brennan, J. R., & Hale, J. T. (2019). Hierarchical structure guides rapid linguistic 1175 
+
+predictions during naturalistic listening. PloS One , 14 (1), e0207741. https://doi.org/https://doi.org/10.1371/journal.pone.0207741 Brennan, J. R., Stabler, E. P., Van Wagenen, S. E., Luh, W.-M., & Hale, J. T. (2016). Abstract linguistic structure correlates with temporal activity during naturalistic comprehension. Brain and Language , 157 , 81–94. 1180 
+
+https://doi.org/https://doi.org/10.1016/j.bandl.2016.04.008 Brodbeck, C. (2024). Christianbrodbeck/alice . https://github.com/christianbrodbeck/Alice Brodbeck, C. (2025). Christianbrodbeck/eelbrain .https://github.com/christianbrodbeck/Eelbrain Brodbeck, C., Bhattasali, S., Heredia, A. A. C., Resnik, P., Simon, J. Z., & Lau, E. (2022). 1185 
+
+Parallel processing in speech perception with local and global representations of linguistic context. eLife , 11 , e72056. https://doi.org/https://doi.org/10.7554/eLife.72056 Brodbeck, C., Das, P., Gillis, M., Kulasingham, J. P., Bhattasali, S., Gaston, P., Resnik, P., & Simon, J. Z. (2023). Eelbrain, a Python toolkit for time-continuous 1190 
+
+analysis with temporal response functions. eLife , 12 , e85012. https://doi.org/https://doi.org/10.7554/eLife.85012 Brodbeck, C., Hong, L. E., & Simon, J. Z. (2018). Rapid transformation from auditory to linguistic representations of continuous speech. Current Biology , 28 (24), 3976–3983. https://doi.org/https://doi.org/10.1016/j.cub.2018.10.042 1195 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 49 Brodbeck, C., & Hyde, H. (2025). Christianbrodbeck/trf-tools .https://github.com/christianbrodbeck/TRF-Tools Brodbeck, C., Jiao, A., Hong, L. E., & Simon, J. Z. (2020). Neural speech restoration at the cocktail party: Auditory cortex recovers masked speech of both attended and ignored speakers. PLoS Biology , 18 (10). 1200 
+
+https://doi.org/https://doi.org/10.1371/journal.pbio.3000883 Brodbeck, C., Presacco, A., & Simon, J. Z. (2018). Neural source dynamics of brain responses to continuous stimuli: Speech processing from acoustics to comprehension. 
+
+NeuroImage , 172 , 162–174. https://doi.org/https://doi.org/10.1016/j.neuroimage.2018.01.042 1205 
+
+Broderick, M. P., Anderson, A. J., Di Liberto, G. M., Crosse, M. J., & Lalor, E. C. (2018). Electrophysiological correlates of semantic dissimilarity reflect the comprehension of natural, narrative speech. Current Biology , 28 (5), 803–809. https://doi.org/https://doi.org/10.1016/j.cub.2018.01.080 Brouwer, H., Crocker, M. W., Venhuizen, N. J., & Hoeks, J. C. (2017). A 1210 
+
+neurocomputational model of the n400 and the p600 in language processing. 
+
+Cognitive Science , 41 , 1318–1352. https://doi.org/https://doi.org/10.1111/cogs.12461 Brouwer, H., Fitz, H., & Hoeks, J. (2012). Getting real about semantic illusions: Rethinking the functional role of the p600 in language comprehension. Brain research , 1446 ,1215 
+
+127–143. https://doi.org/https://doi.org/10.1016/j.brainres.2012.01.055 Brouwer, H., & Hoeks, J. C. (2013). A time and place for language comprehension: Mapping the n400 and the p600 to a minimal cortical network. Frontiers in human neuroscience , 7, 758. https://doi.org/https://doi.org/10.3389/fnhum.2013.00758 Buys, J., & Blunsom, P. (2015a). A Bayesian model for generative transition-based 1220 
+
+dependency parsing. Proceedings of the Third International Conference on Dependency Linguistics (Depling 2015) , 58–67. https://aclanthology.org/W15-2108 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 50 Buys, J., & Blunsom, P. (2015b). Generative incremental dependency parsing with neural networks. Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural 1225 
+
+Language Processing (Volume 2: Short Papers) , 863–869. https://doi.org/https://doi.org/10.3115/v1/P15-2142 Campanelli, L., Van Dyke, J. A., & Marton, K. (2018). The modulatory effect of expectations on memory retrieval during sentence comprehension. Proceedings of the Annual Meeting of the Cognitive Science Society , 40 .1230 
+
+https://escholarship.org/uc/item/5vt3m66c Chen, L., Oralova, G., Clark, S., Teodorescu, D., Fyshe, A., Demmans Epp, C., Helfrich, M., & Perfetti, C. (2025). Tracking the dynamic word-by-word incremental reading through multimeasures. Journal of Experimental Psychology: Learning, Memory, and Cognition . https://doi.org/https://doi.org/10.1037/xlm0001438 1235 
+
+Coulson, S., King, J. W., & Kutas, M. (1998). Expect the unexpected: Event-related brain response to morphosyntactic violations. Language and Cognitive Processes , 13 (1), 21–58. https://doi.org/https://doi.org/10.1080/016909698386582 Crabbé, B., Fabre, M., & Pallier, C. (2019, November). Variable beam search for generative neural parsing and its relevance for the analysis of neuro-imaging signal. In K. Inui, 1240 
+
+J. Jiang, V. Ng, & X. Wan (Eds.), Proceedings of the 2019 conference on empirical methods in natural language processing and the 9th international joint conference on natural language processing (emnlp-ijcnlp) (pp. 1150–1160). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/D19-1106 Crosse, M. J., Di Liberto, G. M., Bednar, A., & Lalor, E. C. (2016). The multivariate 1245 
+
+temporal response function (mTRF) toolbox: A MATLAB toolbox for relating neural signals to continuous stimuli. Frontiers in Human Neuroscience , 10 , 604. https://doi.org/https://doi.org/10.3389/fnhum.2016.00604 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 51 Dale, A. M., & Sereno, M. I. (1993). Improved localizadon of cortical activity by combining EEG and MEG with MRI cortical surface reconstruction: A linear approach. 1250 
+
+Journal of Cognitive Neuroscience , 5 (2), 162–176. https://doi.org/https://doi.org/10.1162/jocn.1993.5.2.162 Daube, C., Ince, R. A., & Gross, J. (2019). Simple acoustic features can explain phoneme-based predictions of cortical responses to speech. Current Biology , 29 (12), 1924–1937. https://doi.org/https://doi.org/10.1016/j.cub.2019.04.067 1255 
+
+David, S. V., Mesgarani, N., & Shamma, S. A. (2007). Estimating sparse spectro-temporal receptive fields with natural stimuli. Network: Computation in neural systems ,
+
+18 (3), 191–212. https://doi.org/https://doi.org/10.1080/09548980701609235 David, S. V., & Shamma, S. A. (2013). Integration over multiple timescales in primary auditory cortex. Journal of Neuroscience , 33 (49), 19154–19166. 1260 
+
+https://doi.org/https://doi.org/10.1523/JNEUROSCI.2270-13.2013 de Marneffe, M.-C., Dozat, T., Silveira, N., Haverinen, K., Ginter, F., Nivre, J., & Manning, C. D. (2014, May). Universal Stanford dependencies: A cross-linguistic typology. In N. Calzolari, K. Choukri, T. Declerck, H. Loftsson, B. Maegaard, J. Mariani, A. Moreno, J. Odijk, & S. Piperidis (Eds.), Proceedings of the ninth 1265 
+
+international conference on language resources and evaluation (LREC‘14) 
+
+(pp. 4585–4592). European Language Resources Association (ELRA). https://aclanthology.org/L14-1045/ de Marneffe, M.-C., MacCartney, B., & Manning, C. D. (2006, May). Generating typed dependency parses from phrase structure parses. In N. Calzolari, K. Choukri, 1270 
+
+A. Gangemi, B. Maegaard, J. Mariani, J. Odijk, & D. Tapias (Eds.), Proceedings of the fifth international conference on language resources and evaluation (LREC‘06) .European Language Resources Association (ELRA). https://aclanthology.org/L06-1260/ 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 52 de Marneffe, M.-C., & Manning, C. D. (2008a). Stanford typed dependencies manual 1275 
+
+(tech. rep.). Stanford University. https://nlp.stanford.edu/software/dependencies_manual.pdf de Marneffe, M.-C., & Manning, C. D. (2008b, August). The Stanford typed dependencies representation. In J. Bos, E. Briscoe, A. Cahill, J. Carroll, S. Clark, A. Copestake, D. Flickinger, J. van Genabith, J. Hockenmaier, A. Joshi, R. Kaplan, T. H. King, 1280 
+
+S. Kuebler, D. Lin, J. T. Lønning, C. Manning, Y. Miyao, J. Nivre, S. Oepen, . . . Y. Zhang (Eds.), Coling 2008: Proceedings of the workshop on cross-framework and cross-domain parser evaluation (pp. 1–8). Coling 2008 Organizing Committee. https://aclanthology.org/W08-1301/ de Marneffe, M.-C., Manning, C. D., Nivre, J., & Zeman, D. (2021). Universal 1285 
+
+Dependencies. Computational Linguistics , 47 (2), 255–308. https://doi.org/https://doi.org/10.1162/coli_a_00402 de Marneffe, M.-C., & Nivre, J. (2019). Dependency grammar. Annual Review of Linguistics , 5 (1), 197–218. https://doi.org/https://doi.org/10.1146/annurev-linguistics-011718-011842 1290 
+
+Delogu, F., Aurnhammer, C., Brouwer, H., & Crocker, M. W. (2025). On the biphasic nature of the N400-P600 complex underlying language comprehension. Brain and Cognition , 186 , 106293. https://doi.org/https://doi.org/10.1016/j.bandc.2025.106293 Delogu, F., Brouwer, H., & Crocker, M. W. (2019). Event-related potentials index lexical 1295 
+
+retrieval (N400) and integration (P600) during language comprehension. Brain and Cognition , 135 , 103569. https://doi.org/https://doi.org/10.1016/j.bandc.2019.05.007 Delogu, F., Brouwer, H., & Crocker, M. W. (2021). When components collide: Spatiotemporal overlap of the N400 and P600 in language comprehension. Brain Research , 1766 , 147514. 1300 
+
+https://doi.org/https://doi.org/10.1016/j.brainres.2021.147514 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 53 Desikan, R. S., Ségonne, F., Fischl, B., Quinn, B. T., Dickerson, B. C., Blacker, D., Buckner, R. L., Dale, A. M., Maguire, R. P., Hyman, B. T., et al. (2006). An automated labeling system for subdividing the human cerebral cortex on mri scans into gyral based regions of interest. Neuroimage , 31 (3), 968–980. 1305 
+
+https://doi.org/http://dx.doi.org/10.1016/j.neuroimage.2006.01.021 Di Liberto, G. M., Nie, J., Yeaton, J., Khalighinejad, B., Shamma, S. A., & Mesgarani, N. (2021). Neural representation of linguistic feature hierarchy reflects second-language proficiency. NeuroImage , 227 , 117586. https://doi.org/https://doi.org/10.1016/j.neuroimage.2020.117586 1310 
+
+Di Liberto, G. M., O’sullivan, J. A., & Lalor, E. C. (2015). Low-frequency cortical entrainment to speech reflects phoneme-level processing. Current Biology , 25 (19), 2457–2465. https://doi.org/https://doi.org/10.1016/j.cub.2015.08.030 Dillon, B., Mishler, A., Sloggett, S., & Phillips, C. (2013). Contrasting intrusion profiles for agreement and anaphora: Experimental and modeling evidence. Journal of Memory 1315 
+
+and Language , 69 (2), 85–103. https://doi.org/https://doi.org/10.1016/j.jml.2013.04.003 Ding, N., Chatterjee, M., & Simon, J. Z. (2014). Robust cortical entrainment to the speech envelope relies on the spectro-temporal fine structure. NeuroImage , 88 , 41–46. https://doi.org/http://dx.doi.org/10.1016/j.neuroimage.2013.10.054 1320 
+
+Ding, N., & Simon, J. Z. (2012a). Emergence of neural encoding of auditory objects while listening to competing speakers. Proceedings of the National Academy of Sciences ,
+
+109 (29), 11854–11859. https://doi.org/https://doi.org/10.1073/pnas.1205381109 Ding, N., & Simon, J. Z. (2012b). Neural coding of continuous speech in auditory cortex during monaural and dichotic listening. Journal of Neurophysiology , 107 (1), 78–89. 1325 
+
+https://doi.org/https://doi.org/10.1152/jn.00297.2011 Dunagan, D. (2025). Linguistic dependency: Investigations into its assignment and processing [Doctoral dissertation, University of Georgia]. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 54 https://www.proquest.com/docview/3253537008?pq-origsite=gscholar&fromopenview=true&sourcetype=Dissertations%20&%20Theses 1330 
+
+Dunagan, D., Jordan, T., Hale, J. T., Pylkkänen, L., & Chacón, D. A. (2025). Evaluating the timecourses of morpho-orthographic, lexical, and grammatical processing following rapid parallel visual presentation: An EEG investigation in English. 
+
+Cognition , 229 . https://doi.org/https://doi.org/10.1016/j.cognition.2025.106080 Dyer, C., Kuncoro, A., Ballesteros, M., & Smith, N. A. (2016, June). Recurrent Neural 1335 
+
+Network Grammars. In K. Knight, A. Nenkova, & O. Rambow (Eds.), Proceedings of the 2016 conference of the north American chapter of the association for computational linguistics: Human language technologies (pp. 199–209). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/N16-1024 1340 
+
+Eberhard, K. M. (1997). The marked effect of number on subject–verb agreement. Journal of Memory and Language , 36 (2), 147–164. https://doi.org/https://doi.org/10.1006/jmla.1996.2484 Eberhard, K. M., Cutting, J. C., & Bock, K. (2005). Making syntax of sense: Number agreement in sentence production. Psychological Review , 112 (3), 531–559. 1345 
+
+https://doi.org/https://doi.org/10.1037/0033-295X.112.3.531 Embick, D., Hackl, M., Schaeffer, J., Kelepir, M., & Marantz, A. (2001). A magnetoencephalographic component whose latency reflects lexical frequency. 
+
+Cognitive Brain Research , 10 (3), 345–348. https://doi.org/https://doi.org/10.1016/S0926-6410(00)00053-7 1350 
+
+Fayol, M., Largy, P., & Lemaire, P. (1994). Cognitive overload and orthographic errors: When cognitive overload enhances subject–verb agreement errors. A study in French written language. The Quarterly Journal of Experimental Psychology , 47 (2), 437–464. https://doi.org/https://doi.org/10.1080/14640749408401119 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 55 Fernandez Monsalve, I., Frank, S., & Vigliocco, G. (2012, April). Lexical surprisal as a 1355 
+
+general predictor of reading time. In W. Daelemans (Ed.), Proceedings of the 13th conference of the European chapter of the association for computational linguistics 
+
+(pp. 398–408). Association for Computational Linguistics. https://aclanthology.org/E12-1041/ Ferrante, O., Liu, L., Minarik, T., Gorska, U., Ghafari, T., Luo, H., & Jensen, O. (2022). 1360 
+
+FLUX: A pipeline for MEG analysis. NeuroImage , 253 , 119047. https://doi.org/https://doi.org/10.1016/j.neuroimage.2022.119047 Fiebach, C. J., Friederici, A. D., Smith, E. E., & Swinney, D. (2007). Lateral inferotemporal cortex maintains conceptual—semantic representations in verbal working memory. Journal of Cognitive Neuroscience , 19 (12), 2035–2049. 1365 
+
+https://doi.org/https://doi.org/10.1162/jocn.2007.19.12.2035 Fiebach, C. J., Schlesewsky, M., & Friederici, A. D. (2001). Syntactic working memory and the establishment of filler-gap dependencies: Insights from ERPs and fMRI. Journal of Psycholinguistic Research , 30 (3), 321–338. https://doi.org/https://doi.org/10.1023/A:1010447102554 1370 
+
+Fiebach, C. J., Schlesewsky, M., & Friederici, A. D. (2002). Separating syntactic memory costs and syntactic integration costs during parsing: The processing of German WH-questions. Journal of Memory and Language , 47 (2), 250–272. https://doi.org/https://doi.org/10.1016/S0749-596X(02)00004-9 Fiebach, C. J., Schlesewsky, M., Lohmann, G., Von Cramon, D. Y., & Friederici, A. D. 1375 
+
+(2005). Revisiting the role of Broca’s area in sentence processing: Syntactic integration versus syntactic working memory. Human Brain Mapping , 24 (2), 79–91. https://doi.org/https://doi.org/10.1002/hbm.20070 Firth, J. (1957). A synopsis of linguistic theory, 1930-1955. In Studies in linguistic analysis 
+
+(pp. 1–32). Blackwell. 1380 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 56 Fischl, B. (2012). Freesurfer. NeuroImage , 62 (2), 774–781. https://doi.org/https://doi.org/10.1016/j.neuroimage.2012.01.021 Fishbach, A., Nelken, I., & Yeshurun, Y. (2001). Auditory edge detection: A neural model for physiological and psychoacoustical responses to amplitude transients. Journal of Neurophysiology , 85 (6), 2303–2323. 1385 
+
+https://doi.org/https://doi.org/10.1152/jn.2001.85.6.2303 Forster, K. I. (1979). Levels of processing and the structure of the language processor. In W. E. Cooper & E. C. T. Walker (Eds.), Sentence processing: Psycholinguistic studies presented to Merrill Garrett . Lawrence Erlbaum Associates. Franck, J., Colonna, S., & Rizzi, L. (2015). Task-dependency and structure-dependency in 1390 
+
+number interference effects in sentence comprehension. Frontiers in psychology , 6,132431. https://doi.org/https://doi.org/10.3389/fpsyg.2015.00349 Frank, S. (2013). Uncertainty reduction as a measure of cognitive load in sentence comprehension. Topics in Cognitive Science , 5 (3), 475–494. https://doi.org/https://doi.org/10.1111/tops.12025 1395 
+
+Frank, S., Otten, L. J., Galli, G., & Vigliocco, G. (2013). Word surprisal predicts N400 amplitude during reading. In H. Schuetze, P. Fung, & M. Poesio (Eds.), Proceedings of the 51st annual meeting of the association for computational linguistics (volume 2: Short papers) (pp. 878–883). Association for Computational Linguistics. https://aclanthology.org/P13-2152/ 1400 
+
+Frank, S., Otten, L. J., Galli, G., & Vigliocco, G. (2015). The erp response to the amount of information conveyed by words in sentences. Brain and Language , 140 , 1–11. https://doi.org/https://doi.org/10.1016/j.bandl.2014.10.006 Franzluebbers, B., Dunagan, D., Stanojević, M., Buys, J., & Hale, J. (2024, August). Multipath parsing in the brain. In L.-W. Ku, A. Martins, & V. Srikumar (Eds.), 1405 
+
+Proceedings of the 62nd annual meeting of the association for computational linguistics (volume 1: Long papers) (pp. 12215–12229). Association for 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 57 Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/2024.acl-long.660 Frazier, L., & Fodor, J. D. (1978). The sausage machine: A new two-stage parsing model. 1410 
+
+Cognition , 6 (4), 291–325. https://doi.org/https://doi.org/10.1016/0010-0277(78)90002-1 Fried, D., Stern, M., & Klein, D. (2017, July). Improving neural parsing by disentangling model combination and reranking effects. In R. Barzilay & M.-Y. Kan (Eds.), 
+
+Proceedings of the 55th annual meeting of the association for computational 1415 
+
+linguistics (volume 2: Short papers) (pp. 161–166). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/P17-2025 Friederici, A. D. (2002). Towards a neural basis of auditory sentence processing. Trends in Cognitive Sciences , 6 (2), 78–84. https://doi.org/https://doi.org/10.1016/S1364-6613(00)01839-8 1420 
+
+Friederici, A. D., & Gierhan, S. M. (2013). The language network. Current Opinion in Neurobiology , 23 (2), 250–254. https://doi.org/https://doi.org/10.1016/j.conb.2012.10.002 Friedman, J., Hastie, T., & Tibshirani, R. (2000). Additive logistic regression: A statistical view of boosting (with discussion and a rejoinder by the authors). The Annals of 1425 
+
+Statistics , 28 (2), 337–407. https://doi.org/https://doi.org/10.1214/aos/1016218223 Gaifman, H. (1965). Dependency systems and phrase-structure systems. Information and Control , 8 (3), 304–337. https://doi.org/https://doi.org/10.1016/S0019-9958(65)90232-9 Glaser, Y. G., Martin, R. C., Van Dyke, J. A., Hamilton, A. C., & Tan, Y. (2013). Neural 1430 
+
+basis of semantic and syntactic interference in sentence comprehension. Brain and Language , 126 (3), 314–326. https://doi.org/https://doi.org/10.1016/j.bandl.2013.06.006 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 58 Goldstein, A., Zada, Z., Buchnik, E., Schain, M., Price, A., Aubrey, B., Nastase, S. A., Feder, A., Emanuel, D., Cohen, A., et al. (2022). Shared computational principles 1435 
+
+for language processing in humans and deep language models. Nature Neuroscience ,
+
+25 (3), 369–380. https://doi.org/https://doi.org/10.1038/s41593-022-01026-4 Gramfort, A., Luessi, M., Larson, E., Engemann, D. A., Strohmeier, D., Brodbeck, C., Goj, R., Jas, M., Brooks, T., Parkkonen, L., et al. (2013). MEG and EEG data analysis with MNE-Python. Frontiers in Neuroinformatics , 7, 267. 1440 
+
+https://doi.org/https://doi.org/10.3389/fnins.2013.00267 Guest, O., & Martin, A. E. (2021). How computational modeling can force theory building in psychological science [PMID: 33482070]. Perspectives on Psychological Science ,
+
+16 (4), 789–802. https://doi.org/10.1177/1745691620970585 Gwilliams, L., Bhaya-Grossman, I., Zhang, Y., Scott, T., Harper, S., & Levy, D. (2025). 1445 
+
+Computational architecture of speech comprehension in the human brain. Annual Review of Linguistics , 11 (1), 209–226. https://doi.org/https://doi.org/10.1146/annurev-linguistics-031120-111245 Hale, J. (2001). A probabilistic Earley parser as a psycholinguistic model. Second meeting of the North American Chapter of the Association for Computational Linguistics .1450 
+
+https://doi.org/https://doi.org/10.3115/1073336.1073357 Hale, J. (2003). The information conveyed by words in sentences. Journal of Psycholinguistic Research , 32 (2), 101–123. https://doi.org/https://doi.org/10.1023/A:1022492123056 Hale, J. (2006). Uncertainty about the rest of the sentence. Cognitive Science , 30 (4), 1455 
+
+643–672. https://doi.org/https://doi.org/10.1207/s15516709cog0000_64 Hale, J. (2011). What a rational parser would do. Cognitive Science , 35 (3), 399–443. https://doi.org/https://doi.org/10.1111/j.1551-6709.2010.01145.x Hale, J. (2016). Information-theoretical complexity metrics. Language and Linguistics Compass , 10 (9), 397–412. https://doi.org/https://doi.org/10.1111/lnc3.12196 1460 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 59 Hale, J., Campanelli, L., Li, J., Bhattasali, S., Pallier, C., & Brennan, J. R. (2022). Neurocomputational models of language processing. Annual Review of Linguistics , 8,427–446. https://doi.org/https://doi.org/10.1146/annurev-linguistics-051421-020803 Hale, J., Dyer, C., Kuncoro, A., & Brennan, J. (2018). Finding syntax in human encephalography with beam search. Proceedings of the 56th Annual Meeting of the 1465 
+
+Association for Computational Linguistics (Volume 1: Long Papers) , 2727–2736. https://doi.org/https://doi.org/10.18653/v1/P18-1254 Hale, J., Lutz, D., Luh, W.-M., & Brennan, J. (2015, June). Modeling fMRI time courses with linguistic structure at various grain sizes. In T. O’Donnell & M. van Schijndel (Eds.), Proceedings of the 6th workshop on cognitive modeling and computational 1470 
+
+linguistics (pp. 89–97). Association for Computational Linguistics. https://doi.org/https://doi.org/10.3115/v1/W15-1110 Hämäläinen, M. S., & Ilmoniemi, R. J. (1994). Interpreting magnetic fields of the brain: Minimum norm estimates. Medical & Biological Engineering & Computing , 32 (1), 35–42. https://doi.org/https://doi.org/10.1007/BF02512476 1475 
+
+Hammer, A., Jansma, B. M., Tempelmann, C., & Münte, T. F. (2011). Neural mechanisms of anaphoric reference revealed by fMRI. Frontiers in Psychology , 2, 32. https://doi.org/https://doi.org/10.3389/fpsyg.2011.00032 Hao, Y., Mendelsohn, S., Sterneck, R., Martinez, R., & Frank, R. (2020). Probabilistic predictions of people perusing: Evaluating metrics of language model performance 1480 
+
+for psycholinguistic modeling. Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics , 75–86. https://doi.org/https://doi.org/10.18653/v1/2020.cmcl-1.10 Harris, Z. S. (1954). Distributional structure. Word , 10 (2-3), 146–162. https://doi.org/https://doi.org/10.1080/00437956.1954.11659520 1485 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 60 Hartsuiker, R. J., Schriefers, H. J., Bock, K., & Kikstra, G. M. (2003). Morphophonological influences on the construction of subject-verb agreement. Memory & Cognition ,
+
+31 (8), 1316–1326. https://doi.org/https://doi.org/10.3758/BF03195814 Hays, D. G. (1964). Dependency theory: A formalism and some observations. Language ,
+
+40 (4), 511–525. https://doi.org/https://doi.org/10.2307/411934 1490 
+
+Hays, D. G. (1965). An annotated bibliography of publications on dependency theory. https://www.rand.org/pubs/research_memoranda/RM4479.html Heeris, J. (2018). Gammatone filterbank toolkits . https://github.com/detly/gammatone Heilbron, M., Armeni, K., Schoffelen, J.-M., Hagoort, P., & De Lange, F. P. (2022). A hierarchy of linguistic predictions during natural language comprehension. 1495 
+
+Proceedings of the National Academy of Sciences , 119 (32), e2201968119. https://doi.org/https://doi.org/10.1073/pnas.2201968119 Hickok, G., & Poeppel, D. (2007). The cortical organization of speech processing. Nature Reviews Neuroscience , 8 (5), 393–402. https://doi.org/https://doi.org/10.1038/nrn2113 1500 
+
+Hoen, M., & Dominey, P. F. (2000). ERP analysis of cognitive sequencing: A left anterior negativity related to structural transformation processing. NeuroReport , 11 (14), 3187–3191. https://journals.lww.com/neuroreport/fulltext/2000/09280/erp_ analysis_of_cognitive_sequencing__a_left.28.aspx Hofmeister, P., & Vasishth, S. (2014). Distinctiveness and encoding effects in online 1505 
+
+sentence comprehension. Frontiers in Psychology , 5, 1237. https://doi.org/https://doi.org/10.3389/fpsyg.2014.01237 Honnibal, M., Montani, I., Van Landeghem, S., & Boyd, A. (2020). SpaCy: Industrial-strength natural language processing in Python .https://doi.org/https://doi.org/10.5281/zenodo.1212303 1510 
+
+Hu, J., Gauthier, J., Qian, P., Wilcox, E., & Levy, R. (2020). A systematic assessment of syntactic generalization in neural language models. Proceedings of the 58th annual 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 61 
+
+meeting of the association for computational linguistics , 1725–1744. https://doi.org/https://doi.org/10.18653/v1/2020.acl-main.158 Huang, K.-J., Arehalli, S., Kugemoto, M., Muxica, C., Prasad, G., Dillon, B., & Linzen, T. 1515 
+
+(2024). Large-scale benchmark yields no evidence that language model surprisal explains syntactic disambiguation difficulty. Journal of Memory and Language , 137 ,104510. https://doi.org/https://doi.org/10.1016/j.jml.2024.104510 Jäger, L. A., Engelmann, F., & Vasishth, S. (2017). Similarity-based interference in sentence comprehension: Literature review and Bayesian meta-analysis. Journal of 1520 
+
+Memory and Language , 94 , 316–339. https://doi.org/https://doi.org/10.1016/j.jml.2017.01.004 Jäger, L. A., Mertzen, D., Van Dyke, J. A., & Vasishth, S. (2020). Interference patterns in subject-verb agreement and reflexives revisited: A large-sample study. Journal of Memory and Language , 111 , 104063. 1525 
+
+https://doi.org/https://doi.org/10.1016/j.jml.2019.104063 Johnson-Laird, P. N. (1983). Mental models . Harvard University Press. Kaan, E., Harris, A., Gibson, E., & Holcomb, P. (2000). The P600 as an index of syntactic integration difficulty. Language and Cognitive Processes , 15 (2), 159–201. https://doi.org/https://doi.org/10.1080/016909600386084 1530 
+
+Kaan, E., & Swaab, T. Y. (2003a). Electrophysiological evidence for serial sentence processing: A comparison between non-preferred and ungrammatical continuations. 
+
+Cognitive Brain Research , 17 (3), 621–635. https://doi.org/https://doi.org/10.1016/S0926-6410(03)00175-7 Kaan, E., & Swaab, T. Y. (2003b). Repair, revision, and complexity in syntactic analysis: 1535 
+
+An electrophysiological differentiation. Journal of Cognitive Neuroscience , 15 (1), 98–110. https://doi.org/https://doi.org/10.1162/089892903321107855 Kasai, J., Friedman, D., Frank, R., Radev, D., & Rambow, O. (2019). Syntax-aware neural semantic role labeling with supertags. In J. Burstein, C. Doran, & T. Solorio (Eds.), 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 62 
+
+Proceedings of the 2019 conference of the north American chapter of the association 1540 
+
+for computational linguistics: Human language technologies, volume 1 (long and short papers) (pp. 701–709). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/N19-1075 Kim, A., & Osterhout, L. (2005). The independence of combinatory semantic processing: Evidence from event-related potentials. Journal of Memory and Language , 52 (2), 1545 
+
+205–225. https://doi.org/https://doi.org/10.1016/j.jml.2004.10.002 Kluender, R., & Kutas, M. (1993). Bridging the gap: Evidence from ERPs on the processing of unbounded dependencies. Journal of Cognitive Neuroscience , 5 (2), 196–214. https://doi.org/https://doi.org/10.1162/jocn.1993.5.2.196 Kübler, S., McDonald, R., & Nivre, J. (2009). Dependency parsing. Synthesis Lectures on 1550 
+
+Human Language Technologies , 1 (1), 1–127. https://doi.org/https://doi.org/10.2200/S00169ED1V01Y200901HLT002 Kudo, T., & Matsumoto, Y. (2002). Japanese dependency analysis using cascaded chunking. COLING-02: The 6th Conference on Natural Language Learning 2002 (CoNLL-2002) . https://aclanthology.org/W02-2016/ 1555 
+
+Kuhlmann, M., Gómez-Rodríguez, C., & Satta, G. (2011, June). Dynamic programming algorithms for transition-based dependency parsers. In D. Lin, Y. Matsumoto, & R. Mihalcea (Eds.), Proceedings of the 49th annual meeting of the association for computational linguistics: Human language technologies (pp. 673–682). Association for Computational Linguistics. https://aclanthology.org/P11-1068/ 1560 
+
+Kumar, S., Sumers, T. R., Yamakoshi, T., Goldstein, A., Hasson, U., Norman, K. A., Griffiths, T. L., Hawkins, R. D., & Nastase, S. A. (2024). Shared functional specialization in Transformer-based language models and the human brain. Nature Communications , 15 (1), 5523. https://doi.org/https://doi.org/10.1038/s41467-024-49173-5 1565 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 63 Kutas, M., & Hillyard, S. A. (1980). Reading senseless sentences: Brain potentials reflect semantic incongruity. Science , 207 (4427), 203–205. https://doi.org/10.1126/science.735065 Lago, S., Shalom, D. E., Sigman, M., Lau, E. F., & Phillips, C. (2015). Agreement attraction in Spanish comprehension. Journal of Memory and Language , 82 ,1570 
+
+133–149. https://doi.org/https://doi.org/10.1016/j.jml.2015.02.002 Lalor, E. C., & Foxe, J. J. (2010). Neural responses to uninterrupted natural speech can be extracted with precise temporal resolution. European Journal of Neuroscience ,
+
+31 (1), 189–193. https://doi.org/https://doi.org/10.1111/j.1460-9568.2009.07055.x Lalor, E. C., Pearlmutter, B. A., Reilly, R. B., McDarby, G., & Foxe, J. J. (2006). The 1575 
+
+VESPA: A method for the rapid estimation of a visual evoked potential. 
+
+NeuroImage , 32 (4), 1549–1561. https://doi.org/https://doi.org/10.1016/j.neuroimage.2006.05.054 Lalor, E. C., Power, A. J., Reilly, R. B., & Foxe, J. J. (2009). Resolving precise temporal processing properties of the auditory system using continuous stimuli. Journal of 1580 
+
+Neurophysiology , 102 (1), 349–359. https://doi.org/https://doi.org/10.1152/jn.90896.2008 Lee, E.-K., & Garnsey, S. M. (2015). An ERP study of plural attraction in attachment ambiguity resolution: Evidence for retrieval interference. Journal of Neurolinguistics ,
+
+36 , 1–16. https://doi.org/https://doi.org/10.1016/j.jneuroling.2015.04.004 1585 
+
+Lenci, A. (2018). Distributional models of word meaning. Annual Review of Linguistics ,
+
+4 (1), 151–171. https://doi.org/https://doi.org/10.1146/annurev-linguistics-030514-125254 Lesenfants, D., Vanthornhout, J., Verschueren, E., & Francart, T. (2019). Data-driven spatial filtering for improved measurement of cortical tracking of multiple 1590 
+
+representations of speech. Journal of Neural Engineering , 16 (6), 066017. https://doi.org/https://doi.org/10.1088/1741-2552/ab3c92 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 64 Levy, O., & Goldberg, Y. (2014, June). Dependency-based word embeddings. In K. Toutanova & H. Wu (Eds.), Proceedings of the 52nd annual meeting of the association for computational linguistics (volume 2: Short papers) (pp. 302–308). 1595 
+
+Association for Computational Linguistics. https://doi.org/10.3115/v1/P14-2050 Levy, R. (2008). Expectation-based syntactic comprehension. Cognition , 106 (3), 1126–1177. https://doi.org/https://doi.org/10.1016/j.cognition.2007.05.006 Lewis, R. L., & Vasishth, S. (2005). An activation-based model of sentence processing as skilled memory retrieval. Cognitive Science , 29 , 375–419. 1600 
+
+https://doi.org/https://doi.org/10.1207/s15516709cog0000_25 Lewis, R. L., Vasishth, S., & Van Dyke, J. A. (2006). Computational principles of working memory in sentence comprehension. Trends in Cognitive Sciences , 10 (10), 447–454. https://doi.org/https://doi.org/10.1016/j.tics.2006.08.007 Lopopolo, A., Frank, S., Van den Bosch, A., & Willems, R. M. (2017). Using stochastic 1605 
+
+language models (slm) to map lexical, syntactic, and phonological information processing in the brain. PloS One , 12 (5), e0177794. https://doi.org/https://doi.org/10.1371/journal.pone.0177794 Lopopolo, A., van den Bosch, A., Petersson, K.-M., & Willems, R. M. (2021). Distinguishing syntactic operations in the brain: Dependency and phrase-structure 1610 
+
+parsing. Neurobiology of Language , 2 (1), 152–175. https://doi.org/https://doi.org/10.1162/nol_a_00029 Maris, E., & Oostenveld, R. (2007). Nonparametric statistical testing of EEG-and MEG-data. Journal of Neuroscience Methods , 164 (1), 177–190. https://doi.org/https://doi.org/10.1016/j.jneumeth.2007.03.024 1615 
+
+Marr, D. (1982). Vision: A computational investigation into the human representation and processing of visual information (1st ed.). W.H. Freeman and Company. Martin, A. E., Nieuwland, M. S., & Carreiras, M. (2012). Event-related brain potentials index cue-based retrieval interference during sentence comprehension. NeuroImage ,
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 65 
+
+59 (2), 1859–1869. 1620 
+
+https://doi.org/http://dx.doi.org/10.1016/j.neuroimage.2011.08.057 Martin, A. E., Nieuwland, M. S., & Carreiras, M. (2014). Agreement attraction during comprehension of grammatical sentences: ERP evidence from ellipsis. Brain and language , 135 , 42–51. https://doi.org/https://doi.org/10.1016/j.bandl.2014.05.001 Massol, S., & Grainger, J. (2025). Word superiority and sentence superiority effects in 1625 
+
+post-cued letter-in-string identification. Attention, Perception, & Psychophysics ,
+
+87 (4), 1342–1352. https://doi.org/https://doi.org/10.3758/s13414-025-03059-w Matchin, W., & Hickok, G. (2020). The cortical organization of syntax. Cerebral Cortex ,
+
+30 (3), 1481–1498. https://doi.org/https://doi.org/10.1093/cercor/bhz180 McAuliffe, M., Socolof, M., Mihuc, S., Wagner, M., & Sonderegger, M. (2017). Montreal 1630 
+
+forced aligner: Trainable text-speech alignment using kaldi. Interspeech , 2017 ,498–502. https://doi.org/https://doi.org/10.21437/Interspeech.2017-1386 McClelland, J. L. (1979). On the time relations of mental processes: An examination of systems of processes in cascade. Psychological Review , 86 (4), 287. https://doi.org/https://psycnet.apa.org/doi/10.1037/0033-295X.86.4.287 1635 
+
+Mikolov, T., Sutskever, I., Chen, K., Corrado, G. S., & Dean, J. (2013). Distributed representations of words and phrases and their compositionality. In C. Burges, L. Bottou, M. Welling, Z. Ghahramani, & K. Weinberger (Eds.), Advances in neural information processing systems (Vol. 26). Curran Associates, Inc. https://proceedings.neurips.cc/paper_files/paper/2013/file/ 1640 
+
+9aa42b31882ec039965f3c4923ce901b-Paper.pdf Mikolov, T., Chen, K., Corrado, G., & Dean, J. (2013). Efficient estimation of word representations in vector space. 1st International Conference on Learning Representations, ICLR 2013, Scottsdale, Arizona, USA, May 2-4, 2013, Workshop Track Proceedings . http://arxiv.org/abs/1301.3781 1645 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 66 Miller, G. A., & Chomsky, N. (1963). Finitary models of language users. In R. D. Luce, R. R. Bush, & E. Galanter (Eds.), Handbook of Mathematical Psychology 
+
+(pp. 419–491, Vol. 2). John Wiley and Sons. Molinaro, N., Barber, H. A., & Carreiras, M. (2011). Grammatical agreement processing in reading: ERP findings and future directions. Cortex , 47 (8), 908–930. 1650 
+
+https://doi.org/https://doi.org/10.1016/j.cortex.2011.02.019 Neville, H., Nicol, J. L., Barss, A., Forster, K. I., & Garrett, M. F. (1991). Syntactically based sentence processing classes: Evidence from event-related brain potentials. 
+
+Journal of Cognitive Neuroscience , 3 (2), 151–165. https://doi.org/https://doi.org/10.1162/jocn.1991.3.2.151 1655 
+
+Nicenboim, B., Vasishth, S., Engelmann, F., & Suckow, K. (2018). Exploratory and confirmatory analyses in sentence processing: A case study of number interference in German. Cognitive Science , 42 , 1075–1100. https://doi.org/https://doi.org/10.1111/cogs.12589 Nieuwland, M. S., Otten, M., & Van Berkum, J. J. (2007). Who are you talking about? 1660 
+
+tracking discourse-level referential processing with event-related brain potentials. 
+
+Journal of Cognitive Neuroscience , 19 (2), 228–236. https://doi.org/https://doi.org/10.1162/jocn.2007.19.2.228 Nieuwland, M. S., & Van Berkum, J. J. (2006). Individual differences and contextual bias in pronoun resolution: Evidence from erps. Brain Research , 1118 (1), 155–167. 1665 
+
+https://doi.org/https://doi.org/10.1016/j.brainres.2006.08.022 Nieuwland, M. S., & Van Berkum, J. J. (2008). The neurocognition of referential ambiguity in language comprehension. Language and Linguistics Compass , 2 (4), 603–630. https://doi.org/https://doi.org/10.1111/j.1749-818X.2008.00070.x Nivre, J. (2003). An efficient algorithm for projective dependency parsing. Proceedings of 1670 
+
+the Eighth International Conference on Parsing Technologies , 149–160. https://aclanthology.org/W03-3017/ 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 67 Nivre, J. (2004). Incrementality in deterministic dependency parsing. Proceedings of the Workshop on Incremental Parsing: Bringing Engineering and Cognition Together ,50–57. https://aclanthology.org/W04-0308/ 1675 
+
+Nivre, J. (2006). Inductive dependency parsing . Springer. https://doi.org/https://doi.org/10.1007/1-4020-4889-0 Nivre, J., de Marneffe, M.-C., Ginter, F., Goldberg, Y., Hajič, J., Manning, C. D., McDonald, R., Petrov, S., Pyysalo, S., Silveira, N., Tsarfaty, R., & Zeman, D. (2016, May). Universal Dependencies v1: A multilingual treebank collection. In 1680 
+
+N. Calzolari, K. Choukri, T. Declerck, S. Goggi, M. Grobelnik, B. Maegaard, J. Mariani, H. Mazo, A. Moreno, J. Odijk, & S. Piperidis (Eds.), Proceedings of the tenth international conference on language resources and evaluation (LREC‘16) 
+
+(pp. 1659–1666). European Language Resources Association (ELRA). https://aclanthology.org/L16-1262/ 1685 
+
+Noji, H., & Miyao, Y. (2014). Left-corner transitions on dependency parsing. Proceedings of COLING 2014, the 25th International Conference on Computational Linguistics: Technical Papers , 2140–2150. https://aclanthology.org/C14-1202 Noji, H., & Miyao, Y. (2016). Left-corner parsing for dependency grammar. Information and Media Technologies , 11 , 116–153. 1690 
+
+https://doi.org/https://doi.org/10.11185/imt.11.116 Nolan, H., Whelan, R., & Reilly, R. B. (2010). FASTER: Fully automated statistical thresholding for EEG artifact rejection. Journal of Neuroscience Methods , 192 (1), 152–162. https://doi.org/https://doi.org/10.1016/j.jneumeth.2010.07.015 Oh, B.-D., Clark, C., & Schuler, W. (2021). Surprisal estimators for human reading times 1695 
+
+need character models. Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) , 3746–3757. https://doi.org/https://doi.org/10.18653/v1/2021.acl-long.290 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 68 Oh, B.-D., Clark, C., & Schuler, W. (2022). Comparison of structural parsers and neural 1700 
+
+language models as surprisal estimators. Frontiers in Artificial Intelligence , 5.https://doi.org/https://doi.org/10.3389/frai.2022.777963 Oh, B.-D., & Schuler, W. (2022, December). Entropy- and distance-based predictors from GPT-2 attention patterns predict reading times over and above GPT-2 surprisal. In Y. Goldberg, Z. Kozareva, & Y. Zhang (Eds.), Proceedings of the 2022 conference 1705 
+
+on empirical methods in natural language processing (pp. 9324–9334). Association for Computational Linguistics. https://doi.org/10.18653/v1/2022.emnlp-main.632 Oh, B.-D., & Schuler, W. (2023). Why does surprisal from larger transformer-based language models provide a poorer fit to human reading times? Transactions of the Association for Computational Linguistics , 11 , 336–350. 1710 
+
+https://doi.org/https://doi.org/10.1162/tacl_a_00548 Osterhout, L., & Holcomb, P. J. (1992). Event-related brain potentials elicited by syntactic anomaly. Journal of Memory and Language , 31 (6), 785–806. https://doi.org/https://doi.org/10.1016/0749-596X(92)90039-Z Osterhout, L., & Mobley, L. A. (1995). Event-related brain potentials elicited by failure to 1715 
+
+agree. Journal of Memory and language , 34 (6), 739–773. https://doi.org/https://doi.org/10.1006/jmla.1995.1033 Pearlmutter, N. J., Garnsey, S. M., & Bock, K. (1999). Agreement processes in sentence comprehension. Journal of Memory and Language , 41 (3), 427–456. https://doi.org/https://doi.org/10.1006/jmla.1999.2653 1720 
+
+Perrin, F., Pernier, J., Bertrand, O., & Echallier, J. F. (1989). Spherical splines for scalp potential and current density mapping. Electroencephalography and Clinical Neurophysiology , 72 (2), 184–187. https://doi.org/https://doi.org/10.1016/0013-4694(89)90180-6 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 69 Phillips, C., Kazanina, N., & Abada, S. H. (2005). ERP effects of the processing of 1725 
+
+syntactic long-distance dependencies. Cognitive Brain Research , 22 (3), 407–428. https://doi.org/https://doi.org/10.1016/j.cogbrainres.2004.09.012 Pimentel, T., Meister, C., Wilcox, E. G., Levy, R., & Cotterell, R. (2023). On the effect of anticipation on reading times. Transactions of the Association for Computational Linguistics , 11 , 1624–1642. https://doi.org/https://doi.org/10.1162/tacl_a_00603 1730 
+
+Pollan, M. (2001). The botany of desire: A plant’s-eye view of the world . Random House Publishing Group. https://www.penguinrandomhouse.com/books/132200/the-botany-of-desire-by-michael-pollan/ Pylkkänen, L., Feintuch, S., Hopkins, E., & Marantz, A. (2004). Neural correlates of the effects of morphological family frequency and family size: An MEG study. Cognition ,1735 
+
+91 (3), B35–B45. https://doi.org/https://doi.org/10.1016/j.cognition.2003.09.008 Pylkkänen, L., & Marantz, A. (2003). Tracking the time course of word recognition with MEG. Trends in Cognitive Sciences , 7 (5), 187–189. https://doi.org/https://doi.org/10.1016/S1364-6613(03)00092-5 Pylkkänen, L., Stringfellow, A., & Marantz, A. (2002). Neuromagnetic evidence for the 1740 
+
+timing of lexical activation: An MEG component sensitive to phonotactic probability but not to neighborhood density. Brain and Language , 81 (1-3), 666–678. https://doi.org/https://doi.org/10.1006/brln.2001.2555 Quirk, R., Greenbaum, S., Leech, G. N., Svartvik, J., et al. (1972). A grammar of contemporary English . Longman. 1745 
+
+Radford, A., Wu, J., Child, R., Luan, D., Amodei, D., Sutskever, I., et al. (2019). Language models are unsupervised multitask learners. OpenAI blog , 1 (8), 9. https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 70 Resnik, P. (1992). Left-corner parsing and psychological plausibility. COLING 1992 1750 
+
+Volume 1: The 14th International Conference on Computational Linguistics .https://aclanthology.org/C92-1032/ Robinson, J. J. (1967). Methods for obtaining corresponding phrase structure and dependency grammars. COLING 1967 Volume 1: Conference Internationale Sur Le Traitement Automatique Des Langues . https://aclanthology.org/C67-1015/ 1755 
+
+Ryu, S. H. (2025). Memory for prediction: A Transformer-based integrative account of sentence processing [Doctoral dissertation, University of Michigan]. https://doi.org/https://hdl.handle.net/2027.42/199382 Ryu, S. H., & Lewis, R. (2021). Accounting for agreement phenomena in sentence comprehension with transformer language models: Effects of similarity-based 1760 
+
+interference on surprisal and attention. In E. Chersoni, N. Hollenstein, C. Jacobs, Y. Oseki, L. Prévot, & E. Santus (Eds.), Proceedings of the workshop on cognitive modeling and computational linguistics (pp. 61–71). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/2021.cmcl-1.6 Ryu, S. H., & Lewis, R. (2025). Memory for prediction: A Transformer-based theory of 1765 
+
+sentence processing. Journal of Memory and Language , 145 , 104670. https://doi.org/https://doi.org/10.1016/j.jml.2025.104670 Shain, C., Blank, I. A., van Schijndel, M., Schuler, W., & Fedorenko, E. (2020). Fmri reveals language-specific predictive coding during naturalistic sentence comprehension. Neuropsychologia , 138 , 107307. 1770 
+
+https://doi.org/https://doi.org/10.1016/j.neuropsychologia.2019.107307 Shmueli, G. (2011). To explain or predict? Statistical Science , 25 (3), 289–310. https://doi.org/10.1214/10-STS330 Sohoglu, E., & Davis, M. H. (2020). Rapid computations of spectrotemporal prediction error support perception of degraded speech. eLife , 9, e58077. 1775 
+
+https://doi.org/https://doi.org/10.7554/eLife.58077 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 71 Solomyak, O., & Marantz, A. (2010). Evidence for early morphological decomposition in visual word recognition. Journal of Cognitive Neuroscience , 22 (9), 2042–2057. https://doi.org/https://doi.org/10.1162/jocn.2009.21296 Stanojević, M., Brennan, J. R., Dunagan, D., Steedman, M., & Hale, J. T. (2023). 1780 
+
+Modeling structure-building in the brain with CCG parsing and large language models. Cognitive Science , 47 (7), e13312. https://doi.org/https://doi.org/10.1111/cogs.13312 Stanojević, M., & Steedman, M. (2020). Max-margin incremental ccg parsing. Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics ,1785 
+
+4111–4122. https://doi.org/10.18653/v1/2020.acl-main.378 Steedman, M., & Baldridge, J. (2011). Combinatory categorial grammar. 
+
+Non-transformational syntax: Formal and explicit models of grammar , 181–224. Stern, M., Fried, D., & Klein, D. (2017). Effective inference for generative neural parsing. 
+
+Proceedings of the 2017 Conference on Empirical Methods in Natural Language 1790 
+
+Processing , 1695–1700. https://doi.org/https://doi.org/10.18653/v1/D17-1178 Sternberg, S. (1969). The discovery of processing stages: Extensions of Donders’ method. 
+
+Acta Psychologica , 30 , 276–315. https://doi.org/https://doi.org/10.1016/0001-6918(69)90055-9 Stockall, L., Stringfellow, A., & Marantz, A. (2004). The precise time course of lexical 1795 
+
+activation: MEG measurements of the effects of frequency, probability, and density in lexical decision. Brain and Language , 90 (1-3), 88–94. https://doi.org/https://doi.org/10.1016/S0093-934X(03)00422-X Tanner, D., Grey, S., & van Hell, J. G. (2017). Dissociating retrieval interference and reanalysis in the P600 during sentence comprehension. Psychophysiology , 54 (2), 1800 
+
+248–259. https://doi.org/https://doi.org/10.1111/psyp.12788 Tanner, D., Nicol, J., & Brehm, L. (2014). The time-course of feature interference in agreement comprehension: Multiple mechanisms and asymmetrical attraction. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 72 
+
+Journal of Memory and Language , 76 , 195–215. https://doi.org/http://dx.doi.org/10.1016/j.jml.2014.07.003 1805 
+
+Taulu, S., Kajola, M., & Simola, J. (2004). Suppression of interference and artifacts by the signal space separation method. Brain Topography , 16 (4), 269–275. https://doi.org/https://doi.org/10.1023/B:BRAT.0000032864.93890.f9 Taulu, S., & Simola, J. (2006). Spatiotemporal signal space separation method for rejecting nearby interference in MEG measurements. Physics in Medicine & Biology , 51 (7), 1810 
+
+1759. https://doi.org/https://doi.org/10.1088/0031-9155/51/7/008 Terpstra, S., Zuidema, W., & Kloots, M. D. H. (2025). Beyond surprisal: GPT-derived attention metrics offer additional explanatory power in predicting the N400 during naturalistic reading. Computational Psycholinguistics Meeting 2025 .https://openreview.net/forum?id=MAl0d23q2N 1815 
+
+Tesnière, L. (1959). Éléments de syntaxe structurale . Klincksieck. Timkey, W., & Linzen, T. (2023). A language model with limited memory capacity captures interference in human sentence processing. In H. Bouamor, J. Pino, & K. Bali (Eds.), Findings of the association for computational linguistics: Emnlp 2023 (pp. 8705–8720). Association for Computational Linguistics. 1820 
+
+https://doi.org/https://doi.org/10.18653/v1/2023.findings-emnlp.582 Tucker, M. A., Idrissi, A., & Almeida, D. (2015). Representing number in the real-time processing of agreement: Self-paced reading evidence from Arabic. Frontiers in Psychology , 6, 347. https://doi.org/https://doi.org/10.3389/fpsyg.2015.00347 Tung, T.-Y., & Brennan, J. R. (2023). Expectations modulate retrieval interference during 1825 
+
+ellipsis resolution. Neuropsychologia , 190 , 108680. https://doi.org/https://doi.org/10.1016/j.neuropsychologia.2023.108680 van Vliet, M., Larson, E., & Koen, J. (2025). Wmvanvliet/mne-faster: Version 1.2.2 
+
+(Version 1.2.2). Zenodo. https://doi.org/https://doi.org/10.5281/zenodo.14856168 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 73 Van Berkum, J. J., Brown, C. M., & Hagoort, P. (1999). Early referential context effects in 1830 
+
+sentence processing: Evidence from event-related brain potentials. Journal of Memory and Language , 41 (2), 147–182. https://doi.org/https://doi.org/10.1006/jmla.1999.2641 Van Berkum, J. J., Brown, C. M., Hagoort, P., & Zwitserlood, P. (2003). Event-related brain potentials reflect discourse-referential ambiguity in spoken language 1835 
+
+comprehension. Psychophysiology , 40 (2), 235–248. https://doi.org/https://doi.org/10.1111/1469-8986.00025 Van Berkum, J. J., Koornneef, A. W., Otten, M., & Nieuwland, M. S. (2007). Establishing reference in language comprehension: An electrophysiological perspective. Brain Research , 1146 , 158–171. 1840 
+
+https://doi.org/https://doi.org/10.1016/j.brainres.2006.06.091 Van Dyke, J. A. (2007). Interference effects from grammatically unavailable constituents during sentence processing. Journal of Experimental Psychology: Learning, Memory, and Cognition , 33 (2), 407. https://doi.org/https://doi.org/10.1037/0278-7393.33.2.407 1845 
+
+Van Dyke, J. A., & Lewis, R. L. (2003). Distinguishing effects of structure and decay on attachment and repair: A cue-based parsing account of recovery from misanalyzed ambiguities. Journal of Memory and Language , 49 (3), 285–316. https://doi.org/https://doi.org/10.1016/S0749-596X(03)00081-0 Van Dyke, J. A., & McElree, B. (2006). Retrieval interference in sentence comprehension. 1850 
+
+Journal of Memory and Language , 55 (2), 157–166. https://doi.org/https://doi.org/10.1016/j.jml.2006.03.007 Van Dyke, J. A., & McElree, B. (2011). Cue-dependent interference in comprehension. 
+
+Journal of Memory and Language , 65 (3), 247–263. https://doi.org/https://doi.org/10.1016/j.jml.2011.05.002 1855 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 74 Vasishth, S., & Engelmann, F. (2021). Sentence comprehension as a cognitive process: A computational approach . Cambridge University Press. https://doi.org/https://doi.org/10.1017/9781316459560 Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). Attention is all you need. Advances in Neural Information 1860 
+
+Processing Systems , 31 , 6000–6010. https://proceedings.neurips.cc/paper_files/ paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf Voita, E., Talbot, D., Moiseev, F., Sennrich, R., & Titov, I. (2019). Analyzing multi-head self-attention: Specialized heads do the heavy lifting, the rest can be pruned. In A. Korhonen, D. Traum, & L. Màrquez (Eds.), Proceedings of the 57th annual 1865 
+
+meeting of the association for computational linguistics (pp. 5797–5808). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/P19-1580 Wagers, M. W., Lau, E. F., & Phillips, C. (2009). Agreement attraction in comprehension: Representations and processes. Journal of Memory and Language , 61 (2), 206–237. 1870 
+
+https://doi.org/https://doi.org/10.1016/j.jml.2009.04.002 Wang, D., Sadrzadeh, M., Stanojević, M., Chow, W.-Y., & Breheny, R. (2024, August). How can large language models become more human? In T. Kuribayashi, G. Rambelli, E. Takmaz, P. Wicke, & Y. Oseki (Eds.), Proceedings of the workshop on cognitive modeling and computational linguistics (pp. 166–176). Association for 1875 
+
+Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/2024.cmcl-1.14 Wang, D., Sadrzadeh, M., Stanojević, M., Chow, W.-Y., & Breheny, R. (2025, January). Extracting structure from an LLM - how to improve on surprisal-based models of human language processing. In O. Rambow, L. Wanner, M. Apidianaki, 1880 
+
+H. Al-Khalifa, B. D. Eugenio, & S. Schockaert (Eds.), Proceedings of the 31st 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 75 
+
+international conference on computational linguistics (pp. 4938–4944). Association for Computational Linguistics. https://aclanthology.org/2025.coling-main.329/ Wilcox, E. G., Gauthier, J., & Hu, J. (2020). On the predictive power of neural language models for human real-timecomprehension. Proceedings of the Annual Meeting of the 1885 
+
+Cognitive Science Society, 42 . https://escholarship.org/uc/item/738338tm Willems, R. M., Frank, S., Nijhof, A. D., Hagoort, P., & Van den Bosch, A. (2016). Prediction during natural language comprehension. Cerebral Cortex , 26 (6), 2506–2516. https://doi.org/https://doi.org/10.1093/cercor/bhv075 Wittgenstein, L. (1953). Philosophical investigations (G. E. M. Anscombe, Trans.). 1890 
+
+Blackwell. Wolf, T., Debut, L., Sanh, V., Chaumond, J., Delangue, C., Moi, A., Cistac, P., Rault, T., Louf, R., Funtowicz, M., Davison, J., Shleifer, S., von Platen, P., Ma, C., Jernite, Y., Plu, J., Xu, C., Le Scao, T., Gugger, S., . . . Rush, A. (2020). Transformers: State-of-the-art natural language processing. In Q. Liu & D. Schlangen (Eds.), 1895 
+
+Proceedings of the 2020 conference on empirical methods in natural language processing: System demonstrations (pp. 38–45). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/2020.emnlp-demos.6" Wolfman, M., Dunagan, D., Brennan, J., & Hale, J. (2024, August). Hierarchical syntactic structure in human-like language models. In T. Kuribayashi, G. Rambelli, 1900 
+
+E. Takmaz, P. Wicke, & Y. Oseki (Eds.), Proceedings of the workshop on cognitive modeling and computational linguistics (pp. 72–80). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/2024.cmcl-1.6 Yamada, H., & Matsumoto, Y. (2003). Statistical dependency analysis with support vector machines. Proceedings of the Eighth International Conference on Parsing 1905 
+
+Technologies , 195–206. https://aclanthology.org/W03-3023/ Yoshida, R., Isono, S., Kajikawa, K., Someya, T., Sugimoto, Y., & Oseki, Y. (2025). If attention serves as a cognitive model of human memory retrieval, what is the 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 76 plausible memory representation? In W. Che, J. Nabende, E. Shutova, & M. T. Pilehvar (Eds.), Proceedings of the 63rd annual meeting of the association for 1910 
+
+computational linguistics (volume 1: Long papers) (pp. 9795–9812). Association for Computational Linguistics. https://doi.org/https://doi.org/10.18653/v1/2025.acl-long.483 Yue, S. (2026). Modeling cue-based retrieval interference through linear transformations in syntactic and semantic space [Manuscript]. 1915 
+
+Zandvoort, R. (1961). Varia syntactica. In Language and society: Essays presented to Arthur M. Jensen on his seventieth birthday (pp. 193–203). Det Berlingske Bogtrykkeri. Zhang, S., Li, J., Yang, Y., & Hale, J. (2022). Decoding the silence: Neural bases of zero pronoun resolution in Chinese. Brain and Language , 224 , 105050. 1920 
+
+https://doi.org/https://doi.org/10.1016/j.bandl.2021.105050 Zhang, T., & Yu, B. (2005). Boosting with early stopping: Convergence and consistency. 
+
+The Annals of Statistics , 33 (4), 1538–1579. https://doi.org/https://doi.org/10.1214/009053605000000255 Zipse, L., Kearns, K., & Marantz, A. (2006). Identity priming of the m350 response: A 1925 
+
+single-trial analysis approach. Brain and Language , 99 (1-2), 208–209. https://doi.org/https://doi.org/10.1016/j.bandl.2006.06.112 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 77 Abbreviation Full Name 
+
+acl adnominal clause 
+
+acl:relcl relative clause 
+
+advmod adverbial modifier 
+
+amod adjectival modifier 
+
+appos appositional modifier 
+
+aux auxiliary 
+
+case case marker 
+
+cc coordination conjunction 
+
+ccomp closed clausal complement 
+
+compound compound 
+
+conj conjunction 
+
+cop copula 
+
+det determiner 
+
+discourse discourse element 
+
+iobj indirect object 
+
+mark marker 
+
+nmod nominal modifier 
+
+nsubj nominal subject 
+
+nummod numeral modifier 
+
+obj object 
+
+obl oblique 
+
+parataxis parataxis 
+
+xcomp open clausal complement 
+
+Table 1 
+
+The 23 Universal Dependencies relations considered by the aggregate mixed Grammar-Bilinear Asymw2v model (see Fig. 4). 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 78 
+
+## The coach of the player was frustrated .det nmod det case nsubj aux root punct 
+
+Figure 1 
+
+Dependency graph for example (1). 
+
+.CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint TEMPORAL DISSOCIATION 79 
+
+Figure 2 
+
+Aspects of the Incremental Left-Corner Generative Dependency Parser. (A) The transition set describes structure building and information processing rules, and how those rules update the present state of affairs. (B) Feature template demonstrating how numerical representations are extracted from the linguistic-symbolic parse state and the architecture of the deep neural network model used to assign scores to transitions and upcoming words. (C) Demonstration of beam search parsing and surprisal calculation. At each parsing step, the k probability-ranked partial parses on the beam are each passed through the trained neural network to generate all possible states reachable by one transition. This collection of configurations is sorted and then culled to just the top k once again, based upon probability. 
+
+α indicates prefix probability, or sum of the probabilities of the partial parses on the beam. Surprisal of the second word (and those subsequent) is calculated as the negative log ratio of the current to former prefix probability for beams resulting from SHIFT actions. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 80 The coach of the player was frustrated The coach of the player was frustrated 
+
+Figure 3 
+
+Potential distribution of attention at the word frustrated — from example (1) — when making a retrieval to form the nsubj dependency relation with the subject of the sentence (see Figs. 1 and 4). 
+
+.CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint TEMPORAL DISSOCIATION 81 
+
+Figure 4 
+
+Aspects of the Grammar-Bilinear Asymw2v retrieval model. (A) The grammar-bilinear component represents syntactic context using Combinatory Categorial Grammar supertags and computes cue–target compatibility through a bilinear transformation to produce a syntactic retrieval distribution. (B) The lexical-semantic component uses dependency-based word embeddings to model semantic compatibility between the cue and candidate targets. (C) The two distributions are combined linearly and normalized to produce the final retrieval probability distribution. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 82 
+
+Figure 5 
+
+Time series representations of predictors aligned with the MEG data and auditory stimulus. From top: band-pass filtered MEG, raw auditory waveform, gammatone spectrogram, acoustic onset spectrogram, word onsets as uniform impulses, word-wise surprisal according to GPT-2 and the ILCGDP, and word-wise NAE extracted from GPT-2’s topmost layer, GPT-2’s dependency-correlated heads, and the GBA model. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 83 
+
+Figure 6 
+
+Incremental Left-Corner Generative Dependency Parser surprisal clusters. Brains show the distribution of t-values and vertices included in each cluster at cluster peak, with the spatial extent of the analyzed bilateral language network demarcated. Time series show the average temporal response function in these vertices, with the temporal extent of the cluster shaded. Dashed line demarcates the 200–1000 ms temporal region of interest. a.u.: arbitrary units. 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 21, 2026. ;https://doi.org/10.64898/2026.04.20.719609 doi: bioRxiv preprint
+
+TEMPORAL DISSOCIATION 84 
+
+Figure 7 
+
+Grammar Bilinear Asymw2v normalized attention entropy clusters. Brains show the distribution of t-values and vertices included in each cluster at cluster peak, with the spatial extent of the analyzed bilateral language network demarcated. Time series show the average temporal response function in these vertices, with the temporal extent of the cluster shaded. Dashed line demarcates the 200–1000 ms temporal region of interest. a.u.: arbitrary units.
