@@ -1,0 +1,222 @@
+Title: Looking Into the Past: Eye Movements Characterize Elements of Autobiographical Recall in Interviews with Holocaust Survivors
+
+URL Source: https://arxiv.org/pdf/2604.22016v1
+
+Published Time: Mon, 27 Apr 2026 00:07:17 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Looking Into the Past: Eye Movements Characterize Elements of Autobiographical Recall in Interviews with Holocaust Survivors 
+
+# Emily Zhou 
+
+emilyzho@usc.edu University of Southern California Los Angeles, CA, USA 
+
+# Marcus Ma 
+
+mjma@usc.edu University of Southern California Los Angeles, CA, USA 
+
+# Kleanthis Avramidis 
+
+avramidi@usc.edu University of Southern California Los Angeles, CA, USA 
+
+# Gabor Mihaly Toth 
+
+University of Luxembourg Esch-sur-Alzette, Luxembourg 
+
+# Shrikanth Narayanan 
+
+shri@usc.edu University of Southern California Los Angeles, CA, USA 
+
+## Abstract 
+
+Eye movement and memory retrieval are deeply and bidirectionally intertwined, however existing literature is generally confined to controlled lab settings. We investigate the relationship between eye gaze and memory recall in free-form autobiographical recall, which comprises both autonoetic consciousness—the ability to mentally place oneself in the past or future—and various affective states. Using a large video corpus of semi-naturalistic interviews with Holocaust survivors ( N =806), we examine eye movements with respect to episodic, semantic, affective, and temporal dimensions of traumatic and highly emotional autobiographical recall. We observe gaze patterns vary significantly across certain temporal contexts, most prominently in vertical eye movements. We additionally train intra-subject sequence models to predict temporal context of sen-tences from segments of gaze features, and find that eye movements entirely preceding sentence onset are sufficient for prediction. Our results corroborate prior findings in literature linking eye move-ments to memory in controlled and semi-structured settings, rein-forcing the role of eye gaze in retrieving and constructing memories, especially in highly emotional and remote memory recall. 
+
+## CCS Concepts 
+
+• Human-centered computing ; • Applied computing → Psy-chology ;
+
+## Keywords 
+
+Memory, Autobiographical recall, Eye gaze, Affect, Multimodal interaction 
+
+## 1 Introduction 
+
+We remember with our eyes. Eye movements play a vital role in memory recall; they change depending on the type of recall [ 17 , 22 ], our emotions [ 7], and who we speak to during recall [ 12 ]. For example, the relative time period of events (past or future-oriented) and direction of attention (internal or external) influences the gaze direction [ 4 , 17 , 22 ]. In controlled studies, memories retrieved in a fixed gaze condition have been found to be less detailed and are retrieved more slowly than in a free-gaze condition [13]. However, prior work has been limited to associations between eye movement and memory recall at short temporal scales with high-quality, fine-grained recordings in controlled settings, thereby leaving a gap on how eye movement and memory recall interact in more naturalistic and ecologically valid settings. In this work, we investigate this relationship in the Voices dataset obtained from the USC Shoah Foundation’s Visual History Archive, consisting of thousands of video testimonies from Holocaust survivors. To the best of the authors’ knowledge, these interviews elicit remote memory recall and emotion processing on a scale and intensity stronger than any existing lab-controlled gaze analyses. In our analysis, we find that high-level gaze patterns are strongly associated with both the type of memory recall and the correspond-ing life period, within World War II and the Holocaust, even when accounting for the elapsed time in the interview. In particular, ver-tical eye movement relative to the interviewer emerges as a signifi-cant discriminative signal. These eye gaze patterns can also predict the temporal characteristics of recalled memories, as demonstrated by experiments that shift the gaze feature window backward in time to infer temporal context. The contributions of this work can be summarized as follows: 
+
+• We study the associations between eye movements and var-ious characteristics of memory recall in semi-naturalistic, video-recorded interviews with Holocaust survivors, with narrations spanning from childhood to the present day. 
+
+• We quantify the effect of recalling different time periods on eye gaze relative to the conversational partner in natu-ralistic autobiographical recall. Individuals tend to divert their gaze away from the interviewer right after sentence onset, and this effect is particularly strong when recalling memories from the remote past, i.e., their childhood. 
+
+• We train deep learning models to predict the temporal con-text of recalled content using coarsely sampled eye gaze from naturalistic video recordings. 
+
+## 2 Related Work 2.1 Memory and Autobiographical Recall 
+
+Autobiographical memory plays a fundamental role in constructing self-identity and psychological well-being [ 5 ] and involves both semantic and episodic components, terms introduced by Tulving et al . [ 24 , 25 ]. Episodic memory describes the system in which the brain encodes and stores information about specific events and the spatiotemporal relationships between the associated components. On the other hand, semantic memory describes the memory for 
+
+> arXiv:2604.22016v1 [cs.MM] 23 Apr 2026 Zhou et al.
+
+Table 1: Distribution of Recall Type and Temporal Contexts Temporal Context Recall Type Pre-war Wartime Liberation Post-war Present Total 
+
+Internal 12,305 105,602 5,308 21,098 1,311 145,624 External 25,852 51,276 919 8,506 7,176 93,729 
+
+Total 38,157 156,878 6,227 29,604 8,487 239,353 general knowledge and language that does not require one to recall experiences of distinctive events. In our experiments, we retroactively label interview transcripts using the definitions outlined by the Autobiographical Interview protocol, a well-established procedure for quantifying episodic and semantic aspects of autobiographical memory [ 15 ]. In the Auto-biographical Interview, episodic details are referred to as internal ,referring to components of an event that occurred at a specific time and place. Semantic information is referred to as external , details describe non-episodic components, such as facts not specific to an event, general knowledge, and repeated statements. We use these definitions when labeling transcripts for memory recall. 
+
+## 2.2 Gaze Patterns During Memory Recall 
+
+Extensive studies on memory recall and eye gaze across controlled and semi-controlled conditions have found relationships between eye movement and various characteristics of memory recall. High-level features, such as gaze direction, are associated with temporal elements during both encoding and recall [ 17 ] as well as perceived direction of attention (external, i.e. , objects, people, or internal, i.e. ,memories of personal experiences) [ 22 ]. In a controlled encoding task of past versus future-oriented events about a fictitious charac-ter in a cohort of German speakers, Martarelli et al . [17 ] found that eye gaze drifts to the right when recalling terms related to future events, but vertical eye movements did not display any significant differences. Meanwhile, internal attention is strongly associated with an upward-averted gaze, while gaze remains around the hori-zontal axis when recalling external memories [22]. Fine-grained features, including fixations (temporary suspen-sion of eye movement), saccades (involuntary, rapid eye movements between fixations), and blinks, are also associated with autobio-graphical recall. In one study, individuals were asked to participate in an audio-guided tour of a museum and asked to freely recall details a week later [ 4]. Mixed-effects models showed that saccades occur more frequently prior to episodic autobiographical details followed by a decrease prior to the next detail. Eye gaze has also been found to be a salient signal for detecting affect [ 1, 7, 16 , 19 , 23 ]. When analyzing affective elements of mem-ory recall, emotionally charged memories were associated with a higher frequency of fixations and saccades than neutral memo-ries [ 7]. Prior work using the Voices data trained a self-supervised model to reconstruct eye movement, learning representations that successfully predicted speech-based affect [16]. 
+
+## 2.3 Gaze Patterns in Dyadic Interactions 
+
+Dyadic interactions encompass a wide variety of settings, includ-ing turn-taking conversations, cooperative tasks, and interviews. In these settings, gaze direction is a critical social cue for estab-lishing a turn in a conversation and gauging understanding of the interlocutor [ 11 ]. Under additional cognitive and social load, gaze aversion is particularly significant. When children were asked a series of increasingly difficult questions on arithmetic, language, and episodic and autobiographical memory [ 6], gaze aversion was the highest when autobiographical questions were asked (typically about recent classroom activities). A study of gaze dynamics across two collaborative, conversation-based tasks in [ 10 ] showed that speakers tended to begin their turn with as averted gaze, before turning their gaze back to their partner roughly 700ms into their turn. However, a gap in eye gaze literature exists at the intersection of memory recall and semi-naturalistic, dyadic interaction, namely how does conversational memory recall impact eye movements, when both memory recall and conversation have individually been shown to influence eye movements? 
+
+## 3 Data Curation 
+
+For our study, we select a subset of videos from the Shoah Founda-tion’s Visual History Archive, a collection of video testimonies with survivors of various genocides and persecution across the globe. We select the interviews of 978 Holocaust survivors (526 men, 452 women), where survivors recount their life experiences starting from early childhood, throughout World War II and the Holocaust, and up until the present day of the interview. In these testimonies, survivors recall traumatic experiences in internment camps, forced labor, and mass killings, as well as general life reflections. The interviews typically begin with a recall of the interviewee’s child-hood, which tend to be less temporally specific than memories from later in life. Topics near the end of the interview are more oriented around the present day (at the time of the interview), and are more philosophical, e.g. , how they currently feel about their past, and what messages they may have to share. Each video is about 30 minutes long and is recorded at 30 FPS and 320x240 pixel resolution. Each interviewee appears in multiple consecutive videos, totaling about two hours of video per intervie-wee. We also have transcripts annotated by human experts at the Shoah Foundation that are time-aligned on the word level. After filtering (described in Section 3.1.1), over 239,000 sentences related to autobiographical recall were used in our analysis. Looking Into the Past: Eye Movements Characterize Elements of Autobiographical Recall in Interviews with Holocaust Survivors 
+
+Figure 1: Valence, Arousal, and Dominance estimated from audio recordings and aligned with transcripts. 
+
+Figure 2: Gaze dynamics (GAMM) across temporal contexts around sentence onset. 
+
+## 3.1 Sentence-Level Annotations 
+
+3.1.1 Autobiographical Recall. Recent studies have successfully adopted Large Language Models (LLMs) to automate the scoring of autobiographical recall [ 26 , 27 ]. In this work, we leverage the GPT-OSS-120B [ 20 ] model to extract characteristics of memory recall and temporal elements through prompting. Sentences are labeled as either internal (episodic) or external (semantic) according to the definitions outlined in the Autobiographical Interview. Before we annotated all sentences, we performed iterative prompt engineering [ 21 ] on a held-out validation set of 100 sentences. Zhou et al.  
+
+> (a) Vertical gaze direction in local coordinates. (b) Vertical gaze distance from interviewer.
+
+Figure 3: Temporal dynamics of vertical gaze relative to sentence onset differ significantly for the pre-war context. 
+
+Two human annotators also labeled the same sentences. The fi-nal prompt, which included definitions and examples of inter-nal/external memory recall sentences, achieved 81% accuracy on human agreement with a Cohen’s kappa of 0.62. Each sentence is also labeled by the relevant time period in the interviewee’s life, referred to as temporal context : pre-war, wartime, liberation, post-war, present-day, and other. High-level measures of the richness of memory recall, duration and word count, are computed from the transcripts for each interviewee response. To construct the final dataset, sentences shorter than 5 s or labeled as ‘other’ were discarded due to their miscellaneous nature, and interviewees having fewer than the 10th quartile of sentences ( 𝑛 =87 )were excluded. This process resulted in a total of 806 interviewees and 239,353 sentences. The number of sentences per recall and temporal context type are shown in Table 1. 
+
+Table 2: Welch’s t-test Results for Eye Gaze Features Predict-ing Internal vs. External Recall. Features are averaged over 5 seconds immediately preceding sentence onset.                          
+
+> Feature 𝑡 𝑝 -value Mean (SD)
+> Gaze X -2.51 0.0122 0.0022 (0.043) Gaze Y 18.75 <0.001 0.0085 (0.033) Gaze X SD -0.92 0.3586 1.2022 (0.651) Gaze Y SD 10.23 <0.001 1.3078 (0.627) Gaze Angle X SD -2.34 0.0193 0.9932 (1.030) Gaze Angle Y SD 5.08 <0.001 0.8326 (0.926)
+> Note: SD refers to standard deviations away from the interviewer.
+
+3.1.2 Affective Labels. Labels of valance, arousal, and dominance (the VAD model) [ 18 ] are obtained from audio data [ 14 ], time-aligned with the transcripts. VAD measures are normalized to a range of [0, 1] and averaged across each sentence to obtain a proxy of felt emotion and emotional load during autobiographical recall. Figure 1 visualizes changes in the three affective dimensions around sentence onset across the five temporal contexts. 
+
+## 3.2 Eye Gaze Pre-processing 
+
+Eye and head position and angle were extracted using OpenFace 2.0 [ 3], resulting in frame-level vectors for gaze direction and head pose (X, Y, Z) in the same experimental setup described by Ma et al . [ 16 ]. Analysis of eye gaze typically uses saccade, fixation, and blink features, but the relatively lower quality and frame rate of this data prevents the accurate estimation of these features. In-stead, we compute high-level features, localized with respect to the interviewee’s head pose and interviewer’s location. OpenFace returns eye gaze direction vectors in world coordinates. Since the recording camera is not set at the same position relative to the interviewee across videos, eye gaze direction vectors were first converted to a local coordinate system centered at the interviewee’s face in each video. Segments with more than 30 consecutive frames of missing gaze data are discarded. Next, the interviewer’s location is estimated as the mode of eye gaze direction during segments of interviewer speech in the first ten minutes of each interview. This value is then subtracted from each measurement to localize all data to the interviewer’s position. Left and right eye gaze features are averaged and six features are calculated for each frame: 
+
+• (1–2) Gaze position in the X (horizontal) and Y (vertical) directions, represented in local coordinates. 
+
+• (3–6) Number of standard deviations (calculated per inter-viewee) away from the interviewer, separately for gaze posi-tion and angle in the X and Y directions. This encodes gaze information relative to the interviewer’s position, while accounting for intra-subject variance. Finally, the features are normalized via robust scaling. 
+
+## 4 Experiments 
+
+The relationship between eye gaze and memory has been studied extensively in controlled studies with short temporal scales [4, 13, Looking Into the Past: Eye Movements Characterize Elements of Autobiographical Recall in Interviews with Holocaust Survivors 
+
+17 ], but not in more naturalistic, free-recall settings. To bridge this gap, we first conduct a series of statistical tests on the high-level eye gaze features to quantify the associations between the eye gaze features and recall type across different life periods. Next, end-to-end deep learning sequence models are trained to predict the temporal context of memory recall in autobiographical interviews from the eye gaze features, a five-class classification task. 
+
+## 4.1 Associating Gaze Features with Autobiographical Recall 
+
+4.1.1 Recall Type. To quantify the association between eye move-ments and characteristics of autobiographical recall, Welch’s t-test is performed to predict internal vs. external recall type from the gaze features. To evaluate differences in eye gaze that may be predictive of memory recall, measurements of each of the six continuous eye gaze features (see Section 3.2) are averaged over the five seconds immediately preceding sentence onset. 
+
+4.1.2 Temporal Context. To model the non-linear trajectories of the various eye gaze features, Generalized Additive Mixed Models (GAMMs) are fitted to model gaze features across the different tem-poral contexts. Additional features are calculated from the initial gaze features: velocity, acceleration, and jerk in the horizontal and vertical directions. 95% confidence intervals are estimated via clus-ter bootstrapping with a sample size of 300 interviewees, effectively accounting for within-subject correlations. The resulting GAMM trajectories are plotted in Figure 2. 
+
+## 4.2 End-to-End Prediction of Temporal Context 
+
+To evaluate the predictive ability of eye gaze for memory recall, we train two deep learning models, a temporal CNN (TCNN) [ 2] and a Structured State Space sequence (S4) model [ 9], to predict sentence-level temporal context using frame-level eye gaze features. For each temporal context (e.g., ‘wartime’ and ‘post-war’), we predict a binary probability for that context occurring. We evaluate each temporal context individually in a One-vs-Rest binary setup and report AUC on this binary task. Specifically, the 6 continuous eye gaze features over a 𝑇 𝑐𝑜𝑛𝑡𝑒𝑥𝑡 -second window are used to predict the recall type of each interviewee sentence. The TCNN model consists of 6 layers, hidden dimension of 32, kernel size of 3, and dropout of 0.2, for a total of 16k trainable pa-rameters. The S4 model consists of 3 S4 blocks, hidden dimension of 32, and dropout of 0.2, with 32k trainable parameters. Both models are trained using the AdamW optimizer with a learning rate of 1e-3 and a weight decay of 1e-2. A separate model is trained for each interviewee in a 5-fold stratified cross validation setting across sentences with context length 𝑇 𝑐𝑜𝑛𝑡𝑒𝑥𝑡 = 5 seconds. The models are trained on a series of different context windows. First, the start of the context window is aligned with the beginning of the target sentence for a pure classification task. The window is shifted backwards with a one second time step, up to 7 seconds prior to sentence onset to obtain predictions from gaze windows preceding the sentence. 
+
+Table 3: Ablation on Gaze Dimension for Temporal Context Prediction. Input is a 5-second window centered at 1 second after sentence onset. Best performance is denoted in bold.                    
+
+> Input Features (#) ACC Weighted F1 AUC (OvR)
+> Baseline 0.6750 0.5440 0.5000 Horizontal (3) 0.7082 (0.1301) 0.6410 (0.1435) 0.6642 (0.0937) Vertical (3) 0.7137 (0.1286) 0.6406 (0.1441) 0.6679 (0.0953) Both (6) 0.7171 (0.1266) 0.6620 (0.1386) 0.6969 (0.0959)
+> Note: The baseline condition represents a naive prediction based on class frequencies. All results reported as median across subjects (standard deviation).
+
+## 4.3 Ablation of Horizontal and Vertical Axes 
+
+Visual inspection of the vertical axis gaze dynamics (Figure 3) show consistent increases in vertical direction, particularly away from the interviewer’s location, around 1 second after sentence onset. Based on this pattern, we further hypothesized that vertical gaze features alone in a 5-second window centered at 1 second after the start of a temporally relevant sentence is adequate for predicting temporal context. To test this hypothesis, the same models are trained to predict temporal context using the 𝑇 𝑐𝑜𝑛𝑡𝑒𝑥𝑡 = 5, centered at 1 second after sentence onset using only the three vertical or three horizontal gaze features. 
+
+## 5 Results and Discussion 
+
+Statistical analysis of the eye gaze features and their temporal dy-namics around sentence onset are shown in Table 2 and Figure 2, respectively. Temporal context prediction results over all classes with feature ablation are shown in Table 3, and performance metrics are visualized in Figures 4 and 5. Summary statistics are calculated across the full set by taking the mean across folds within intervie-wee before computing the median across all interviewees. 
+
+## 5.1 Eye Gaze Patterns Differ Across Recall Type and Temporal Contexts 
+
+Vertical eye gaze patterns differ significantly between internal and external recall, as well as across different temporal contexts. The Welch’s t-test results (Table 2) show that both vertical gaze direc-tion and vertical distance from interviewer are significantly higher for internal sentences, with much larger differences than horizon-tal gaze features. This aligns with prior findings of upward gaze aversion during memory recall [ 22 ], especially when attention is directed internally, i.e. , towards one’s past experiences. We also did not observe significant changes in horizontal gaze direction. Gaze trajectory plots (Figure 3) show the same pattern in vertical gaze direction around sentence onset, with gaze_y and gaze_y_std 
+
+peaking about one second after the interviewee begins speaking. Both features exhibit similar patterns around sentence onset across all temporal contexts, but differ significantly when the individual is discussing the pre-war time period, which extends from childhood up until World War II. The GAMM trajectories of acceleration, jerk, and standard deviations further support this, with highly consistent patterns and low variance in vertical features, but relatively higher spread in horizontal gaze features across the different contexts. Zhou et al.  
+
+> (a) CNN performance across context window offsets. (b) S4 performance across context window offsets.
+
+Figure 4: Eye gaze preceding sentence onset predicts temporal context as effectively as eye gaze during speech. AUC (OvR) is reported, and baseline performance (0.5) is shown as a dashed line. Table 4: Linear Mixed-Effects Model for Mean Vertical Gaze as a function of temporal context (pre-war baseline) and sentence timing ( 𝑁 = 245 , 370 observations) Predictor Coefficient 𝛽 Std. Error 
+
+Fixed Effects 
+
+Intercept (Pre-war)*** 0.01929 0.00073 Wartime*** -0.00580 0.00017 Liberation*** -0.00448 0.00038 Post-war*** -0.00516 0.00024 Present-day*** -0.00547 0.00033 Sentence onset (s)*** -1.13e-06 2.54e-08 
+
+Random Effects 
+
+Interviewee ID ( 𝜎 2 
+
+> 𝑢
+
+) 0.000458 Residual ( 𝜎 2 
+
+> 𝜖
+
+) 0.000695 
+
+Model Fit 
+
+ICC 0.3973 LRT: Content Domain*** 𝜒 2 (4) = 1188 .7
+
+LRT: Interview Onset*** 𝜒 2 (1) = 1952 .5    
+
+> Note: *** 𝑝 <0.001 . Baseline for temporal context dummy coding is ’pre-war’.
+
+Importantly, interviewees tend to speak about their life periods in the same order, so the interview progression may be a potential confound. To test the effect of interview duration, we fit a linear mixed model to predict average vertical gaze position per sentence. The five temporal context categories and the sentence starting timestamp in seconds are the fixed effects, and the interviewee is treated as a random effect to control for inter-individual differences. We find that the progression of the interview (onset time) is a significant predictor, but with a minuscule effect ( 𝛽 = -1.13e-6), and the likelihood ratio tests show that both the temporal context and elapsed time are significantly associated with gaze patterns. 
+
+## 5.2 Synchrony in Speech-Based Affect and Gaze 
+
+The audio-based valence, arousal, and dominance trajectories around sentence onset, averaged across interviewees, were also visualized (Figure 1). All contexts exhibited low valence (< 0.33), arousal (< 0.44), and dominance (< 0.39). Both valence and dominance typ-ically drop within 2 seconds prior to the start of a sentence and tends to increase prior to the next sentence; the starting point of decrease aligns with the vertical gaze changes apparent in Figure 3. Arousal remains fairly constant, although there are clear differences in average arousal level across different temporal context groups, with arousal being highest when recalling pre-war experiences and lowest when discussing wartime and liberation .
+
+## 5.3 Gaze Aversion Increases at Sentence Onset 
+
+The interviews constitute a form of dyadic conversation, in which eye gaze is known to both signal and respond to turn taking, but they are also dominated by the interviewee’s autobiographical nar-rative as they recall their life experiences. Vertical gaze distance away from the interviewer’s position begins to increase about 1.5 seconds prior to speaking and peaks just before one second after Looking Into the Past: Eye Movements Characterize Elements of Autobiographical Recall in Interviews with Holocaust Survivors 
+
+Figure 5: Model prediction results by prior context. Perfor-mance drops when temporal context changes, but remains above chance. ’-1s offset’ refers to the eye gaze window start-ing one second prior to sentence onset. 
+
+sentence onset, with a consistent pattern across all temporal con-texts. The same patterns were seen during interviews of general questions of likes and dislikes [ 8] and cooperative gameplay [ 10 ]. This suggests that gaze aversion from a conversational partner extends beyond typical turn-taking and controlled interviews to autobiographical recall and narration about highly emotional and influential life events. 
+
+## 5.4 Eye Gaze Predicts Temporal Context of Autobiographical Recall 
+
+We evaluate the predictive ability of eye gaze for temporal context of upcoming sentences by training TCNN and S4 sequence models on fixed-length, sliding windows starting prior to sentence onset. Results show that gaze windows entirely preceding the sentence are as predictive of temporal context as eye gaze during the sentence 4. Models achieve the highest performance for sentences related to the 
+
+pre-war time period, followed by similar performance on wartime 
+
+and post-war (Figure 4). It should be noted that class labels are imbalanced, with wartime being discussed the most often; despite this, the models are able to predict the context of upcoming sen-tences well above chance performance. The present-day context is more difficult to predict, with the lowest performance across all eye gaze settings. This could be due to the more varied life experiences discussed, as well as the inclusion of various philosophical topics, thoughts, and feelings. Additionally, we hypothesized that vertical gaze would be highly predictive of temporal context. The ablation study proves this hy-pothesis false, with the horizontal feature subset performing just as well as the vertical features. The full feature set performed better than both subsets, demonstrating the importance of both verti-cal and horizontal gaze dynamics in differentiating between recall of different autobiographical time periods, even when statistical analyses does not show significant associations across all variables. These results should be interpreted with the consideration of the duration of the autobiographical narratives. In particular, inter-viewees tend to speak continuously about the same time period for several minutes at a time, a possible explanation for the long pre-dictive window. When sentences with the same temporal context as the immediate prior sentence are filtered out, prediction AUC drops significantly (Table 5). 
+
+## 6 Limitations and Future Work 
+
+Memory retrieval and recall is a highly complex process, involving neural mechanisms that relate prior knowledge, self-perception, temporal and spatial information, and affect. Therefore, the relation-ship between eye gaze and memory, especially autobiographical recall, has largely been studied in controlled environments with structured recall tasks. This work introduces an initial step towards an understanding of eye gaze features and autobiographical recall in a naturalistic, noisy setting. Labels generated by the LLM achieved high agreement with human annotators, but are not guaranteed to be correct, contributing additional noise. In processing the eye gaze data, gaze features were normalized with respect to the interviewer’s assumed position, since only the interviewee is in frame. Interviewer position is estimated by taking the mode of the interviewee’s gaze direction while the interviewer is speaking, but this cannot be directly verified. As a result, noise may have contributed higher variance in the processed features. The standard deviation in model performance across individuals also suggests high inter-individual differences in eye gaze patterns. While this work focused on sentence-level analysis, examining eye gaze across full episodes of memory recall would provide ad-ditional insights into the complex relationships between the two, especially given the observed temporal consistency of the narra-tives in our dataset. Future work could also explore multimodal sentiment analysis, including interactions between text, speech, eye gaze, and facial expressions across different affective states, and incongruence in displayed emotion across these modalities. 
+
+## 7 Conclusion 
+
+This work, to the best of the authors’ knowledge, contributes the first study of eye gaze and characteristics of memory recall in autobiographical recall at this scale. Our experiments elucidate the relationships between eye movements and temporal characteristics of autobiographical recall and demonstrate the predictive ability of gaze patterns across temporal contexts. Vertical gaze features differ between sentences of internal versus external attention, and different time periods throughout life. High-level gaze features are also predictive of the temporal context of recalled experiences with respect to the Holocaust and World War II. Despite the noisy setting, the reported results align with established findings in literature on the close relationship between eye gaze and memory. 
+
+## 8 Safe and Responsible Innovation 
+
+The videos used in the analyses were provided by the USC Shoah Foundation as part of the Visual History Archive 1, and no personally 
+
+> 1https://vha.usc.edu/home
+
+Zhou et al. 
+
+identifiable information is made available. This work focuses on the retelling of life events from survivors of the Holocaust, a tragic event in human history. Any analysis on these data, including the findings presented in this work, must be interpreted with careful ethical consideration and are limited to the temporal contexts defined by the historical events that shaped these individuals’ lives. 
+
+## References 
+
+[1] Kleanthis Avramidis, Woojae Jeong, Aditya Kommineni, Sudarsana R Kadiri, Marcus Ma, Colin McDaniel, Myzelle Hughes, Thomas McGee, Elsi Kaiser, Dani Byrd, Assal Habibi, B Rael Cahn, Idan A Blank, Kristina Lerman, Takfarinas Medani, Richard M Leahy, and Shrikanth Narayanan. 2026. Deep learning char-acterizes depression and suicidal ideation in young adults from eye movements. 
+
+npj Digital Medicine (March 2026). doi:10.1038/s41746-026-02550-4 [2] Shaojie Bai, J. Zico Kolter, and Vladlen Koltun. 2018. An Empirical Evalua-tion of Generic Convolutional and Recurrent Networks for Sequence Modeling. arXiv:1803.01271 [cs.LG] https://arxiv.org/abs/1803.01271 [3] Tadas Baltrusaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe Morency. 2018. OpenFace 2.0: Facial Behavior Analysis Toolkit. In 2018 13th IEEE Inter-national Conference on Automatic Face & Gesture Recognition (FG 2018) . 59–66. doi:10.1109/FG.2018.00019 [4] Ryan M Barker, Michael J Armson, Nicholas B Diamond, Zhong-Xu Liu, Yushu Wang, Jennifer D Ryan, and Brian Levine. 2026. Remembrance with gazes passed: Eye movements precede continuous recall of episodic details of real-life events. 
+
+Cognition 268 (2026), 106380. [5] Martin A Conway and Christopher W Pleydell-Pearce. 2000. The construction of autobiographical memories in the self-memory system. Psychological review 
+
+107, 2 (2000), 261. [6] Gwyneth Doherty-Sneddon and Fiona G Phelps. 2005. Gaze aversion: A response to cognitive or social difficulty? Memory & cognition 33, 4 (2005), 727–733. [7] Mohamad El Haj, Jean-Louis Nandrino, Pascal Antoine, Muriel Boucart, and Quentin Lenoble. 2017. Eye movement during retrieval of emotional autobio-graphical memories. Acta psychologica 174 (2017), 54–58. [8] Megan Freeth, Tom Foulsham, and Alan Kingstone. 2013. What affects social attention? Social presence, eye contact and autistic traits. PloS one 8, 1 (2013), e53286. [9] Albert Gu, Karan Goel, and Christopher Ré. 2022. Efficiently Modeling Long Sequences with Structured State Spaces. arXiv:2111.00396 [cs.LG] https://arxiv. org/abs/2111.00396 [10] Simon Ho, Tom Foulsham, and Alan Kingstone. 2015. Speaking and listening with the eyes: Gaze signaling during dyadic interactions. PloS one 10, 8 (2015), e0136905. [11] Kristiina Jokinen, Kazuaki Harada, Masafumi Nishida, and Seiichi Yamamoto. 2010. Turn-alignment using eye-gaze and speech in conversational interaction.. In INTERSPEECH . 2018–2021. [12] Chris L Kleinke. 1986. Gaze and eye contact: a research review. Psychological bulletin 100, 1 (1986), 78. [13] Quentin Lenoble, Steve MJ Janssen, and Mohamad El Haj. 2019. Don’t stare, unless you don’t want to remember: Maintaining fixation compromises autobio-graphical memory retrieval. Memory 27, 2 (2019), 231–238. [14] Thanathai Lertpetchpun, Tiantian Feng, Dani Byrd, and Shrikanth Narayanan. 2025. Developing a High-performance Framework for Speech Emotion Recogni-tion in Naturalistic Conditions Challenge for Emotional Attribute Prediction. In 
+
+Interspeech 2025 . 4648–4652. doi:10.21437/Interspeech.2025-1082 [15] Brian Levine, Eva Svoboda, Janine F Hay, Gordon Winocur, and Morris Moscov-itch. 2002. Aging and autobiographical memory: dissociating episodic from semantic retrieval. Psychology and aging 17, 4 (2002), 677. [16] Marcus Ma, Jordan Prescott, Emily Zhou, Tiantian Feng, Kleanthis Avramidis, Gabor Mihaly Toth, and Shrikanth Narayanan. 2026. Encoding Emotion Through Self-Supervised Eye Movement Reconstruction. arXiv:2601.12534 [cs.CV] https: //arxiv.org/abs/2601.12534 [17] Corinna S Martarelli, Fred W Mast, and Matthias Hartmann. 2017. Time in the eye of the beholder: Gaze position reveals spatial-temporal associations during encoding and memory retrieval of future and past. Memory & Cognition 45, 1 (2017), 40–48. [18] Albert Mehrabian. 1996. Pleasure-Arousal-Dominance: A General Framework for Describing and Measuring Individual Differences in Temperament. Current Psychology 14, 4 (1996), 261–292. [19] Jonny O’Dwyer, Ronan Flynn, and Niall Murray. 2017. Continuous affect predic-tion using eye gaze and speech. In 2017 IEEE International Conference on Bioin-formatics and Biomedicine (BIBM) . 2001–2007. doi:10.1109/BIBM.2017.8217968 [20] OpenAI, :, Sandhini Agarwal, Lama Ahmad, Jason Ai, Sam Altman, Andy Apple-baum, Edwin Arbus, Rahul K. Arora, Yu Bai, Bowen Baker, Haiming Bao, Boaz Barak, Ally Bennett, Tyler Bertao, Nivedita Brett, Eugene Brevdo, Greg Brockman, Sebastien Bubeck, Che Chang, Kai Chen, Mark Chen, Enoch Cheung, Aidan Clark, Dan Cook, Marat Dukhan, Casey Dvorak, Kevin Fives, Vlad Fomenko, Timur Garipov, Kristian Georgiev, Mia Glaese, Tarun Gogineni, Adam Goucher, Lukas Gross, Katia Gil Guzman, John Hallman, Jackie Hehir, Johannes Heidecke, Alec Helyar, Haitang Hu, Romain Huet, Jacob Huh, Saachi Jain, Zach Johnson, Chris Koch, Irina Kofman, Dominik Kundel, Jason Kwon, Volodymyr Kyrylov, Elaine Ya Le, Guillaume Leclerc, James Park Lennon, Scott Lessans, Mario Lezcano-Casado, Yuanzhi Li, Zhuohan Li, Ji Lin, Jordan Liss, Lily, Liu, Jiancheng Liu, Kevin Lu, Chris Lu, Zoran Martinovic, Lindsay McCallum, Josh McGrath, Scott McKin-ney, Aidan McLaughlin, Song Mei, Steve Mostovoy, Tong Mu, Gideon Myles, Alexander Neitz, Alex Nichol, Jakub Pachocki, Alex Paino, Dana Palmie, Ashley Pantuliano, Giambattista Parascandolo, Jongsoo Park, Leher Pathak, Carolina Paz, Ludovic Peran, Dmitry Pimenov, Michelle Pokrass, Elizabeth Proehl, Huida Qiu, Gaby Raila, Filippo Raso, Hongyu Ren, Kimmy Richardson, David Robinson, Bob Rotsted, Hadi Salman, Suvansh Sanjeev, Max Schwarzer, D. Sculley, Harshit Sikchi, Kendal Simon, Karan Singhal, Yang Song, Dane Stuckey, Zhiqing Sun, Philippe Tillet, Sam Toizer, Foivos Tsimpourlas, Nikhil Vyas, Eric Wallace, Xin Wang, Miles Wang, Olivia Watkins, Kevin Weil, Amy Wendling, Kevin Whinnery, Cedric Whitney, Hannah Wong, Lin Yang, Yu Yang, Michihiro Yasunaga, Kris-ten Ying, Wojciech Zaremba, Wenting Zhan, Cyril Zhang, Brian Zhang, Eddie Zhang, and Shengjia Zhao. 2025. gpt-oss-120b and gpt-oss-20b Model Card. arXiv:2508.10925 [cs.CL] https://arxiv.org/abs/2508.10925 [21] Sander Schulhoff, Michael Ilie, Nishant Balepur, Konstantine Kahadze, Amanda Liu, Chenglei Si, Yinheng Li, Aayush Gupta, HyoJung Han, Sevien Schul-hoff, Pranav Sandeep Dulepet, Saurav Vidyadhara, Dayeon Ki, Sweta Agrawal, Chau Pham, Gerson Kroiz, Feileen Li, Hudson Tao, Ashay Srivastava, Hevan-der Da Costa, Saloni Gupta, Megan L. Rogers, Inna Goncearenco, Giuseppe Sarli, Igor Galynker, Denis Peskoff, Marine Carpuat, Jules White, Shyamal Anad-kat, Alexander Hoyle, and Philip Resnik. 2025. The Prompt Report: A Sys-tematic Survey of Prompt Engineering Techniques. arXiv:2406.06608 [cs.CL] https://arxiv.org/abs/2406.06608 [22] Anaïs Servais, Christophe Hurter, and Emmanuel J Barbeau. 2022. Gaze direction as a facial cue of memory retrieval state. Frontiers in Psychology 13 (2022), 1063228. [23] Mohammad Soleymani, Jeroen Lichtenauer, Thierry Pun, and Maja Pantic. 2012. A Multimodal Database for Affect Recognition and Implicit Tagging. IEEE Transactions on Affective Computing 3, 1 (2012), 42–55. doi:10.1109/T-AFFC.2011. 25 [24] Endel Tulving. 2002. Episodic memory: From mind to brain. Annual review of psychology 53, 1 (2002), 1–25. [25] Endel Tulving et al . 1972. Episodic and semantic memory. Organization of memory 1, 381-403 (1972), 1. [26] Ruben DI van Genugten and Daniel L Schacter. 2024. Automated scoring of the autobiographical interview with natural language processing. Behavior research methods 56, 3 (2024), 2243–2259. [27] Victoria Wardell, Christian L Esposito, Christopher R Madan, and Daniela J Palombo. 2021. Semi-automated transcription and scoring of autobiographical memory narratives. Behavior Research Methods 53, 2 (2021), 507–517.

@@ -1,0 +1,667 @@
+Title: SpeechParaling-Bench: A Comprehensive Benchmark for Paralinguistic-Aware Speech Generation
+
+URL Source: https://arxiv.org/pdf/2604.20842v1
+
+Published Time: Thu, 23 Apr 2026 01:20:26 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+# SpeechParaling-Bench: A Comprehensive Benchmark for Paralinguistic-Aware Speech Generation 
+
+# Ruohan Liu 1∗, Shukang Yin 1*, Tao Wang 1, Dong Zhang 2, Weiji Zhuang 2, Shuhuai Ren 2,Ran He 1, Caifeng Shan 1, Chaoyou Fu 1†
+
+> 1
+
+# Nanjing University, 2Xiaomi 
+
+ruohanliu998@gmail.com, bradyfu24@gmail.com 
+
+# Project page: speechparaling-bench.github.io 
+
+# Abstract 
+
+Paralinguistic cues are essential for natural human-computer interaction, yet their evaluation in Large Audio-Language Models (LALMs) remains limited by coarse fea-ture coverage and the inherent subjectivity of assessment. To address these challenges, we introduce SpeechParaling-Bench , a comprehensive benchmark for paralinguistic-aware speech generation. It expands existing coverage from fewer than 50 to over 100 fine-grained features , supported by more than 1,000 English-Chinese parallel speech queries, and is organized into three progressively challenging tasks: fine-grained control, intra-utterance variation, and context-aware adaptation. To enable reliable evaluation, we further develop a pairwise comparison pipeline , in which candi-date responses are evaluated against a fixed baseline by an LALM-based judge. By framing evaluation as relative pref-erence rather than absolute scoring, this approach mitigates subjectivity and yields more stable and scalable assessments without costly human annotation. Extensive experiments re-veal substantial limitations in current LALMs. Even leading proprietary models struggle with comprehensive static con-trol and dynamic modulation of paralinguistic features, while failure to correctly interpret paralinguistic cues accounts for 43.3% of errors in situational dialogue. These findings underscore the need for more robust paralinguistic modeling toward human-aligned voice assistants. 
+
+# 1. Introduction 
+
+Recent years have witnessed the rise of Large Audio Lan-guage Models (LALMs) [ 20 , 31 , 35 ]. Different from the traditional audio modeling approach that tackles each audio processing task, e.g ., speech recognition [ 1 , 4, 14 ], emotion           
+
+> *Equal contribution.
+> †Corresponding author. User
+> LALM
+> LALM
+> Please read this sentence with an excited tone:
+> “Hello, nice to meet you !!! ”
+> “Hello, nice to meet you !! ”
+> Text “Hello, nice to meet you.”
+> Please read this sentence: “ Hello, nice to
+> meet you.”
+> Tone
+> User
+> “Hello, nice to meet you.” Text Tone
+> Target
+> Text Tone
+
+Figure 1. Comparison between traditional speech generation and paralinguistic-aware speech generation. While traditional benchmarks (Top) focus on text-to-speech consistency, the latter (Bottom) requires the model to synthesize not only linguistic con-tent but also non-verbal features ( e.g ., tone). 
+
+recognition [ 3, 25 ], and speech synthesis [ 23 , 29 ], LLM-driven audio modeling enables the emergence of audio foun-dation models [ 9, 38 ], which provide versatile task support with a unified I/O interface. Moreover, empowered by the strong language proficiency of the LLM backbone, new ap-plications such as real-time spoken dialogue [ 8, 20 , 36 ] have become a reality. Notably, frontier models like ChatGPT-Audio [ 20 ] and Doubao Voice [ 26 ] have demonstrated pre-liminary capabilities in paralinguistic-aware speech genera-tion, mimicking human speaking styles and tones and facili-tating more natural user interactions. Yet despite extensive evaluations of general audio tasks, assessments of compe-tence in this important capability remain limited. As shown in Fig. 1, proficiency in paralinguistic-aware speech gener-ation requires not only the correct generation of linguistic content but also the accurate expression of non-verbal as-pects such as speaking styles and tones. To fill this gap, we introduce SpeechParaling-Bench, 1                        
+
+> arXiv:2604.20842v1 [cs.CL] 22 Apr 2026 Audio Input: I don’t want to sleep, I
+> want to watch TV, just five more
+> minutes!
+> Audio: Haha, this movie is so funny, I
+> can’t stop laughing!
+> Multi -Dim: Emotion -Happy,
+> NLV -With Laughter
+> Single -Dim: Age -Child
+> Audio Input: Please read this sentence
+> with a sad emotion: “My puppy is
+> missing, I’m so sad.”
+> Audio Input: Please read this sentence
+> with a youthful voice and a happy
+> emotion: “We succeed! Let's celebrate
+> tonight!”
+> Dynamic Variation
+> My puppy is missing, I’m
+> so sad.
+> We succeed! Let‘s
+> celebrate tonight!
+> Just five more minutes,
+> then we have to go to
+> bed, okay?
+> Tell me about it! I’ve been
+> cracking up nonstop!
+> Based on current data,
+> the risks are still within
+> controllable limits.
+> Wait, system alert!
+> Quickly check the firewall!
+> Single -Dim: Emotion
+> Multi -Dim: Age, Emotion
+> Audio Input: Please read this
+> sentence starting with a low pitch
+> and suddenly jumping to a high
+> pitch: “Based on current data, the
+> risks are still within controllable
+> limits. Wait, system alert! Quickly
+> check the firewall!”
+> Situational Adaptation Paralanguage Control
+> Single -Dim: Pitch
+
+Figure 2. Data samples from SpeechParaling-Bench. Our evaluation covers three tasks critical for paralinguistic-aware speech generation: (1) Paralanguage Control : tests the LALM’s ability to generate audio with specific paralinguistic features; (2) Dynamic Variation : assesses the capability to modulate paralinguistic features; and (3) Situational Adaptation : evaluates the paralinguistic alignment between LALMs and users, where, unlike the former two, there is no standard answer for content. Each sample consists of an audio query paired with paralinguistic annotations. Single/Multi-Dim: Single-/Multi-dimension. NLV: Non-Linguistic Vocalizations. 
+
+a comprehensive evaluation suite for paralinguistic-aware speech generation, featuring: (1) Broader paralinguistic fea-ture coverage. Compared to existing benchmarks that typi-cally cover fewer than 50 features, our benchmark expands the scope to over 100 distinct paralinguistic features, com-prising more than 1,000 English–Chinese parallel speech queries curated via our custom data pipeline. (2) Special-ized task design. As shown in Fig. 2, we structure the eval-uation around progressive skill types, Paralanguage Con-trol , Dynamic Variation , and Situational Adaptation , ranging from controlled generation to context-aware adaptability, with a focus on real-world utility. (3) Enhanced evaluation pipeline. To address the inherent subjectivity of paralinguis-tic evaluation, we adopt a pairwise comparison framework that evaluates candidate responses against a fixed baseline. By reducing the task to relative preference rather than abso-lute scoring, this approach yields more stable and reliable assessments while remaining efficient and scalable. Through extensive evaluations on leading LALMs, we find that: (1) Achieving a comprehensive and accurate con-trol across various paralinguistic dimensions is still chal-lenging; (2) Dynamic regulation of paralinguistic features is a common bottleneck; (3) Failing to understand the par-alinguistic cues embedded in user speech is a major reason (accounting for 43.3%) for failure in situational dialogue. Overall, our contributions are threefold: • A comprehensive benchmark: We introduce a bench-mark that expands paralinguistic coverage from fewer than 50 to over 100 fine-grained features, supported by more than 1,000 English–Chinese parallel speech queries. The benchmark is structured into three complementary tasks—fine-grained control, intra-utterance variation, and context-aware adaptation—to capture paralinguistic abili-ties from static to contextual settings. • A pairwise evaluation pipeline: We propose an auto-mated pairwise evaluation framework that compares candi-date responses against a fixed baseline. By reformulating evaluation as relative preference rather than absolute scor-ing, the approach mitigates the inherent subjectivity of paralinguistic assessment, resulting in more stable and scalable evaluation without costly human annotation. • Empirical insights: Through extensive experiments, we identify key limitations of current LALMs, including weak dynamic modulation and difficulty in capturing contextual paralinguistic cues, with misinterpretation of such cues ac-counting for a substantial portion of errors. These findings highlight critical bottlenecks for building more natural and human-aligned voice assistants. 
+
+# 2. Related Work 
+
+2.1. Large Audio-Language Models 
+
+Recent years have witnessed the rapid emergence of Large Audio-Language Models (LALMs) and their applications in real-world scenarios [ 9 , 30 , 38 ]. Equipped with excep-tional reasoning and fluent speech-generation capabilities, these models facilitate seamless, colloquial dialogue experi-ences. In the commercial domain, frontier models like GPT 2Table 1. Key statistics of SpeechParaling-Bench. Statistic Number 
+
+Samples 1,001 Dimensions 13 Features 104 Avg. Text Length - English Set (words) 27.4 - Chinese Set (chars) 35.3 Avg. Audio Duration (s) - English Set 10.3 - Chinese Set 8.5 
+
+Audio [ 21 ] and Gemini Audio [ 7] exemplify end-to-end multimodal understanding, offering native support for au-dio streaming and expressive responses rich in emotion and prosody. Similarly, the Doubao Realtime Voice Model [ 26 ]is tailored for the Chinese linguistic context, exhibiting ex-traordinary naturalness and ultra-low interaction latency. Conversely, the open-source community focuses on democ-ratizing these capabilities through efficient architectures. For instance, LLaMA-Omni [ 10 , 11 ] and Freeze-Omni [ 28 ]propose efficient fine-tuning techniques to integrate audio modalities without compromising the textual proficiency of the original LLM backbones. Qwen-Omni series [ 31 , 32 ]adopt a Thinker-Talker architecture, achieving a balance be-tween reasoning capabilities and generation efficiency under a relatively small parameter scale. 
+
+2.2. Benchmarks for LALMs 
+
+General Audio Understanding Benchmarks. These benchmarks focus on understanding various audio types and reasoning based on audio/speech input. Mainstream evalua-tion forms include speech-based general QAs and instruction following [ 5, 19 ], or multiple-choice QAs grounded in au-dio input and textual prompts [ 17 , 24 , 27 ]. For example, MMAU [ 24 ] incorporates a comprehensive coverage of au-dio domains and task types, focusing on the evaluation of perception and understanding of sounds, speech, and mu-sic. MMAR [ 17 ] extends the evaluation to deeper reasoning based on graduate-level and multi-disciplinary knowledge. 
+
+Paraliguistic-Aware Spoken Dialogue Benchmarks. In response to surging demand for a real-world, empathetic dialogue experience, recent evaluations have increasingly underscored the need for fine-grained perception and re-sponse generation involving paralinguistic cues. Apart from recognizing semantic meaning, the models are expected to perceive paralinguistic cues implicit in the speaker’s voice (such as emotion and age) and generate responses that are appropriate in both speaking styles and content. Previous work primarily considers a small subset of paralinguistic features to evaluate scenario awareness and speaking style Paralanguage 
+
+> Control
+> 69.1%
+> Dynamic
+> Variation
+> 12.0%
+> Situational
+> Adaptation
+> 18.9%
+> Age
+> Attitude
+> Cog.
+> Emotion
+> NLV
+> Pace
+> Pause
+> Rhythm
+> Pitch
+> Stress
+> Timbre
+> Volume
+> Calm
+> Lazy
+> Evil
+> Innocent
+> Pure
+> Mysterious
+> Pitch
+> Timbre
+> Pace
+> Volume
+> Rhythm
+> Emotion
+> Cog.
+> Attitude
+> Age
+> Emotion
+> Attitude
+> NLV
+
+Figure 3. Composition of SpeechParaling-Bench. The dataset consists of over 1,000 bilingual speech queries, encompassing more than 100 paralinguistic features. Cog.: Cognitive State. (See the Appendix for descriptions and value ranges of all dimensions.) 
+
+adaptation. For example, StepEval-Audio-Paralinguistic [ 30 ]designs understanding tasks across 11 dimensions and pri-marily focuses on the Chinese context. EChat-eval [ 13 ] en-compasses emotion, gender, age, and sound events, with emotional states being the predominant category. Similarly, ParaS2SBench [ 34 ] only includes emotion, sarcasm, gender, and age as paralinguistic cues. In contrast, targeting real-world scenarios, our work proposes a comprehensive evalua-tion suite to assess capabilities in perception and fine-grained generation involving a rich set of paralinguistic features. 
+
+2.3. LALM-as-a-Judge for Speech Evaluation 
+
+Due to the high cost and limited scalability of human judg-ment, LALM-as-a-Judge has become a mainstream evalu-ation approach for speech-based evaluation. However, con-structing efficient and robust automatic evaluation pipelines remains a significant open research challenge. For instance, S2S-Arena [ 15 ] finds that using LALMs as judges for speech evaluation may suffer from severe positional and length bi-ases. Thus, our work relies on manual pairwise compar-isons. To mitigate such positional biases, EmergentTTS-Eval [ 18 ] introduces randomized ordering for reference-candidate pairs. Inspired by prior works, we carefully design a suite of prompts and develop a robust evaluation pipeline based on pairwise comparisons. This system significantly re-duces reliance on human scoring and enables reliable bench-marking of mainstream LALMs. 3Dimension Set 
+
+Gemini-2.5-Flash  
+
+> Index
+> TTS
+> Audio Prompts
+> Call APIs with
+> Crafted Prompts
+> Text Prompt Dims
+> Generate
+> Structured Output
+> (+Emotion)
+> Gemini-3.0-Pro
+
+Baseline  Candidate vs   
+
+> Score: 1
+> Evaluation
+> Criteria
+> <audio 1> <audio 2>
+> Audio 2 is the winner.
+> Text
+> Prompt Score: 3
+> Reasoning Chain
+> Reasoning Chain
+> Calculate Scores
+> Dims
+> zh:
+> en:
+> Please read this sentence with a polite tone: “Hello, nice to meet you.”
+
+## Data Synthesis  Pairwise Comparison  Judge and Rank 
+
+## Response Generation Figure 4. Overview of the proposed framework. (1) Data Engine : Leverages Gemini to synthesize textual instructions based on a pre-defined dimension set, followed by IndexTTS to generate audio prompts for eliciting LALM responses. (2) Evaluation Pipeline :Conducts pairwise comparisons between a strong baseline and candidate models. As the judge, Gemini evaluates audio responses against specific criteria and textual instructions, generating reasoning chains and scores to produce the final leaderboard. 
+
+# 3. SpeechParaling-Bench 
+
+We introduce S PEECH PARALING -B ENCH , a comprehensive, Chinese-English parallel benchmark designed to evaluate the capabilities of paralinguistic speech generation. The dataset comprises 1,001 samples, each consisting of a speech query paired with specific paralinguistic dimensions. The statistics and composition of SpeechParaling-Bench are summarized in Tab. 1 and Fig. 3, respectively. 
+
+3.1. Task Design 
+
+Our design principles focus on three aspects: (1) covering fine-grained and interpretable paralinguistic dimensions; (2) designing a reasonable task hierarchy; and (3) assessing LALMs’ paralinguistic understanding and response capabili-ties in real-world interactive scenarios through contextual-ized tasks. Ultimately, the benchmark is structured around critical skill types: Paralanguage Control , Dynamic Varia-tion , and Situational Adaptation .
+
+Paralanguage Control. The Paralanguage Control task in-structs an LALM to repeat a sentence with specified paralin-guistic features. It directly assesses the model’s proficiency in manipulating various vocal characteristics. This capabil-ity is further divided into two sub-categories: control over 
+
+common features and the generation of abstract styles . The former centers on 12 common paralinguistic features, encom-passing dimensions like expressive ( e.g ., emotion, attitude), prosodic ( e.g ., pause, stress), and acoustic features (such as timbre and volume). The latter probes a more holistic and advanced capability, assessing how well the model can understand and render complex speaking styles and tones that require a combination of features, such as generating a “lively and mischievous voice”. 
+
+Dynamic Variation. Building on the static capabilities of Paralanguage Control, the Dynamic Variation task eval-uates a more advanced skill: the continuous, fine-grained modulation of paralinguistic features within a single utter-ance. This task gauges the model’s competence in executing smooth and natural-sounding transitions, which are crucial for human-like speech. We incorporate 8 dimensions for this task, including pitch, speed, and volume, etc . Each in-struction chooses two distinct values within the same di-mension, connected either through transitional relationships (e.g ., Emotion : Happy → Sad ) or progressive relation-ships ( e.g ., Volume : Whisper increase 
+
+−−−−→ Normal ). 
+
+Situational Adaptation. This task emulates real-life em-pathetic dialogue by incorporating user utterances grounded in specific socio-affective contexts. The model is expected to comprehend the complex scenario and generate responses with appropriate semantic content and speaking style. It eval-uates the model’s ability to infer paralinguistic cues embed-ded in speech and produce contextually appropriate spoken 4Table 2. Comparison with related benchmarks. Our benchmark features comprehensive coverage of paralinguistic features, diverse tasks, and an automated, transcription-free evaluation pipeline that directly assesses audio. # Features: total number of paralinguistic features involved. Para. Con: fine-grained paralanguage control over the speech generation. Dyn. Var: dynamic variation of the paralinguistic features. Sit. Ada: situational adaptation in dialogue.                                                             
+
+> Benchmarks Size # Features Eval. Aspects Pairwise Evaluation
+> Para. Con Dyn. Var Sit. Ada
+> AIR-Bench [33] 3,000 10 ✗✗✗✗
+> SD-Eval [2] 6,613 16 ✗✗✓✗
+> S2S-Arena [15] 154 11 ✗✗✓✓
+> StepEval-Para [30] 450 44 ✗✗✗✗
+> TELEval [16] 1,540 11 ✗✗✓✗
+> EChat-eval [13] 1400 27 ✗✗✓✗
+> ParaS2SBench [34] 2,690 12 ✗✗✓✗
+> VStyle [37] 762 16 ✓✓✓✗
+> SpeechParaling-Bench (Ours) 1,001 101 ✓✓✓✓
+
+utterances. This category mainly involves 4 paralinguistic dimensions, i.e ., age, emotion, attitude, and non-linguistic vocalizations ( e.g ., laughter and sighs). 
+
+3.2. Data Curation 
+
+To facilitate the construction of evaluation samples, we de-sign an efficient, scalable data pipeline. Fig. 4 illustrates our framework, comprising a data engine that synthesizes paralinguistic-related speech queries, and an automated eval-uation pipeline that assesses response quality. We detail the data engine in this section, while the evaluation settings are presented in the subsequent section. 
+
+Instruction Synthesis. We primarily leverage Gemini 2.5 Flash for instruction synthesis. Specifically, we define five common real-world settings (campus, workplace, daily life, family, and entertainment), each accompanied by five repre-sentative scenarios. The LLM is explicitly instructed to cover these contexts and generate relevant, appropriate queries along with their corresponding paralinguistic dimensions. To enhance instruction-following capabilities and data qual-ity, we provide the model with meticulously crafted in-context demonstrations. Furthermore, we iteratively input curated dimension sets into the model in batches. This strat-egy ensures a diverse and balanced distribution across typi-cal real-life scenarios. This process yields a textual dataset 
+
+T = {(ti, Dim i)}Ni=1 , where ti denotes the textual prompt and Dim i represents the associated paralinguistic dimension set ( e.g ., emotion, age). For the Paralanguage Control and Dynamic Varia-tion tasks, we adopt a fixed instruction as a prefix, “ Please read this sentence {Dimension(s)}: {Sentence}”, in-structing models to repeat a sentence with required paralin-guistic dimensions. For Situational Adaptation, the paralin-guistic cues are implicit in the query audio. The model needs to derive the contextualized scenarios from user speech and respond with appropriate content and speaking styles. 
+
+Speech Synthesis. To convert the previously acquired tex-tual instructions into speech queries, we utilize a robust open-source Text-to-Speech (TTS) model [ 39 ] known for its zero-shot timbre reconstruction capabilities and fine-grained control over emotional tones. The synthesis process with the TTS-based system can be formulated as: 
+
+si = TTS (ti, Dim i | aref ), (1) where aref denotes the reference audio used for timbre con-trol. For the Paralanguage Control and Dynamic Variation 
+
+tasks, we use a fixed male-voice reference audio with a neu-tral tone. For the Situational Adaptation task, we craft a delicate scheme to align style with content. Specifically, the age and attitude dimensions are controlled by the timbre and style prompts (reference audio clips), while the emotion dimension is modulated by the emotion vector. We note that non-linguistic vocalizations can be seamlessly integrated into the prompts via textual hints ( e.g ., “Ah”, “Cough”) without requiring special treatment. Finally, we obtain the multi-modal evaluation dataset Deval = {(si, t i, Dim i)}Ni=1 .
+
+Quality Check. We conduct a rigorous manual check of the constructed samples and ensure that the data quality meets the criteria. Critical aspects include whether the syn-thesized speech si is clear and recognizable, and whether the speaking content ti and the corresponding paralinguistic dimensions Dim i are reasonable in real-life scenarios. 5Table 3. Overall performance comparison of state-of-the-art LALMs on Chinese and English subsets. Models are listed in descending order of overall performance. Style represents abstract style. S-Dim and M-Dim denote single-dimension and multi-dimension, respectively. The first 5, second 5, and third 5 places of each evaluation module are highlighted.                                                                                                                              
+
+> Model Overall Paralanguage Control Dynamic Variation
+> Situational Adaptation
+> Style S-Dim M-Dim Total S-Dim M-Dim Total
+> CHINESE (ZH )Doubao Realtime Voice 70.84 580.03 71.77 68.87 71.86 554.09 554.39 58.10 58.21 5
+> GPT Audio 39.09 524.77 37.50 36.58 35.57 563.33 543.50 38.33 40.18 Gemini Audio 28.18 520.72 26.19 36.05 29.64 529.17 29.00 19.72 23.04 Qwen3-Omni-Flash 22.58 7.66 14.29 15.92 14.16 35.00 546.50 43.61 44.64 5
+> Qwen3-Omni-Realtime 14.34 2.25 4.76 5.39 4.72 5.83 51.50 48.06 49.29 5
+> ENGLISH (EN )Gemini Audio 64.97 565.09 68.43 62.80 66.49 561.08 552.01 51.21 52.37 5
+> GPT Audio 49.39 545.95 43.69 49.47 46.38 552.92 558.00 57.50 57.68 5
+> Doubao Realtime Voice 31.39 525.68 26.19 30.79 28.05 522.50 546.00 46.11 46.07 Qwen3-Omni-Realtime 15.52 0.90 7.74 7.37 6.75 5.00 44.00 51.11 48.57 5
+> Qwen3-Omni-Flash 13.73 9.46 10.71 15.39 12.51 7.92 22.00 19.17 20.18
+
+3.3. Pairwise Evaluation Pipeline 
+
+General Setting. In this work, we employ Gemini 3 Pro [ 12 ] as an LALM-based judge, owing to its superior capabilities in audio perception and reasoning. Following the protocol in [ 18 ], we devise a baseline-candidate eval-uation framework based on pairwise comparisons. In this setup, a set of candidate models M = {Mk}Kk=1 are evalu-ated against a fixed baseline B. Specifically, given a speech query si, the baseline model B and the candidate model Mk
+
+generate their speech responses, denoted as rBi and rMk 
+
+> i
+
+,respectively. Given the response pair, the query transcript ti,the target dimensions Dim i, and the evaluation criteria Ceval ,the LALM judges which response is better: 
+
+wi = J
+
+
+
+rBi , r Mk 
+
+> i
+
+, t i, Dim i | C eval 
+
+
+
+, (2) where wi ∈ { 0, 1, 2} denotes the winner index, and 0 de-notes a tie. For each sample, only the winner receives 1 score; in the event of a tie, both models receive 0.5 points. In practice, we use Doubao Realtime Voice Model and Gemini Audio as Chinese and English baselines, respectively. 
+
+Bias and Hallucination Control. To mitigate the judgment bias brought by response orders, we follow EmergentTTS-Eval [ 18 ] to randomly assign orders for the baseline and candidate model. For judgment robustness and accuracy, we prompt the judge with a Chain-of-Thought (CoT) strategy. The judge is explicitly required to analyze specific aspects before rating (on a 0-3 Likert scale) and se-lecting the winner. For Paralanguage Control and Dynamic Variation tasks, the evaluated aspects include Content Accu-racy , Fluency and Naturalness , and Paralinguistic Compli-ance . For the Situational Adaptation task, the corresponding judging aspects include Content Relevance , Fluency and Naturalness , and Paralinguistic Alignment .To reduce hallucinations, the LALM judge is explicitly prompted to ground analysis in specific timestamps from the corresponding audio clips (a detailed evaluation prompt is available in the Appendix). 
+
+Judging Metrics. Model performance is evaluated by ag-gregating scores either task-wise or across the entire set. To mitigate potential bias arising from the varying capabilities of candidate models, we introduce a weighted scoring mech-anism for the baseline performance. Let S(Mk, τ ) denote the total score of candidate Mk on task τ . The performance of the baseline is defined as the weighted average of its pairwise scores against all candidates: 
+
+S(B, τ ) = 
+
+> K
+
+X
+
+> k=1
+
+S(B, τ | Mk) × S(Mk, τ )
+
+P 
+
+> j
+
+S(Mj , τ )
+
+!
+
+, (3) where S(B, τ | Mk) is the score of the baseline against the candidate. The core intuition behind this weighting scheme is to adjust the contribution of each pairwise comparison based on the opponent’s relative strength [ 6]. Unless otherwise specified, all reported results are normalized to a range of 0-100% to facilitate comparisons within each task. 
+
+3.4. Comparison with Existing Benchmarks 
+
+As summarized in Tab. 2, S PEECH PARALING -B ENCH distin-guishes itself from existing benchmarks in three key aspects: (1) Broad Paralinguistic Coverage: We cover a wider range of paralinguistic features derived from common real-life 6interactions. (2) Application-Oriented Task Hierarchy: We design a progressive task structure, ranging from basic par-alanguage control (useful in applications such as role-play) to continuous fine-grained modulation ( e.g ., for storytelling and news reports), and finally to social-affective understand-ing and response generation (for scenarios like empathetic dialogue and social companionship). (3) Scalable Speech-based Evaluation: We introduce an LALM-based evaluation pipeline. Unlike prior methods that rely on distortion-prone transcriptions or expensive human labor, our approach en-ables robust, efficient speech assessment. 
+
+# 4. Empirical Results and Analysis 
+
+Our main objective is to evaluate the most advanced LALMs on generation capabilities with paralinguistic features. The models include gpt-audio-2025-08-28 [ 21 ], Gemini 2.5 Flash Audio [ 7 ], Doubao Realtime Voice Model [ 26 ], Qwen3-Omni-Flash-2025-12-01 [ 22 ], and Qwen3-Omni-Realtime [ 32 ], accessed via APIs using default decoding parameters. We evaluate these models on both English and Chinese subsets of our benchmark. 
+
+4.1. Main Results 
+
+Paralanguage Control. As shown in Tab. 3, Doubao holds a commanding lead on the Chinese domain (71.86). For the English benchmark, however, Gemini (66.49) takes the lead, GPT performs more consistently across both the Chinese (35.57) and English (46.38) sections. As shown in Fig. 5, different models excel in different paralinguistic dimensions. Doubao is relatively more well-rounded. It performs better on expressive features and acous-tic features, but still lags in prosodic attributes. In contrast, GPT and Gemini significantly outperform in pause and stress, but lag in expressive dimensions. The models exhibit significant regional variations in their core capabilities, primarily resulting from differences in training corpora and inherent language characteristics. While Chinese-centric models place greater emphasis on localized expressions and acoustic nuances, English-centric models perform better in terms of prosodic structure. 
+
+ Key Takeaway 1 
+
+Achieving comprehensive static control still poses a significant challenge for LALMs. 
+
+Dynamic Variation. As shown in Tab. 4, Dynamic Varia-tion constitutes the primary bottleneck for current LALMs, achieving the lowest average score (56.51/100) among all tasks. This difficulty likely stems from the strong coupling between paralinguistic features and linguistic content, as       
+
+> Table 4. Initial average score assigned by judge model. The average of the initial scores of all evaluated models given by the judge model (scores normalized to 0–100).
+> Task Average Score
+> Situational Adaptation 68.64 Paralanguage Control 66.01 Dynamic Variation 56.51
+
+well as the scarcity of training data exhibiting explicit intra-utterance variation, which hinders models from learning fine-grained and controllable modulation. Notably, model behaviors differ significantly. GPT shows limited but observable dynamic adjustment, whereas the Qwen3 series models exhibit weaker instruction-following ability in this task, often failing to translate variation instruc-tions into appropriate acoustic changes. 
+
+ Key Takeaway 2 
+
+Basic dynamic modulation of paralinguistic features continues to represent a widespread bottleneck. Style                
+
+> Attitude
+> Cog.
+> Emotion
+> NLV
+> Pace
+> Pause
+> Stress
+> Rhythm
+> Pitch Timbre
+> Volume
+> Age
+> 20 40 60 80 100
+> GPT
+> Doubao
+> Gemini
+> Qwen-Omni
+> Qwen-RT
+> Figure 5. Dimension-wise performance on Paralanguage Control task (zh) . We categorize paralinguistic dimensions into Expressive (NLV, Emotion, Cog., Attitude, Style), Prosodic (Pace, Pause, Stress, Rhythm), and Acoustic (Pitch, Timbre, Volume, Age) features.
+
+Situational Adaptation. Human judgment reveals that models exhibit significant shortcomings when handling com-plex human interaction logic, as discussed in Sec. 4.3. While leading LALMs can generally understand and respond well to simple paralinguistic features in user in-7Table 5. Manual qualitative analysis of failure modes of Gemini Audio. We show representative cases of each type with detailed human-annotated analysis. For ease of visualization, all cases are translated into English. Para. Dim(s): paralinguistic dimension(s). 
+
+Text Prompt Please speak to the user in an appropriate tone based on the user’s pre-set scenario. 
+
+Failure Mode Case Study 
+
+Role-play Failure Input Audio: Context: Haha, long time no see, come in and sit, I’ve missed you so much! 
+
+Para. Dim(s): Attitude : Enthusiastic NLV : With Laughter 
+
+Gemini Output Audio: It sounds like you two are very close. I’m glad you’ve reunited. 
+
+Analysis: The model misinterprets the subject “you”, incorrectly assuming the user is talking to another person and thus responding as a third-party observer. 
+
+Neglecting Paralanguage Input Audio: Context: Look at what you’ve done, truly “perfect” isn’t it? 
+
+Para. Dim(s): Attitude : Sarcastic 
+
+Gemini Output Audio: I’m not sure what you’re referring to, but I’m glad you think it’s good! Would you like to chat about your thoughts? 
+
+Analysis: The model fails to detect the user’s sarcastic attitude. It interprets the input literally as praise, and consequently provides an inappropriately enthusiastic response. 
+
+Template Response Input Audio: Context: Honey, your little cat drawing is so cute! Haha! 
+
+Para. Dim(s): NLV : With Laughter 
+
+Gemini Output Audio: The children’s paintings are full of childlike innocence and creativity. 
+
+Analysis: The model overlooks the user’s intimate tone and the specific ’cat drawing’ detail, instead defaulting to a generic, formalized comment on children’s art. 
+
+Intent Misunderstanding Input Audio: Context: Our class monitor’s speech was so funny, haha, my stomach hurts from laughing. 
+
+Para. Dim(s): NLV : With Laughter 
+
+Gemini Output Audio: A good speech can leave a deep impression. 
+
+Analysis: The model overlooks the user’s humor and the paralinguistic “laughter” cue. It adopts an inappropriately formal tone and responds to a joke with a flat attitude. 
+
+structions, they sometimes struggle to grasp more complex paralinguistic features ( e.g ., sarcastic tone), indicating that LALMs still lack the ability to analyze and capture complex paralinguistic information within a speech segment. Lim-ited performance in role adaptation may be related to the “voice assistant” identity constraints reinforced during the pre-training phase, making it difficult for the model to fully immerse itself in other complex emotional contexts. 
+
+ Key Takeaway 3 
+
+It remains a challenge for LALMs to grasp and re-spond to contextualized or abstract paralinguistic information in user’s speech. 
+
+4.2. Agreement with Human Judgment 
+
+Setup. Following the previous approach [ 18 ], we conduct a human evaluation to test how well model-based judgment aligns with human subjective preference. Human judges are instructed to determine the winner (or tie) of each response pair, with instructions and evaluation criteria similar to those in the model-judging prompt. We randomly select 5% sam-ples from each task, totaling 416 response audio pairs. 
+
+Correlation Analysis. We compute Spearman’s rank cor-relation coefficient to measure the agreement between rank-ings derived from model judgments and those from human evaluators. Our automated speech-based evaluation system achieves correlation scores of 0.90 and 1.00 on the Chinese and English subsets, respectively, both of which are statisti-cally significant. These results indicate that our evaluation pipeline closely aligns with human preferences when assess-ing audio pairs with paralinguistic features. 
+
+4.3. Failure Analysis 
+
+We conduct a manual failure analysis for Gemini Audio on the Situational Adaptation task in the Chinese subset to identify potential failure modes. In total, Gemini Audio fails in 67 out of 190 samples, which can be categorized into four types: Role-play Failure , Intent Misunderstanding , Tem-plate Response , and Neglecting Paralanguage . As illustrated in Fig. 6, a substantial portion (43.3%) of these errors stems from overlooking paralinguistic information embedded in the user’s speech. These results underscore the importance of understanding paralanguage alongside linguistic content for enhanced human-computer interaction. We present represen-tative cases and detailed analyses of each pattern in Tab. 5. 810.4% 
+
+> 17.9%
+> 28.4%
+> 43.3%
+> Role-play Failure
+> Intent Misunderstanding
+> Template Response
+> Neglecting Paralanguage
+
+Figure 6. Distribution of error types of Gemini Audio on the Situational Adaptation task. 
+
+# 5. Conclusion 
+
+We introduce SpeechParaling-Bench, a comprehensive benchmark for paralinguistic-aware speech generation. De-signed for real-world scenarios, it features three tasks of increasing complexity: Paralanguage Control, Dynamic Vari-ation, and Situational Adaptation. Using our curated auto-matic evaluation pipeline, we reveal limitations in leading voice assistants’ ability to generate natural speech with nu-anced paralanguage. Our findings highlight potential avenues for improving LALMs and underscore the need for models with enhanced paralinguistic capabilities. 
+
+# References 
+
+[1] Dario Amodei, Sundaram Ananthanarayanan, Rishita Anub-hai, Jingliang Bai, Eric Battenberg, Carl Case, Jared Casper, Bryan Catanzaro, Qiang Cheng, Guoliang Chen, et al. Deep Speech 2 : End-to-End Speech Recognition in English and Mandarin. In ICML , 2016. 1 [2] Junyi Ao, Yuancheng Wang, Xiaohai Tian, Dekun Chen, Jun Zhang, Lu Lu, Yuxuan Wang, Haizhou Li, and Zhizheng Wu. SD-Eval: A Benchmark Dataset for Spoken Dialogue Understanding Beyond Words. In NeurIPS , 2024. 5 [3] Alexei Baevski, Yuhao Zhou, Abdelrahman Mohamed, and Michael Auli. wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations. In NeurIPS , 2020. 1 [4] William Chan, Navdeep Jaitly, Quoc Le, and Oriol Vinyals. Listen, attend and spell: A neural network for large vocabulary conversational speech recognition. In ICASSP , 2016. 1 [5] Yiming Chen, Xianghu Yue, Chen Zhang, Xiaoxue Gao, Robby T Tan, and Haizhou Li. VoiceBench: Benchmark-ing LLM-Based Voice Assistants. arXiv:2410.17196 , 2024. 3[6] Wei-Lin Chiang, Lianmin Zheng, Ying Sheng, Anasta-sios Nikolas Angelopoulos, Tianle Li, Dacheng Li, Banghua Zhu, Hao Zhang, Michael Jordan, Joseph E Gonzalez, et al. Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference. In ICML , 2024. 6 [7] Google Cloud. Gemini Live API Now GA on Vertex AI. 
+
+https://cloud.google.com/blog/products/ ai - machine - learning / gemini - live - api -available-on-vertex-ai , 2025. 3, 7 [8] Alexandre Défossez, Laurent Mazaré, Manu Orsini, Amélie Royer, Patrick Pérez, Hervé Jégou, Edouard Grave, and Neil Zeghidour. Moshi: a speech-text foundation model for real-time dialogue. arXiv:2410.00037 , 2024. 1 [9] Ding Ding, Zeqian Ju, Yichong Leng, Songxiang Liu, Tong Liu, Zeyu Shang, Kai Shen, Wei Song, Xu Tan, Heyi Tang, et al. Kimi-Audio Technical Report. arXiv:2504.18425 , 2025. 1, 2 [10] Qingkai Fang, Shoutao Guo, Yan Zhou, Zhengrui Ma, Shaolei Zhang, and Yang Feng. LLaMA-Omni: Seamless Speech Interaction with Large Language Models. In ICLR , 2025. 3 [11] Qingkai Fang, Yan Zhou, Shoutao Guo, Shaolei Zhang, and Yang Feng. LLaMA-Omni2: LLM-based Real-time Spoken Chatbot with Autoregressive Streaming Speech Synthesis. 
+
+arXiv:2505.02625 , 2025. 3 [12] Google Gemini Team. A new era of intelligence with Gemini 3. https://blog.google/products-and-platforms/products/gemini/gemini-3/ , 2025. 6[13] Xuelong Geng, Qijie Shao, Hongfei Xue, Shuiyuan Wang, Hanke Xie, Zhao Guo, Yi Zhao, Guojian Li, Wenjie Tian, Chengyou Wang, et al. OSUM-EChat: Enhancing End-to-End Empathetic Spoken Chatbot via Understanding-Driven Spoken Dialogue. arXiv:2508.09600 , 2025. 3, 5 [14] Awni Hannun, Carl Case, Jared Casper, Bryan Catanzaro, Greg Diamos, Erich Elsen, Ryan Prenger, Sanjeev Satheesh, Shubho Sengupta, Adam Coates, et al. Deep Speech: Scaling up end-to-end speech recognition. arXiv:1412.5567 , 2014. 1 [15] Feng Jiang, Zhiyu Lin, Fan Bu, Yuhao Du, Benyou Wang, and Haizhou Li. S2S-Arena, Evaluating Speech2Speech Proto-cols on Instruction Following with Paralinguistic Information. 
+
+arXiv:2503.05085 , 2025. 3, 5 [16] Zehan Li, Hongjie Chen, Yuxin Zhang, Jing Zhou, Xuening Wang, Hang Lv, Mengjie Du, Yaodong Song, Jie Lian, Jian Kang, et al. TELEVAL: A Dynamic Benchmark Designed for Spoken Language Models in Chinese Interactive Scenarios. 
+
+arXiv:2507.18061 , 2025. 5 [17] Ziyang Ma, Yinghao Ma, Yanqiao Zhu, Chen Yang, Yi-Wen Chao, Ruiyang Xu, Wenxi Chen, Yuanzhe Chen, Zhuo Chen, Jian Cong, et al. MMAR: A Challenging Benchmark for Deep Reasoning in Speech, Audio, Music, and Their Mix. In 
+
+NeurIPS , 2025. 3 [18] Ruskin Raj Manku, Yuzhi Tang, Xingjian Shi, Mu Li, and Alex Smola. EmergentTTS-Eval: Evaluating TTS Models on Complex Prosodic, Expressiveness, and Linguistic Chal-lenges Using Model-as-a-Judge. In NeurIPS , 2025. 3, 6, 8[19] Eliya Nachmani, Alon Levkovitch, Roy Hirsch, Julian Salazar, Chulayuth Asawaroengchai, Soroosh Mariooryad, Ehud Rivlin, RJ Skerry-Ryan, and Michelle Tadmor Ramanovich. Spoken Question Answering and Speech Continuation Using Spectrogram-Powered LLM. In ICLR , 2024. 3 
+
+9[20] OpenAI. ChatGPT can now see, hear, and speak. https: //openai.com/index/chatgpt- can- now- see-hear-and-speak/ , 2023. 1 [21] OpenAI. Introducing gpt-realtime and realtime api updates for production voice agents. https://openai.com/ index/introducing-gpt-realtime/ , 2025. 3, 7 [22] Alibaba Qwen Team. Qwen3-Omni-Flash-2025-12-01: Hear You. See You. Follow Smarter! https://qwen.ai/ blog?id=qwen3-omni-flash-20251201 , 2025. 7 [23] Yi Ren, Chenxu Hu, Xu Tan, Tao Qin, Sheng Zhao, Zhou Zhao, and Tie-Yan Liu. FastSpeech 2: Fast and High-Quality End-to-End Text to Speech. In ICLR , 2021. 1 [24] S Sakshi, Utkarsh Tyagi, Sonal Kumar, Ashish Seth, Ra-maneswaran Selvakumar, Oriol Nieto, Ramani Duraiswami, Sreyan Ghosh, and Dinesh Manocha. MMAU: A Massive Multi-Task Audio Understanding and Reasoning Benchmark. In ICLR , 2024. 3 [25] Steffen Schneider, Alexei Baevski, Ronan Collobert, and Michael Auli. wav2vec: Unsupervised pre-training for speech recognition. In Interspeech , 2019. 1 [26] Bytedance Seed. Doubao Realtime Voice Model. https: //seed.bytedance.com/en/realtime_voice/ ,2025. 1, 3, 7 [27] Dingdong Wang, Jincenzi Wu, Junan Li, Dongchao Yang, Xueyuan Chen, Tianhua Zhang, and Helen Meng. MMSU: A Massive Multi-task Spoken Language Understanding and Reasoning Benchmark. arXiv:2506.04779 , 2025. 3 [28] Xiong Wang, Yangze Li, Chaoyou Fu, Yunhang Shen, Lei Xie, Ke Li, Xing Sun, and Long Ma. Freeze-Omni: A Smart and Low Latency Speech-to-speech Dialogue Model with Frozen LLM. In ICLR , 2025. 3 [29] Yuxuan Wang, RJ Skerry-Ryan, Daisy Stanton, Yonghui Wu, Ron J Weiss, Navdeep Jaitly, Zongheng Yang, Ying Xiao, Zhifeng Chen, Samy Bengio, et al. Tacotron: Towards End-to-End Speech Synthesis. In Interspeech , 2017. 1 [30] Boyong Wu, Chao Yan, Chen Hu, Cheng Yi, Chengli Feng, Fei Tian, Feiyu Shen, Gang Yu, Haoyang Zhang, Jingbei Li, et al. Step-Audio 2 Technical Report. arXiv:2507.16632 ,2025. 2, 3, 5 [31] Jin Xu, Zhifang Guo, Jinzheng He, Hangrui Hu, Ting He, Shuai Bai, Keqin Chen, Jialin Wang, Yang Fan, Kai Dang, et al. Qwen2.5-Omni Technical Report. arXiv:2503.20215 ,2025. 1, 3 [32] Jin Xu, Zhifang Guo, Hangrui Hu, Yunfei Chu, Xiong Wang, Jinzheng He, Yuxuan Wang, Xian Shi, Ting He, Xinfa Zhu, Yuanjun Lv, Yongqi Wang, Dake Guo, He Wang, Linhan Ma, Pei Zhang, Xinyu Zhang, Hongkun Hao, Zishan Guo, Baosong Yang, Bin Zhang, Ziyang Ma, Xipin Wei, Shuai Bai, Keqin Chen, Xuejing Liu, Peng Wang, Mingkun Yang, Day-iheng Liu, Xingzhang Ren, Bo Zheng, Rui Men, Fan Zhou, Bowen Yu, Jianxin Yang, Le Yu, Jingren Zhou, and Junyang Lin. Qwen3-Omni Technical Report. arXiv:2509.17765 ,2025. 3, 7 [33] Qian Yang, Jin Xu, Wenrui Liu, Yunfei Chu, Ziyue Jiang, Xiaohuan Zhou, Yichong Leng, Yuanjun Lv, Zhou Zhao, Chang Zhou, et al. AIR-Bench: Benchmarking Large Audio-Language Models via Generative Comprehension. In ACL ,2024. 5 [34] Shu-wen Yang, Ming Tu, Andy T Liu, Xinghua Qu, Hung-yi Lee, Lu Lu, Yuxuan Wang, and Yonghui Wu. ParaS2S: Benchmarking and Aligning Spoken Language Models for Paralinguistic-aware Speech-to-Speech Interaction. In ICLR ,2026. 3, 5 [35] Shukang Yin, Chaoyou Fu, Sirui Zhao, Ke Li, Xing Sun, Tong Xu, and Enhong Chen. A survey on multimodal large language models. National Science Review , 2024. 1 [36] Aohan Zeng, Zhengxiao Du, Mingdao Liu, Kedong Wang, Shengmin Jiang, Lei Zhao, Yuxiao Dong, and Jie Tang. GLM-4-Voice: Towards Intelligent and Human-Like End-to-End Spoken Chatbot. arXiv:2412.02612 , 2024. 1 [37] Jun Zhan, Mingyang Han, Yuxuan Xie, Chen Wang, Dong Zhang, Kexin Huang, Haoxiang Shi, DongXiao Wang, Tengtao Song, Qinyuan Cheng, et al. VStyle: A Bench-mark for Voice Style Adaptation with Spoken Instructions. 
+
+arXiv:2509.09716 , 2025. 5 [38] Dong Zhang, Gang Wang, Jinlong Xue, Kai Fang, Liang Zhao, Rui Ma, Shuhuai Ren, Shuo Liu, Tao Guo, Weiji Zhuang, et al. MiMo-Audio: Audio Language Models are Few-Shot Learners. arXiv:2512.23808 , 2025. 1, 2 [39] Siyi Zhou, Yiquan Zhou, Yi He, Xun Zhou, Jinchao Wang, Wei Deng, and Jingchen Shu. IndexTTS2: A Breakthrough in Emotionally Expressive and Duration-Controlled Auto-Regressive Zero-Shot Text-to-Speech. In AAAI , 2026. 5 
+
+10 A. Descriptions of Paralinguistic Features 
+
+We list paralinguistic dimensions, their descriptions, and possible values ( i.e ., paralinguistic features) below. Our benchmark includes more than 100 paralinguistic features across 13 dimensions. 
+
+Paralinguistic Dimension Dimension Description Paralinguistic Feature 
+
+Age Refers to the speaker’s age group child, youthful, adult, elderly Pitch Refers to the frequency of the speaker’s voice very high pitch, high pitch, medium pitch, low pitch, very low pitch Timbre Refers to the qualitative characteristics of the speaker’s voice bright, hoarse, smooth, rich, gentle, sweet Pace Refers to the speed of speech very fast pace, fast pace, medium pace, slow pace, very slow pace Volume Refers to the loudness of the speaker’s voice shouting manner, loudly, normal volume, quietly, whisper Pause Refers to interruptions during speech with a clear pause after the a specific word Rhythm Refers to the regular variation in speech steady rhythm, lighthearted rhythm, soothing rhythm, rushed rhythm, emphatic rhythm, dragging rhythm, halting rhythm Stress Refers to the emphasis placed on words during speech with emphasis on, with stress on, with heavy stress on, with a forceful tone on Emotion Refers to the feelings expressed during speech neutral emotion, happy emotion, sad emotion, angry emotion, surprised emotion, disgusted emotion, fearful emotion Cognitive State Refers to the speaker’s state of mind during the speech process confident tone, hesitant tone, confused tone, doubting tone, tired tone, curious tone, anxious tone, helpless tone, nervous tone Non-Linguistic Vocalizations Refers to sounds made during speech that do not carry semantic meaning with laughter, with crying, with a sigh, with coughing, with a scream, with hiccups, with a yawn, with a smack of the lips Attitude Refers to the speaker’s subjective stance toward the listener polite tone, sincere tone, enthusiastic tone, cold tone, sarcastic tone, contemptuous tone, rude tone, perfunctory tone, teasing tone Style Refers to the distinctive manner or character persona adopted during speech with a lively and mischievous voice, with a professional and objective tone, with an evil tone, with a lazy and casual manner, with a mysterious and unpredictable tone, with a serious and earnest tone, with an innocent and pure voice ... 
+
+# B. Prompt Templates 
+
+We present prompt templates used in our data pipeline, including those for LLM-based instruction synthesis and LALM-based evaluation. 
+
+B.1. Instruction Synthesis Prompt 
+
+In our data synthesis pipeline, we prompt Gemini 2.5 Flash to synthesize desired textual prompts and their corresponding paralinguistic dimensions, producing a structured output. The prompt is shown below. 11 Query prompt of LLM in instruction synthesis 
+
+You are a senior expert in speech generation and paralinguistics, proficient in designing test instructions to accurately evaluate a speech model’s paralinguistic generation capabilities, and skilled in both Chinese and English. Your task is to create high-quality, diverse, and challenging Chinese and English test instructions for a project evaluating the paralinguistic generation of a speech model. 
+
+[The Start of User Instruction] {
+
+Task Description: 
+
+Based on the following classification and collection of paralinguistic features, generate unique, high-quality test instructions in JSONL format. Each instruction should include a prompt containing content that the user requests the speech model to recite, as well as a structured context object (dimensions) that precisely describes the paralinguistic features required in the generated speech, aiming to assess whether the speech model can correctly produce content according to the specified paralinguistic feature requirements. 
+
+Paralinguistic Features: 
+
+• Age: Refers to the speaker’s age group, including child, youthful, adult, elderly. 
+
+• Pitch: Refers to the frequency of the speaker’s voice, including very high pitch, high pitch, medium pitch, low pitch, very low pitch. 
+
+• Timbre: Refers to the qualitative characteristics of the speaker’s voice, including bright, hoarse, smooth, rich, gentle, sweet. 
+
+• Pace: Refers to the speed of speech, including very fast pace, fast pace, medium pace, slow pace, very slow pace. 
+
+• Volume: Refers to the loudness of the speaker’s voice, including shouting manner, loudly, normal volume, quietly, whisper. 
+
+• Pause: Refers to interruptions during speech, including with a clear pause after a specific word 
+
+• Rhythm: Refers to the regular variation in speech, including steady rhythm, lighthearted rhythm, soothing rhythm, rushed rhythm, emphatic rhythm, dragging rhythm, halting rhythm. 
+
+• Stress: Refers to the emphasis placed on words during speech, including with emphasis on, with stress on, with heavy stress on, with a forceful tone on. 
+
+• Emotion: Refers to the feelings expressed during speech, including neutral emotion, happy emotion, sad emotion, angry emotion, surprised emotion, disgusted emotion, fearful emotion. 
+
+• Cognitive State: Refers to the speaker’s state of mind during the speech process, including confident tone, hesitant tone, confused tone, doubting tone, tired tone, curious tone, anxious tone, helpless tone, nervous tone. 
+
+• Non-Linguistic Vocalizations: Refers to sounds made during speech that do not carry semantic meaning, including with laughter, with crying, with a sigh, with coughing, with a scream, with hiccups, with a yawn, with a smack of the lips. 
+
+• Attitude: Refers to the speaker’s subjective stance toward the listener, including polite tone, sincere tone, enthusi-astic tone, cold tone, sarcastic tone, contemptuous tone, rude tone, perfunctory tone, teasing tone. Set of paralinguistic feature dimensions: {SET_PLACEHOLDER} 
+
+Generation Requirements: 
+
+1. Generate 3 sets of unique Chinese and English instructions for each element in the set. Each set must meet the generation requirements, have the exact same meaning (differing only in language), and include only one element from the set as the paralinguistic feature requirement. 2. The sentences requested for repetition must match the required paralinguistic features to form a natural and credible expression. 3. The sentences for the voice model to repeat should be approximately 50 characters/words long, without hint markers such as () or []. 4. Scenarios should cover daily life scenes: 
+
+• Daily routines (washing up, dressing/grooming, making the bed, morning skincare, bedtime relaxation) 
+
+• Campus (dining in the canteen, self-study in the library, dormitory chatting, classroom interaction, club activities) 
+
+• Workplace (office collaboration, meeting discussions, remote work, professional socializing, project reporting) 
+
+• Family (parent-child dialogue, dinner table conversation, family gatherings, doing housework together, 
+
+12 bedtime stories) 
+
+• Entertainment (video games, outdoor travel, watching movies, friend gatherings, sports and fitness) 5. Ensure the text content is rich and diverse, avoiding repetitive scenarios and expressions. 
+
+Generation Output Format: 
+
+• JSONL format, one JSON object per line. Each set of instructions occupies two lines without breaks between sets: one line in Chinese and one line in English, identical in meaning, differing only in language, and both adhering to the corresponding requirements. 
+
+• dimensions must correspond to the paralinguistic feature dimension of the element in the set. 
+
+• 中文：{"prompt":" 请用[集合中元素]的[对应副语言特征]说:[ 让语 音模型复述的内容]", "dimensions": [" 考
+
+察的副语言特征"]} 。注意 prompt 部分请组织 成自然的语言表达形式 。
+
+• English: {"prompt":"Please read this sentence with a [elements in the set] voice(or any other suitable expres-sion):'[the content for the speech model to repeat]"', "dimensions": ["the examined paralinguistic features"]}. Please make sure the prompt is phrased in natural language. 
+
+Output Example: 
+
+{"prompt": " 请用孩童的声音说：妈妈 ，我可以再吃一块饼干吗？", "dimensions": [" 年龄"]} {"prompt": "Please read this sentence with a child’s voice: 'Mom, can I have another cookie?'", "dimensions": ["Age"]} {"prompt": " 请用高音说：早上好！今天天 气真不错，心情很好。", "dimensions": [" 音高"]} {"prompt": "Please read this sentence with a high pitch: 'Good morning! The weather is really nice today, I feel great.'", "dimensions": ["Pitch"]} {"prompt": " 请用圆润的音质说：您好，请这边 坐，为您准备了茶点。", "dimensions": [" 音质"]} {"prompt": "Please read this sentence with a smooth timbre: 'Hello, please have a seat here, I’ve prepared refreshments for you.'", "dimensions": ["Timbre"]} . . . . . . } 
+
+[The End of User Instruction] 
+
+Now please strictly follow the generation requirements, think carefully, and generate the required number of instruction samples based on the above requirements. Please output the results directly. 
+
+B.2. Evaluation Prompt 
+
+In our automated speech-based evaluation system, we prompt Gemini 3.0 Pro to judge the winner (or a tie) among an audio response pair. In addition to audio responses, we provide textual prompts, corresponding paralinguistic dimensions, and evaluation criteria as inputs to the model. The prompt is shown below. Template prompt of scoring evaluation 
+
+(System Prompt) 
+
+You are a professional LALM audio generation quality evaluator (Judger). Please strictly and fairly evaluate the provided audio file based on the following scoring criteria. Your goal is to judge two audios generated by large language models according to user’s command and analyze which audio demonstrates superior quality across the paralinguistic feature. You will receive an audio file **T1** first, and after my prompt, you will receive the second audio file **T2**. 
+
+(Instruction) 
+
+Both of the user’s commands are:"{demand}", and their format is: Please read this sentence with [required paralinguistic features] : "[audio content]".You need to evaluate whether the audio effectively conveys the required paralinguistic dimensions. The text_category for this evaluation is "Paralanguage Control": exploring whether LALM can accurately generate audio following user’s command "{demand}", with specified features "{dims_str}". GLOBAL CONSIDERATIONS: 1. You must strictly adhere to the evaluation criterion and scoring standard below. 2. You are acting as a Model-as-a-Judge and should aim to **predict human preference**. 3. Your analysis shall be assessed against the requirements specified in {demand} and {dims_str}. 4. Your analysis must be grounded in the audio, using **precise timestamps** to justify your findings. 13 5. Resolve borderline cases by articulating fine-grained distinctions (subtle vs. significant) between T1 and T2. 6. **If the generated audio is extremely poor or the content is empty, you must assign a score of 0 to that LALM’s audio.** Required Reasoning Procedure (Strict): For each of T1 and T2, you must: 1. Identify which parts of the text prompt {demand} require emotional or stylistic expression 2. Provide **timestamps** for the key expressive segments 3. Analyze whether the expression matches the intended {dims_str} 4. For each dimension of {dims_str}, provide a **comparative analysis** highlighting key differences between T1 and T2, annotated as either subtle or significant. 5. For each dimension of {dims_str}, give a final score (0–3) with justification. 6. The evaluation of each dimension in {dims_str} should be **mutually independent**. 
+
+(Noticement) 
+
+Anti-Bias Factors: You must **only** compare the two models based on the **Evaluation Dimensions**. This means you **must not** let the following types of bias influence your judgment: 1. The speaker’s gender and voice characteristics. 2. Any other factor unrelated to the **evaluation_dimension**. 3. Evaluations for each paralinguistic dimension must be **INDEPENDENT OF ONE ANOTHER**, which means judgments regarding the performance of the current dimension should not be influenced by the performance of other dimensions. 4. Models exhibiting exaggerated expressiveness should **not** receive extra reward **unless** those features are relevant to the **evaluation_dimension**. 
+
+(Criteria) 
+
+The goal is to judge whether each large audio language model correctly and naturally expresses the required controllable characteristic(s): {dims_str}. You must evaluate or follow: 1. **Content Accuracy:** How perfectly the spoken content matches the required text script, without any errors (mispronunciations, omissions, additions, or ambiguous phonetics). 2. **Fluency and Naturalness:** How natural and human-like the pace, pauses, and prosody are, without electronic noise, stutters, or mechanical sounds. 3. **Paralinguistic Compliance - CORE:** Whether the target characteristic/tone/emotion(s) in the feature dimen-sion: dims_str is(are) accurately conveyed. 4. If {dims_str} contains multiple dimensions, please assign a **separate score** to each dimension. 5. If the first two points show no obvious flaws, the focus should be on evaluating **the third CORE point**. Detailed Scoring Standard (0–3): • 0 = Completely incorrect 
+
+·**Content Accuracy:** Voice content is clearly inconsistent with the script, or the meaning is completely changed due to major errors/omissions. 
+
+·**Fluency and Naturalness:** Obvious stuttering, discontinuity, strong mechanical electronic tone, completely wrong rhythm, severely impacting listening experience. 
+
+·**Paralinguistic Compliance - CORE:** Flat tone, completely devoid of emotion/features, or even expressing the opposite characteristic/tone. • 1 = Major issues 
+
+· **Content Accuracy:** Core content is accurate, but there are minor flaws that do not affect understanding ( e.g ., slight stammering or subtle repetition). 
+
+· **Fluency and Naturalness:** Overall fluent, but slight inconsistencies in pace, unnatural breathing/pauses, or subtle machine-like sound are noticeable. 
+
+· **Paralinguistic Compliance - CORE:** Characteristic change is present but emotion is insufficiently or unclearly expressed; the target feature can only be vaguely perceived, or the expression seems stiff. • 2 = Partially correct 
+
+· **Content Accuracy:** Voice content is accurate with the script, with only extremely minor, non-distracting 
+
+14 mispronunciations or omissions. 
+
+· **Fluency and Naturalness:** The speech is generally very smooth, with only extremely subtle and rare unnatural pauses or rhythmic issues that do not disrupt the overall natural flow. 
+
+· **Paralinguistic Compliance - CORE:** The characteristic or emotion is correctly expressed and clearly discernible, but the intensity or consistency is slightly lacking in certain segments, preventing it from being perfectly "vivid and spot-on." • 3 = Fully correct 
+
+· **Content Accuracy:** Voice content is perfectly consistent with the script, with no errors (mispronunciations, omissions, extra words, or ambiguous phonetics). 
+
+· **Fluency and Naturalness:** Pace, pauses, and prosody are indistinguishable from human speech; the sound is natural and fluent, without any electronic noise, stutters, or mechanical feel. 
+
+· **Paralinguistic Compliance - CORE:** Sound features clearly and accurately embody the target characteristic; emotional expression is vivid and spot-on (the ’anchor’), and the listener can immediately perceive the emotion. 
+
+(Desired Output Format) 
+
+Your response **must only be a JSON object with the following fields** (assuming dims contains n dimensions): 
+
+{"reasoning_model_1": "str = Reasoning chain based on the Required Reasoning Procedure for the generated speech from model 1.", "reasoning_model_2": "str = Reasoning chain based on the Required Reasoning Procedure for the generated speech from model 2, **INDEPENDENT** of the performance of model 1.", "model_comparison": "str = Keeping in mind the GLOBAL CONSIDERATIONS and the Anti-Bias Factors, compare and contrast the performance of the two models across { dims_str} based on your output in reasoning_model_1 and reasoning_model_2 and also by analyzing both audios again. Provide very fine-grained reasoning for which model won, or if the comparison results in an even tie.", "score_1_1": "int = Score (0-3) for model 1 on dimension dims[0], based on the evaluation_criterion and what you have mentioned in reasoning_model_1.", "score_2_1": "int = Score (0-3) for model 2 on dimension dims[0], based on the evaluation_criterion and what you have mentioned in reasoning_model_2.", "winner_1": 0 or 1 or 2"score_1_2": "int = Score (0-3) for model 1 on dimension dims[1], based on the evaluation_criterion and what you have mentioned in reasoning_model_1.", "score_2_2": "int = Score (0-3) for model 2 on dimension dims[1], based on the evaluation_criterion and what you have mentioned in reasoning_model_2.", "winner_2": 0 or 1 or 2"...": ... "score_1_n": "int = Score (0-3) for model 1 on dimension dims[n-1], based on the evaluation_criterion and what you have mentioned in reasoning_model_1.", "score_2_n": "int = Score (0-3) for model 2 on dimension dims[n-1], based on the evaluation_criterion and what you have mentioned in reasoning_model_2.", "winner_n": 0 or 1 or 2}
+
+Where: - model_1 = T1 - model_2 = T2 - winner_n = 0 → tie 1 → model_1 wins 2 → model_2 wins - Note: Ensure the json structure is followed and the json output **MUST** be parsable without errors. 
+
+15 C. Output Examples 
+
+We present examples of the prompted LLM and LALM outputs, including the Output JSON Schema for instruction analysis by the LLM and the LALM’s detailed judgment. 
+
+C.1. Instruction Output JSON Schema 
+
+We show the structured output schema of the LLM for instruction analysis, as detailed below. Each sample comprises a textual prompt and corresponding paralinguistic dimensions. Output JSON Schema for Paralanguage Control, Dynamic Variation, and Situational Adaptation 
+
+Paralanguage Control: 
+
+{"prompt": "Please read this sentence with a child’s voice: ’Mom, can I have another cookie?’", "dimensions": ["Age"]} {"prompt": "Please read this sentence with a very high pitch: ’Help! I’m trapped here !’", "dimensions": ["Pitch"]} {"prompt": "Please read this sentence with a sad emotion: ’We lost the game, we worked hard for a long time.’", "dimensions": ["Emotion"]} {"prompt": "Please read this sentence with a rushed rhythm and a fearful emotion: ’ Hurry, I feel someone following us!’", "dimensions": ["Emotion", "Rhythm"]} {"prompt": "Please read this sentence quietly and with a contemptuous tone: ’Him? Still wants to win?’", "dimensions": ["Attitude", "Volume"]} 
+
+... 
+
+Dynamic Variation: 
+
+{"prompt": "Please read this sentence starting with a very low pitch and gradually transitioning to a medium pitch: ’Late at night, the little bear quietly crept out of his cave, wanting to see how round the moon was in the forest.’", "dimensions" : ["Pitch"]} {"prompt": "Please read this sentence starting with a very slow pace and gradually increasing to a medium pace: ’The morning sunlight gently falls by the window. Hmm , time to get up, I need to hurry and make breakfast.’", "dimensions": ["Pace"]} {"prompt": "Please read this sentence starting quietly and gradually increasing the volume to loudly: ’Actually, I’ve always known that secret. Now, I decide to stop hiding, I will tell everyone the truth!’", "dimensions": ["Volume"]} 
+
+... 
+
+Situational Adaptation: 
+
+{"prompt": "If the children could visit more often, I would be very content.", "dimensions": ["Age: Elderly"]} {"prompt": "This service attitude is absolutely terrible, I demand a refund!", "dimensions": ["Emotion: Angry"]} {"prompt": "Ah! There’s an insect, run! I’m most afraid of insects!", "dimensions": [" Emotion: Fear", "Non-Linguistic Vocalizations: With a Scream"]} {"prompt": "Yawn... Are you done talking? I don’t have time for your nonsense.", "dimensions": ["Attitude: Cold", "Non-Linguistic Vocalizations: With a Yawn"]} {"prompt": "Haha, look at your sleepy eyes, stayed up playing games again last night, didn’t you?", "dimensions": ["Attitude: Teasing", "Non-Linguistic Vocalizations: With Laughter"]} 
+
+... 
+
+C.2. LALM Judgment Cases 
+
+We list some real cases of LALM judgment below. Given a textual user query, associated paralinguistic dimension(s), and a pair of audio responses (criteria omitted here for brevity), LALM gives a detailed analysis, rating, and judgment of the winner 16 (or a tie). An example of LALM judgment 
+
+User: Please read this sentence with laughter: "Hahaha, that joke you told was so funny!" 
+
+Paralinguistic Dimension(s): "Non-Linguistic Vocalizations" 
+
+Model 1.name: Doubao Reatime Voice 
+
+Model 1.answer : Hahaha. That’s so funny. 
+
+result1.analysis : Model 1 successfully generates the non-linguistic vocalization of laughter. The audio begins with a very natural, deep male laugh from 0.0s to approximately 1.5s, which effectively conveys genuine amusement. The tone of the subsequent speech maintains the comedic atmosphere. However, the model fails significantly in Content Accuracy. The script required the model to read: 'Hahaha, that joke you told was so funny!'Model 1 paraphrases this to '[Laughter]... That’s so funny.'It completely omits the phrase 'that joke you told was '. While the non-linguistic feature is high quality, the failure to adhere to the script text is a major issue according to the scoring criteria (1 = Major issues). Score: 1 
+
+Model 2.name: Gemini Audio 
+
+Model 2.answer : Hahaha! That joke you told was SO FUNNY! 
+
+result2.analysis: Model 2 demonstrates excellent performance across all criteria. It correctly interprets the text 'Hahaha'as a non-linguistic instruction, generating a natural female laugh from 0.0s to 1.0s. It then proceeds to read the rest of the sentence 'that joke you told was so funny!'verbatim, with no omissions or errors. The transition from the laughter to speech is fluid (around 1.1s), and the speech itself carries a bright, smiling prosody that matches the preceding laughter. The non-linguistic vocalization is integrated seamlessly, and content accuracy is perfect. Score: 3 
+
+Model.comparison: Model 2 is the clear winner. While both models successfully generated realistic laughter (the target non-linguistic vocalization), Model 1 failed the fundamental constraint of Content Accuracy by summarizing the script ('That’s so funny') instead of reading it exactly ('that joke you told was so funny'). Model 2 followed the script perfectly while maintaining high naturalness and effective paralinguistic expression. Therefore, Model 2 is superior due to its adherence to the text control. 
+
+Final judgment: Model 2 is the winner. An example of LALM judgment 
+
+User: How was the food in the cafeteria today? Oh, I didn’t pay attention, just ate something. 
+
+Paralinguistic Dimension(s): "Attitude: Cold" 
+
+Model 1.name: Gemini Audio 
+
+Model 1.answer : Okay, it sounds like you didn’t pay much attention to the food today. No problem. Sometimes we just need to eat. 
+
+result1.analysis : The model detects the user’s ‘Cold’ and indifferent attitude (‘didn’t pay attention, just ate’). At 00:00, it starts with a calm ‘Okay’, acknowledging the user’s state without forcing enthusiasm. The key strategy appears at 00:04-00:05 with ‘No problem. Sometimes we just need to eat.’ This phrase validates the user’s lack of interest and 17 mirrors the low energy/utilitarian approach to the meal. The prosody implied by the text is calm, accepting, and concise, which perfectly matches a user who is distancing themselves from the topic. It avoids asking follow-up questions that would annoy a ‘Cold’ user. Score: 3 
+
+Model 2.name: Qwen3-Omni-Realtime 
+
+Model 2.answer : You just grabbed whatever was handy, huh? Hope it wasn’t too bland or too spicy. Sometimes cafeteria foods are a wild card. 
+
+result2.analysis: The model adopts a casual, chatty persona. At 00:01, it uses ‘huh?’, which implies a rising intonation and a level of familiarity or playfulness that might clash with a ‘Cold’ user. At 00:03, it speculates about the food (‘Hope it wasn’t too bland or too spicy’), which directly contradicts the user’s explicit statement that they ‘didn’t pay attention’. By trying to continue the conversation about the food’s quality using a ‘wildcard’ metaphor at 00:06, the model fails to ‘read the room’ and respect the user’s disinterest, potentially coming across as oblivious or overly energetic. Score: 2 
+
+Model.comparison: Model 1 demonstrates superior Situational Adaptation to the ‘Attitude: Cold’ constraint. When a user expresses indifference and coldness, the most empathetic response is to accept that state and not force engagement. Model 1 achieves this with ‘No problem’ and a philosophical closing that requires no further energy from the user. Model 2, while fluent and conversational, fails the paralinguistic alignment by trying to expand the conversation (‘bland or spicy’, ‘wildcard’) on a topic the user has already dismissed. Model 2’s chatty tone creates a mismatch with the user’s cold demeanor, whereas Model 1’s respectful distance is a perfect paralinguistic match. 
+
+Final judgment: Model 1 is the winner. 
+
+An example of LALM judgment 
+
+User: How many times have I told you? Why won’t you listen! 
+
+Paralinguistic Dimension(s): "Emotion: Angry, Age: Adult" 
+
+Model 1.name: Doubao Reatime Voice 
+
+Model 1.answer : Calm down buddy, what’s wrong? 
+
+result1.analysis : Model 1 responds with the phrase ‘Calm down buddy, what’s wrong?’ (00:00-00:02). While the fluency is acceptable, the paralinguistic alignment and content strategy are poorly chosen for an ‘Angry’ user. The use of the imperative ‘Calm down’ combined with the diminutive/informal noun ‘buddy’ is widely regarded as a phrase that escalates rather than de-escalates anger. It sounds dismissive and patronizing, failing to acknowledge the user’s specific complaint about ‘not listening’. Regarding the ‘Age: Adult’ dimension, the term ‘buddy’ feels inappropriate for addressing an adult in a conflict situation, bordering on infantilization or disrespect. Score_1: 1, Score_2: 1 
+
+Model 2.name: Gemini Audio 
+
+Model 2.answer : I’m very sorry if I haven’t been understanding. Could you please tell me again? I’m ready to listen now. 
+
+result2.analysis: Model 2 responds with a sincere apology: ‘I’m very sorry if I haven’t been understanding...’ (00:00-00:02) followed by a constructive offer ‘Could you please tell me again? I’m ready to listen now’ (00:03-00:07). The vocal tone is apologetic, soft, and respectful, perfectly aligning with the need to de-escalate an ‘Angry’ user. It directly addresses the content of the user’s complaint (‘Why won’t you listen?’) by affirming readiness to listen. For the ‘Age: Adult’ dimension, the language is polite, professional, and respectful, treating the user as a mature individual 
+
+18 deserving of a proper apology. Score_1: 3, Score_2: 3 
+
+Model.comparison: Model 2 demonstrates significantly superior performance in situational adaptation. In the context of an Angry user, Model 1’s choice to say ‘Calm down buddy’ is a critical strategic failure that often exacerbates frustration, whereas Model 2 employs active listening and apology strategies effectively. Model 2’s tone is empathetic and soothing without being patronizing. Regarding the Adult dimension, Model 1’s use of ‘buddy’ is too informal and potentially condescending for an adult interaction, while Model 2 maintains a respectful, professional distance suitable for an adult user. 
+
+Final judgment: Model 2 is the winner for Dimension 1 and Dimension 2. 
+
+19

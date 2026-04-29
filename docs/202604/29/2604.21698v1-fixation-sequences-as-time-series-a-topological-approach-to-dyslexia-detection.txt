@@ -1,0 +1,748 @@
+Title: Fixation Sequences as Time Series: A Topological Approach to Dyslexia Detection
+
+URL Source: https://arxiv.org/pdf/2604.21698v1
+
+Published Time: Fri, 24 Apr 2026 00:57:58 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# Fixation Sequences as Time Series: A Topological Approach to Dyslexia Detection 
+
+## Marius Huber ∗ David R. Reich † Lena A. J¨ ager Department of Computational Linguistics, University of Z¨ urich, Switzerland 
+
+## {marius.huber,davidrobert.reich,lenaann.jaeger }@uzh.ch 
+
+# Abstract 
+
+Persistent homology, a method from topological data analysis, extracts robust, multi-scale features from data. It produces stable representations of time series by apply-ing varying thresholds to their values (a process known as a filtration ). We develop novel filtrations for time series and introduce topological methods for the analysis of eye-tracking data, by interpreting fixation sequences as time series, and constructing “hybrid models” that combine topological features with traditional statistical features. We empirically evaluate our method by applying it to the task of dyslexia detection from eye-tracking-while-reading data using the Copenhagen Corpus, which contains scan-paths from dyslexic and non-dyslexic L1 and L2 readers. 1
+
+Our hybrid models outperform existing approaches that rely solely on traditional features, showing that persis-tent homology captures complementary information en-coded in fixation sequences. The strength of these topo-logical features is further underscored by their achieving performance comparable to established baseline methods. Importantly, our proposed filtrations outperform existing ones. 
+
+# 1 Introduction 
+
+Topological data analysis (TDA) has emerged as a power-ful framework for extracting features from complex data sets that capture not only more traditional, statistics-based properties of a data set, but also its shape. These   
+
+> ∗Supported by the Swiss National Science Foundation (grant no. 209413).
+> †Supported by the Swiss National Science Foundation (grant IZ-COZ0 220330/1 (EyeNLG))
+> 1All code to run experiments is available at https://github. com/DiLi-Lab/topological-dyslexia-detection and archived at
+> https://doi.org/10.5281/zenodo.19238279 .
+
+features are robust to noise and coordinate-invariant, and useful in data analysis, visualization and machine learn-ing tasks [7, 10]. In recent years, persistent homology, a key tool within TDA, has been increasingly applied to a wide variety of data sets (for accessible introductions, see [8, 19]). Informally, computation of persistent homol-ogy is obtained from a so-called filtration on a data set, which can be thought of as a way of “sweeping” the data set with respect to some relevant feature. Persistent ho-mology tracks topological features (the “shape”) of a data set across various stages of a filtration, producing a prov-ably stable representation of the topology and geometry of the underlying data set [12]. If the data set at hand is a time series, that is, a se-quence of values indexed by time, persistent homology may be computed from a filtration that is defined on the time series itself, and it enables the characterization of geometric and dynamical structures intrinsic to temporal signals [21, 35, 42]. In this context, a filtration may be defined, for example, by thresholding the values the time series attains, and gradually letting that threshold sweep the entirety of the time series. For an illustration, see Figure 1, which shows a time series (in red) being swept by a horizontal line (in blue); see Example 2.1 for a full discussion of this. The resulting persistent homology can thus capture properties of the time series such as its am-plitude and periodic behavior. The main contribution of this work is twofold: first, we extend existing topological methods for time series classi-fication, and second, we introduce the above framework to eye-tracking data and empirically evaluate whether TDA-based features add additional information that is not cap-tured by traditional statistical or hand-crafted features. In existing work, persistent homology of a time series is usually computed with respect to a so-called horizontal filtration that sweeps the time series by horizontal lines 1
+
+> arXiv:2604.21698v1 [cs.CL] 23 Apr 2026
+
+of increasing heights [14, 33]. In particular, this horizon-tal filtration is agnostic to the temporal coordinate of the time series. In order to capture the temporal information contained in a time series, we introduce non-horizontal filtrations which explicitly depend on the temporal coor-dinate. In the case where the time series is a fixation sequence, these non-horizontal filtrations enable sensitiv-ity to, for instance, the total number of fixations in a sequence, the time elapsed between consecutive fixations, or the presence and number of regressions. Second, and as a case study introducing persistent homology to eye-tracking data, we consider the task of dyslexia detection from reading data. Concretely, we extend existing models for dyslexia detection to contain the TDA-based features, in order to investigate whether persistent homology can provide features which are complementary to more tradi-tional, hand-crafted ones. To extract topological features from a fixation sequence of an individual reading a text, we first translate the in-formation contained in it into a pair of time series: one containing the horizontal coordinates of the fixations in-dexed by the time of their onset, and the other contain-ing the vertical coordinates. This separation of horizontal and vertical movements is done because our topological approach is suitable only for time series where the values are numbers (as opposed to vectors). In the context of eye movements, however, this separation also enables per-sistent homology to capture reading behavior constrained to a single line (from the horizontal movements) as well as that happening across lines (from vertical movements); this is particularly useful when dealing with fixation se-quences stemming from reading of multiline stimuli, as is the case in the present article. From these two time series, we compute persistent homology, and combine the resulting topological features with the traditional ones ob-tained from existing models for dyslexia detection. We find that when adding these topological features, the re-sulting models outperform their counterparts that use only traditional features. Moreover, we find that even when removing all traditional features, the topological features on their own are sufficient to achieve near-state-of-the-art classification performance in dyslexia detection. This suggests that persistent homology captures aspects of fixation sequences that are complementary to those captured by traditional methods. For the above, we train and evaluate various pipelines on the Copenhagen Cor-pus of Eye Tracking Recordings from Natural Reading of Danish Texts (CopCo) [4, 24, 40], a large eye-tracking data set specifically designed for dyslexia research. 
+
+# 2 Background and Related Work 
+
+We now review how persistent homology may be used for time series classification, and then provide relevant background on dyslexia detection. 
+
+## 2.1 Persistent Homology for Time Series Classification 
+
+We provide a conceptual review of persistent homology in time series classification, as described, for instance, in [33] or [14]. For a more technical discussion, we refer to Ap-pendix A. In the following, we use the term time series to refer to a finite sequence (( t1, x 1), . . . , (tn, x n)) of n pairs of real numbers, where the t1 < t 2 < · · · < t n represent points in time, and x1, x 2, . . . , x n denote the values that the time series attains at the respective points in time. In the context of eye-tracking data, for example, a fixation sequence naturally gives rise to a time series where the 
+
+t-values represent the onset of a fixation and the x-values represent either the horizontal or vertical coordinate of the corresponding fixation. The former is expected to be more sensitive to eye movements within a single line than to those across lines, and vice versa for the latter. 2 In our experiments, we therefore work with both time series extracted from a single fixation sequence (see Section 4.2 for details). Persistent homology [18, 20] is a topological tool that, broadly speaking, “sweeps” a time series and produces a so-called persistence diagram that captures characterizing features of the time series. One approach to this is to rep-resent a time series ( t1, x 1), . . . , (tn, x n) by the graph in the ( t, x )-plane that is obtained by drawing a straight line connecting the point ( t1, x 1) with ( t2, x 2), one connecting (t2, x 2) with ( t3, x 3), and so on. Persistent homology is obtained by sweeping this graph by a horizontal line mov-ing from bottom to top, and recording the evolution of the number of line segments that constitute the portion of the graph lying below the horizontal line. 
+
+Example 2.1 (Sweeping the time series corresponding to a fixation sequence by horizontal lines) . Consider the 
+
+> 2One could generalize the notion of time series to one that cap-tures both the horizontal and the vertical coordinate of a fixation. This, however, would yield a so-called multivariate time series, a for-mat that is unsuitable for the methods of time series classification outlined here. Note also that with time series stemming from other domains such as finance or audio signals, we would not necessarily expect one coordinate to be more informative than others.
+
+20 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+0 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+birth 
+
+birth 
+
+0 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+0 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+death Figure 1: Graph corresponding to the time series from Example 2.1 (leftmost panel) and three stages of sweeping of the graph by a horizontal line for increasing heights (second through fourth panels). The number of line segments constituting the portion of the graph lying under the horizontal line changes from one to two and back to one as the height of the horizontal line changes from x = 200 .0 to x = 400 .0 and to x = 600 .0, respectively. Table 1: An example of a fixation sequence. Onset [ms] x-coordinate [px] y-coordinate [px] 0 963.1 533.0 244 210.7 95.4 366 100.0 130.8 726 457.2 124.3 984 569.6 120.7 1415 281.6 136.6 horizontal movements of the fixation sequence given in Table 1 (a procedure analogous to the following one ap-plies to the vertical movements). The corresponding time series is specified by the sequence (( t1, x 1), . . . , (t6, x 6)) = ((0 , 963 .1) , (244 , 210 .7) ,
+
+(366 , 100 .0) , (726 , 457 .2) ,
+
+(984 , 569 .6) , (1415 , 281 .6)) .
+
+Its graph is obtained by connecting consecutive ( t, x )-pairs by straight lines; it is pictured in the leftmost panel of Figure 1, where fixations are indicated by blue dots, and dotted lines indicate the t- and x-entries of the pairs that constitute the time series. Sweeping this graph starts out with a horizontal line that is situated at a height that is theoretically infinitely far below the graph. For a horizontal line placed at any height that is smaller than the global minimum of the time series, the portion of the graph lying under that line is empty. As the height of the horizontal line passes the global minimum value 
+
+x = 100 .0, this changes: for a horizontal line at height, for example, x = 200 .0, the portion of the graph lying below it now consists of a line segment near the point (366 , 100 .0) in the ( t, x )-plane; see the second panel from the left of Figure 1, where the horizontal line at height 
+
+x = 200 .0 is indicated in blue, and where the portion of the graph lying below it is indicated by the thickened seg-ment. As the horizontal line moves further upwards, we see that a new line segment is “born” as the line passes the value x = 281 .6: at height, for example, x = 400 .0the portion of the graph lying under the horizontal line now consists of two separate line segments; see the sec-ond panel from the right of Figure 1. This newly born segment “dies” as the height of the horizontal line passes 
+
+x = 569 .6, since it gets absorbed into the line segment that was born earlier at height x = 100 .0. 3 Correspond-ingly, the number of segments is reduced back to one at height, for example, x = 600 .0; see the rightmost panel of Figure 1. Note that this behavior is a consequence of the fact that the time series returns to a value near 
+
+x = 200 toward its end (indicating a within-line regres-sion of the reader). Indeed, if no within-line regressions were present, the graph in Figure 1 would lack the local maximum responsible for the death event. Sweeping the graph corresponding to a time series thus yields a sequence of the number of segments present at each height of the horizontal line. This information is recorded in a persistence diagram [17]; we illustrate this concept in the following example, and refer to Appendix A for details.        
+
+> 3One defines that “older” connected line segments absorb “younger” ones (and not vice versa) for technical reasons; with-out this definition, computation of persistent homology would not lead to a well-defined result [18, Chapter VII.1].
+
+30 200 400 600 800 10001200 
+
+0200 400 600 800 1000 1200 birth death 
+
+Figure 2: Persistence diagram corresponding to the time series from Example 2.1, obtained from sweeping by horizontal lines. The point located at (281 .6, 569 .6) records the line segment that is born at x = 281 .6 and dies at x = 569 .6. 
+
+Example 2.2 (Persistence diagram) . Consider the time series given in Example 2.1. By definition, a persistence diagram is obtained by placing a point at the coordinates (b, d ) in R2, where b and d record the height of the hor-izontal line at which a line segment is born and dies, re-spectively. In Example 2.1, the first line segment is born at height x = 100 .0, whereas the second one is born at 
+
+x = 281 .6 and dies at x = 569 .6. While the former never dies and thus does not have a death time, the birth and death times of the latter are recorded by including the point (281 .6, 569 .6) in the persistence diagram; see Fig-ure 2. Additionally, a persistence diagram is endowed with the diagonal line which indicates the region of the persistence diagram where birth time equals death time; the greater the vertical distance of a point corresponding to a line segment to this diagonal line, the greater the dif-ference between its death and birth time, and hence the longer this segment survives for. Line segments surviving for a long time are deemed to represent more “signifi-cant” features of the time series than short-lived ones. A persistence diagram thus provides a summary of the evo-lution of the line segments as one sweeps a time series by horizontal lines. We point out that persistence diagrams computed from a time series like above typically contain many more points than that pictured in Figure 2. Indeed, the “spar-sity” of that persistence diagram is a consequence of the fact that the underlying time series is very short. 
+
+Remark 2.3 . The process above produces one persistence diagram from a time series, and is known as ordinary persistent homology . In our experiments, we also use ex-tended persistent homology [13]. In a nutshell, this is obtained by first sweeping the graph corresponding to a time series by horizontal lines as above, and then sweep-ing the same graph in the opposite direction—from top to bottom—to capture additional information. We point out that extended persistent homology produces three per-sistence diagrams from a time series, and refer to Ap-pendix A for details. In order to make persistence diagrams usable in ma-chine learning pipelines, one must transform them into vectors of a fixed length. Methods for doing so abound [6, 9, 11, 16], and we choose to use the method known as per-sistence image [1]. In a nutshell, a persistence image is obtained from a persistence diagram by first applying a shearing that maps the diagonal of the persistence dia-gram to a horizontal line. The resulting diagram is then converted into a “heat map” by placing a bivariate Gaus-sian distribution with a given standard deviation (also referred to as bandwidth in the present context) at each point of the diagram. This yields a single-channel image commonly referred to as persistence surface; see Figure 3 for an illustration of the process of obtaining a persistence surface from a persistence diagram. Finally, the persis-tence image is obtained from the persistence surface by discretizing it into a pixel grid of a resolution prescribed by the user. We refer to Appendix B for details on persis-tence images, and conclude this section by pointing out that a persistence image created as above depends on the bandwidth and resolution used; in applications, these are treated as hyperparameters. 
+
+## 2.2 Predicting Dyslexia from Eye-Tracking-While-Reading Data 
+
+Dyslexia is one of the most common learning disabilities that affects reading, impacting an estimated 9–12% of the population [27, 44]. For children with dyslexia, identify-ing the condition early is crucial for helping them succeed and keep pace in school [22, 45, 46]. Eye-tracking tech-nology has emerged as a promising tool in this context. It offers a good balance between cost, invasiveness and data quality, and as the technology continues to improve and become more affordable, it is increasingly realistic to use it on a large scale. A single eye tracker in a school could serve multiple screening purposes, for example, evaluat-ing reading proficiency in a second language [3]. These developments raise the question of whether dyslexia can 4birth death 
+
+birth death–birth 
+
+D 7 → π(D) π(D) 7 → ρπ(D)
+
+Figure 3: Schematic showing the transformation of a persistence diagram D in (birth, death)-coordinates (left) to (birth, death-birth)-coordinates (middle) by means of a shearing π, and the resulting persistence surface ρπ(D)
+
+(right). be detected from eye movements. Researchers have been exploring links between dyslexia and eye-movement be-havior since the 1980s [32, 34, 37]. While early studies fo-cused on deficits in eye-movement control, later research shifted attention toward difficulties in phonological de-coding as the core cause of dyslexia. Importantly, eye movements are closely tied to phonological decoding [25] throughout life [5, 29, 30, 38, 39], which provides a strong theoretical basis for using eye-movement data to infer dyslexia. Indeed, a growing body of experimental re-search [2, 4, 23, 26, 28, 31, 36, 41, 43] shows that machine learning approaches can effectively screen for dyslexia us-ing features derived from eye movements. Here, we use the work of [4] and [36] as reference methods. 
+
+# 3 Problem Setting 
+
+We empirically study the usefulness of casting fixation se-quences as time series, and combining topological features computed from them with traditional eye-movement fea-tures. This is to investigate whether the former capture information complementary to that captured by the lat-ter. We do this for the problem of dyslexia detection from eye-tracking-while-reading data for two levels of aggrega-tion: trial-level and reader-level. For each individual j, their reading behavior during the reading of stimulus text k is recorded as a sequence 
+
+Tj,k =  (t1, x 1, y 1), . . . , (tMj,k , x Mj,k , y Mj,k )
+
+of Mj,k fixations, where tm denotes the onset of the m-th fixation and ( xm, y m) denotes its location. In our training data set D = {(Tj,k , c j )}j,k , each fixation sequence Tj,k is associated with a binary label cj ∈ { 0, 1}, indicating the absence ( cj = 0) or diagnosis ( cj = 1) of dyslexia in the reader. In trial-level aggregation, we aim to model the conditional probability P (cj | Tj,k ), whereas in reader-level aggregation, we aim to model P  cj {Tj,k }k
+
+. The performance of our classification models will be evalu-ated using the Area Under the Receiver Operating Char-acteristic curve (ROC AUC). The ROC AUC provides a robust measure of discriminatory power, as it consid-ers the trade-off between true positive and false positive rates across various classification thresholds. In particu-lar, ROC AUC is less sensitive to class imbalance than accuracy, which is relevant in our case given the unequal distribution of dyslexic and non-dyslexic participants in the data set we used (see Section 5.1). 
+
+# 4 Method 
+
+We inject our topological features extracted from fixation sequences into the two models introduced in [4] and [36] (the “baseline models”). We compare the resulting “hy-brid models” trained with these features against the two baseline models, and against models that take into ac-count only the topological features (the “TSH-models”, where TSH stands for “time series homology”). We per-form this for both trial-level and reader-level aggregation, and including/excluding data stemming from non-native readers, which results in four experiment settings (here, a trial refers to a participant’s reading of one stimulus text; see Section 5.1 for details). We now introduce an extension of the sweeping method discussed in Section 2.1, and then present our dyslexia de-tection pipeline for each of the three model classes men-tioned above. 50 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+0 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+Figure 4: Two stages of sweeping of the graph corresponding to a time series by a line of slope 
+
+c ≈ − 0.3 moving from left to right (indicated in blue). The number of line segments constituting the portion of the graph lying to the left of the line changes from two to one as the line moves from the left panel to the right one. 
+
+## 4.1 Computation of Topological Features and Non-Horizontal Filtrations 
+
+To compute the topological features of a time series, we use the horizontal filtration as described in Section 2.1. 4
+
+A shortcoming of that method is that this process is ag-nostic to the time coordinate of the time series. Indeed, the birth and death times of line segments are dependent only on the values of the local extrema of the time se-ries, but not on the point in time at which these local extrema occur. 5 We therefore introduce three new filtra-tions, which we call sloped , sigmoid and arctan filtrations .We illustrate the sloped filtration with an example, and refer the reader to Appendix C for technicalities, and de-tails on the sigmoid and arctan filtrations. 
+
+Example 4.1 (Sloped filtration of a time series) . Con-sider the time series from Example 2.1, whose correspond-ing graph is pictured in the left of Figure 1. To start, one places a line with slope c̸ = 0 far enough to the left in the (t, x )-plane so that the graph corresponding to the time series lies entirely to the right of that line (in experiments, 
+
+c is a tunable hyperparameter). One then lets the sloped line move horizontally to the right while keeping track of the evolution of the number of line segments that consti-tute the portion of the graph that lies to the left side of  
+
+> 4The term “filtration” is simply a more technical term for a sweeping method.
+> 5As an example of this, observe that inverting the time coordi-nate of a time series and computing persistent homology using the horizontal filtration yields the same result as computing persistent homology of the original time series.
+
+the line. As in the case of the horizontal filtration, the birth and death times of the line segments being born and dying along the way are recorded in a persistence di-agram. For an illustration of this, see Figure 4. In that figure, the graph corresponding to the time series is swept by a line of slope c ≈ − 0.3 moving from left to right (in-dicated in blue), and the portion of the graph lying to the left of that line is indicated by the thickened segments. Crucially, the sloped filtration is no longer agnostic to the time coordinate. 6 For eye movements, this makes the filtration sensitive to, for instance, the total number of fixations. For the sigmoid and arctan filtrations, one re-places the sloped line by a curve described by the logistic and the arctan functions, respectively, and lets that curve move from the left to the right while keeping track of the number of line segments lying to the left of the curve, as before. These filtrations can “see” backward and forward in the time coordinate thanks to their curved shape, thus capturing, for instance, the time elapsed between two fix-ations. 
+
+## 4.2 Pipeline for Dyslexia Detection 
+
+Given a fixation sequence Tj,k = {(ti, x i, y i)}Mj,k  
+
+> i=1
+
+stem-ming from the k-th trial of individual j and consist-ing of Mj,k fixations, we wish to predict the binary la-bel cj ∈ { 0, 1}, indicating the absence or diagnosis of dyslexia. For the hybrid models combining traditional features with topological ones, we first compute the feature vec-tor vBL  
+
+> j,k
+
+from Tj,k via the relevant baseline model. For the topological feature vector, we split up the fixation sequence Tj,k into the sequences T xj,k := {(ti, x i)}Mj,k 
+
+> i=1
+
+and T yj,k := {(ti, y i)}Mj,k  
+
+> i=1
+
+containing just the x- and y-coordinates of the fixation sequence, respectively. We in-terpret each of T xj,k and T yj,k as a time series, min-max-scale their values, and compute persistent homology with respect to either the horizontal, sloped, sigmoid or arc-tan filtration; for the latter three filtrations, we treat the slope c as a tunable hyperparameter. This yields one or three persistence diagrams (PDs) for each of T xj,k and 
+
+T yj,k , depending on whether ordinary or extended persis-tence is computed (cf. Remark 2.3). This results in two or six diagrams, respectively, for each initial fixation se-
+
+> 6Indeed, inverting the time coordinate of the time series and using the sloped filtration will result in a persistence diagram that is different from the one computed from the non-inverted time series; cf. Footnote 5.
+
+6Fixation sequence 
+
+Tj,k Time series 
+
+T yj,k 
+
+PD(s) PI(s) flatten 
+
+PCA 
+
+Feature vector 
+
+vTSH 
+
+> j,k
+
+concat 
+
+flatten PI(s) PD(s) 
+
+Time series 
+
+T xj,k 
+
+Figure 5: Computation of the topological feature vector vTSH  
+
+> j,k
+
+from a fixation sequence. A fixation sequence Tj,k is split up into two time series T xj,k and T yj,k , after which the persistence diagrams (PDs) and the corresponding persistence images (PIs) are computed for each. The persistence images are each flattened, concatenated and reduced via PCA to yield the feature vector vTSH  
+
+> j,k
+
+.quence Tj,k . Each persistence diagram is vectorized into a persistence image (PI) of a fixed resolution. The persis-tence images are flattened, min-max-scaled and concate-nated into a single vector. Using a resolution of ( n, m )for the persistence images, this resulting vector has length 2·1·n·m = 2 nm if ordinary persistence is used, and length 2·3·n·m = 6 nm if extended persistence is used; in our ex-periments, we set n = m = 50 throughout. Pixel values of persistence images are highly correlated, so we reduce this vector using PCA to obtain the topological feature vector 
+
+vTSH  
+
+> j,k
+
+corresponding to the fixation sequence Tj,k ; in our experiments, we use PCA with 250 and 3 ·250 = 750 com-ponents for ordinary and extended persistence, respec-tively, as this number of components is empirically suffi-cient to capture the information stored in the pixel values. For a schematic depiction of the computation of vTSH  
+
+> j,k
+
+, see Figure 5. Finally, we concatenate vBL  
+
+> j,k
+
+and vTSH  
+
+> j,k
+
+into a single feature vector vj,k , containing both traditional and topological features of Tj,k . For trial-level aggregation, we pass vj,k into the classifier specified by the baseline model for prediction of cj,k ∈ { 0, 1}; for the baseline introduced in [4], this is a support vector machine (SVM), whereas for the one introduced in [36], both a SVM and a ran-dom forest (RF) are used. For reader-level aggregation, we compute the mean of all vectors vj, 1, v j, 2, . . . stemming from individual j before passing the resulting vector into the respective classifier for prediction of cj ∈ { 0, 1}.For the baseline and TSH-models, we pass just the fea-ture vector vBL  
+
+> j,k
+
+and vTSH  
+
+> j,k
+
+, respectively, into the classifier; the latter is either a SVM or a RF for the baseline models, and a SVM for the TSH-models. 
+
+# 5 Experiments 
+
+In the following, we describe the data set and evalua-tion protocol used in our experiments; all code to run them is available at https://github.com/DiLi-Lab/ topological-dyslexia-detection and archived at 
+
+https://doi.org/10.5281/zenodo.19238279 .
+
+## 5.1 Data Set 
+
+The Copenhagen Corpus of Eye-Tracking Recordings from Natural Reading (CopCo; [24]) is a corpus of eye-tracking data collected during natural reading of Dan-ish texts. These consisted of 46 transcriptions of Danish speeches and 12 articles from Danish Wikipedia, which were presented to participants in multiline portions con-taining at most 10 lines. We refer to a participant’s read-ing of one such portion as a trial. Participants read a varying number of texts according to their own speed, and reading data was collected tracking the right eye, using an EyeLink 1000 Plus eye tracker with a sampling rate of 1000 Hz. The data set comprises recordings from 58 par-ticipants, including 22 L1 (native) speakers of Danish not diagnosed with dyslexia, 19 L1 speakers diagnosed with dyslexia, and 17 L2 speakers of Danish without dyslexia. 7       
+
+> 7The non-L1 speakers stem from different L1 backgrounds. Moreover, as in [40], we refer to the non-L1 speakers as L2 speak-ers for simplicity, even though Danish is L3 or L4 for some of the
+
+7We discarded the data from four out of the 22 L1 readers without dyslexia due to poor calibration or a diagnosed attention disorder. Moreover, the data from one of the L1 readers with dyslexia was discarded due to the absence of a dyslexia screening result, leaving data from a total of 53 readers. The fixation sequences used in our models were taken directly from CopCo. These were previously extracted using the DataViewer software by SR Research, which applies a velocity- and acceleration-based saccade detection method [24]. We discarded those trials con-sisting of fewer than five fixations. Each participant was assigned a binary label based on the original CopCo anno-tations: participants diagnosed with dyslexia were labeled as “dyslexic”, and all others as “non-dyslexic”. This re-sults in a data set consisting of 4653 fixation sequences (out of which 1134 or 24.37% are labeled as “dyslexic”) on the trial-level, and consisting of 53 readers (out of which 18 or 33.96% are labeled as “dyslexic”) on the reader-level. 
+
+## 5.2 Evaluation Protocol 
+
+We train the pipeline introduced in Section 4.2 for each of the hybrid, baseline and TSH-models, and in each of the settings specified by aggregation level and in-clusion/exclusion of non-L1 readers. We evaluate the pipelines via k-fold nested cross-validation, where k = 5 for trial-level aggregation and k = 10 for reader-level aggregation, using Area Under the Receiver Operating Characteristic curve (ROC AUC) as the scoring function. In both the trial-level and reader-level aggregation, the folds are stratified according to dyslexia label. In the trial-level aggregation, the folds are additionally such that data from a given reader appears in precisely one fold, ensuring that the model always makes predictions about unseen readers. 
+
+5.2.1 Hyperparameter Tuning 
+
+For the hybrid models, the pipeline described in Sec-tion 4.2 depends on the slope parameter c̸ = 0 specifying the filtration, the bandwidth σ > 0 of the persistence im-age, and the parameters of the classifier stemming from the respective baseline model; we tune these via random-ized search according to the distributions for the slope and bandwidth given in Table 2, and the distributions for the parameters of the classifier as given in the respective orig-inal implementation. The baseline models depend only 
+
+> participants.
+
+Table 2: Search spaces used for randomized hyperparameter tuning. Model class Hyperparameter Domain/values hybrid, TSH Slope c∗ [−4, −0.5] ∪ [0 .5, 4] Bandwidth σ† [10 −3, 10 −1]TSH Kernel ‡ {linear , rbf }
+
+C (linear kernel) † [10 −2, 10 1]
+
+C (rbf kernel) † [10 −1, 10 2]
+
+γ (rbf kernel) † [10 −4, 10 −2]   
+
+> ∗Sampled uniformly with respect to angle
+> †Sampled log-uniformly
+> ‡Sampled uniformly
+
+Table 3: Mean ROC AUC scores by aggregation level and model class. Subscripts indicate standard deviation. Mean ROC AUC score Aggregation Model class Including L2 Excluding L2 Trial-level Hybrid 0.88 0.07 0.89 0.12 
+
+Baseline 0.85 0.12 0.87 0.17 
+
+TSH 0.81 0.17 0.87 0.16 
+
+Reader-level Hybrid 0.92 0.10 0.99 0.02 
+
+Baseline 0.89 0.08 0.97 0.04 
+
+TSH 0.88 0.17 0.95 0.07 
+
+on the parameters of their respective classifiers; we tune these according to their original implementations. For the TSH-models, the pipeline depends on the slope parameter 
+
+c̸ = 0, the bandwidth σ > 0, and on the hyperparameters specifying the SVM classifier; we tune these via random-ized search according to the distributions given in Table 2. Note that we excluded values between −0.5 and 0 .5 for the slope c for computational stability. In all instances of randomized search, 200 iterations are performed. 
+
+## 5.3 Results 
+
+In Table 3, we report the classification performance of the model classes described in Section 4. For each model class, we select the best-performing model and report its mean and standard deviation of the ROC AUC across all folds, and we highlight in bold the best performance in each of the four settings result-ing from including/excluding L2-readers and aggregating on trial/reader-level (for a detailed breakdown of perfor-8mances, see Table D.1 in Appendix D). The results show that the hybrid models consistently outperform the base-line and the TSH-models, and, moreover, that the TSH-models perform on par with the baseline models, or come close to doing so. Finally, the results demonstrate that our novel, non-horizontal filtrations mostly outperform the existing horizontal one. 
+
+# 6 Discussion 
+
+This study assessed the value of introducing novel fil-trations for time series and of using these filtrations to extract topological features from fixation sequences with persistent homology. We provide strong empiri-cal evidence that the proposed topological features en-code information about reading behavior and are comple-mentary to traditional features: across all experimental settings (trial-/reader-level and including/excluding non-native readers), the hybrid models that combine topo-logical and traditional features consistently achieved the highest ROC AUC scores. Moreover, seeing that each of the highest-scoring models makes use of one of the newly introduced filtrations, we empirically showed that these provide improvements over existing filtrations. The com-petitive performance of the TSH-models further indicates that topological representations of fixation time series are themselves highly informative. Despite abstracting away from explicit linguistic alignment and relying only on ge-ometric and temporal structure, these models perform on par with established baselines. This suggests that dyslexia-related differences manifest not only in more tra-ditional, aggregate reading measures, but also in higher-order temporal and structural patterns of eye movements that are captured by persistent homology. The introduc-tion of non-horizontal filtrations appears particularly rel-evant, as they explicitly incorporate temporal ordering and spacing of fixations, properties that are central to reading dynamics. Performance gains are more pronounced at the reader level, which is expected given the aggregation of multiple trials into a more stable behavioral profile. At the same time, the very high reader-level ROC AUCs, especially when excluding L2 readers, should be interpreted cau-tiously due to the limited number of participants. The observed drop in performance when including L2 read-ers highlights population heterogeneity as an important factor. Overall, the results demonstrate that topological fea-tures derived from fixation sequences are a viable and ef-fective addition to dyslexia detection pipelines, and likely to be useful in analysis of eye-tracking data in general. Future work should focus on validating these findings on larger and more diverse data sets as well as on tasks other than dyslexia detection, and on interpreting the topolog-ical features to better connect them to cognitive theories of reading and clinical practice. 
+
+# References 
+
+[1] Henry Adams, Tegan Emerson, Michael Kirby, Rachel Neville, Chris Peterson, Patrick Shipman, So-fya Chepushtanova, Eric Hanson, Francis Motta, and Lori Ziegelmeier. Persistence images: A stable vec-tor representation of persistent homology. Journal of Machine Learning Research , 18(8):1–35, 2017. URL 
+
+http://jmlr.org/papers/v18/16-337.html .[2] Thomais Asvestopoulou, Victoria Manousaki, An-tonis Psistakis, Ioannis Smyrnakis, Vassilios An-dreadakis, Ioannis M. Aslanides, and Maria Pa-padopouli. Dyslexml: Screening tool for dyslexia us-ing machine learning, 2019. URL https://arxiv. org/abs/1903.06274 .[3] Yevgeni Berzak, Boris Katz, and Roger Levy. Assess-ing language proficiency from eye movements in read-ing. In Marilyn Walker, Heng Ji, and Amanda Stent, editors, Proceedings of the 2018 Conference of the North American Chapter of the Association for Com-putational Linguistics: Human Language Technolo-gies, Volume 1 (Long Papers) , pages 1986–1996, New Orleans, Louisiana, June 2018. Association for Com-putational Linguistics. doi: 10.18653/v1/N18-1180. URL https://aclanthology.org/N18-1180/ .[4] Marina Bj¨ ornsd´ ottir, Nora Hollenstein, and Maria Barrett. Dyslexia prediction from natural reading of Danish texts. In Tanel Alum¨ ae and Mark Fishel, ed-itors, Proceedings of the 24th Nordic Conference on Computational Linguistics (NoDaLiDa) , pages 60– 70, T´ orshavn, Faroe Islands, May 2023. University of Tartu Library. URL https://aclanthology.org/ 2023.nodalida-1.7/ .[5] Hazel I. Blythe. Developmental changes in eye move-ments and visual information encoding associated with learning to read. Current Directions in Psy-chological Science , 23(3):201–207, 2014. doi: 10. 91177/0963721414530145. URL https://doi.org/ 10.1177/0963721414530145 .[6] Peter Bubenik. Statistical topological data analysis using persistence landscapes. Journal of Machine Learning Research , 16(3):77–102, 2015. URL http: //jmlr.org/papers/v16/bubenik15a.html .[7] Gunnar Carlsson. Topology and data. 
+
+Bull. Amer. Math. Soc. (N.S.) , 46(2):255– 308, 2009. ISSN 0273-0979,1088-9485. doi: 10.1090/S0273-0979-09-01249-X. URL https: //doi.org/10.1090/S0273-0979-09-01249-X .[8] Gunnar Carlsson and Mikael Vejdemo-Johansson. 
+
+Topological data analysis with applications . Cam-bridge University Press, Cambridge, Cambridge, UK, 2022. ISBN 978-1-108-83865-8. doi: 10.1017/ 9781108975704. URL https://doi.org/10.1017/ 9781108975704 .[9] Mathieu Carri` ere, Steve Y. Oudot, and Maks Ovs-janikov. Stable topological signatures for points on 3d shapes. In Proceedings of the Eurographics Symposium on Geometry Processing , SGP ’15, page 1–12, Goslar, DEU, 2015. Eurographics Association. doi: 10.1111/cgf.12692. URL https://doi.org/10. 1111/cgf.12692 .[10] Fr´ ed´ eric Chazal and Bertrand Michel. An introduc-tion to topological data analysis: Fundamental and practical aspects for data scientists. Frontiers Ar-tif. Intell. , 4:667963, 2021. doi: 10.3389/FRAI.2021. 667963. URL https://doi.org/10.3389/frai. 2021.667963 .[11] Fr´ ed´ eric Chazal, Brittany Terese Fasy, Fabrizio Lecci, Alessandro Rinaldo, and Larry Wasserman. Stochastic convergence of persistence landscapes and silhouettes. In Proceedings of the Thirtieth Annual Symposium on Computational Geometry ,SOCG’14, page 474–483, New York, NY, USA, 2014. Association for Computing Machinery. ISBN 9781450325943. doi: 10.1145/2582112.2582128. URL 
+
+https://doi.org/10.1145/2582112.2582128 .[12] David Cohen-Steiner, Herbert Edelsbrunner, and John Harer. Stability of persistence diagrams. In Proceedings of the Twenty-First Annual Sympo-sium on Computational Geometry , SCG ’05, page 263–271, New York, NY, USA, 2005. Association for Computing Machinery. ISBN 1581139918. doi: 10.1145/1064092.1064133. URL https://doi.org/ 10.1145/1064092.1064133 .[13] David Cohen-Steiner, Herbert Edelsbrunner, and John Harer. Extending persistence using poincar´ eand lefschetz duality. Foundations of Computa-tional Mathematics , 9(1):79–103, Feb 2009. ISSN 1615-3383. doi: 10.1007/s10208-008-9027-z. URL 
+
+https://doi.org/10.1007/s10208-008-9027-z .[14] Sebastiano Cultrera di Montesano, Herbert Edels-brunner, Monika Henzinger, and Lara Ost. Dynami-cally maintaining the persistent homology of time se-ries. In Proceedings of the 2024 Annual ACM-SIAM Symposium on Discrete Algorithms (SODA) , pages 243–295, Philadelphia, PA, 2024. SIAM. ISBN 978-1-61197-791-2. doi: 10.1137/1.9781611977912.11. URL 
+
+https://doi.org/10.1137/1.9781611977912.11 .[15] Department of Computer Science, ETH Z¨ urich. Lecture notes: Topological data analysis (tda25), n.d. URL https://ti.inf.ethz.ch/ew/courses/ TDA25/Script.pdf . Accessed: 2026-03-23. [16] Barbara Di Fabio and Massimo Ferri. Compar-ing persistence diagrams through complex vectors. In Vittorio Murino and Enrico Puppo, editors, Im-age Analysis and Processing — ICIAP 2015 , pages 294–305, Cham, 2015. Springer International Pub-lishing. ISBN 978-3-319-23231-7. doi: 10.1007/ 978-3-319-23231-7 27. URL https://doi.org/10. 1007/978-3-319-23231-7_27 .[17] Edelsbrunner, Letscher, and Zomorodian. Topologi-cal persistence and simplification. Discrete & Com-putational Geometry , 28(4):511–533, Nov 2002. ISSN 1432-0444. doi: 10.1007/s00454-002-2885-2. URL 
+
+https://doi.org/10.1007/s00454-002-2885-2 .[18] Herbert Edelsbrunner and John L. Harer. Com-putational topology . American Mathematical Soci-ety, Providence, RI, 2010. ISBN 978-0-8218-4925-5. doi: 10.1090/mbk/069. URL https://doi.org/10. 1090/mbk/069 . An introduction. [19] Robert Ghrist. Barcodes: the persistent topology of data. Bull. Amer. Math. Soc. (N.S.) , 45(1): 61–75, 2008. ISSN 0273-0979,1088-9485. doi: 10. 1090/S0273-0979-07-01191-3. URL https://doi. org/10.1090/S0273-0979-07-01191-3 .10 [20] Robert Ghrist. Elementary applied topology . Cre-atespace Independent Publishing Platform, North Charleston, SC, September 2014. ISBN 978-1502880857. [21] Marian Gidea and Yuri Katz. Topological data analysis of financial time series: Landscapes of crashes. Physica A: Statistical Mechanics and its Applications , 491:820–834, 2018. ISSN 0378-4371. doi: https://doi.org/10.1016/j.physa.2017. 09.028. URL https://www.sciencedirect.com/ science/article/pii/S0378437117309202 .[22] Jonathan Glazzard. The impact of dyslexia on pupils’ self-esteem. Support for Learning ,25(2):63–69, 2010. doi: https://doi.org/10. 1111/j.1467-9604.2010.01442.x. URL https: //nasenjournals.onlinelibrary.wiley.com/ doi/abs/10.1111/j.1467-9604.2010.01442.x .[23] Patrick Haller, Andreas S¨ auberli, Sarah Kiener, Jinger Pan, Ming Yan, and Lena J¨ ager. Eye-tracking based classification of Mandarin Chinese readers with and without dyslexia using neural sequence models. In Sanja ˇStajner, Horacio Saggion, Daniel Ferr´ es, Matthew Shardlow, Kim Cheng Sheang, Kai North, Marcos Zampieri, and Wei Xu, editors, Pro-ceedings of the Workshop on Text Simplification, Ac-cessibility, and Readability (TSAR-2022) , pages 111– 118, Abu Dhabi, United Arab Emirates (Virtual), December 2022. Association for Computational Lin-guistics. doi: 10.18653/v1/2022.tsar-1.10. URL 
+
+https://aclanthology.org/2022.tsar-1.10/ .[24] Nora Hollenstein, Maria Barrett, and Marina Bj¨ ornsd´ ottir. The copenhagen corpus of eye track-ing recordings from natural reading of Danish texts. In Nicoletta Calzolari, Fr´ ed´ eric B´ echet, Philippe Blache, Khalid Choukri, Christopher Cieri, Thierry Declerck, Sara Goggi, Hitoshi Isahara, Bente Mae-gaard, Joseph Mariani, H´ el` ene Mazo, Jan Odijk, and Stelios Piperidis, editors, Proceedings of the Thir-teenth Language Resources and Evaluation Confer-ence , pages 1712–1720, Marseille, France, June 2022. European Language Resources Association. URL 
+
+https://aclanthology.org/2022.lrec-1.182/ .[25] International Dyslexia Association. Dyslexia ba-sics, n.d. URL https://dyslexiaida.org/ dyslexia-basics/ . Accessed: 2026-03-23. [26] Appadurai Jothi Prabha and Renta Chintala Bhar-gavi. Prediction of dyslexia from eye movements using machine learning. IETE Journal of Re-search , 68(2):814–823, 2022. doi: 10.1080/03772063. 2019.1622461. URL https://doi.org/10.1080/ 03772063.2019.1622461 .[27] Slavica K. Katusic, Robert C. Colligan, William J. Barbaresi, Daniel J. Schaid, and Steven J. Jacob-sen. Incidence of reading disability in a population-based birth cohort, 1976&#x2013;1982, rochester, minn. Mayo Clinic Proceedings , 76(11):1081–1092, Nov 2001. ISSN 0025-6196. doi: 10.4065/76.11.1081. URL https://doi.org/10.4065/76.11.1081 .[28] Anna Laurinavichyute, Anastasiya Lopukhina, and David Robert Reich. Automatic detection of dyslexia based on eye movements during reading in Rus-sian. In Wanxiang Che, Joyce Nabende, Ekate-rina Shutova, and Mohammad Taher Pilehvar, ed-itors, Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Vol-ume 2: Short Papers) , pages 59–66, Vienna, Aus-tria, July 2025. Association for Computational Lin-guistics. ISBN 979-8-89176-252-7. doi: 10.18653/ v1/2025.acl-short.5. URL https://aclanthology. org/2025.acl-short.5/ .[29] Mallorie Leinenger. Survival analyses reveal how early phonological processing affects eye movements during reading. Journal of Experimental Psychology: Learning, Memory, and Cognition , 45(7):1316–1344, July 2019. doi: 10.1037/xlm0000648. [30] Sara V. Milledge and Hazel I. Blythe. The chang-ing role of phonology in reading development. Vi-sion , 3(2):23, 2019. ISSN 2411-5150. doi: 10. 3390/vision3020023. URL https://www.mdpi.com/ 2411-5150/3/2/23 .[31] Mattias Nilsson Benfatto, Gustaf ¨Oqvist Seimyr, Jan Ygge, Tony Pansell, Agneta Rydberg, and Christer Jacobson. Screening for dyslexia using eye tracking during reading. PLOS ONE , 11(12):1–16, 12 2016. doi: 10.1371/journal.pone.0165508. URL https:// doi.org/10.1371/journal.pone.0165508 .[32] Richard K Olson, Reinhold Kliegl, and Brian JDavidson. Dyslexic and normal readers’ eye move-ments. Journal of Experimental Psychology: Human Perception and Performance , 9(5):816–825, October 1983. doi: 10.1037/0096-1523.9.5.816. 11 [33] Lara Ost, Sebastiano Cultrera di Montesano, and Herbert Edelsbrunner. Banana Trees for the Per-sistence in Time Series Experimentally. In Os-win Aichholzer and Haitao Wang, editors, 41st In-ternational Symposium on Computational Geometry (SoCG 2025) , volume 332 of Leibniz International Proceedings in Informatics (LIPIcs) , pages 71:1– 71:13, Dagstuhl, Germany, 2025. Schloss Dagstuhl – Leibniz-Zentrum f¨ ur Informatik. ISBN 978-3-95977-370-6. doi: 10.4230/LIPIcs.SoCG.2025. 71. URL https://drops.dagstuhl.de/entities/ document/10.4230/LIPIcs.SoCG.2025.71 .[34] George Th. Pavlidis. Do eye movements hold the key to dyslexia? Neuropsycholo-gia , 19(1):57–64, 1981. ISSN 0028-3932. doi: https://doi.org/10.1016/0028-3932(81)90044-0. URL https://www.sciencedirect.com/science/ article/pii/0028393281900440 .[35] Jose A. Perea and John Harer. Sliding windows and persistence: An application of topological meth-ods to signal analysis. Foundations of Computa-tional Mathematics , 15(3):799–838, Jun 2015. ISSN 1615-3383. doi: 10.1007/s10208-014-9206-z. URL 
+
+https://doi.org/10.1007/s10208-014-9206-z .[36] Peter Raatikainen, Jarkko Hautala, Otto Loberg, Tommi K¨ arkk¨ ainen, Paavo Lepp¨ anen, and Paavo Nieminen. Detection of developmental dyslexia with machine learning using eye movement data. 
+
+Array , 12:100087, 2021. ISSN 2590-0056. doi: https://doi.org/10.1016/j.array.2021.100087. URL 
+
+https://www.sciencedirect.com/science/ article/pii/S2590005621000345 .[37] Keith Rayner. Do faulty eye movements cause dyslexia? Developmental Neuropsychology , 1(1):3– 15, 1985. doi: 10.1080/87565648509540294. URL 
+
+https://doi.org/10.1080/87565648509540294 .[38] Keith Rayner, Sara C. Sereno, Mary F. Lesch, and Alexander Pollatsek. Phonological codes are auto-matically activated during reading: Evidence from an eye movement priming paradigm. Psychological Science , 6(1):26–32, 1995. doi: 10.1111/j.1467-9280. 1995.tb00300.x. URL https://doi.org/10.1111/ j.1467-9280.1995.tb00300.x .[39] Keith Rayner, Alexander Pollatsek, and Katherine S. Binder. Phonological codes and eye movements in reading. Journal of Experimental Psychology: Learn-ing, Memory, and Cognition , 24(2):476–497, March 1998. doi: 10.1037/0278-7393.24.2.476. [40] David R. Reich, Shuwen Deng, Marina Bj¨ ornsd´ ottir, Lena J¨ ager, and Nora Hollenstein. Reading does not equal reading: Comparing, simulating and exploit-ing reading behavior across populations. In Nicoletta Calzolari, Min-Yen Kan, Veronique Hoste, Alessan-dro Lenci, Sakriani Sakti, and Nianwen Xue, ed-itors, Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024) ,pages 13586–13594, Torino, Italia, May 2024. ELRA and ICCL. URL https://aclanthology.org/ 2024.lrec-main.1187/ .[41] Luz Rello and Miguel Ballesteros. Detecting read-ers with dyslexia using machine learning with eye tracking measures. In Proceedings of the 12th In-ternational Web for All Conference , W4A ’15, New York, NY, USA, 2015. Association for Computing Machinery. ISBN 9781450333429. doi: 10.1145/ 2745555.2746644. URL https://doi.org/10.1145/ 2745555.2746644 .[42] Lee M. Seversky, Shelby Davis, and Matthew Berger. On time-series topological data analysis: New data and opportunities. In 2016 IEEE Conference on Computer Vision and Pattern Recognition Work-shops (CVPRW) , pages 1014–1022, Las Vegas, NV, USA, 2016. IEEE. doi: 10.1109/CVPRW.2016.131. [43] Soroosh Shalileh, Dmitry Ignatov, Anastasiya Lopukhina, and Olga Dragoy. Identifying dyslexia in school pupils from eye movement and demo-graphic data using artificial intelligence. PLOS ONE , 18(11):1–26, 11 2023. doi: 10.1371/journal. pone.0292047. URL https://doi.org/10.1371/ journal.pone.0292047 .[44] Sally E. Shaywitz, Bennett A. Shaywitz, Kenneth R. Pugh, Robert K. Fulbright, R. Todd Constable, W. Einar Mencl, Donald P. Shankweiler, Alvin M. Liberman, Pawel Skudlarski, Jack M. Fletcher, Leonard Katz, Karen E. Marchione, Cheryl Lacadie, Christopher Gatenby, and John C. Gore. Func-tional disruption in the organization of the brain for reading in dyslexia. Proceedings of the National Academy of Sciences , 95(5):2636–2641, 1998. doi: 12 10.1073/pnas.95.5.2636. URL https://www.pnas. org/doi/abs/10.1073/pnas.95.5.2636 .[45] Joseph K. Torgesen. Individual differences in response to early interventions in reading: The lingering problem of treatment resisters. 
+
+Learning Disabilities Research & Practice , 15 (1):55–64, 2000. doi: 10.1207/SLDRP1501 \
+
+6. URL https://www.tandfonline.com/doi/abs/ 10.1207/SLDRP1501_6 .[46] Frank R. Vellutino, Jack M. Fletcher, Margaret J. Snowling, and Donna M. Scanlon. Specific reading disability (dyslexia): what have we learned in the past four decades? Journal of Child Psy-chology and Psychiatry , 45(1):2–40, 2004. doi: https://doi.org/10.1046/j.0021-9630.2003.00305.x. URL https://acamh.onlinelibrary.wiley.com/ doi/abs/10.1046/j.0021-9630.2003.00305.x .
+
+# A Persistent Homology of Time Series 
+
+In this section, we review persistent homology in the con-text of time series. In doing so, we will limit ourselves to those aspects of persistent homology that are rele-vant to the setting of this paper, and we refer the reader to [15, 18, 20] for details. In the present setting, we mean by a time series a piece-wise linear function T : I → R, where I ⊆ R is a closed in-terval. Furthermore, we require that T have only finitely many points of non-linearity in its domain. Note that any such time series is univariate by definition. In practice, a time series is specified by the finite sequence of tuples 
+
+{(ti, x i)}ni=1 ⊆ R2, where xi := T (ti), I = [ t1, t n], and 
+
+t2 < t 3 < · · · < t n−1 are the points of non-linearity of T
+
+in the interior of I. The graph of a time series is defined as Γ( T ) := {(t, T (t)) | t ∈ I} ⊆ R2.Given a time series T : I → R, a function f : Γ( T ) → R
+
+and a number h ∈ R, the f -sublevel set of T at h is defined as 
+
+Tf,h := {(t, T (t)) | f (t, T (t)) ≤ h, t ∈ I} ⊆ Γ( T ).
+
+Symmetrically, the f -superlevel set of T at h is defined as 
+
+T f,h := {(t, T (t)) | f (t, T (t)) ≥ h, t ∈ I} ⊆ Γ( T ).
+
+In words, Tf,h (resp. T f,h ) consists of that portion of the graph of T on which f attains values of at most (resp. at least) h. We point out that, in practice, the func-tion f is often given as f = g|Γ( T ) for some function 
+
+g : R2 → R. For ease of exposition, we will assume now that f is continuous and generic in the sense that no two local extrema of f map to the same value under f . Ob-serve that we have Tf,h = ∅ for small enough values of 
+
+h. Indeed, this is true for any value of h that is strictly smaller than the global minimum of f , which we denote by ˇf . Similarly, we have Tf,h = Γ( T ) for any h ≥ ˆf , where ˆf is the largest value that f attains on Γ( T ). Moreover, we have that Tf,h 1 ⊆ Tf,h 2 whenever h1 ≤ h2. Put to-gether, {Tf,h }+∞ 
+
+> h=−∞
+
+forms a sequence of nested subsets of the graph of T that starts out as the empty set and eventually equals the entire graph Γ( T ). This means that 
+
+{Tf,h }+∞ 
+
+> h=−∞
+
+forms a filtration of Γ( T ). If h is set to some value smaller than ˇf and starts increasing, Tf,h ceases to be empty as soon as h passes the value ˇf from below. At that value of h, the number of connected components of Tf,h changes from zero to one. 8 This logic generalizes from the global minimum value ˇf of f to any local mini-mum of f : whenever the parameter h passes the value of a local minimum of f from below, a new connected com-ponent of Tf,h is born . Conversely, whenever h passes the value of a local maximum f from below, the number of connected components of Tf,h decreases by one, since in this case an existing connected component dies as it is ab-sorbed by one that was born earlier. By a similar line of argument, we see that the sequence T f,h −∞  
+
+> h=+ ∞
+
+forms a filtration of Γ( T ) (as h de creases from + ∞ to −∞ ). The number of connected components of T f,h increases by one whenever h passes a local maximum of f from above, and it decreases by one if it passes a local minimum of f from above. 
+
+Persistent homology keeps track of the evolution of the connected components of the f -sublevel and f -superlevel sets of a time series that we described in the previous paragraph by means of certain diagrams. Namely, given a time series T : I → R, and some function f : Γ( T ) → R,the thresholding parameter h is first set to −∞ and then increased up to + ∞. In this first phase, we record the births and deaths of connected components of Tf,h by means of a tuple ( b, d ) for each connected component, where b and d denote the birth and death of a compo-nent, respectively. Once h reaches + ∞, the process is reversed. That is, we now let h decrease back to −∞ in 
+
+> 8Here and in the following, a connected component is defined as one connected “piece”; in Example 2.1, connected components are the line segments constituting the portion of the graph lying below the horizontal line.
+
+13 this second phase and record (birth, death)-tuples along the way as before. Note that the connected component corresponding to ˇf (the one that has the smallest birth time of all) never dies in the first phase. While its death time is thus technically d = + ∞, we treat the first birth in the second phase as its death, and hence this compo-nent has death time d = ˆf .9 Consequently, we discard the event where h passes ˆf from above from the set of birth events of the second phase. The resulting collection of all (birth, death)-tuples is recorded in three persistence dia-grams , each of whose horizontal and vertical axes measure birth and death time, respectively. The first and second of these diagrams are populated with the (birth, death)-tuples stemming from the first and second phase, respec-tively, while the third diagram is populated with the sin-gle (birth, death)-tuple equaling ( ˇf , ˆf ). Moreover, each of the diagrams is endowed with the diagonal indicating the region where b = d, the idea being that the further a point is from this diagonal, the longer the lifetime (defined as the difference between death time and birth time) of its corresponding connected component is. These diagrams are called the ordinary , relative and essential diagram of 
+
+f , respectively. Note that in the first phase, the death time of any connected component is larger than its birth time, whereas in the second phase the opposite is true. Hence all points in the ordinary and relative diagram are above and below the diagonal, respectively. The collec-tion of the ordinary, relative and essential diagrams is re-ferred to as extended persistent homology of a time series. In contrast, ordinary persistent homology of a time se-ries is the result that is obtained from stopping the above process after the first phase, which produces just the ordi-nary diagram. In that diagram, the point corresponding to the component with birth time b = ˇf is either omitted, or recorded on a dashed line atop the rest of the points that serves as a placeholder for infinite death time. We conclude this section by providing an example of an extended persistence diagram (see Example 2.2 for an example of an ordinary persistence diagram). 
+
+Example A.1 (Extended persistence diagram) . Let 
+
+T : I → R be a time series and consider the function 
+
+f : Γ( T ) → R given by projection onto the vertical axis, that is, f (t, T (t)) = T (t) for t ∈ I. The filtrations 
+
+{Tf,h }h∈R and T f,h  
+
+> h∈R
+
+may be thought of as sweeping Γ( T ) by a horizontal line at vertical height h. In the left    
+
+> 9In technical terms, this choice stems from the fact that the connected component with birth time ˇfdies in relative homology at time ˆfduring the second phase of the filtration.
+
+part of Figure A.1, Tf,h (resp. T f,h ) is given by the por-tion of Γ( T ) that lies below (resp. above) the dashed line defined by x = h, and hence, for the choice of h depicted, consists of two (resp. three) connected components. As h
+
+passes the value ˇf = a2 from below, the connected com-ponent corresponding to the local extremum of T marked by the square is born. By definition, the death time of this component is d = ˆf , and we record this putting a point at ( b, d ) = ( ˇf , ˆf ) in the essential diagram of f . Similarly, the local minimum of T at t = e1 gives rise to a connected component of Tf,h with ( b, d ) = ( e1, d 2), and we record this tuple in the ordinary diagram of f . Proceeding like this yields the persistence diagram given in the right part of Figure A.1, where we combined the essential, ordinary and relative diagram into one. For future reference, we call the filtration from Exam-ple A.1 the horizontal filtration of a time series [14, 33]. 
+
+# B Persistence Diagrams and Ma-chine Learning 
+
+In Appendix A, we discussed how (extended or ordinary) persistent homology produces one or three diagrams as-sociated with a time series. In order to make these dia-grams usable for machine learning, one must turn these diagrams into a format suitable for processing by machine learning algorithms, a procedure known as vectorization. Vectorization methods for persistence diagrams abound, and we limit ourselves to reviewing that known as persis-tence image , as introduced in [1]. Given a persistence diagram D = {(bi, d i)}ni=1 ⊆ R2
+
+consisting of (birth, death)-pairs, one starts out by dis-carding any points from D that have at least one infinite component. One then applies the linear transformation 
+
+π : R2 → R2 given by π(x, y ) := ( x, y − x); this is a shear-ing mapping the diagonal of the persistence diagram D to the horizontal axis of R2. Define the persistence surface of π(D) as 
+
+ρπ(D) : R2 → R
+
+(x, y ) 7 → X
+
+> d∈π(D)
+
+w(d) · φd,σ 2 (x, y ),
+
+where w : R2 → R≥0 is a weighting function and 
+
+φd,σ 2 denotes the probability density function of a two-dimensional normalized Gaussian with mean d ∈ R2 and variance σ2 ∈ R>0. In words, ρπ(D) is obtained by placing a Gaussian at each point of the diagram π(D) (weighted 14 a2 e2 c2 bd
+
+b2 d1
+
+b2
+
+c2
+
+e2
+
+a2
+
+d2
+
+txe1d1c1b1a1
+
+ˆf = d2
+
+b2
+
+c2
+
+e2
+
+ˇf = a2
+
+x = h
+
+Γ( T )
+
+Figure A.1: Graph of a time series T with the horizontal filtration indicated by the line x = h (left), and the combination of the essential, ordinary and relative persistence diagrams (right). according to the position of the point) and summing these up. See Figure 3 for an illustration of this process. Finally, the persistence image is obtained by discretiz-ing a relevant subdomain of ρπ(D) into a grid of pixels and assigning each pixel the integral of ρπ(D) over that pixel, resulting in an n × m-matrix, where n and m de-note the height and width of the pixel grid, respectively. The persistence image thus created depends on the pa-rameters σ > 0 and ( n, m ) ∈ Z2
+
+> ≥1
+
+; these are referred to as the bandwidth and resolution , respectively. In practice, the persistence image is usually flattened into a vector of length nm before feeding it to machine learning algo-rithms. We conclude this section by pointing out that, in prac-tice, the weighting function w is often chosen to be 
+
+w(x, y ) = 1 or w(x, y ) = y for ( x, y ) ∈ R2. In the for-mer case, all points of a persistence diagram are weighted equally, whereas in the latter case, points of D are effec-tively weighted according to their lifetimes. 
+
+# C Non-Horizontal Filtrations for Time Series 
+
+As discussed in Appendix A, one can construct a filtration of the graph Γ( T ) ⊆ R2 of a time series T : I → R from a function f : Γ( T ) → R. Letting f be projection onto the vertical axis of R2 yields the well-known horizontal filtration of Γ( T ). Note that the horizontal filtration of a time series is sensitive only to the values of T at its local extrema, but not to the point in time at which they occur. This motivates the definition and use of non-horizontal filtrations, that is, filtrations of T that explicitly depend on the time coordinate. In the following, we define a general family of non-horizontal filtrations for time series, from which we will pick three explicit filtrations for our experiments. To that end, let T : I → R be a time series, and let F : J → [0 , 1] be continuous and bijective, where J ⊆ R is some inter-val (possibly of infinite length). Letting ˆT and ˇT denote the global maximum and minimum values that T attains, respectively, we rescale and shift the function F to obtain 
+
+G := ( ˆT − ˇT )F + ˇT : J → [ ˇT , ˆT ]. (1) By construction, the maximum and minimum values of G
+
+coincide with those of T , and, moreover, G is continuous and bijective, too. In particular, G is strictly monotonic. Defining Gh(t) := G(t − h), this implies that the graphs of Gh sweep out the strip R × [ ˇT , ˆT ] as h ranges from 
+
+−∞ to + ∞. Given a point ( t, x ) ∈ R × [ ˇT , ˆT ], this in turn guarantees that there exists a unique value h ∈ R
+
+such that Gh(t) = x. In particular, this applies to any point ( t0, T (t0)) ∈ Γ( T ), and we define fF : Γ( T ) → R
+
+as the function that maps a point ( t0, T (t0)) ∈ Γ( T ) to the unique value of h ∈ R such that Gh(t0) = T (t0). The function fF thus defines a filtration of Γ( T ), with respect to which we can compute (ordinary or extended) persistent homology of T . We call fF : Γ( T ) → R the 
+
+filtration associated to F : J → [0 , 1]. 
+
+Example C.1 (Associated filtration) . Let T : I → R be a time series with global minimum and maximum values 15 ˇT and ˆT , respectively, and consider the function defined by 
+
+F : [ −1/2, 1/2] → [0 , 1] 
+
+t 7 → t + 1 /2.
+
+Following the above, we have that Gh(t) = ( ˆT − ˇT )( t +1/2 − h) + ˇT . Given any point ( t0, T (t0)) ∈ Γ( T ), one can check that 
+
+Gh(t0) = T (t0) ⇔ h = t0 − T (t0) − ˇT
+
+ˆT − ˇT + 12 .
+
+This value of h is, by definition, the filtration value 
+
+fF (t0, T (t0)). This filtration is obtained by sweeping out the strip R × [ ˇT , ˆT ] with a line of slope ˆT − ˇT . Note that, unlike the horizontal filtration of T , this filtration explicitly depends on the time-coordinate of a point in Γ( T ). With the above, we are now in a position to introduce the non-horizontal filtrations that we will use in our ex-periments. 
+
+Definition C.2. Let T : I → R be a time series. Given a parameter c ∈ R \ { 0}, the sloped filtration of T is the filtration associated to the function 
+
+λc : [ −1/2c, 1/2c] → [0 , 1] 
+
+t 7 → ct + 1 /2.
+
+The sigmoid filtration of T is the filtration associated to the function 
+
+σc : R → [0 , 1] 
+
+t 7 → 11 + exp( −4ct ) .
+
+The arctan filtration of T is the filtration associated to the function 
+
+τc : R → [0 , 1] 
+
+t 7 → 1
+
+π arctan( cπt ) + 12 .
+
+Crucially, note that the functions λc, σc and τc in the above definition are continuous and bijective, and hence are valid functions to construct an associated filtration of a time series from. For an example illustrating the sloped filtration, see Example 4.1. For the sigmoid and arctan filtrations of 
+
+0 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+0 2 4 6 8 10 12 14 
+
+0246810 12 onset [100 × ms] x-coord. [100  × px] 
+
+Figure C.2: Sweeping curves defined by the logistic (left) and arctan (right) functions. While these curves look very similar to the naked eye, their asymptotic behaviors are quite different. this time series, one replaces the sloped line by a curve described by the logistic and the arctan functions, respec-tively, and lets that curve move from the left to the right as before. The sloped filtration can be thought of as a tilted ver-sion of the usual horizontal filtration of a time series. The idea behind the choice of the functions σc and τc in Def-inition C.2 is that these functions—unlike λc—can “look ahead” when sweeping out the strip R × [ ˇT , ˆT ] ⊆ R2 in which Γ( T ) is supported; see Figure C.2 for illustrations of these filtrations. While these filtrations look very similar to the naked eye, we choose to use them both in our experiments be-cause the logistic and the arctan functions converge to their asymptotic extrema at quite different rates. The computation from Example C.1 generalizes to an explicit formula for the filtration level of a point of Γ( T )in terms of the function F .
+
+Proposition C.3. Let T : I → R be a time series with global minimum and maximum values ˇT and ˆT , respec-tively, and let F : J → [0 , 1] be continuous and bijective, where J ⊆ R is an interval. Then the filtration level of a point (t0, T (t0)) ∈ Γ( T ) under the filtration associated to 
+
+F is given by 
+
+fF (t0, T (t0)) = t0 − F −1
+
+ T (t0) − ˇT
+
+ˆT − ˇT
+
+
+
+.
+
+Proof. By definition, the filtration level of ( t0, T (t0)) ∈
+
+Γ( T ) is given as the solution to Gh(t0) = T (t0), which, in turn, is equivalent to ( ˆT − ˇT )F (t0 − h) + ˇT = T (t0). Re-arranging, this is equivalent to F (t0 − h) = T (t0)− ˇT   
+
+> ˆT−ˇT
+
+. Note that T (t0)− ˇT   
+
+> ˆT−ˇT
+
+∈ [0 , 1], and hence the preceding equation is 16 equivalent to h = t0 − F −1
+
+ T (t0)− ˇT  
+
+> ˆT−ˇT
+
+
+
+, as desired. This proposition allows us to provide explicit formulas for the sloped, sigmoid and arctan filtration of a time series. 
+
+Corollary C.4. Let T : I → R be a time series with global minimum and maximum values ˇT and ˆT , respec-tively, and let (t0, T (t0)) ∈ Γ( T ). Given a parameter 
+
+c ∈ R \ { 0}, the sloped, sigmoid and arctan filtrations of T are given by 
+
+fλc (t0, T (t0)) = t0 − 1
+
+c
+
+ T (t0) − ˇT
+
+ˆT − ˇT − 12
+
+
+
+,fσc (t0, T (t0)) = t0 + 14c log ˆT − T (t0)
+
+T (t0) − ˇT
+
+!
+
+,
+
+and 
+
+fτc (t0, T (t0)) = t0 − 1
+
+cπ tan 
+
+
+
+π
+
+ T (t0) − ˇT
+
+ˆT − ˇT − 12
+
+ 
+
+,
+
+respectively. Proof. The sloped filtration is, by definition, the one asso-ciated to the function λc(t) = ct + 1 /2, t ∈ [−1/2c, 1/2c], whose inverse is given by λ−1 
+
+> c
+
+(x) = 1 
+
+> c
+
+(x − 1/2), x ∈ [0 , 1]. Hence, by Proposition C.3, the filtration is given by 
+
+fλc (t0, T (t0)) = t0 − 1
+
+c
+
+ T (t0) − ˇT
+
+ˆT − ˇT − 12
+
+
+
+,
+
+as claimed. For the sigmoid filtration, note that the inverse of σc is given by σ−1 
+
+> c
+
+(x) = − 14c log   1 
+
+> x
+
+− 1, x ∈ [0 , 1]. From this, we obtain that 
+
+fσc (t0, T (t0)) = t0 + 14c log ˆT − ˇTT (t0) − ˇT − 1
+
+!
+
+.
+
+Rearranging the argument of the logarithm yields the claimed formula. Finally, for the arctan filtration, note that the inverse of τc is given by τ −1 
+
+> c
+
+(x) = 1 
+
+> cπ
+
+tan ( π(x − 1/2)), x ∈ [0 , 1]. From this, we obtain that 
+
+fτc (t0, T (t0)) = t0 − 1
+
+cπ tan 
+
+
+
+π
+
+ T (t0) − ˇT
+
+ˆT − ˇT − 12
+
+ 
+
+,
+
+as claimed. We conclude this section with a couple of remarks. 1. We have that λ′
+
+> c
+
+(0) = σ′
+
+> c
+
+(0) = τ ′
+
+> c
+
+(0) = c, so that c can be regarded as a parameter that controls the slope of these functions in a consistent manner. In practice, the parameter c ∈ R \ { 0} is a hyperparameter that can be tuned according to the problem setting. 2. As a consequence of Corollary C.4, we have that 
+
+fσc (t, T (t)) = fτc (t, T (t)) = ±∞ whenever t ∈ I is such that T (t) ∈ { ˇT , ˆT }. To avoid infinite filtration values in practice, we “pad” the range of the time series T by a percentage of its actual range. This amounts to replacing the values of ˇT and ˆT in Equa-tion (1) by ˇT −ε( ˆT − ˇT ) and ˆT +ε( ˆT − ˇT ), respectively, for some small value of ε > 0. 
+
+# D Experiment Results 
+
+In Table D.1, we report for each model the mean and standard deviation of the ROC AUC across all k folds (where k = 5 for trial-level aggregation and k = 10 for reader-level aggregation). We denote by “TSH” and “BL” the models using time series homology and the baseline models, respec-tively. Moreover, we use subscripts to denote the filtra-tion used in the topological models, and to denote the name of the baseline models. For example, the model name “BL Bj¨ o+TSH horizontal ” denotes the hybrid model combining the features obtained via the baseline from [4] with those obtained via the TSH-model using the horizon-tal filtration. For the hybrid and TSH-models, we subdi-vide the result according to use of ordinary and extended persistence. We highlight in bold the best performing model in each of the four settings resulting from includ-ing/excluding L2-readers and aggregating on trial/reader-level. 17 Table D.1: Mean ROC AUC scores by model and aggregation level. Subscripts indicate standard deviation. Mean ROC AUC score Model name Including L2 Excluding L2 Ord. persistence Ext. persistence Ord. persistence Ext. persistence TRIAL-LEVEL BL Bj¨ o+TSH horizontal 0.83 0.11 0.81 0.12 0.88 0.13 0.88 0.12 
+
+BL Bj¨ o+TSH sloped 0.82 0.12 0.81 0.12 0.89 0.12 0.88 0.12 
+
+BL Bj¨ o+TSH sigmoid 0.82 0.12 0.80 0.12 0.88 0.13 0.88 0.12 
+
+BL Bj¨ o+TSH arctan 0.81 0.12 0.81 0.12 0.88 0.13 0.88 0.13 
+
+BL Raa-RF +TSH horizontal 0.82 0.12 0.75 0.13 0.86 0.16 0.83 0.15 
+
+BL Raa-RF +TSH sloped 0.85 0.09 0.77 0.12 0.86 0.17 0.83 0.16 
+
+BL Raa-RF +TSH sigmoid 0.84 0.10 0.79 0.10 0.86 0.18 0.82 0.17 
+
+BL Raa-RF +TSH arctan 0.85 0.10 0.83 0.10 0.86 0.18 0.84 0.18 
+
+BL Raa-SVC +TSH horizontal 0.87 0.07 0.87 0.07 0.86 0.19 0.88 0.18 
+
+BL Raa-SVC +TSH sloped 0.88 0.08 0.88 0.07 0.87 0.19 0.88 0.18 
+
+BL Raa-SVC +TSH sigmoid 0.87 0.08 0.88 0.07 0.86 0.21 0.86 0.21 
+
+BL Raa-SVC +TSH arctan 0.87 0.08 0.85 0.11 0.87 0.20 0.87 0.20 
+
+BL Bj¨ o 0.81 0.16 0.84 0.21 
+
+BL Raa-RF 0.82 0.14 0.87 0.17 
+
+BL Raa-SVC 0.85 0.12 0.87 0.18 
+
+TSH horizontal 0.80 0.19 0.80 0.19 0.85 0.18 0.85 0.19 
+
+TSH sloped 0.80 0.17 0.81 0.17 0.87 0.16 0.87 0.16 
+
+TSH sigmoid 0.79 0.17 0.79 0.16 0.85 0.18 0.85 0.19 
+
+TSH arctan 0.76 0.17 0.77 0.17 0.83 0.15 0.84 0.16 
+
+> READER-LEVEL
+
+BL Bj¨ o+TSH horizontal 0.89 0.07 0.75 0.08 0.96 0.05 0.87 0.13 
+
+BL Bj¨ o+TSH sloped 0.77 0.14 0.80 0.15 0.92 0.10 0.88 0.19 
+
+BL Bj¨ o+TSH sigmoid 0.84 0.15 0.84 0.13 0.92 0.08 0.94 0.05 
+
+BL Bj¨ o+TSH arctan 0.80 0.15 0.76 0.11 0.90 0.16 0.91 0.09 
+
+BL Raa-RF +TSH horizontal 0.84 0.16 0.64 0.10 0.86 0.09 0.85 0.12 
+
+BL Raa-RF +TSH sloped 0.85 0.18 0.79 0.16 0.82 0.11 0.89 0.06 
+
+BL Raa-RF +TSH sigmoid 0.89 0.12 0.81 0.12 0.88 0.14 0.93 0.10 
+
+BL Raa-RF +TSH arctan 0.87 0.11 0.86 0.09 0.80 0.20 0.94 0.05 
+
+BL Raa-SVC +TSH horizontal 0.89 0.11 0.90 0.13 0.98 0.03 0.97 0.07 
+
+BL Raa-SVC +TSH sloped 0.84 0.13 0.86 0.13 0.95 0.07 0.95 0.07 
+
+BL Raa-SVC +TSH sigmoid 0.92 0.10 0.88 0.12 0.99 0.02 0.99 0.02 
+
+BL Raa-SVC +TSH arctan 0.87 0.11 0.90 0.09 0.99 0.02 0.99 0.02 
+
+BL Bj¨ o 0.89 0.08 0.93 0.08 
+
+BL Raa-RF 0.88 0.12 0.94 0.08 
+
+BL Raa-SVC 0.88 0.10 0.97 0.04 
+
+TSH horizontal 0.84 0.16 0.84 0.16 0.92 0.09 0.87 0.11 
+
+TSH sloped 0.81 0.18 0.84 0.12 0.95 0.07 0.90 0.12 
+
+TSH sigmoid 0.83 0.21 0.82 0.11 0.93 0.10 0.92 0.05 
+
+TSH arctan 0.88 0.17 0.83 0.17 0.80 0.19 0.87 0.11 
+
+18
