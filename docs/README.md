@@ -6,73 +6,73 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-29
-- 运行时间：2026-04-29 21:05:26 UTC
+- 最新运行日期：2026-04-30
+- 运行时间：2026-04-30 20:47:55 UTC
 - 运行状态：成功
 - 本次总论文数：17
 - 精读区：6
 - 速读区：11
 
 ### 今日简报（AI）
-探索多模态理解与语言认知神经机制，今日共浏览 17 篇论文。  
-重点成果聚焦于跨注意力动态精炼的表情包理解及句法歧义的时间解耦。  
-建议普通读者关注 AI 语义理解与人脑语言处理的交叉研究新进展。
-- 详情：[/202604/29/README](/202604/29/README)
+今日聚焦脑功能与视觉理解，精读与速读共 17 篇论文，高分成果频出。  
+最亮点来自多模态表征与脑区侧化分析：从跨注意力机制的表情包理解，到瞳孔与注视时长揭示左右脑差异。  
+建议关注 AI 与认知神经科学融合的新方法，尤其在语言与视觉交叉应用上的潜力。
+- 详情：[/202604/30/README](/202604/30/README)
 
 ### 精读区论文标签
-1. [DARC-CLIP: Dynamic Adaptive Refinement with Cross-Attention for Meme Understanding](/202604/29/2604.23214v2-darc-clip-dynamic-adaptive-refinement-with-cross-attention-for-meme-understanding)  
+1. [DARC-CLIP: Dynamic Adaptive Refinement with Cross-Attention for Meme Understanding](/202604/30/2604.23214v1-darc-clip-dynamic-adaptive-refinement-with-cross-attention-for-meme-understanding)  
    标签：评分：9.0/10、query:q3
-   evidence：模因中讽刺与幽默分类的多模态线索
-2. [Temporal Dissociation of Syntactic Disambiguation and Memory Retrieval during Sentence Processing: Naturalistic MEG Evidence from Interpretable Models](/202604/29/biorxiv-10-64898-2026-04-20-719609-v1-temporal-dissociation-of-syntactic-disambiguation-and-memory-retrieval-during-sentence-processing-naturalistic-meg-evidence-from-interpretable-models)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：利用MEG研究句子加工中的句法消歧与记忆检索
-3. [A multimodal dataset of EEG, eye-tracking, and physiological signals during naturalistic smartphone interactions](/202604/29/biorxiv-10-64898-2026-04-21-719334-v1-a-multimodal-dataset-of-eeg-eye-tracking-and-physiological-signals-during-naturalistic-smartphone-interactions)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：自然交互过程中EEG和眼动追踪的多模态数据集
-4. [Working Memory Constraints Scaffold Learning in Transformers under Data Scarcity](/202604/29/2604.20789v2-working-memory-constraints-scaffold-learning-in-transformers-under-data-scarcity)  
-   标签：评分：8.5/10、query:q5
-   evidence：与人类阅读时间数据和语言加工中的认知约束对齐
-5. [SpeechParaling-Bench: A Comprehensive Benchmark for Paralinguistic-Aware Speech Generation](/202604/29/2604.20842v1-speechparaling-bench-a-comprehensive-benchmark-for-paralinguistic-aware-speech-generation)  
-   标签：评分：8.5/10、query:q8
-   evidence：语音生成中副语言线索和韵律特征的基准
-6. [The language network responds robustly to sentences across diverse tasks](/202604/29/biorxiv-10-64898-2025-12-02-691902-v2-the-language-network-responds-robustly-to-sentences-across-diverse-tasks)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：语言网络在不同阅读任务中的稳定性
+   evidence：模因中讽刺和幽默理解的多模态线索
+2. [EyeBrain: Left and Right Brain Lateralization Activity Classification Through Pupil Diameter and Fixation Duration](/202604/30/2604.23562v1-eyebrain-left-and-right-brain-lateralization-activity-classification-through-pupil-diameter-and-fixation-duration)  
+   标签：评分：9.0/10、query:q5
+   evidence：使用瞳孔直径和注视时长在认知任务中对大脑侧化进行分类
+3. [MemeScouts@LT-EDI 2026: Asking the Right Questions -- Prompted Weak Supervision for Meme Hate Speech Detection](/202604/30/2604.24179v1-memescoutslt-edi-2026-asking-the-right-questions----prompted-weak-supervision-for-meme-hate-speech-detection)  
+   标签：评分：9.0/10、query:q2
+   evidence：使用视觉语言模型检测多模态模因中的讽刺和反语
+4. [DARC-CLIP: Dynamic Adaptive Refinement with Cross-Attention for Meme Understanding](/202604/30/2604.23214v2-darc-clip-dynamic-adaptive-refinement-with-cross-attention-for-meme-understanding)  
+   标签：评分：8.5/10、query:profile-1
+   evidence：对模因中讽刺和幽默的多模态线索进行建模
+5. [MemeScouts@LT-EDI 2026: Asking the Right Questions -- Prompted Weak Supervision for Meme Hate Speech Detection](/202604/30/2604.24179v2-memescoutslt-edi-2026-asking-the-right-questions----prompted-weak-supervision-for-meme-hate-speech-detection)  
+   标签：评分：8.5/10、query:q2
+   evidence：使用视觉语言模型处理多模态迷因中的讽刺和反语检测
+6. [ALPARC: Artificial Languages with Phonological and Acoustic Rhythmicity Controls](/202604/30/biorxiv-10-1101-2024-05-24-595268-v3-alparc-artificial-languages-with-phonological-and-acoustic-rhythmicity-controls)  
+   标签：评分：8.5/10、query:q1
+   evidence：具有音系和声学节律控制的人工语言工具箱
 
 ### 速读区论文标签
-1. [DialToM: A Theory of Mind Benchmark for Forecasting State-Driven Dialogue Trajectories](/202604/29/2604.20443v1-dialtom-a-theory-of-mind-benchmark-for-forecasting-state-driven-dialogue-trajectories)  
-   标签：评分：8.0/10、query:q6
-   evidence：对话中心理状态预测的心理理论基准
-2. [Looking Into the Past: Eye Movements Characterize Elements of Autobiographical Recall in Interviews with Holocaust Survivors](/202604/29/2604.22016v1-looking-into-the-past-eye-movements-characterize-elements-of-autobiographical-recall-in-interviews-with-holocaust-survivors)  
-   标签：评分：8.0/10、query:q5
-   evidence：眼动特征化记忆提取与语义维度
-3. [EyeBrain: Left and Right Brain Lateralization Activity Classification Through Pupil Diameter and Fixation Duration](/202604/29/2604.23562v1-eyebrain-left-and-right-brain-lateralization-activity-classification-through-pupil-diameter-and-fixation-duration)  
-   标签：评分：8.0/10、query:q5
-   evidence：使用注视时长等眼动指标揭示认知状态
-4. [Exploring the impact of social relevance on the cortical tracking of speech: viability and temporal response characterisation](/202604/29/biorxiv-10-1101-2025-09-23-674728-v2-exploring-the-impact-of-social-relevance-on-the-cortical-tracking-of-speech-viability-and-temporal-response-characterisation)  
-   标签：评分：8.0/10、query:q7
-   evidence：社交互动与对话中语音的脑电响应
-5. [Fixation Sequences as Time Series: A Topological Approach to Dyslexia Detection](/202604/29/2604.21698v1-fixation-sequences-as-time-series-a-topological-approach-to-dyslexia-detection)  
-   标签：评分：7.5/10、query:q5
-   evidence：该论文介绍了用于分析阅读任务中眼动数据的拓扑方法，以检测阅读障碍。
-6. [DARC-CLIP: Dynamic Adaptive Refinement with Cross-Attention for Meme Understanding](/202604/29/2604.23214v1-darc-clip-dynamic-adaptive-refinement-with-cross-attention-for-meme-understanding)  
-   标签：评分：7.5/10、query:profile-1
-   evidence：该论文通过建模视觉和文本信号等多模态线索，来理解网络模因中的反讽和幽默。
-7. [Benchmarking Source-Sensitive Reasoning in Turkish: Humans and LLMs under Evidential Trust Manipulation](/202604/29/2604.24665v1-benchmarking-source-sensitive-reasoning-in-turkish-humans-and-llms-under-evidential-trust-manipulation)  
-   标签：评分：7.5/10、query:q6
-   evidence：关于语用语言现象和来源敏感推理的受控实验
-8. [Independent-Component-Based Encoding Models of Brain Activity During Story Comprehension](/202604/29/2604.24942v1-independent-component-based-encoding-models-of-brain-activity-during-story-comprehension)  
+1. [Fixation Sequences as Time Series: A Topological Approach to Dyslexia Detection](/202604/30/2604.21698v1-fixation-sequences-as-time-series-a-topological-approach-to-dyslexia-detection)  
+   标签：评分：8.5/10、query:q5
+   evidence：使用注视序列分析阅读过程中的眼动追踪数据
+2. [Independent-Component-Based Encoding Models of Brain Activity During Story Comprehension](/202604/30/2604.24942v1-independent-component-based-encoding-models-of-brain-activity-during-story-comprehension)  
+   标签：评分：8.5/10、query:q7
+   evidence：使用大语言模型表示对自然故事倾听期间的大脑活动进行编码建模
+3. [Theory of mind predicts conversational success in early right hemisphere stroke recovery](/202604/30/biorxiv-10-64898-2026-04-23-720418-v1-theory-of-mind-predicts-conversational-success-in-early-right-hemisphere-stroke-recovery)  
+   标签：评分：8.5/10、query:q6
+   evidence：将对话成功与推断说话者意图和语用意义联系起来
+4. [Working Memory Constraints Scaffold Learning in Transformers under Data Scarcity](/202604/30/2604.20789v1-working-memory-constraints-scaffold-learning-in-transformers-under-data-scarcity)  
+   标签：评分：8.0/10、query:profile-1
+   evidence：与人类阅读时间数据和语法判断任务的一致性
+5. [Reheat Nachos for Dinner? Evaluating AI Support for Cross-Cultural Communication of Neologisms](/202604/30/2604.23842v1-reheat-nachos-for-dinner-evaluating-ai-support-for-cross-cultural-communication-of-neologisms)  
+   标签：评分：7.5/10、query:q10
+   evidence：非母语者在跨文化交流中对新词和俚语的理解
+6. [A Dual-Task Paradigm to Investigate Sentence Comprehension Strategies in Language Models](/202604/30/2604.26351v1-a-dual-task-paradigm-to-investigate-sentence-comprehension-strategies-in-language-models)  
+   标签：评分：7.5/10、query:q1
+   evidence：研究语言模型中的句子理解策略和阅读时间
+7. [Sensorimotor dynamics differentiate singing and speaking](/202604/30/biorxiv-10-64898-2025-12-19-695607-v3-sensorimotor-dynamics-differentiate-singing-and-speaking)  
+   标签：评分：7.5/10、query:q1
+   evidence：使用颅内脑电图比较唱歌和说话的言语产生神经机制
+8. [Brain2VLM: Hierarchical Alignment Between Cortical Representations and Vision-Language Latent Spaces](/202604/30/biorxiv-10-64898-2026-04-23-720313-v1-brain2vlm-hierarchical-alignment-between-cortical-representations-and-vision-language-latent-spaces)  
    标签：评分：7.5/10、query:q7
-   evidence：利用fMRI和LLM表征研究故事理解和语言输入处理的神经机制
-9. [Secure Storage and Privacy-Preserving Scanpath Comparison via Garbled Circuits in Eye Tracking](/202604/29/2604.19422v1-secure-storage-and-privacy-preserving-scanpath-comparison-via-garbled-circuits-in-eye-tracking)  
+   evidence：皮层表征与视觉-语言潜空间之间的对齐
+9. [Following the Eye-Tracking Evidence: Established Web-Search Assumptions Fail in Carousel Interfaces](/202604/30/2604.21019v1-following-the-eye-tracking-evidence-established-web-search-assumptions-fail-in-carousel-interfaces)  
    标签：评分：6.5/10、query:q5
-   evidence：眼动追踪中的隐私保护扫描路径比较
-10. [MemeScouts@LT-EDI 2026: Asking the Right Questions -- Prompted Weak Supervision for Meme Hate Speech Detection](/202604/29/2604.24179v1-memescoutslt-edi-2026-asking-the-right-questions----prompted-weak-supervision-for-meme-hate-speech-detection)  
-   标签：评分：6.5/10、query:profile-1
-   evidence：针对模因中讽刺与反语的多模态推理
-11. [MemeScouts@LT-EDI 2026: Asking the Right Questions -- Prompted Weak Supervision for Meme Hate Speech Detection](/202604/29/2604.24179v2-memescoutslt-edi-2026-asking-the-right-questions----prompted-weak-supervision-for-meme-hate-speech-detection)  
-   标签：评分：6.5/10、query:profile-1
-   evidence：该论文探讨了利用视觉语言模型识别模因（meme）中讽刺和反语等多模态线索。
+   evidence：在轮播界面上进行的眼动追踪研究以分析用户行为
+10. [Multimodal QUD: Inquisitive Questions from Scientific Figures](/202604/30/2604.23733v1-multimodal-qud-inquisitive-questions-from-scientific-figures)  
+   标签：评分：6.5/10、query:q1
+   evidence：多模态科学文本中的人类话语理解与交流目标
+11. [Modeling the Brain as an Information Source: An Information-Theoretic Framework for Decoding Cognitive States from fMRI](/202604/30/biorxiv-10-64898-2026-04-21-719919-v1-modeling-the-brain-as-an-information-source-an-information-theoretic-framework-for-decoding-cognitive-states-from-fmri)  
+   标签：评分：6.5/10、query:q7
+   evidence：用于在任务期间从 fMRI 解码认知状态的信息论框架
 
 
 <div class="dpr-home-promo-card">
