@@ -1,0 +1,411 @@
+Title: Representational Curvature Modulates Behavioral Uncertainty in Large Language Models
+
+URL Source: https://arxiv.org/pdf/2604.23985v1
+
+Published Time: Tue, 28 Apr 2026 01:38:59 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# REPRESENTATIONAL CURVATURE MODULATES BEHAVIORAL 
+
+# UNCERTAINTY IN LARGE LANGUAGE MODELS 
+
+Jack King 
+
+Brain and Cognitive Sciences Massachusetts Institute of Technology Cambridge, MA 02139 
+
+jackking@mit.edu 
+
+Evelina Fedorenko 
+
+Brain and Cognitive Sciences Massachusetts Institute of Technology Cambridge, MA 02139 
+
+Eghbal A. Hosseini ∗
+
+Brain and Cognitive Sciences Massachusetts Institute of Technology Cambridge, MA 02139 
+
+ehoseini@mit.edu 
+
+April 28, 2026 
+
+ABSTRACT 
+
+In autoregressive large language models (LLMs), temporal straightening offers an account of how the next-token prediction objective shapes representations. Models learn to progressively straighten the representational trajectory of input sequences across layers, potentially facilitating next-token predic-tion via linear extrapolation. However, a direct link between this trajectory and token-level behavior has been missing. We provide such a link by relating contextual curvature —a geometric measure of how sharply the representational trajectory bends over recent context—to next-token entropy. Across two models (GPT-2 XL and Pythia-2.8B), contextual curvature is correlated with entropy, and this relationship emerges during training. Perturbation experiments reveal selective dependence: manipulating curvature through trajectory-aligned interventions reliably modulates entropy, while geometrically misaligned perturbations have no effect. Finally, regularizing representations to be straighter during training modestly reduces token-level entropy without degrading validation loss. These results identify trajectory curvature as a task-aligned representational feature that influences behavioral uncertainty in LLMs. 
+
+1 Introduction 
+
+Large language models (LLMs) are general-purpose neural networks that autoregressively integrate their inputs into a predictive distribution over the next observation (Radford et al., 2017). Work in mechanistic interpretability has examined the relationship between inputs, internal representations, and outputs in LLMs using representational analyses, circuit-level dissection, and normative frameworks (Liu et al., 2019; Hewitt and Manning, 2019; Olsson et al., 2022; Simon et al., 2024; Templeton et al., 2024; Jin et al., 2025). While most of these studies have characterized the representations and computations that enable model behavior, fewer have asked what the next-token prediction objective itself demands of those representations. Grounding representational hypotheses in the mechanics of this objective is critical, since it is the pressure that shapes them in the first place. One candidate framework for linking objective to representation in temporal prediction systems comes from computa-tional neuroscience. Directly predicting raw sensory input is intractable due to highly nonlinear relationships between successive states (e.g., pixel values across video frames), but transforming sequences into appropriate neural represen-
+
+> ∗
+
+Now at Google DeepMind 
+
+> arXiv:2604.23985v1 [cs.AI] 27 Apr 2026
+
+A PREPRINT - A PRIL 28, 2026 Transformer layers      
+
+> Contextual curvature Curvature
+> Token
+> P(token)
+> Sentence 1 embed unembed Sentence 2
+> Low entropy High entropy Curvature Entropy
+> Transformer block Curvature Entropy
+> Curvature Curvature predicting entropy ABCD
+
+Figure 1: (A) Schematic of the LLM architecture, focusing on the token representation in the residual stream after each transformer block. (B) Hypothesized relationship between the input, internal representation, and output for an easy-to-predict sentence (Sentence 1) versus a hard-to-predict sentence (Sentence 2). A predictable sentence is expected to have a straighter internal representation (lower curvature). Consequently, the set of possible next tokens is smaller, which leads to lower entropy. Conversely, a hard-to-predict sentence is expected to show higher curvature and result in higher entropy. (C) The formulation of contextual curvature used to predict token entropy. (D) The hypothesized relationship between the change in average curvature across layers and the corresponding change in how well contextual curvature predicts token entropy. tations can organize temporal trajectories into geometrically predictable patterns. Hénaff et al. (2019) demonstrated that perceptual representations of visual sequences are straightened in the human visual system, making it easier to extrapolate to future states. Evidence for this temporal straightening principle extends to primate visual cortex (Hénaff et al., 2021), and there is recent evidence that predictive learning directly reshapes representational geometry in the brain (Greco et al., 2024). Language, too, exhibits rich temporal structure at multiple scales (Gibson, 2000; Levy, 2008), making LLMs a natural domain to test whether similar geometric principles apply. Hosseini and Fedorenko (2023) showed that in autoregressive language models, trajectory curvature is high and near the chance level in early layers but progressively decreases across the network, reaching a minimum in middle layers, particularly for more predictable sequences. However, whether this geometry plays a functional role in shaping token-level behavior remains an open question. We address this question by relating contextual curvature —a measure of how sharply the representation trajectory bends over recent context—to next-token entropy, a measure of model uncertainty (Geng et al., 2024). The temporal straightening hypothesis implies that when the representational trajectory is straight, future states are predictable from past states; when it bends, the next state is harder to predict (temporal straightening schematic in Fig. 1). We provide three lines of evidence for this relationship. First, we show that curvature is predictive of next-token entropy, and that this relationship emerges over the course of training. Second, we demonstrate that targeted perturbations along the representation trajectory modulate entropy more effectively than nonspecific perturbations. Finally, we show that auxiliary objectives targeting curvature can reshape the entropy of the output distribution without degrading task performance. Together, these results support trajectory curvature as a task-aligned representational feature influencing output uncertainty, and provide further evidence that temporal straightening could be a functional solution to next-token prediction. 
+
+2 Methods 
+
+2.1 Models 
+
+We analyzed two open-source autoregressive transformer language models: GPT-2 XL (Radford et al., 2019) and Pythia-2.8B (Biderman et al., 2023). While both models were trained with a next-token prediction objective, they differ in architecture, parameter count, and pretraining data (Table 1). We selected them to span distinct positional encoding schemes (learned vs. rotary), training corpora, and model scale. In addition, Pythia’s open-source training checkpoints allow us to track representational changes over the course of training, and we use the GPT-2 Small architecture for our own controlled training experiments. 2A PREPRINT - A PRIL 28, 2026 Table 1: Architectural properties of analyzed models.                
+
+> Model Dim Layers Heads Params Pos. Embd. GPT-2 XL 1600 48 25 1.5B Learned Pythia-2.8B 2560 32 32 2.8B Rotary
+
+2.2 Datasets long-context: LAMBADA (Paperno et al., 2016) consists of narrative passages selected so that humans can predict the final word only when given the full passage, not when shown only the immediately preceding sentence. We use this dataset because it emphasizes long-range contextual dependencies, providing a natural setting in which the structure of the contextual representation leading up to a token is likely to play a critical role in next-token prediction. This makes it well-suited for evaluating how geometric properties of internal representations relate to uncertainty and prediction. We use the term long-context to refer to this dataset. 
+
+short-context: We selected sentences from the Universal Dependencies corpus, which spans diverse topics such as books, newspapers, and web-based sources. Sentences were filtered to include only those with the 100K most frequent English nouns, removing abbreviations. To identify sentences with balanced linguistic dependencies, we limited sentence length to 10–30 tokens. This process yielded 5,815 sentences, which we refer to as the short-context dataset. 
+
+2.3 Contextual Curvature 
+
+Following Hosseini and Fedorenko (2023), we computed curvature based on neural trajectories of token activations within a sequence. In our formulation, each token is treated as a point in high-dimensional representation space, and curvature quantifies how sharply the trajectory bends at that point. Given a sequence of tokens w1, w 2, ..., w n, we extracted their hidden states from the residual stream following each transformer layer, beginning with the first contextualized layer L0. Denote the activation at position k in layer Lp as xpk.We computed first-order difference vectors as: 
+
+vpk = xpk+1 − xpk
+
+Curvature at position k was then defined as the angle between adjacent difference vectors (Hosseini and Fedorenko, 2023): 
+
+cpk = arccos 
+
+ vpk+1 · vpk
+
+∥vpk+1 ∥ ∥ vpk ∥
+
+
+
+We define the contextual curvature associated with token wk at layer p as the average curvature over a backward-looking window. We chose a window of size three because window sizes greater than three did not add predictive power to our regression modeling (Fig. A5): 
+
+Cpk = 13
+
+> k−2
+
+X
+
+> i=k−4
+
+cpi
+
+This provides a localized, contextual measure of changes in direction in the representational trajectory leading up to a token. 
+
+2.4 Next-Token Entropy 
+
+To quantify model uncertainty at each token position, we computed next-token entropy from the model’s output logits (Geng et al., 2024). For a given position n, next-token entropy is defined as: 
+
+H(wn) = − X
+
+> i
+
+P (wi | w1: n−1) log 2 P (wi | w1: n−1)
+
+where P (wi | w1: n−1) is the probability assigned to token wi given the preceding context. These probabilities were obtained by applying a softmax over the model’s vocabulary logits at position n.3A PREPRINT - A PRIL 28, 2026 Entropy was computed for each token at positions n > 6 to ensure sufficient context. Higher entropy indicates greater uncertainty in next-token prediction, while lower entropy reflects more confident, peaked distributions. 
+
+2.5 Analysis of Correlation Between Curvature and Entropy 
+
+To quantify the linear relationship between internal representation and predictive uncertainty, we use 10-fold cross-validated ordinary least squares regression to predict next-token entropy from scalar representational features. Our primary predictor is contextual curvature. For each token, we compute its contextual curvature and the entropy of the subsequent token distribution. In each fold, we fit an OLS model with an intercept on the training split and generate predictions on the held-out split. Predictive performance is quantified by the Pearson correlation ( r) between predicted and observed entropy within each test fold. Although this setting involves a single scalar predictor, we adopt a cross-validated protocol to estimate the association out of sample and to ensure comparability with analyses involving additional predictors. To summarize performance, we compute the Pearson correlation separately for each fold, apply a Fisher z-transform, average in z-space, and transform back to obtain a pooled estimate of the expected out-of-sample correlation. We estimate uncertainty using a t-based 95% confidence interval over the fold-wise Fisher-transformed correlations (df = 9 ), and report these intervals as error bars in figures. The same procedure is repeated using contextual magnitude and contextual distance as predictors, reported in the Appendix (Fig. A1). Additional analyses controlling for unigram probability are provided in the Appendix as well (Fig. A2). 
+
+2.6 Perturbation Experiments 
+
+To evaluate the role of contextual curvature in token-level behavior, we designed perturbation experiments in which we applied localized modifications to the residual stream at individual token positions, inducing controlled changes in contextual curvature ( ∆C). We then measured the resulting changes in next-token entropy ( ∆H). For each token position k, we extracted the residual-stream activation xpk ∈ Rd from an intermediate layer. Perturbations were applied additively, 
+
+˜xpk = xpk + δ, 
+
+and the forward pass was continued from ˜xpk while keeping all other activations fixed. All perturbation experiments were conducted with the long-context dataset at intermediate layers, where we suspect extrapolation might occur (Fig. 2: 21 for GPT-2 XL, 11 for Pythia-2.8B). Perturbations are scaled relative to local trajectory geometry: |δ| = 0 .2|vpk |,where vpk = xpk+1 − xpk is the displacement to the next token. This ties the perturbation scale to the intrinsic step size of the trajectory at each position, ensuring comparable relative effects across tokens and layers. We considered five perturbation types, differing only in the geometric subspace from which δ was drawn. These conditions form a ladder of increasing alignment with the model’s representational trajectory: full-space and random-subspace are trajectory-agnostic; activation-subspace controls for low-rank, data-aligned structure without trajectory alignment; trajectory- and planar-subspaces impose trajectory alignment at increasing specificity. Activation-subspace rules out the alternative that any low-dimensional, data-relevant direction would suffice. For the subspace-based perturbations, we fix the subspace dimensionality to m = 2 for parity with the planar subspace; results are robust for 
+
+m ∈ { 2, 5, 10 }.1. Full-space: directions drawn from the unit sphere in Rd.2. Random-subspace: directions drawn from a randomly oriented m-dimensional subspace of Rd. Controls for dimensionality while remaining trajectory-agnostic. 3. Activation-subspace: directions drawn from the m-dimensional subspace defined by the top principal components of residual-stream activations at layer p. Captures the dominant directions of variation in the data, but is not aligned with any individual sample’s trajectory. 4. Trajectory-subspace: directions drawn from a per-sample m-dimensional subspace defined by the top principal components of that sample’s own difference vectors xpi+1 − xpi for i = 0 , . . . , k .5. Planar-subspace: directions restricted to the two-dimensional subspace spanned by the two most recent difference vectors for each token. This is the tightest possible alignment with the plane in which contextual curvature is defined; it is a special case of trajectory-subspace using only the last two difference vectors rather than PCs over the full recent path. 4A PREPRINT - A PRIL 28, 2026 For each perturbation, we recomputed contextual curvature ˜Cpk and next-token entropy ˜H(wk+1 ), and defined 
+
+∆C = ˜Cpk − Cpk , ∆H = ˜H(wk+1 ) − H(wk+1 ).
+
+For each token, we sampled N = 300 perturbations and computed the Pearson correlation between ∆C and ∆H across perturbations. These correlations were averaged across tokens to obtain a mean effect size for each perturbation family, with 95% confidence intervals computed by bootstrap resampling over tokens. To isolate the effect of geometric alignment from perturbation scale, we applied importance reweighting to match the marginal distribution of |∆C| across perturbation families before computing correlations (see Appendix A.4). 
+
+2.7 Training with Curvature Regularization 
+
+To examine how training shapes representational geometry, we trained a 12-layer GPT-2 model (GPT-2 Small) with a 512-token context window from scratch. The training dataset consisted of BookCorpus and English Wikipedia, combined in a 1:3 ratio, totaling 100 million tokens. Models were trained on the next-token prediction objective with randomly initialized weights, a batch size of 128, and a fixed validation set used across all runs. Training was terminated at the point of best validation loss. To directly influence internal geometry, we introduced an auxiliary loss that penalized mean trajectory curvature. Specifically, we added a regularization term at layers 7 and 8 of the form: 
+
+Lp 
+
+> curv
+
+= 1
+
+n λ
+
+> n
+
+X
+
+> k=0
+
+cpk
+
+where cpk is the angle-based curvature at position k in layer p, n is the number of curves, and λ is a weight linearly annealed from 0 to its maximum value ( 1 × 10 −2) over the course of training. The total loss combined the next-token cross-entropy loss with this curvature penalty. Including the curvature penalty resulted in an untangled model, whereas including the negative of the curvature penalty resulted in a tangled model. Layers 7 and 8 were chosen because these are the layers where trajectories are typically straightest and where curvature–entropy coupling is strongest, suggesting these layers are where the structure of the trajectory most impacts behavior. Furthermore, we found that training with regularization at other layers consistently increased validation loss, suggesting middle layers are also where representational geometry is most amenable to being reshaped without disrupting the model’s predictive capacity. Optimization was performed using AdamW with a learning rate of 3 × 10 −4. Gradient clipping with a max norm of 1.0 was used to promote stability. 
+
+2.8 Evaluation of Regularized Models 
+
+For each dataset, we first identified the subset of sentences that exhibited both (1) increased curvature in the tangled models relative to baseline, and (2) decreased curvature in the untangled models relative to baseline. This ensured that the auxiliary loss had a consistent directional effect on those sentences. For each sentence in this subset, we computed the token-wise difference in next-token entropy between each auxiliary-loss model and its corresponding baseline. This was done independently for three models per condition (baseline, untangled, tangled), each trained with a different random seed. 
+
+3 Results 
+
+3.1 Contextual Curvature Predicts Token Entropy 
+
+We start by establishing a link between contextual curvature—a representational measure—and entropy—a behavioral readout of uncertainty. We establish this relationship using cross-validated linear regression between token-wise contextual curvature and the entropy of the subsequent predictive distribution. Contextual curvature in the middle layers was positively correlated with entropy. To assess generality, we evaluate this effect across datasets and across two autoregressive models—GPT-2 XL (Radford et al., 2019) and Pythia (Biderman et al., 2023)—which differ in architecture, training data, and positional encoding schemes. The layers that exhibit the lowest average curvature are also the ones where contextual curvature at individual tokens is the most predictive of next-token entropy, and these occur consistently in the middle of the network (Fig. 2). In GPT-2 5A PREPRINT - A PRIL 28, 2026 gpt2-xl pythia-2.8b                       
+
+> Curvature (degrees) Transformer layers Transformer layers Emb 10 20 30 40 50 0.00 0.04 0.08 0.12 0.16 510 15 20 25 30 0.00 0.04 0.08 0.12 0.16 10 20 30 40 50 112 114 116 118 120 510 15 20 25 30 112 114 116 118 120 Emb Emb Emb
+> ABCD
+> Pearson’s corr. coeffi.
+
+Figure 2: Curvature and entropy relationship across layers. (A) Average contextual curvature across transformer layers in GPT-2 XL on the long-context dataset. ( B) Same as (A) for Pythia-2.8B. In both models, curvature decreases from early layers and reaches a minimum in the middle of the network. ( C) Predictive performance (Pearson r) of contextual curvature for next-token entropy across layers in GPT-2 XL. ( D) Same as (C) for Pythia-2.8B. In both cases, predictivity increases across layers and peaks around the layers of minimal curvature. XL, average curvature decreases steadily from early layers to a minimum around layer 23 (out of 48) (Fig. 2A). This reduction is accompanied by a monotonic increase in predictive correlation between curvature and next-token entropy, with maximal predictive power occurring near the layer of minimal curvature (Fig. 2C). The same pattern is observed in the Pythia-2.8B model (Fig. 2B, D), indicating that this relationship generalizes across models. Although the resulting correlations are modest in absolute magnitude (peaking around r ≈ 0.15 ), we suspected that this could be a result of how we defined our measure. Contextual curvature is measured at individual token positions and is a single scalar summary of a rich, high-dimensional representation. Predictive entropy depends on many additional factors encoded in the high-dimensional representation. Nevertheless, these correlations are highly consistent across layers, datasets, and model classes, and at the straightest layers exceed those obtained using alternative scalar features. By contrast, control measures based on activation magnitude and trajectory distance show weaker or later-emerging relationships with entropy (Fig. A1), indicating that curvature uniquely captures uncertainty-relevant geometry in the middle layers. 
+
+3.2 Training Links Curvature with Entropy 
+
+Previous work has established that curvature reduction in middle layers emerges gradually over the course of pretraining (Hosseini and Fedorenko, 2023; Skean et al., 2025). Here we asked whether the coupling between curvature and entropy emerges in tandem. Pythia-2.8B provides model checkpoints throughout training, allowing us to track this relationship over time. Specifically, we analyzed model checkpoints at logarithmically spaced intervals over a 300-billion-token training run ( 0% , 0.007% , 0.07% , 0.7% , 7% , 70% ), measuring internal curvature, its predictivity of next-token entropy, and average token-level entropy on the long-context dataset. The representational curvature gradually decreased over all layers during the course of training (Fig. 3A). Initially, the layer-wise curvature profile is relatively flat, with all layers exhibiting high curvature comparable to the embedding layer (Fig. 3A; 0% , 0.007% , 0.07% ). With additional training, curvature begins to decrease in early layers and reaches a minimum in the middle layers. By 70% of training (Fig. 3A; 70% ), the curvature profile closely resembles that of the fully trained model. Critically, these changes in representational curvature coincide with the emergence of a link to output entropy. In the earliest stages of training, curvature is only weakly predictive of next-token entropy (Fig. 3B; 0% , 0.007% , 0.07% ). However, around 0.7% of training, a distinct transition occurs: curvature decreases substantially across the early-to-middle layers, and the predictive power of curvature rises sharply in tandem. This relationship continues to strengthen over training. By the final checkpoint, the middle layers are also the most predictive of entropy. The parallel training-dynamics analysis for control measures (activation magnitude and trajectory distance) shows weaker or later-emerging coupling, mirroring the static comparison (Fig. A3). 6A PREPRINT - A PRIL 28, 2026 Curvature (degrees) % trainining data (300B) 0.00 0.15 Curvature (degrees) 112 120 0 10 20 30                                                                      
+
+> Pearson’s corr. coeffi.
+> 010 20 30 112 120 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+> ABC
+> 10 Entropy 0.007 .07 0.7 7.0 70.0% 2
+> Pearson’s corr. (r)
+> 0.12 0.02
+> Pearson’s corr. (r)
+> 0.02 0.06 0.10 0.14 % trainining data (300B) 0.007 .07 0.7 7.0 70.0% % trainining data (300B) 0.007 .07 0.7 7.0 70.0% % trainining data (300B) 0.007 .07 0.7 7.0 70.0%
+> DEF
+
+Figure 3: Training dynamics of curvature and uncertainty. (A) Layer-wise contextual curvature across training checkpoints for Pythia-2.8B on the long-context dataset. ( B) Predictive performance (Pearson r) of contextual curvature for next-token entropy across layers at the same checkpoints. ( C) Average curvature at the minimum-curvature layer over training. ( D) Average token-level entropy over training. ( E) Predictivity of contextual curvature measured at the minimum-curvature layer across checkpoints. ( F) Predictivity of contextual curvature measured at the maximum-predictivity layer across checkpoints. Training progressively straightens internal trajectories and strengthens the coupling between curvature and predictive uncertainty. 
+
+3.3 Trajectory-Aligned Perturbations Modulate Entropy 
+
+To investigate the extent to which curvature directly shapes uncertainty, we perturbed internal activations and measured the resulting changes in next-token entropy. Holding the input fixed lets us better isolate the effect of curvature on entropy, while varying the geometric subspace from which perturbations are drawn lets us test a sharper prediction of the temporal straightening hypothesis: entropy should respond to curvature changes along the model’s representational trajectory—the direction along which extrapolation would occur—but not to curvature changes in arbitrary directions of activation space. All interventions targeted middle layers, where straightening is most pronounced. For each token, we computed the induced change in curvature ( ∆C) and the corresponding change in next-token entropy ( ∆H). We used five pertur-bation types, progressively moving from unconstrained perturbations of activation space to perturbations constrained to subspaces aligned with the trajectory (Fig. 4A): (1) full-space : the entire activation space, with no geometric constraint; (2) random-subspace : a randomly oriented low-dimensional subspace, controlling for dimensionality alone; (3) activation-subspace : the top principal components of residual-stream activations, capturing data-aligned but trajectory-agnostic directions; (4) trajectory-subspace : the top principal components of each sample’s token-to-token displacement vectors, aligning perturbations with the model’s recent representational path; and (5) planar-subspace :the plane spanned by the two most recent displacements, the tightest possible alignment with the geometry in which curvature is defined (see Section 2.6 for a more detailed explanation). We find that changes to curvature only produce a reliable effect on entropy when perturbations are restricted to the trajectory (Fig. 4). Specifically, perturbations drawn from the full activation space, randomly oriented low-dimensional subspaces, and activation-derived subspaces all failed to produce a reliable relationship between ∆C and 
+
+∆H, suggesting that the model’s predictive computations are robust to curvature changes outside of the trajectory. On the other hand, interventions restricted to the trajectory subspace yielded a robust curvature-entropy relationship, while the planar perturbations produced the largest effect size. Thus, modifying curvature along directions in which the representation naturally evolves produces consistent directional changes in output entropy. These findings suggest that trajectory curvature is a behaviorally relevant geometric feature. 7A PREPRINT - A PRIL 28, 2026 A                   
+
+> Full-space Random-subspace Activation-subspace Trajectory-subspace Planar
+> Prompt: When I got home, the ...
+> Entropy = 5.614 Entropy = 5.543 Entropy = 5.725
+> phone milk mail house first kids door news Probability 0.12 0.08 0.04 0.00 0.12 0.08 0.04 0.00 0.12 0.08 0.04 0.00 .077 .046 .072 .042 .034 .031 .024 .022 .027 .025 .015 .045 .024 .022 .120 .052 .074 .074 .047 .022 .030 .030 .017 .021
+> BC
+> Pearson’s Corr. (r)  pythia-2.8b Continuation Baseline
+> When Igot home the
+> Perturbation type
+> Perturbation
+> Curvature Decreased Curvature Increased
+> 0.2 0.1 0.0 Full Random Activation Trajectory Planar
+> Perturbation type
+> Pearson’s Corr. (r)
+> 0.2 0.1 0.0 -0.1 -0.2 0.3 gpt2-xl
+
+Figure 4: Trajectory-aligned perturbations selectively couple curvature to uncertainty. (A) Schematic of the five perturbation types, ranging from unconstrained to trajectory-aligned: full-space (entire activation space), random-subspace (random low-dimensional subspace), activation-subspace (top PCs of activations), trajectory-subspace (top PCs of token-to-token displacement vectors), and planar-subspace (plane of the two most recent displacements). 
+
+(B) Example output distributions after perturbation at the token “the” in the prompt “When I got home, the ”. One perturbation increases both curvature and entropy; the other decreases both. (C) Correlation between changes in curvature ( ∆C) and changes in entropy ( ∆H) induced by different perturbation families (bars: mean across samples; error bars: 95% CIs). Perturbation layer is 21/48 for GPT-2 XL and 11/32 for Pythia-2.8B. 
+
+3.4 Curvature Regularization During Training Reduces Entropy 
+
+Finally, we explored whether insights about the link between representation and behavior can be leveraged during training to improve model reliability. We added an auxiliary loss that penalized mean curvature over each sequence (Fig. 5A) and trained a GPT-2 style model under three conditions: baseline (next-token prediction only), untangling 
+
+(curvature penalty encouraging straighter trajectories), and tangling (reversed penalty encouraging higher curvature). We first verified that the auxiliary loss influenced representations as intended. Compared to baseline, untangled models showed lower curvature in middle layers, while tangled models showed higher curvature (Fig. 5C). Validation loss was similar across conditions (Fig. 5C, inset; Fig. A6), indicating that the regularization modulated geometry without degrading overall predictive performance. This could be due to the fact that cross-entropy loss primarily constrains the probability of the target token, allowing a degree of freedom in how the remaining probability mass is distributed across other tokens. We found that models trained to untangle their neural trajectories showed lower token-level entropy across different validation sets compared to baseline models trained without the auxiliary loss, and the reverse was true for tangled models (Fig. 5D). While these effects were small, they align well with our predictions and generalize across multiple datasets. Several factors may contribute to the modest effect size, including the limited scale of both the model and the training dataset. 
+
+4 Discussion 
+
+We investigated whether contextual curvature—a geometric measure of how sharply representations bend over recent context—modulates next-token entropy in LLMs. Curvature predicts next-token entropy most strongly in middle layers, where trajectories are straightest. This relationship emerges over training, and perturbation experiments suggest entropy is selectively dependent on curvature: trajectory-aligned perturbations that increase curvature reliably increase entropy, 8A PREPRINT - A PRIL 28, 2026 CAD           
+
+> Change in entropy relative to Base model
+> Model layers
+> Curvature
+> gpt2 Transformer layers 0246812 10 Curvature (degrees) 112 114 116 118 120 Tangled Untangled -.015 -.010 -.005 .000 .005 -.02 -.01 .00 .01 .02 Untangled -.010 -.005 .000 .005 3.5 4.5 5.5 6.5 10 110 2Loss Step Validation Loss Tangled Untangled Base Tangled Untangled Base Tangled Untangled Base
+> Tangled Untangled
+> (i) (ii) (iii) (iv) B
+> Change in Entropy Long context Validation set Short context
+
+Figure 5: (A) Experimental design: (i) regularization is applied to the residual stream to modulate curvature, (ii) increasing curvature (Tangled) or decreasing it (Untangled), with (iii) hypothesized layer-wise curvature and (iv) hypothesized entropy effects. (B) Training loss across conditions, showing similar convergence. (C) Layer-wise curvature on the validation set. As hypothesized, the Untangled model shows lower curvature and the Tangled model shows higher curvature in middle layers. (D) Change in token-level entropy relative to baseline across three datasets. The Untangled model reduces entropy across all datasets; the Tangled model increases entropy in two of three. while misaligned perturbations do not. Finally, we find evidence that curvature regularization can modestly influence entropy without degrading validation loss. These findings support the temporal straightening hypothesis in LLMs, which posits that models transform their internal representation of input sequences into straighter trajectories to facilitate prediction via extrapolation (Hosseini and Fedorenko, 2023). We provide evidence for a natural implication of this hypothesis: trajectories with low curvature are easier to extrapolate from, yielding lower entropy output distributions. Combined with previous work, our observations suggest that in order to do next-token prediction, LLMs implicitly learn to straighten their internal trajectory over sequences of tokens. The localization of this effect to intermediate layers aligns with broader observations that middle layers are disproportionately informative for downstream behavior (Skean et al., 2025; Marshall and Kirchner, 2024; Bigelow et al., 2025; Lubana et al., 2025; Park et al., 2025). Our findings additionally have implications for work in mechanistic interpretability. Recent activation-steering methods show that internal representations can be manipulated to control model behavior, including expressed uncertainty (Turner et al., 2024; Marks and Tegmark, 2024; Li et al., 2024; Rahn et al., 2024). Our perturbation analysis complements these methods by targeting the temporal geometry of representations: modifying how representations evolve across tokens, not just their state at a single position, also yields predictable behavioral changes. Indeed, Lubana et al. (2025) argue that single-position methods such as sparse autoencoders miss the temporal structure of LM representations, and propose a decomposition that separates each token’s representation into a predictable component and a novel component. They find that the predictable component traces smooth trajectories across tokens, which they identify as a form of temporal straightening. Counterfactual edits to this predictable component shift the model’s next-token predictions in correspondingly different directions, paralleling our perturbation results. Huang et al. (2026) formalize a closely related principle, the Geodesic Hypothesis, positing that token trajectories trace locally-linear geodesics on a semantic manifold, and show that an auxiliary training loss enforcing this structure improves data efficiency. Their loss is a manifold-aware analog of our curvature regularization; both auxiliary objectives constrain across-token trajectory geometry during training, with measurable functional benefits. Across these threads, across-token representational geometry emerges as both functionally consequential and amenable to targeted intervention, marking it as a promising target for mechanistic interpretation and behavioral control. 
+
+Limitations and Future Directions Our approach simplifies both the representations and the behavior of the models. Temporal straightening implies that the model is shaping the geometry of the representational manifold to make trajectories easier to extrapolate from. Our curvature measure captures one aspect of this, but predictability on a manifold is a richer problem: it also depends on whether nearby trajectories are converging toward similar predictions 9A PREPRINT - A PRIL 28, 2026 or diverging toward different ones, how many dimensions the trajectory occupies, and how quickly the representation moves through space. Contextual curvature reduces high-dimensional trajectories to a single scalar over a local window of points. Geometric descriptors that allow more flexibility might capture aspects of representation structure that curvature misses. Similarly, entropy quantifies uncertainty but not its exact structure. For example, output distributions could have comparable entropy, yet spread their probability mass across semantically similar tokens (‘happy’, ‘glad’) or dissimilar ones (‘happy’, ‘expired’). Characterizing what geometric motifs correspond to different distributional structures—not just overall uncertainty—would further clarify the link between geometry and behavior. We used small-scale LLMs for the training experiments. Whether the curvature-entropy relationship holds in larger foundation models, different architectures, or multimodal systems remains untested, as does generalization to more diverse datasets. Also, while we show that curvature regularization reduces entropy, whether this translates to improved calibration, robustness, or downstream task performance is an open question. Our experiments indicate that geometric regularization can modestly influence model confidence: nudging the repre-sentations towards straighter trajectories reduces token entropy without degrading validation loss, while penalizing straightness increases entropy. These effects were small. We believe this could be due to the limited scale of our models and training data, which remains to be tested. This perspective is supported by recent work with larger models, showing that uncertainty and calibration can be shaped through auxiliary training objectives (Krishnan et al., 2024), as well as with evidence that regularizing representation structure can improve learning (Bardes et al., 2022; Li et al., 2025; Huang et al., 2026). 
+
+References 
+
+Alec Radford, Rafal Jozefowicz, and Ilya Sutskever. Learning to generate reviews and discovering sentiment, 2017. URL https://arxiv.org/abs/1704.01444 .Nelson F. Liu, Matt Gardner, Yonatan Belinkov, Matthew E. Peters, and Noah A. Smith. Linguistic knowledge and transferability of contextual representations, 2019. URL https://arxiv.org/abs/1903.08855 .John Hewitt and Christopher D. Manning. A structural probe for finding syntax in word representations. In Jill Burstein, Christy Doran, and Thamar Solorio, editors, Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) , pages 4129–4138, Minneapolis, Minnesota, June 2019. Association for Computational Linguistics. doi: 10.18653/v1/N19-1419. URL https://aclanthology.org/N19-1419/ .Catherine Olsson, Nelson Elhage, Neel Nanda, Nicholas Joseph, Nova DasSarma, Tom Henighan, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Dawn Drain, Deep Ganguli, Zac Hatfield-Dodds, Danny Hernandez, Scott Johnston, Andy Jones, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Dario Amodei, Tom Brown, Jack Clark, Jared Kaplan, Sam McCandlish, and Chris Olah. In-context learning and induction heads, 2022. URL 
+
+https://arxiv.org/abs/2209.11895 .Pablo J. Diego Simon, Stéphane d’Ascoli, Emmanuel Chemla, Yair Lakretz, and Jean-Remi King. A polar coordinate system represents syntax in large language models. In The Thirty-eighth Annual Conference on Neural Information Processing Systems , 2024. URL https://openreview.net/forum?id=x2780VcMOI .Adly Templeton, Tom Conerly, Jonathan Marcus, Jack Lindsey, Trenton Bricken, Brian Chen, Adam Pearce, Craig Citro, Emmanuel Ameisen, Andy Jones, Hoagy Cunningham, Nicholas L Turner, Callum McDougall, Monte MacDiarmid, C. Daniel Freeman, Theodore R. Sumers, Edward Rees, Joshua Batson, Adam Jermyn, Shan Carter, Chris Olah, and Tom Henighan. Scaling monosemanticity: Extracting interpretable features from claude 3 sonnet. Transformer Cir-cuits Thread , 2024. URL https://transformer-circuits.pub/2024/scaling-monosemanticity/index. html .Mingyu Jin, Qinkai Yu, Jingyuan Huang, Qingcheng Zeng, Zhenting Wang, Wenyue Hua, Haiyan Zhao, Kai Mei, Yanda Meng, Kaize Ding, Fan Yang, Mengnan Du, and Yongfeng Zhang. Exploring concept depth: How large language models acquire knowledge and concept at different layers?, 2025. URL https://arxiv.org/abs/2404.07066 .Olivier J Hénaff, Robbe LT Goris, and Eero P Simoncelli. Perceptual straightening of natural videos. Nature neuroscience , 22(6):984–991, 2019. Olivier J. Hénaff, Yoon Bai, Julie A. Charlton, Ian Nauhaus, Eero P. Simoncelli, and Robbe L. T. Goris. Primary visual cortex straightens natural video trajectories. Nature Communications , 12(1):5982, October 2021. ISSN 2041-1723. doi: 10.1038/s41467-021-25939-z. URL https://www.nature.com/articles/s41467-021-25939-z .Publisher: Nature Publishing Group. Antonino Greco, Julia Moser, Hubert Preissl, and Markus Siegel. Predictive learning shapes the representational geometry of the human brain. Nature Communications , 15(1):9670, November 2024. ISSN 2041-1723. doi: 10 A PREPRINT - A PRIL 28, 2026 10.1038/s41467-024-54032-4. URL https://www.nature.com/articles/s41467-024-54032-4 . Publisher: Nature Publishing Group. Edward Gibson. The dependency locality theory: A distance-based theory of linguistic complexity. Image and Language and Brain , 2000:95–126, 2000. Roger Levy. Expectation-based syntactic comprehension. Cognition , 106(3):1126–1177, March 2008. ISSN 0010-0277. doi: 10.1016/j.cognition.2007.05.006. URL https://www.sciencedirect.com/science/article/pii/ S0010027707001436 .Eghbal Hosseini and Evelina Fedorenko. Large language models implicitly learn to straighten neural sentence trajectories to construct a predictive representation of natural language. In A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt, and S. Levine, editors, Advances in Neural Information Processing Systems , volume 36, pages 43918–43930. Curran Associates, Inc., 2023. Jiahui Geng, Fengyu Cai, Yuxia Wang, Heinz Koeppl, Preslav Nakov, and Iryna Gurevych. A survey of confidence estimation and calibration in large language models, 2024. URL https://arxiv.org/abs/2311.08298 .Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019. Stella Biderman, Hailey Schoelkopf, Quentin Gregory Anthony, Herbie Bradley, Kyle O’Brien, Eric Hallahan, Moham-mad Aflah Khan, Shivanshu Purohit, USVSN Sai Prashanth, Edward Raff, et al. Pythia: A suite for analyzing large language models across training and scaling. In International Conference on Machine Learning , pages 2397–2430. PMLR, 2023. Denis Paperno, Germán Kruszewski, Angeliki Lazaridou, Ngoc Quan Pham, Raffaella Bernardi, Sandro Pezzelle, Marco Baroni, Gemma Boleda, and Raquel Fernández. The LAMBADA dataset: Word prediction requiring a broad discourse context. In Katrin Erk and Noah A. Smith, editors, Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 1525–1534, Berlin, Germany, August 2016. Association for Computational Linguistics. doi: 10.18653/v1/P16-1144. URL https://aclanthology.org/P16-1144/ .Oscar Skean, Md Rifat Arefin, Dan Zhao, Niket Patel, Jalal Naghiyev, Yann LeCun, and Ravid Shwartz-Ziv. Layer by layer: Uncovering hidden representations in language models, 2025. URL https://arxiv.org/abs/2502.02013 .Simon C. Marshall and Jan H. Kirchner. Understanding polysemanticity in neural networks through coding theory, 2024. URL https://arxiv.org/abs/2401.17975 .Eric Bigelow, Daniel Wurgaft, YingQiao Wang, Noah Goodman, Tomer Ullman, Hidenori Tanaka, and Ekdeep Singh Lubana. Belief dynamics reveal the dual nature of in-context learning and activation steering, 2025. URL https: //arxiv.org/abs/2511.00617 .Ekdeep Singh Lubana, Can Rager, Sai Sumedh R. Hindupur, Valerie Costa, Greta Tuckute, Oam Patel, Sonia Krishna Murthy, Thomas Fel, Daniel Wurgaft, Eric J. Bigelow, Johnny Lin, Demba Ba, Martin Wattenberg, Fernanda Viegas, Melanie Weber, and Aaron Mueller. Priors in time: Missing inductive biases for language model interpretability, 2025. URL https://arxiv.org/abs/2511.01836 .Core Francisco Park, Andrew Lee, Ekdeep Singh Lubana, Yongyi Yang, Maya Okawa, Kento Nishi, Martin Wattenberg, and Hidenori Tanaka. ICLR: In-Context Learning of Representations, May 2025. URL http://arxiv.org/abs/ 2501.00070 . arXiv:2501.00070 [cs]. Alexander Matt Turner, Lisa Thiergart, Gavin Leech, David Udell, Juan J. Vazquez, Ulisse Mini, and Monte MacDiarmid. Steering language models with activation engineering, 2024. URL https://arxiv.org/abs/2308.10248 .Samuel Marks and Max Tegmark. The geometry of truth: Emergent linear structure in large language model representa-tions of true/false datasets, 2024. URL https://arxiv.org/abs/2310.06824 .Kenneth Li, Oam Patel, Fernanda Viégas, Hanspeter Pfister, and Martin Wattenberg. Inference-time intervention: Eliciting truthful answers from a language model, 2024. URL https://arxiv.org/abs/2306.03341 .Nate Rahn, Pierluca D’Oro, and Marc G. Bellemare. Controlling large language model agents with entropic activation steering, 2024. URL https://arxiv.org/abs/2406.00244 .Hai Huang, Yann LeCun, and Randall Balestriero. Semantic tube prediction: Beating llm data efficiency with jepa, 2026. URL https://arxiv.org/abs/2602.22617 .Ranganath Krishnan, Piyush Khanna, and Omesh Tickoo. Enhancing trust in large language models with uncertainty-aware fine-tuning, 2024. URL https://arxiv.org/abs/2412.02904 .Adrien Bardes, Jean Ponce, and Yann LeCun. Vicreg: Variance-invariance-covariance regularization for self-supervised learning, 2022. URL https://arxiv.org/abs/2105.04906 .11 A PREPRINT - A PRIL 28, 2026 Yanhong Li, Ming Li, Karen Livescu, and Jiawei Zhou. On the predictive power of representation dispersion in language models, 2025. URL https://arxiv.org/abs/2506.24106 .
+
+A Appendix 
+
+A.1 Additional Representation Measures Contextual Magnitude : to estimate representational magnitude, we computed the L2 norm for each token embedding at all layers. For a given token xpk, its magnitude is: 
+
+μpk = ∥xpk∥2 =
+
+vuut dX
+
+> j=1
+
+(xpk,j )2
+
+where d is the dimensionality of the hidden state. We then averaged this value over a backward-looking window to obtain the contextual magnitude: 
+
+M pk = 13
+
+> k−1
+
+X
+
+> i=k−3
+
+μpi
+
+This feature captures the overall size of the representation vectors leading up to each token. 
+
+Contextual Distance : we defined token distance as the Euclidean norm of the trajectory segment immediately preceding each token. That is, for token xpk, the contextual distance is: 
+
+dpk = ∥xpk+1 − xpk∥
+
+Analogous to the previous measures, we smoothed this distance over a local window to define contextual distance as: 
+
+Dpk = 13
+
+> k−1
+
+X
+
+> i=k−3
+
+dpi
+
+This measure captures how quickly the model’s representation is moving through space, without reference to its direction or curvature. 
+
+A.2 Additional Regression Analysis Regression Analysis with Unigram Probability Control : Because unigram probability is inherently predictive of next-token entropy, its influence may be partially reflected in the contextual representation itself. That is, if some of the representation’s predictive power stems from encoding token frequency, then any observed relationship between representational geometry and entropy could be confounded by this prior information. To isolate the genuinely contextual contribution of the representation, we therefore control for unigram probability—allowing us to assess whether geometric features like curvature explain additional variance in entropy beyond what is attributable to token frequency alone. To determine whether contextual curvature explains variance in entropy beyond that captured by unigram probability, we performed a model comparison analysis. Specifically, we fit two linear regression models for each fold of 10-fold cross-validation: a baseline model using unigram probability alone as a predictor, and a full model including both unigram probability and contextual curvature. For each fold, we computed the Pearson correlation ( r) between predicted and observed entropy for both models, and recorded the difference in r (full model minus baseline). This yielded a distribution of 10 correlation differences across folds. We report the mean increase in r attributable to adding curvature as the main result. As with previous analyses, we computed the 95% confidence interval of the correlation differences using the t-distribution with 9 degrees of freedom. This procedure quantifies whether contextual curvature provides a consistent and statistically reliable improvement in predicting model uncertainty beyond unigram probability. 12 A PREPRINT - A PRIL 28, 2026 gpt2-xl pythia-2.8b                                                                                                                                     
+
+> Curvature (degrees) Transformer layers Emb 10 20 30 40 50 0.00 0.04 0.08 0.12 0.16 510 15 20 25 30 0.00 0.04 0.08 0.12 0.16 10 20 30 40 50 112 114 116 118 120 510 15 20 25 30 112 114 116 118 120 Emb Emb Emb
+> A
+> BPearson’s corr. coeffi.
+> Emb 10 20 30 40 50 0.00 0.10 0.20 Emb 510 15 20 25 30 0.00 0.10 0.20
+> Pearson’s corr. coeffi.
+> Emb 10 20 30 40 50 0.00 0.04 0.08 0.12 Emb 510 15 20 25 30 0.00 0.04 0.08 0.12
+> Pearson’s corr. coeffi.
+> 0.00 0.04 0.08 0.12 0.00 0.04 0.08 0.12 Transformer layers Emb 10 20 30 40 50 510 15 20 25 30 Emb
+> E
+> 0.00 0.10 0.20 0.00 0.10 0.20 Emb 10 20 30 40 50 510 15 20 25 30 Emb 0.00 0.04 0.08 0.12 0.00 0.04 0.08 0.12 Emb 510 15 20 25 30 Transformer layers Transformer layers Emb 10 20 30 40 50
+> F
+> 35000 25000 15000 5000 10 20 30 40 50 Emb 35000 25000 15000 5000
+> Distance
+> 0.30 0.30 Emb 510 15 20 25 30 108 112 116 120 108 112 116 120 Emb 10 20 30 40 50 gpt2-xl pythia-2.8b 510 15 20 25 30 Emb 020000 40000 Emb 510 15 20 25 30 020000 40000 10 20 30 40 50 Emb 10000 30000 30000 10000 010000 20000 30000 40000 50000 Emb 10 20 30 40 50 510 15 20 25 30 Emb 010000 20000 30000 40000 50000 010000 20000 30000 40000 010000 20000 30000 40000 Emb 10 20 30 40 50 Emb 510 15 20 25 30 Magnitude
+> CD
+
+Figure A1: Predicting next-token entropy with three geometric measures. For curvature (A,D), magnitude (B,E), and distance (C,F), we plot the measure values across layers (red) and the Pearson correlation between predicted and true next-token entropy (blue). Left column: long-context dataset; right column: short-context dataset. 
+
+A.3 Calculating Unigram Probabilities 
+
+To estimate each model’s unigram token probabilities, we approximated the marginal distribution over tokens by sampling from the model’s own generative distribution. Specifically, we generated 1,000 short sequences (30 tokens each) using nucleus sampling (top k = 1000 ), starting from the beginning-of-sequence token. For each generated sequence, we recorded the predicted token probability distribution at every timestep (i.e., the model’s softmax over the vocabulary at each position). Let pt(v) denote the predicted probability of vocabulary item v at position t in a sampled sequence. We accumulated these across all positions and samples to estimate the marginal probability of each token: 
+
+ˆP (v) = 1
+
+T
+
+NX
+
+i=1 
+
+LiX
+
+t=1 
+
+p(i)
+
+t (v)
+
+where N is the number of sampled sequences, Li is the length of the i-th sequence, and T = PNi=1 Li is the total number of tokens across all sequences. This yielded an empirical approximation of the model’s unigram distribution, which was normalized to ensure it summed to one. These estimated unigram probabilities were then used as covariates in subsequent regression analyses to control for frequency-based effects on next-token entropy. 13 A PREPRINT - A PRIL 28, 2026 0.000 0.002 0.004 0.006 0.008 0.000 0.002 0.004 0.006 0.008 Emb 10 20 30 40 50 Emb 5 10 15 20 25 30 0.000 0.002 0.004 0.006 Emb 10 20 30 40 50 Emb 5 10 15 20 25 30 0.000 0.002 0.004 0.006 0.000 0.004 0.008 0.012 0.000 0.004 0.008 0.012 Emb 10 20 30 40 50 Emb 5 10 15 20 25 30 gpt2-xl pythia-2.8b                                     
+
+> Pearson’s corr. coeffi. Pearson’s corr. coeffi. Pearson’s corr. coeffi. Transformer layers Transformer layers
+> ABC
+> 0.00 0.01 0.02 0.03 0.04 Emb 10 20 30 40 50 Emb 510 15 20 25 30 gpt2-xl pythia-2.8b 0.00 0.01 0.02 0.03 0.04 0.14 0.10 0.06 0.02 Emb 10 20 30 40 50
+> Transformer layers
+> Emb 510 15 20 25 30
+> Transformer layers
+> 0.14 0.10 0.06 0.02 0.00 0.01 0.02 0.03 0.04 0.00 0.01 0.02 0.03 0.04 Emb 10 20 30 40 50
+> Transformer layers
+> Emb 510 15 20 25 30
+> Transformer layers
+
+Figure A2: Controlling for unigram probability in predicting next-token entropy. Plots show the difference in Pearson correlation between models that include curvature and those that use unigram probability alone. Error bars indicate 95% confidence intervals. (A) Curvature, (B) Magnitude, (C) Distance. Left two columns: long-context dataset; right two columns: short-context dataset. 
+
+A.4 Importance Reweighting for Perturbation Correlations 
+
+Different perturbation families can produce systematically different distributions of curvature change |∆C|, which could confound comparisons of the ∆C–∆H correlation across families. To ensure that observed differences in correlation reflect geometric alignment rather than distributional mismatch, we apply importance reweighting to equalize the marginal distribution of |∆C| across perturbation types before computing correlations. We first construct a reference distribution by pooling |∆C| values from the full-space perturbation across all layers and binning them into a histogram with B = 100 equal-width bins. Let qb denote the proportion of reference samples falling in bin b. For each perturbation family, we compute the analogous histogram pb from that family’s |∆C| values and assign each perturbation i falling in bin b the importance weight 
+
+wi = qb(i)
+
+pb(i) + ϵ ,
+
+where ϵ = 10 −12 prevents division by zero. Weights are clamped to [ 1
+
+τ , τ ] with τ = 10 to limit the influence of any single sample. The per-token correlation between ∆C and ∆H is then computed as a weighted Pearson correlation using the importance weights wi. These per-token correlations are averaged across tokens, and 95% confidence intervals are obtained by bootstrap resampling over tokens with Bboot = 2 ,000 replicates and Fisher z-transformation. 
+
+A.5 Perturbation Effects Across Layers 
+
+The perturbation experiments reported in the main text were conducted in intermediate layers where we expect the trajectory geometry to be implicated in model behavior. Here we examine how the ∆C–∆H relationship changes when perturbations are applied at early and late layers. At early layers, the relationship between ∆C and ∆H is generally weak across all perturbation types (Fig. A4A). While 
+
+∆C–∆H correlations are present, the perturbations have negligible effect sizes, consistent with the observation that curvature-entropy coupling is weak at these layers (Fig. 2). At late layers in Pythia-2.8B, trajectory-aligned perturbations–particularly planar perturbations–produce significant 
+
+negative ∆C–∆H correlations, reversing the pattern observed at middle layers (Fig. A4A). To understand this reversal, we examined the Spearman rank correlation between the perturbed and unperturbed output distributions for each perturbation type across layers (Fig. A4B). At middle layers, all perturbation types largely preserve the output ranking, indicating that the interventions modulate uncertainty without fundamentally altering the model’s predictions. At late layers, however, trajectory-aligned perturbations substantially degrade the output ranking, suggesting that these interventions are no longer selectively modulating uncertainty but are instead disrupting the model’s output distribution. The resulting negative correlations are therefore difficult to interpret as evidence of a meaningful geometric relationship: 14 A PREPRINT - A PRIL 28, 2026 0.0 0.4 017500 0 10 20 30 0 10 20 30 0 10 20 30 0 10 20 30 0 10 20 30 0 10 20 30 Magnitude 0 10 20 30 0 10 20 30 0 10 20 30 0 10 20 30 0 10 20 30 0 10 20 30                
+
+> Pearson’s corr. coeffi.
+> 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+> Pearson’s corr. coeffi.
+> Magnitude
+> Percentage of trainining data (300B)
+> 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+> Percentage of trainining data (300B)
+> 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+
+C D
+
+> 60 35 0.4 0.0
+
+AB                            
+
+> 010000
+> Distance
+> 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+
+E                       
+
+> 0.0 0.2 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30 010 20 30
+> Pearson’s corr. coeffi.
+
+F          
+
+> Pearson’s corr. coeffi. Distance Percentage of trainining data (300B)
+> 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+> Percentage of trainining data (300B)
+> 0% 0.007% 0.07% 0.7% 7.0% 70.0%
+
+G H
+
+> 75 50 0.24 0.08
+
+Figure A3: Training dynamics for magnitude and distance in the long-context dataset. (A) Magnitude across layers over training. (B) Correlation between magnitude and entropy over training. (C) Minimum magnitude at each checkpoint. (D) Maximum correlation at each checkpoint. (E–H) Parallel analyses for distance. a perturbation that scrambles the token ranking and happens to compress the output distribution does not reflect the same mechanism as one that shifts entropy while preserving the structure of the prediction. This motivates our focus on the middle layers, where perturbations modulate curvature and entropy while leaving the output distribution largely intact. 15 A PREPRINT - A PRIL 28, 2026 Full Random Activation Trajectory Planar       
+
+> Pearson’s Corr. (r) 0.2 0.1 0.0 -0.1 -0.2 Layer 4 Layer 11 Layer 24
+> Full Random Activation Trajectory Planar Full Random Activation Trajectory Planar
+> pythia-2.8b
+> Layer 8 Layer 21 Layer 40 Pearson’s Corr. (r) 0.2 0.1 0.0 -0.1 -0.2 0.3
+> gpt2-xl A
+> Full Random Activation Trajectory Planar Full Random Activation Trajectory Planar Full Random Activation Trajectory Planar
+> Layer 4 Layer 11 Layer 24
+> Full Random Activation Trajectory Planar Full Random Activation Trajectory Planar Full Random Activation Trajectory Planar
+> 0.875 0.900 0.925 0.950 0.975 1.000 Spearmans’ Corr. (r)
+> B
+
+Figure A4: ∆C–∆H correlations across layers. (A) Correlation between induced curvature change and entropy change for each perturbation type at early, middle, and late layers. Bars show mean per-token correlation; error bars show 95% bootstrap CIs. (B) Spearman rank correlation between perturbed and unperturbed output logit distributions for each perturbation type at early, middle, and late layers for Pythia-2.8B. At early and middle layers, all perturbation types largely preserve the output ranking. At late layers, trajectory-aligned perturbations substantially degrade it, indicating nonspecific disruption rather than selective modulation of uncertainty. 16 A PREPRINT - A PRIL 28, 2026 0.00 0.05 0.10 0.15 Pearson's r 0.00 0.05 0.10 0.15 0.00 0.05 0.10 0.15 0 10 20 30 40 50 Layer 0.00 0.05 0.10 0.15        
+
+> w=1
+> w=2 w=5 w=10 0510 15 20 25 30 gpt2-xl pythia-2.8b Pearson's r Pearson's r Pearson's r Layer
+
+Figure A5: Window size sweep. Predictive performance (Pearson r) of contextual curvature for next-token entropy across layers for window sizes w = 1, 2, 5, 10 in GPT-2 XL (left) and Pythia-2.8B (right). The middle-layer predictivity peak is stable across window sizes, with performance decreasing with larger window sizes at 5 and beyond. Untangled Baseline Tangled Loss 
+
+Figure A6: Final validation loss across regularization types. Final validation losses across the Baseline, Untangled, and Tangled models, demonstrating that losses are comparable. 17

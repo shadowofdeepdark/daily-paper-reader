@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.23985v1/fig-001.webp",
+      "caption": "Figure 2: Curvature and entropy relationship across layers. (A) Average contextual curvature across transformer layers in GPT-2 XL on the long-context dataset. (B) Same as (A) for Pythia-2.8B. In both models, curvature decreases from early layers and reaches a minimum in the middle of the network. (C) Predictive performance (Pearson r) of contextual curvature for next-token entropy across layers in GPT-2 XL. (D) Same as (C) for Pythia-2.8B. In both cases, predictivity increases across layers and peaks around the layers of minimal curvature.",
+      "page": 6,
+      "index": 1,
+      "width": 524,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2604.23985v1/fig-002.webp",
+      "caption": "Figure 1: (A) Schematic of the LLM architecture, focusing on the token representation in the residual stream after each transformer block. (B) Hypothesized relationship between the input, internal representation, and output for an easy-to-predict sentence (Sentence 1) versus a hard-to-predict sentence (Sentence 2). A predictable sentence is expected to have a straighter internal representation (lower curvature). Consequently, the set of possible next tokens is smaller, which leads to lower entropy. Conversely, a hard-to-predict sentence is expected to show higher curvature and result in higher entropy. (C) The formulation of contextual curvature used to predict token entropy. (D) The hypothesized relationship between the change in average curvature across layers and the corresponding change in how well contextual curvature predicts token entropy.",
+      "page": 2,
+      "index": 2,
+      "width": 790,
+      "height": 273
+    },
+    {
+      "url": "assets/figures/arxiv/2604.23985v1/fig-003.webp",
+      "caption": "Figure 3: Training dynamics of curvature and uncertainty. (A) Layer-wise contextual curvature across training checkpoints for Pythia-2.8B on the long-context dataset. (B) Predictive performance (Pearson r) of contextual curvature for next-token entropy across layers at the same checkpoints. (C) Average curvature at the minimum-curvature layer over training. (D) Average token-level entropy over training. (E) Predictivity of contextual curvature measured at the minimum-curvature layer across checkpoints. (F) Predictivity of contextual curvature measured at the maximumpredictivity layer across checkpoints. Training progressively straightens internal trajectories and strengthens the coupling between curvature and predictive uncertainty.",
+      "page": 7,
+      "index": 3,
+      "width": 790,
+      "height": 415
+    },
+    {
+      "url": "assets/figures/arxiv/2604.23985v1/fig-004.webp",
+      "caption": "Figure 4: Trajectory-aligned perturbations selectively couple curvature to uncertainty. (A) Schematic of the five perturbation types, ranging from unconstrained to trajectory-aligned: full-space (entire activation space), randomsubspace (random low-dimensional subspace), activation-subspace (top PCs of activations), trajectory-subspace (top PCs of token-to-token displacement vectors), and planar-subspace (plane of the two most recent displacements). (B) Example output distributions after perturbation at the token “the” in the prompt “When I got home, the ”. One perturbation increases both curvature and entropy; the other decreases both. (C) Correlation between changes in curvature (∆C) and changes in entropy (∆H) induced by different perturbation families (bars: mean across samples; error bars: 95% CIs). Perturbation layer is 21/48 for GPT-2 XL and 11/32 for Pythia-2.8B.",
+      "page": 8,
+      "index": 4,
+      "width": 786,
+      "height": 514
+    },
+    {
+      "url": "assets/figures/arxiv/2604.23985v1/fig-005.webp",
+      "caption": "Figure 5: (A) Experimental design: (i) regularization is applied to the residual stream to modulate curvature, (ii) increasing curvature (Tangled) or decreasing it (Untangled), with (iii) hypothesized layer-wise curvature and (iv) hypothesized entropy effects. (B) Training loss across conditions, showing similar convergence. (C) Layer-wise curvature on the validation set. As hypothesized, the Untangled model shows lower curvature and the Tangled model shows higher curvature in middle layers. (D) Change in token-level entropy relative to baseline across three datasets. The Untangled model reduces entropy across all datasets; the Tangled model increases entropy in two of three.",
+      "page": 9,
+      "index": 5,
+      "width": 790,
+      "height": 378
+    }
+  ]
+}
