@@ -1,0 +1,2259 @@
+Title: Exploring the impact of social relevance on the cortical tracking of speech: viability and temporal response characterisation
+
+URL Source: https://www.biorxiv.org/content/10.1101/2025.09.23.674728v2.full.pdf
+
+Number of Pages: 35
+
+Markdown Content:
+Exploring the impact of social relevance on the cortical 1
+
+# tracking of speech : viability and temporal response 2
+
+# characterisation 3
+
+Abbreviated title : Social relevance enhances cortical speech tracking 4
+
+Emily  Y.J.  Ip 1,2*,  Asena Akkaya 1,2*, Martin  M. Winchester 1,2 , Sonia  J.  Bishop 2,3 ,5
+
+Benjamin  R.  Cowan 4, Giovanni M. Di Liberto 1,2 ** 6 
+
+> 1
+
+School of Computer Science and Statistics, University of Dublin, Trinity College, Dublin 2, Ireland; 7
+
+ADAPT Centre 8 
+
+> 2
+
+Trinity College Institute of Neuroscience , University of Dublin, Trinity College, Dublin 2, Ireland 9 
+
+> 3
+
+School of Psychology, University of Dublin, Trinity College, Dublin 2, Irelan 10  
+
+> 4
+
+School of Information and Communication Studies, University College Dublin , Dublin 4, Ireland 11 
+
+*Co -first authors 12 
+
+**Corresponding author : gdiliber@tcd.ie 13 
+
+14 
+
+Number of pages: 3515 
+
+Number of figures: 816 
+
+Number of tables: 317 
+
+Number of words 18 
+
+• Abstract: 219 19 
+
+• Introduction: 654 20 
+
+• Discussion: 121 821 
+
+Conflict of interest statement : The authors declare no compet ing interest s.22 
+
+Acknowledgements : This work was conducted with the financial support of the 23 
+
+Research Ireland Cent re for Research Training in Digitally -Enhanced Reality (d -real) 24 
+
+under Grant No. 18/CRT/6224. This research was conducted with the financial support 25 
+
+of Resea rch Ireland at ADAPT, the Research Ireland Centre for AI -Driven Digital 26 
+
+Content Technology at Trinity College Dublin and University College Dublin 27 
+
+[13/RC/2106_P2]. For the purpose of Open Access, the author s ha ve applied a CC 28 
+
+BY public copyright licence to any Author Accepted Manuscript version arising from 29 
+
+this submission. 30 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+# Abstract 31 
+
+Human speech is inherently social. Yet our understanding of the neural substrates 32 
+
+underlying continuous speech perception relies largely on neural responses to 33 
+
+monologues, leaving substantial uncertainty about how social interactions shape the 34 
+
+neural encoding of speech. Here, we bridge this gap by study ing how EEG responses 35 
+
+to speech change when the input includes a social element. In Experiment 1 , we 36 
+
+compared the neural encoding of synthesised undirected monologues, directed 37 
+
+monologues, and dialogues . In Experiment 2, we extended this by using podcast s,38 
+
+addressing the additional challenges of real speech dialogue, such as dysfluenc y.39 
+
+Using temporal response function analyses, we show that the presence of a social 40 
+
+component strengthens the cortical tracking of the speech envelope , despite identical 41 
+
+acoustic properties . Neural responses to synthesised speech showed a strong 42 
+
+correlation with those for real speech podcasts, with a stronger alignment emerging 43 
+
+for more socially -relevant speech material. In addition, we demonstrate that robust 44 
+
+neural indices of sound and lexical -level processing can be derived using real podcast 45 
+
+recordings despite the presence of dysfluencies . Finally, we present a simulat ion to 46 
+
+put to the test the robustness of temporal response function analys es under increasing 47 
+
+levels of dysfluency . Together, these findings highlighting the impact of social 48 
+
+element s in shaping auditory neural processing , providing a framework for future 49 
+
+investigation and analysis of social speech listening and speech interaction .50 
+
+# Significance Statement 51 
+
+Human speech is rarely produced or processed in a social vacuum. Yet, our 52 
+
+understanding of continuous speech neurophysiology mostly comes from experiments 53 
+
+involving speech monologue s. This study reveals how social context modulates the 54 
+
+neural encoding of speech. We directly contrast neural signals recorded when 55 
+
+participants listened to monologues and dialogues , using controlled material from 56 
+
+speech synthesis and real podcast recordings. We found that the social element 57 
+
+amplifies the neural encoding of speech features , reflecting greater engagement. We 58 
+
+also show strong correlation between synthetic and real podcast neural responses, 59 
+
+scaling with social relevance . Finally, we demonstrate that lexical processing can be 60 
+
+measured robustly even amid natural dysfluencies. These insights advance our 61 
+
+understanding of speech neurophysiology, informing future research on social speech. 62 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+# Introduction 63 
+
+To understand speech , our brains must rap idly process sounds into linguistic meaning 64 
+
+(Friederici, 2011 ; Poeppel et al., 2012 ). Th e neural basis of this phenomenon has been 65 
+
+studied extensively using controlled paradigms involving targeted manipulations 66 
+
+(Carreiras et al., 2005 ; Kutas & Federmeier, 2011 ; Osterhout & Holcomb, 1993 ), and 67 
+
+more recently with listening tasks involving more realistic continuous streams of 68 
+
+speech (Di Liberto & Ip, 2025 ; Di Liberto et al., 2021 ; Gwilliams et al., 2023 ). That work 69 
+
+utilised a variety of neural recording technologies , including electro - and magneto -70 
+
+encephalography (EEG and MEG ) (Défossez et al., 2023 ; Destoky et al., 2019 ),71 
+
+functional magnetic resonance imaging and functional near -infrared spectroscopy 72 
+
+(Butler et al., 2020 ; Chen et al., 2020 ; Formisano et al., 2008 ), and intracranial 73 
+
+electrical recordings (e.g., electrocorticography and stereotactic EEG ) (Bernabei et al., 74 
+
+2021 ; Hamilton et al., 2021 ; Mesgarani et al., 2014 ). Overall, this research has led to 75 
+
+a new understanding of the sound -to -meaning transformation, providing detailed 76 
+
+insights into the spatial and temporal dynamics that unfold throughout that process 77 
+
+(Kocagoncu et al., 2017 ; Uusvuori et al., 2008 ). However, the necessary experimental 78 
+
+constraints have led to listening tasks centred around audiobook -style , pre -recorded 79 
+
+speech material , while ignor ing one of the key functions of speech: the social element. 80 
+
+Recent research has explor ed speech interaction, for example by measuring brain -to -81 
+
+brain synchrony using simultaneous neural recordings from interacting individuals 82 
+
+(Kinreich et al., 2017 ; Schwartz et al., 2024 ). However, th os e interactive experiments 83 
+
+are far removed from previous speech listening research , as other factors at play (e.g., 84 
+
+social anxiety, familiarity, turn -taking) mak e it difficult to relate findings across the two 85 
+
+domains . To achieve this and advance the study of social speech neurophysiology ,86 
+
+we require a mechanistic understanding of how specific social factors impact the 87 
+
+neural processing of speech , which requires careful experimental control . The present 88 
+
+study takes a step in that direction, by extending the conventional audiobook -style 89 
+
+listening paradigm to stimuli with progressively higher social relevance . In doing so, 90 
+
+we investigate how challenges of real speech (e.g., dysfluencies ) impact our ability to 91 
+
+measure the neural processing of speech and language (Di Liberto & Ip, 2025 ;92 
+
+Mousavi et al., 2024 ).93 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+We present results from two EEG experiments . The first experiment compares the 94 
+
+neural encoding of speech while participants listen ed to pre -recorded monologues and 95 
+
+dialogues (Experiment 1 ). Dialogue typically involves turn -taking, mutual feedback, 96 
+
+and shared communicative goal s (Garrod & Pickering, 2004 ), while monologue s lack 97 
+
+immediate (auditory) reciprocity . Nevertheless , monologues can also include a social 98 
+
+dimension by being directed to a listener , as opposed to undirected monologues , when 99 
+
+they are not aimed at any particular listener . Using the temporal response function 100 
+
+analysis (TRF), this study tests if social relevance impact s the neural processing of 101 
+
+speech during listening . This leads to our first hypothesis: 102 
+
+Hypothesis 1 : Social relevance enhances the cortical encoding of speech, 103 
+
+leading to stronger enc oding for directed than undirected monologues .104 
+
+Synthesised speech was used to control for acoustic and lexical differences across 105 
+
+conditions, ensuring that differences in the EEG would be due to social relevance as 106 
+
+opposed to other factors such as prosody, word rate, or volume level (see Methods ).107 
+
+To generalise the results from Experiment 1 to the case of real human speech, we108 
+
+also conducted a second experiment using real dialogue recordings from popular 109 
+
+podcasts (Experiment 2 ). The material included speech from different registers to 110 
+
+capture a broader range of speech types, increasing generalisability . Furthermore, real 111 
+
+spontaneous includes dysfluency (Shriberg, 2001 ), which can challenge natural 112 
+
+speech comprehension , for example by hampering syntactic parsing (Ferreira & 113 
+
+Bailey, 2004 ), contribut ing to processing delays that impact word predictability (Corley 114 
+
+et al., 2007 ). Here, we investigate the possibility of studying speech material including 115 
+
+dysfluencies, testing if robust EEG measurements of speech processing can be 116 
+
+derived at varying levels of dysfluency , with the following hypotheses: 117 
+
+118 
+
+Hypothesis 2 : The social element of speech leads to a consistent neural 119 
+
+signature, which generalises across synthesised and real speech dialogue. 120 
+
+Hypothesis 3: Neural measurements of speech encoding are robust to 121 
+
+dysfluency in the speech material .122 
+
+123 
+
+124 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+# Materials and Methods 
+
+EEG Experiment 1 125 
+
+Data acquisition and experimental setup . Twenty healthy individuals (10 male, 10 126 
+
+female ; between 18 and 30 years old, median = 22 ) participated in the experiment. All 127 
+
+participants were native English speakers and reported no history of hearing 128 
+
+impairment o r neurologic disorder, provided written informed consent, and were paid 129 
+
+for participating. The study was undertaken in accordance with the Declaration of 130 
+
+Helsinki and was approved by the ethics committee of the School of Computer Science 131 
+
+and Statistics at Trinity College Dublin. The experiment was carried out in a single 132 
+
+session for each participant. EEG data were recorded from 64 electrode positions, 133 
+
+digitised at 512 Hz using a BioSemi ActiveTwo system. Audio stimuli were presented 134 
+
+at a sampling rate of 48 kHz using Sennheiser HD 650 headphones and the 135 
+
+Psychtoolbox -3 MATLAB library (Brainard, 1997 ). Testing was conducted at Trinity 136 
+
+College Dublin in a dark room . Participants were instructed to maintain visual fixation 137 
+
+on a crosshair centred on the screen and to minimise motor activities during the 138 
+
+speech listening task. 139 
+
+Stimuli . Monologue scripts were generated with the large language model ( LLM ) GPT -140 
+
+4 (OpenAI, 2024) , using prompt s such as "Could you create a monologue, with a 141 
+
+duration of approximately 2 minutes?" . From 30 generated monologues, scripts with 142 
+
+highly similar content and those containing strongly emotional themes (e.g., scenarios 143 
+
+involving extreme sadness or anger) were excluded to avoid potential confounds in 144 
+
+the experiment. After this filtering process, 16 monologue scripts with sufficiently 145 
+
+varied topics were retained for use as stimuli. The selected monologues were further 146 
+
+processed with GPT -4, generating eight directed and eight undirected monologues. 147 
+
+That manipulation was achieved by using prompts such as: “Turn this into a directed 148 
+
+monologue that address es the listener” and “Turn this into an undirected monologue ,149 
+
+where the speaker talk s to themselves .”150 
+
+The 16 monologues (8 directed, 8 undirected) were then converted into dialogues 151 
+
+using the same approach, with the prompt : “Convert the following monologue into a 152 
+
+dialogue between two speakers while preserving the original content. Keep the 153 
+
+duration approximately the same and distribute the information naturally across the 154 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+speakers .” The aim of this transformation was to create dialogue versions that 155 
+
+preserved the semantic content of the original monologues while introducing an 156 
+
+interlocutor. This approach allowed us to maintain comparable content across 157 
+
+monologue and dialogue conditions, thereby minimi sing potential confounds related 158 
+
+to topic or narrative structure. 159 
+
+Scripts were synthesised using the realistic AI -based voice generation software 160 
+
+PlayHT version 2.0 1. The generated speech sound s were manually inspected 161 
+
+sentence -by -sentence to minimis e generation artifacts . Speech segments with clear 162 
+
+artifacts or sounding unnatural were replaced by re -running the generation for the 163 
+
+affected segment , ensuring a consistent tone and emphasis . Note that t his was 164 
+
+possible as each generation produces a different result. Altogether, this procedure 165 
+
+generated 32 sound files (1 6 monologues, 16 dialogues) synthesised using different 166 
+
+voices (16 voices: 8 male, 8 female) . The final version of auditory stimuli ha s been 167 
+
+deposited in the OSF repository 2.168 
+
+To control for potential acoustic and speech -structure confounds, several acoustic 169 
+
+properties of each stimulus, including duration, RMS amplitude, mean fundamental 170 
+
+frequency (F0), F0 variability (standard deviation), and word rate (number of words 171 
+
+per second) were quantified. Participants (N=15) participated in an online survey, 172 
+
+where they were asked to categorise whether speech recordings were undirected or 173 
+
+directed. Participants were presented with 16 speech recordings, each ~2 -min of 174 
+
+duration. Acoustic measures were compared across conditions ( undirected -directed 175 
+
+monologues, dialogues) using Kruskal -Wallis tests. No significant differences were 176 
+
+observed for any of the acoustic properties across the three conditions (all Kruskal -177 
+
+Wallis tests, p > 0. 05 ; see Table S3 ). 178 
+
+In addition, monologue stimuli (combination of di rected and undirected conditions) 179 
+
+were compared with dialogue stimuli , showing no statistically significant differences 180 
+
+for any of the acoustic properties (all Wilcoxon rank -sum tests, p > 0. 05; see Table 181 
+
+S3 ). 182   
+
+> 1https://app.play.ht/
+> 2https://osf.io/hx3nz
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Experimental procedure . All thirty -two stimuli were presented in a single experimental 183 
+
+session in a randomised order, which was different across participants. Participants 184 
+
+were free to take breaks of arbitrary length in -between stimuli. To maintain 185 
+
+engagement throughout the experiment, participants were periodically (25% of the 186 
+
+trials) asked to rate how interesting they found the speech segments on a 5 -point scale 187 
+
+(1 : not at all interesting; 3 : neutral; 5 : very interesting). 188 
+
+EEG Experiment 2 189 
+
+Data acquisition and experimental setup . Twenty healthy individuals (10 male, 10 190 
+
+female; between 20 and 39 years old, median = 26 ), separate from Experiment 1, 191 
+
+participated in the second EEG experiment. All participants were native English 192 
+
+speakers and reported no history of hearing impairment o r neurologic disorder, 193 
+
+provided written informed consent, and were paid for participating. The study was 194 
+
+undertaken in accordance with the Declaration of Helsinki and was approved by the 195 
+
+ethics committee of the School of Psychology at Trinity College Dublin. 196 
+
+The experiment was carried out in a single session for each participant. EEG data 197 
+
+were recorded from 64 electrode positions, digitised at 512 Hz using a BioSemi 198 
+
+ActiveTwo system. Audio stimuli were presented at a sampling rate of 44,100 Hz using 199 
+
+Sennheiser HD 280 Pro headphones and the PsychoPy Python library version 200 
+
+2022.2.5 (Peirce et al., 2019 ). Testing was conducted at Trinity College Dublin in a 201 
+
+dark room . P articipants were instructed to maintain visual fixation on a crosshair 202 
+
+centred on the screen and minimise motor activities during the speech listening task. 203 
+
+Stimuli . Podcast recordings were selected from publicly available sources: 1) 204 
+
+American podcast shows called Brains On! and Forever Ago; 2) WIRED 5 Levels of 205 
+
+Difficulty series on YouTube; and 3) interviews with the same two hosts Forever Ago ,206 
+
+available online 3. Dialogues contained general interest topics, such as questions about 207 
+
+science and math (e.g., why do we sweat, why memories as a young child are 208 
+
+forgotten ). Altogether, forty -two podcast recordings involving 1 -to -1 dialogues were 209 
+
+selected for this experiment (the same stimuli for all participants) , totalling one hour in 210  
+
+> 3https://laist.com/podcasts/servant -of -pod/kids -podcasts -a-true -alternative -to -screen -time ;
+> https://creators.spotify.com/pod/profile/martine -severin/episodes/31 --How -to -Become -an -Epic -Improv -
+> Comic -with -Joy -Dolo -e1js9c2
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+duration. Sixteen of those recordings involved adult -adult (AA) dialogue s, while the 211 
+
+remaining twenty -six were adult -child (AC) dialogues. The AA and AC dialogues 212 
+
+contained the same five adult speaker s (podcast hosts) , speaking to a range of 213 
+
+different children and other adults. The higher number of recordings for the latter 214 
+
+condition ensured that the two conditions had a comparable number of words , as child -215 
+
+speech and child -directed speech are generally slower than adult -speech (Ferreira, 216 
+
+2019 ; Snow, 1972 ). To that end, t he select ed speech register s captured a range of 217 
+
+speaking styles for test ing the robustness of our findings (e.g., the impact of 218 
+
+dysflu encies on the EEG encoding of speech ) to variations in acoustic and lexical 219 
+
+properties of a speech input .220 
+
+Experimental procedure . Participants were presented with the forty -two speech stimuli 221 
+
+(referred hereafter as trials) in a random order , separated by a short break. To 222 
+
+enc ourage attention, participants were asked to rate how interesting they found the 223 
+
+speech segment on a scale from 1 -5 (1 : not at all interesting; 3: neutral; 5: very 224 
+
+interesting) after each trial . Additionally, f or a random subset of twenty percent of the 225 
+
+trials, the participants were asked a behavioural multi ple -choice question to select the 226 
+
+set of keywords that best describe d the trial they just heard . This was also to keep the 227 
+
+participants engaged and on task throughout the experiment .228 
+
+EEG data preprocessing 229 
+
+Neural data from both experiments were analysed offline using MATLAB software 230 
+
+(MathWorks) , using the same preprocessing and analysis pipeline . EEG signals were 231 
+
+digitally filtered using Butterworth zero -phase filters with order 2, implemented with the 232 
+
+function filtfilt . The primary analyses were carried out on EEG data band -pass filtered 233 
+
+between 0.5 and 8 Hz , as that range has been shown to be particularly sensitive to 234 
+
+the cortical tracking of speech (Di Liberto et al., 2015 ; Doelling et al., 2014 ; O'Sullivan 235 
+
+et al., 2015 ; Vanthornhout et al., 2018 ). Low -frequencies from 0.5 Hz to 1 Hz were 236 
+
+included as they were previously shown to be important for measuring the neural 237 
+
+encoding of lexical predictions with EEG (Broderick et al., 2018; Carta et al., 2024) .238 
+
+Secondary analyses were carried out to pinpoint specific sub -bands driving effect s of 239 
+
+interest . In Experiment 1 , we considered the delta -band (0.5 -4 Hz), theta -band (4 -8240 
+
+Hz), alpha -band power (8-12 Hz) , beta -band power (12 -30 Hz ) and broadband (0.5 -241 
+
+30 Hz) . In Experiment 2, we considered just the delta -band (0.5 -4 Hz) and theta -band 242 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+(4 -8 Hz) , as they led to the highest EEG prediction correlation in Experiment 1 (Figure 243 
+
+S1 ). The power of alpha and beta bands was calculated as the instantaneous 244 
+
+magnitude of the Hilbert transform in those sub -bands . This selection is based on 245 
+
+evidence that alpha and beta rates reflect predictive processing, attention, and working 246 
+
+memory (Haegens et al., 2017 ; Samaha et al., 2015 ). EEG signals were down sampled 247 
+
+to 64 Hz , reducing computational and storage costs. EEG channels with a variance 248 
+
+exceeding three times that of the surrounding ones were replaced by a spherical spline 249 
+
+interpolation (Delorme & Makeig, 2004 ; Perrin et al., 1989 ). Signals were then re -250 
+
+referenced to the average of the two mastoid channels .251 
+
+Stimulus features 252 
+
+The present study examines the neural encoding of speech and language features 253 
+
+during speech listening . The same features and analyses were used across the two 254 
+
+experiments .255 
+
+Sound envelope and derivative . The sound envelope was calculated as the 256 
+
+instantaneous magnitude of the Hilbert transform of the sound -pressure waveform. 257 
+
+The speech envelope captures the slow amplitude modulations of the speech signal, 258 
+
+which have been shown to be robustly reflected in the EEG signal (Crosse et al., 259 
+
+2016a ; Ding & Simon, 2012 ; Lalor & Foxe, 2010 ). The envelope -related features 260 
+
+assessed in this study comprised the sound envelope and half -way rectified envelope 261 
+
+derivative (calculated from the envelope at the original sampling rate with the MATLAB 262 
+
+diff function , and by replacing negative values with zero ). Matching the processed EEG 263 
+
+signal, t he se acoustic features were then down sampled to 64 Hz .264 
+
+Word onsets . The forced alignment software DARLA (Reddy & Stanford, 2015 ) was 265 
+
+used to produce a word -by -word time -align ment between each speech segment and 266 
+
+its transcript. The onset time of all words in the speech stimuli was then coded into 267 
+
+sparse vectors of zeros and ones with the same length and sampling rate as the other 268 
+
+features , where ones represent the onset time of a word , consistent with previous 269 
+
+studies (Broderick et al., 2018 ; Chalehchaleh et al., 2025 ; Di Liberto et al., 2021 ).270 
+
+Lexical surprise and entropy . The second experiment in the present study investigates 271 
+
+the possibility of measuring neural signatures of lexical surprise and entropy in the 272 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+presence of dysfluencies, which are typically part of dialogues (Bosker et al., 2014 ;273 
+
+Clark & Tree, 2002 ; Fox Tree, 2001 ; Tree, 1995 ). Next -word lexical surprise and 274 
+
+entropy values were extracted from Mistral -7B -Instruct -v0.1 (Jiang et al., 2023 ), an 275 
+
+open source state -of -the -art LLM that has been fine -tuned on conversation datasets .276 
+
+For each trial, l exical surprise was calculated as the negative log contextual probability 277 
+
+of each word (Heilbron et al., 2022 ; Slaats & Martin, 2025 ). Additionally, for each trial 278 
+
+lexical entropy was calculated as the weighted sum over the surprise values for all 279 
+
+possible next words, and measures the level of uncertainty the model has for its next -280 
+
+word prediction (Goldstein et al., 2022 ; Slaats & Martin, 2025 ). Lexical surprise and 281 
+
+entropy feature vectors were built by scaling the word onset vector by its 282 
+
+corresponding surprise and entropy value, respectively . Previous work employing 283 
+
+similar models (e.g., GPT -2) found lexical expectation values to reliably explain 284 
+
+EEG/MEG variance when considering speech listening tasks (Dou et al., 2024 ;285 
+
+Heilbron et al., 2022 ). However, that work typically involved scripted speech 286 
+
+monologues without dysflu encies. 287 
+
+Dysflu encies . To investigate the impact of dysfluenc ies on lexical surprise and entropy 288 
+
+and their neural signature s, we built two lexical surprise and entropy vectors : (1) one 289 
+
+that included dysfluencies and (2) one that exclud ed dysflu encies in the speech 290 
+
+material (Figure 4A). Such dysfluencies were manually transcribed, annotated, and 291 
+
+removed (see the dysfluency types considered in Table S1). To balance the amount 292 
+
+of data in both versions of the surprise and entropy vectors, the annotated dysfluencies 293 
+
+were removed from both feature vectors. Therefore, the main difference in the two 294 
+
+versions of the surprise and entropy vectors lies primarily in if/how the presence of 295 
+
+dysfluencies impacts the predictions of upcoming words . In practice, this led to two 296 
+
+surprise and entropy feature vectors with the same word onsets, but different surprise 297 
+
+and entropy values. 298 
+
+Temporal response function analysis 299 
+
+A system identification approach was employed to determine how specific stimulus 300 
+
+features map onto EEG activity. This approach, known as the Temporal Response 301 
+
+Function (TRF) (Ding & Simon, 2012 ; Edmund C. Lalor, 2009 ), utili ses regulari sed 302 
+
+ridge linear regression (Crosse et al., 2016) to estimate a filter , or model, that best 303 
+
+captures how the brain converts input stimulus features into the resulting neural 304 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+responses. One of the two metric s derived from the TRF is the weights of the model 305 
+
+over time. The brain's response to a speech stimulus is not instantaneous; rather, it 306 
+
+unfolds over time when speech is heard. Therefore, the brain's electrical activity is 307 
+
+affected not just at the moment the sound occurs, but also over a subsequent time 308 
+
+period. This delayed and extended influence is captured in the time lags of the TRF 309 
+
+weights between the stimulus and the EEG response. These time lags can be 310 
+
+analysed both spatially (across the scalp) and temporally (in terms of response 311 
+
+delays). 312 
+
+As is typical (Crosse et al., 2016b ; Crosse et al., 2021 ), t o evaluate the model's ability 313 
+
+to generali se and avoid overfitting, we used leave -one -out cross -validation across 314 
+
+trials . In this process, TRF models were trained on all but one trial and then used to 315 
+
+predict the EEG signal for the left -out trial. The TRF model performance is then 316 
+
+assessed by computing Pearson’s correlation between the predicted EEG signal and 317 
+
+the actual EEG signal on the left -out fold at each scalp electrode . This constitutes the 318 
+
+second metric derived from the TRF: the prediction correlation, or the EEG variance 319 
+
+explained by a specific set of speech feature(s) . The EEG variance captured by 320 
+
+speech features is interpreted as how well the model was able to map the encoding of 321 
+
+speech features in the brain signals. Fitting the model with one speech feature results 322 
+
+in a univariate model, while fitting the model while more than one speech feature 323 
+
+results in a multivariate model. 324 
+
+Using these objective metrics, u nivariate forward TRF models were used to assess 325 
+
+the corresponding neural response to each speech feature of interest . Three univariate 326 
+
+TRF models were fit in Experiments 1 and 2 for the following speech features : the 327 
+
+speech envelope, envelope derivative, and the word onset . In Experiment 1, the 328 
+
+strength of the neural response to the speech in each of the three conditions was 329 
+
+assessed through the TRF models’ prediction correlations for any effect of social 330 
+
+relevance. In Experiment 2, the temporal dynamics of the EEG response to podcast 331 
+
+dialogues were examined from the TRF weights , expecting latencies consistent with 332 
+
+previous results on audiobook listening tasks . Despite variability in the acoustics of the 333 
+
+spontaneous dialogue stimul i across speech registers (Ferreira & Ferreira, 2019 ;334 
+
+Snow, 1972 ) and, as a result, the neural responses, the TRF measured is designed to 335 
+
+remain robust and stable against such specific differences as it estimates the 336 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+consistent impulse response of the brain . This serves as an opportunity to build speech 337 
+
+dialogue TRFs that are stable acr oss various types of speech and speech registers in 338 
+
+real dialogues . Notably , we expect ed to measure a negative deflection of the TRF at 339 
+
+latencies around 400 ms (i.e., the TRF -N400 response ) for this podcast listening task 340 
+
+that , compatibly with previous monologue listening work (Broderick et al., 2018 ;341 
+
+Broderick et al., 2021 ; Heilbron et al., 2022 ), would index word -level processing .342 
+
+Multivariate TRF (mTRF) analys es were also conducted in Experiment 2 to assess if 343 
+
+the cortical encoding of lexical surprise and entropy was more aligned with a next -344 
+
+word prediction model including or disregarding dysfluen cies . This enables us to 345 
+
+evaluate how much, if at all, dysfluencies impact lexical predictions during speech ,346 
+
+informing us on the most appropriate approach for measuring lexical expectations in 347 
+
+the human brain in contexts involving real speech (i.e., with dysfluencies) (Heilbron et 348 
+
+al., 2022 ; Mousavi et al., 2024 ). Sound envelope and word segmentation information 349 
+
+features (e.g., speech, speech derivative, word onset) were concatenated to represent 350 
+
+the stimulus, along with one of two versions of surprise: either dysfluent or non -351 
+
+dysfluent surprise .352 
+
+Statistical analyses 353 
+
+Parallel statistical procedures were applied to the datasets from the two experiments. 354 
+
+Statistical analyses were performed on EEG prediction -correlation values obtained 355 
+
+from the TRF models. For each participant and condition, prediction correlations were 356 
+
+averaged across all EEG electrodes to obtain subject -level values, and these values 357 
+
+were used in all statistical tests. To determine whether the TRF models captured 358 
+
+meaningful neural tracking of the speech features, prediction correlations were tested 359 
+
+against zero using one -sample t-tests. 360 
+
+To compare experimental conditions, repeated -measures statistical tests were used 361 
+
+because all conditions were recorded from the same participants. When three levels 362 
+
+of social relevance (undirected monologue, directed monologue, and dialogue) were 363 
+
+compared, a one -way repeated -measures ANOVA was applied to the subject -level 364 
+
+averages. When the omnibus test was significant, pairwise comparisons between 365 
+
+conditions were performed using Wilcoxon signed -rank tests. 366 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+For analyses of TRF weights across time lags, multiple comparisons were controlled 367 
+
+using the false discovery rate (FDR) procedure with p = 0.05 , according to the 368 
+
+procedure set out by (Benjamini & Yekutieli, 2001 ) for dependence assumptions. 369 
+
+A cross -experiment comparison was carried out by correlating TRFs for the two 370 
+
+datasets. Considering that the two datasets differ in both stimuli and participants, we 371 
+
+carried out that comparison via a bootstrap resampling procedure on the group -372 
+
+averaged TRF weights . Pearson’s correlation scores were calculated for the TRF 373 
+
+weights corresponding to univariate envelope, envelope derivative, and word onset 374 
+
+features . The general assumption in averaging TRFs (as for ERPs) is that TRFs for 375 
+
+individual participants may vary, but that participants share certain consistent 376 
+
+dynamics, which would emerge by averaging. Here , the assumption was that 377 
+
+averaging TRFs from two distinct samples of participants (from the same population) 378 
+
+would lead to the same TRF (when enough participants are available) , with higher 379 
+
+TRF correlation for more similar experimental tasks . Accordingly, we expected higher 380 
+
+inter -experiments TRF correlations when considering more similar tasks (i.e., dialogue 381 
+
+listening). This test was carried out via a bootstrap resampling procedure that derived 382 
+
+1,000 correlations between the average TRFs for each of the conditions in Experiment 383 
+
+1 and for Experiment 2, generated using a random sample with replacement on each 384 
+
+participant cohort. Because Mauchly’s test indicated that the assumption of sphericity 385 
+
+was violated ( p < 0.05), a nonparametric Friedman test was conducted to examine 386 
+
+differences in the correlations across conditions for each TRF feature using JASP 387 
+
+software (Love et al., 2019 ).388 
+
+The dysfluency analysis in Experiment 2 included repeated measures ANOVAs. Post -389 
+
+hoc tests using paired t-tests with the Holm correction were performed to examine the 390 
+
+effect of including/excluding dysfluencies on TRF model predictions , from which we 391 
+
+report the adjusted p-value. Matlab was used for statistical analysis in Experiment 1. 392 
+
+For Experiment 2, statistical analyses were performed using Matlab and JASP 393 
+
+software. 394 
+
+Code and data accessibility 395 
+
+The TRF analysis was conducted using the public ly available and open source mTRF -396 
+
+toolbox version 2.6 (Crosse et al., 2016a ; Crosse et al., 2021 ), which can be 397 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+downloaded from  https://github.com/mickcrosse/mTRF -Toolbox  or 398 
+
+https://sourceforge.net/projects/ aespa/ . Stimul us features and EEG data were stored 399 
+
+according to the continuous -event neural data structure CND (Di Liberto et al., 2024 ).400 
+
+Analyses were conducted using scripts shared via the GitHub channel 4 of the 401 
+
+Cognition and Natural Sensory Processing (CNSP ) and Natural Sensory Processing 402 
+
+open science initiative 5. Custom scripts were used for data visualisation and statistical 403 
+
+analyses. Datasets for Experiments 1 and 2 will be publicly shared via the open 404 
+
+science repository OSF (osf.io) at the time of publication and will also be included in 405 
+
+the list of publicly available datasets of the CNSP -initiative .406 
+
+# Results 407 
+
+Experiment 1 408 
+
+The survey indicated that participants could categorise undirected versus directed 409 
+
+speech sounds, achieving an accuracy of 0.94 (average across participants; ± 0.11 410 
+
+SD). Performance was significantly above chance level, as confirmed by one -sample 411 
+
+t-tests (overall: t(14) = 15.9, p = 1.1 × 10 ⁻³²; undirected stimuli: t(14) = 13.2, p = 3.1 × 412 
+
+10 ⁻²¹; directed stimuli: t(14) = 17.4, p = 2.4 × 10 ⁻³³ ; Fig . S4 ). Monologues were rated 413 
+
+as more interesting on average than dialogues ( Mmonologue = 3.42 , Mdialogue = 2.87; 414 
+
+paired t-test; t(18) = −2.26, p = 0.036) , while n o statistically significant difference in 415 
+
+interest ratings emerged between undirected and directed monologues (M undirected =416 
+
+3.72 ; Mdirected = 2.89 ; paired t-test: t(8) = −2.13, p = 0.066). 417 
+
+Univariate TRFs were fit to model the relationship between stimulus features ( speech 418 
+
+envelope, envelope derivative, and word onset ) and the broadband EEG signal (0.5 -419 
+
+30 Hz) . Separate TRF models were fit for the three stimulus features. First, we report 420 
+
+results for the widely used sound envelope feature as in previous studies (Muncke et 421 
+
+al., 2022 ; Vanthornhout et al., 2018 ). EEG prediction correlation values calculated with 422 
+
+leave -one -out cross validation (see Materials and Methods ) had magnitude s423 
+
+compatible with envelope TRF analyses in previous research (r~0.2 -0.4, after 424 
+
+averaging across all participants and EEG channels) . Comparing EEG prediction 425 
+
+correlations for envelope TRFs across conditions (undirected monologue, directed 426  
+
+> 4
+
+https://github.com/CNSP -Workshop/CNSP -resources/tree/main/CNSP/ exampleScripts  
+
+> 5
+
+https://cnspworkshop.net/ 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+monologue, and dialogue) revealed a statistically significant effect of social relevance 427 
+
+(one -way repeated measures ANOVA, F(2, 38) = 5.98, p = 0.00 6), with more socially -428 
+
+relevant stimuli producing larger EEG prediction correlation values . Post -hoc analyses 429 
+
+indicated lower prediction correlations in the undirected monologue condition 430 
+
+compared with both the directed monologue ( Wilcoxon signed -rank tests, p = 0.008) 431 
+
+and dialogue conditions ( p = 0.003; Figure 1A ). No statistically significant difference s432 
+
+were observed between directed monologue and dialogue conditions (p = 0. 89 ). No 433 
+
+statistically significant effects of social relevance were observed for the other stimulus 434 
+
+features considering broadband EEG (envelope derivative: F(2, 38) = 2.16, p = 0.129; 435 
+
+word onset: F(2, 38) = 1.03, p = 0.366). 436 
+
+437 Figure 1. Social relevance impacts the cortical tracking of speech . (A) Univariate 438 
+
+forward TRFs were f it ted for envelope, envelope derivative, and word onset features 439 
+
+to predict the on the broadband EEG in Experiment 1. EEG prediction correlations 440 
+
+(Pearson’s r) were first averaged across electrodes within each participant, and group 441 
+
+means (± SEM across participants) are shown for the three experimental conditions: 442 
+
+undirected monologue, directed monologue, and dialo gue .Envelope TRFs for the 443 
+
+socially -relevant conditions exhibited stronger EEG prediction correlations (one -way 444 
+
+repeated measures ANOVA with Wilcoxon signed -rank post hoc comparisons; *p < 0.05, **p 445 
+
+< 0.01) . (B) The same analysis was repeated for all EEG sub -bands of interest. F-value 446 
+
+of the repeated measures ANOVA is reported for each sub -band, indicating the effect 447 
+
+of social relevance across features and EEG frequency bands. The strongest effects 448 
+
+of social relevance for the envelope TRF emerged in the delta -band, and for word -449 
+
+onset in the gamma -band. (C) Scalp topographies of the EEG prediction correlations 450 
+
+for each condition and speech feature. Warmer colours indicate higher prediction 451 
+
+correlation values. All topographies showed qualitatively similar spatial patterns ,452 
+
+compatible with previous studies on continuous speech listening (Di Liberto et al., 453 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+2015 ). (D) TRF weights averaged across all participants at channel Cz are show n for 454 
+
+the three conditions and stimulus feature s. Shaded areas represent the standard error 455 
+
+of the mean (SEM) across participants. 456 
+
+TRF and ANOVA analys es were repeated for different EEG sub -bands to determine if 457 
+
+the effect was specific to certain cortical rhythms. The envelope TRF analysis showed 458 
+
+strongest effects in low -frequency EEG (Figure 1B ), with a s tatistically significant 459 
+
+effect in the delta -band (F(2, 38) = 5.80, p = 0.006) ; a trending effect in the alpha -band 460 
+
+(F(2, 38) = 3.18, p = 0.053 ); and no statistically significant effects elsewhere ( theta -461 
+
+band : F(2, 38 ) = 0.27, p = 0.763 ; beta -band : F(2, 38 ) = 1.89 , p = 0. 166 ). Conversely, 462 
+
+the word onset TRF showed strongest effects in higher EEG frequencies, with a 463 
+
+statistically significant effect in the beta -band (one -sample ANOVA, F(2, 38 ) = 6.38 , p464 
+
+= 0.00 4); a trending effect in the alpha -band (F(2, 38 ) = 2.95 , p = 0.0 64 ); and no 465 
+
+statistically significant effects elsewhere ( delta -band : F(2, 38 ) = 0. 61 , p = 0. 551 ; theta -466 
+
+band: F(2, 38 ) = 0.57 , p = 0. 559 ). No statistically significant effects were measured for 467 
+
+the envelope derivative TRF (delta -band: F(2, 38 ) = 2.75 , p = 0. 077 ; theta -band: F(2, 468 
+
+38 ) = 0. 27 , p = 0. 765 ; alpha -band: F(2, 38 ) = 1.45 , p = 0. 248 ; gamma -band: F(2, 38 )469 
+
+= 2.17 , p = 0. 128 ).470 
+
+We also report TRF weights for the models in the EEG broadband. Based on previous 471 
+
+research, we expected a P1 -N1 -P2 pattern with latencies around 40, 80, and 140ms 472 
+
+respectively (Crosse et al., 2016a ; Di Liberto et al., 2015 ; Lalor & Foxe, 2010 ), where 473 
+
+longer latencies have been linked with factors such as selective attention (Power et 474 
+
+al., 2012 ). The literature also informs us on the neural dynamics corresponding with 475 
+
+higher order features like word onsets, such as a large slow negative deflection at a 476 
+
+latency of approximately 400 ms (Broderick, 2018 ). Here, we found TRF patterns that 477 
+
+were qualitatively similar to that literature in all those aspects .478 
+
+Experiment 2 479 
+
+EEG signals were recorded as participants listened to spontaneous two -party 480 
+
+dialogues from popular podcast s, each involving a podcast host and a guest . Forward 481 
+
+univariate TRFs were derived for the two speech features showing an effect of social 482 
+
+relevance: the sound envelope and word onset features ( Figure 2 ; we also report the 483 
+
+envelope derivative results in Figure S2). As in Experiment 1, EEG prediction 484 
+
+correlations were calculated with leave -one -out cross validation for each stimulus 485 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+feature separately. EEG prediction correlations were above chance for both sound 486 
+
+envelope (Figure 2A -left ; t-test s, p < 0.001 ) and word onsets ( Figure 2B -left ; t-tests, 487 
+
+p < 0.001 ), reflecting a statistically significant EEG encoding of the two features. 488 
+
+489 Figure 2. Characterising the c ortical tracking of speech using real podcast 490 
+
+dialogue s. Univariate forward TRF models in Experiment 2 for envelope (A) and word 491 
+
+onset (B) features . The se analyses aggregated data from both listening conditions (AA 492 
+
+and AC). Scalp distributions of the average EEG prediction correlations are reported 493 
+
+(left panels). TRF weights at channels Fz, Cz and Pz (middle -panels) and the TRF 494 
+
+weights at three key time -lags exhibit patterns compatible with the literature 495 
+
+(Chalehchaleh et al., 2025 ; Di Liberto et al., 2015 ; Lalor, 2009 ).496 
+
+In Experiment 2, the podcast host was always an adult speaker, while the podcast 497 
+
+guest was either an adult or a child. This led to two conditions (adult -adult 498 
+
+conversation s - AA; adult -child conversations - AC) that we compared to determine if 499 
+
+their multi -faceted differences (e.g., prosody, lexis, word -rate) would impact the 500 
+
+envelope and word onset TRF model fit s. While there may be other differences that 501 
+
+exist elsewhere between AA and AC speech , for the purposes of the current analyses, 502 
+
+we focused on just these two speech features . EEG prediction correlations averaged 503 
+
+across scalp locations did not differ significantly between AA and AC stimuli (Wilcoxon 504 
+
+paired signed -rank test (*p <0.05) : envelope: p = 0.17 7; word onset: p = 0.16 5). The 505 
+
+effect of stimulus type (AA versus AC) upon TRF feature weights at channel C z was 506 
+
+also examined for each time lag . N o statistically significant difference s emerged (FDR -507 
+
+corrected Wilcoxon paired signed -rank test , *p > 0.05 across all time lags ). On this 508 
+
+basis, the analyses that follow are carried out by combin ing AA and AC stimuli . While 509 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+no effects of speech register emerged in this investigation, further work could 510 
+
+investigate possible effects on other linguistic features (Piazza et al., 2025 ).511 
+
+The TRF weights were qualitatively comparable with the previous literature (Di Liberto 512 
+
+et al., 2015 ; Lalor et al., 2009 ) and with the results from Experiment 1, with the 513 
+
+envelope TRF presenting the typical P1 -N1 -P2 characteristics, and the word onset 514 
+
+TRF exhibiting the typical dominant negative deflection at about 400 ms ( Figure 2 -515 
+
+middle ). We measured Pearson’s correlations between the group TRF weights across 516 
+
+the two experiments. The resulting group -level correlations after averaging the TRF 517 
+
+weights of the 64 EEG channels across participants are shown in Figure 3 , indicating 518 
+
+high correlations (up to 0.92) across experiments , with average correlation values 519 
+
+increasing with social relevant i.e., undirected monologue , directed monologue ,520 
+
+synthesised dialogue .521 
+
+522 
+
+Figure 3. Speech podcast TRFs are more correlated with synthesised speech 523 
+
+TRFs involving socially -relevant speech than undirected monologues. 524 
+
+Correlations between group -level average TRF weights of the 64 EEG channels were 525 
+
+calculated on the original samples from the two experiment s. A bootstrap resampling 526 
+
+procedure was performed to assess the robustness of this pattern . The distribution 527 
+
+and confidence intervals of the bootstrap , the bootstrap mean (dot) , and the group -528 
+
+level average (diamond ) TRF correlation are plotted. TRF weights for the real podcast 529 
+
+dialogues in Experiment 2 shows high correlat ions with the three conditions in 530 
+
+Experiment 1 in the following descending order: synthesised dialogue, directed 531 
+
+monologue, undirected monologue. This pattern emerges for all speech features in 532 
+
+th e analysis , with statistically significant differences emerging only for the word onset 533 
+
+features across all conditions. 534 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+To assess whether this pattern was statistically reliable across participants, conducted 535 
+
+Friedman tests (due to Mauchly’s violation of sphericity ), followed by post -hoc pairwise 536 
+
+Wilcoxon signed -rank tests by considering each participant as a datapoint (N = 20). 537 
+
+This analysis revealed a statistically significant effect of condition on the inter -538 
+
+experiment correlation when considering the word onset TRFs (χ²(2) = 11.70, p =539 
+
+0.003, Kendall's W = 0.29), while no statistical significant differences were detected 540 
+
+for envelope (χ²(2) = 2.50, p = 0.29) , and envelope derivative TRFs (χ²(2) = 4.90, p =541 
+
+0.09). Post -hoc tests on word onset TRFs indicated that synthesised dialogue TRFs 542 
+
+were significantly more correlat ed with real dialogue TRFs from Experiment 2 than 543 
+
+directed monologue TRFs (Wilcoxon signed -rank rsynth -Dialog vs. real -Dialog > rdirected -M vs. real -544 
+
+> Dialog
+
+: p < 0.001 ), with the correlation further decreasing for monologue TRFs (rdirected -M545  
+
+> vs. real -Dialog
+
+> rund irected -M vs. real -Dialog : p < 0.001 ) from Experiment 1. This trend is consistent 546 
+
+with the correlation pattern synthesised dialogue > directed monologue > undirected 547 
+
+monologue as on the original sample. 548 
+
+Additional analyses were carried out t o obtain a more detailed assessment of the 549 
+
+distribution and robustness of the cross -experiment correlations. Specifically, we 550 
+
+performed a bootstrap resampling procedure (with replacement) and generat ed 1,000 551 
+
+correlations between the group -averaged TRF in Experiment 2 to each of the 552 
+
+conditions in Experiment 1 for each feature . Compatibly with the participant -level 553 
+
+results, the bootstrap distributions indicate particularly robust inter -experiment 554 
+
+correlations for word onset TRFs, especially for synthesised dialogue .555 
+
+Investigating the impact of dysflu encies on lexical expectation measurements 556 
+
+Experiment 2 involved real podcast recordings, which include dysfluencies by nature .557 
+
+Indeed, the dysfluency types and frequencies can vary due to a variety of factors (e.g., 558 
+
+speaker, social context, social anxiety, fatigue , familiarity with interlocutor, knowledge 559 
+
+of topic, speaking a native or non -native language). To investigate the impact of 560 
+
+dysfluenc ies on the lexical surprise and entropy feature and its corresponding brain 561 
+
+response, two lexical surprise and entropy vectors were constructed , including and 562 
+
+excluding dysfluencies in the speech material, respectively ( Figure 4A ). As such, we 563 
+
+carried out a characterisation of the dysfluency type and frequency for this specific 564 
+
+dataset split across conditions AA and AC ( Figure 4B ), finding a majority of filler -type 565 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+dysfluency and an overall frequency of dysfluent words of 3. 36 %, whereby ~5% of all 566 
+
+words were filler -type dysfluencies (e.g., “uh”/”like”/”you know”), ~1% were repetitions, 567 
+
+with less than 1% consisting of replacements and restarts (see Materials and 568 
+
+Methods and Table S1 ). The frequency distribution of these dysfluencies types was 569 
+
+consistent across podcast episodes, with a statistically significant main effect of 570 
+
+dysfluency type (repeated measures ANOVA: F(4,60 ) = 28.49, p < 0.001 , η² = 0.42; 571 
+
+post hoc tests in Table S2 ). We found no statistically significant interaction of 572 
+
+dysfluency type and experimental condition (adult -adult podcast AA; adult -child 573 
+
+podcast AC ) (repeated measures ANOVA: F(4,60 ) = 1.04, p = 0.39, η² = 0.02). 574 
+
+575 
+
+Figure 4. Investigating the impact of dysfluencies on LLMs . (A) Audio transcripts 576 
+
+were analysed using two different lexical surprise and entropy vectors. While both 577 
+
+vectors only included non -dysfluent words , for sake of comparison, lexical surprise 578 
+
+and entropy were calculated using Mistral by including or excluding dysfluent words 579 
+
+from the text input, producing the dysfluent and non -dysfluent feature vectors . (B) 580 
+
+Dysfluencies were identified manually in the text material. We report the dysfluency 581 
+
+frequency organised according to dysfluency type and experimental condition (adult -582 
+
+adult podcast AA; adult -child podcast AC) . (C) Th e correlations between Mistral ’s 583 
+
+expectations when including or excluding dysfluent words in the calculation of lexical 584 
+
+surprise and entropy are shown , quantifying the potential impact of dysfluency on the 585 
+
+measurement of lexical expectations. Doubling the number of dysfluencies le d to a 586 
+
+statistically significant effect of dysfluency. On this basis, future research should 587 
+
+measure dysfluencies in the speech material, since differences across participant 588 
+
+cohorts or conditions may reflect differences in the prevalence of dysfluent words in 589 
+
+the heard or produced speech. 590 
+
+Here, we investigated if the presence of dysfluent words in the speech material (and 591 
+
+its transcript) significantly impacts our ability to model the neural encoding of lexical 592 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+expectations. To that end, we introduced two additional stimulus features in 593 
+
+Experiment 2 . These comprised word onset vectors modulated by lexical surprise and 594 
+
+entropy values calculated using Mistral (see Materials and Methods ). The first vector 595 
+
+involved surprise values calculated when including all words , of which 3.3% of the 596 
+
+were dysfluent . The second vector only included non -dysfluent words (dysfluencies 597 
+
+were identified manually). However, dysfluent and non -dysfluent surprise values did 598 
+
+not differ in this dataset, with a Pearson’s correlation between the two surprise vectors 599 
+
+of 0.98. Due to this high correlation, we also did not expect differences to report in the 600 
+
+coupling between these vectors and the corresponding EEG signals. While we could 601 
+
+measure a statistically significant neural encoding of lexical surprise (using either 602 
+
+dysfluent or non -dysfluent vectors) when compared to a baseline acoustic model 603 
+
+(Figure S3 ), this is not guaranteed to be the case in speech material with more 604 
+
+dysfluencies. 605 
+
+These virtually identical regressors suggest that at this low volume of dysfluencies, 606 
+
+using speech material that includes or excludes dysfluencies would render little to no 607 
+
+difference in the neural processing and encoding of speech. However, social speech 608 
+
+can widely vary in the number of dysfluencies depending on numerous factors (e.g., 609 
+
+speaker, social context, anxiety, tiredness, familiarity with interlocutor, knowledge of 610 
+
+topic, speaking a native or non -native language). As a consequence, the neural 611 
+
+encoding of speech may be impacted when more dysfluencies are present. An612 
+
+excessive number of dysfluencies (e.g., more dysfluent than non -dysfluent words) may 613 
+
+disrupt lexical prediction in both the LLM and the human brain . Hence, we then 614 
+
+assess ed what level of dysfluency frequenc ies constitute an issue for lexical prediction 615 
+
+in LLMs and to what extent this sensitivity persists by manually increasing the number 616 
+
+of dysfluencies in the speech transcript . Specifically, we doubled and quadrupled the 617 
+
+existing dysfluencies in Experiment 2 , calculating the correlation between the lexical 618 
+
+surprise and entropy values between the dysfluent and non -dysfluent vectors (Figure 619 
+
+4C ). Lower correlation s indicate a stronger impact of dysfluencies. We found a 620 
+
+significant impact of dysfluency frequency (FDR -corrected Wilcoxon paired sign -621 
+
+ranked test: poriginalSur vs. doubledSur < 0.001 , poriginalSur vs. quadSur < 0.001 , poriginalEntro vs. 622  
+
+> doubledEntro
+
+< 0.001 , pdoubledEntro vs. quadEntro < 0.001 , poriginalEntro vs. quadEntro < 0.001 ), w hereby 623 
+
+there was practically no sensitivity to dysfluencies for the frequency in the original 624 
+
+material (dysfluent -nondysfluent correlation ~ 1) and significant sensitivity to 625 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+dysfluencies once they were doubled , though this effect seems to level out. 626 
+
+Additionally, the strong est sensitivity overall emerged for entropy vectors (correlation 627 
+
+down to ~0.7) .628 
+
+# Discussion 629 
+
+Speech communication is an ideal testbed for investigating human cognition, as it 630 
+
+involves a multitude of processes involved in the transformation of sound to meaning .631 
+
+Such processes encompass mechanisms such as statistical prediction , attention and 632 
+
+cognitive effort . The possibility of extending that work to social speech opens up 633 
+
+opportunities for probing a whole range of processes that are typically excluded from 634 
+
+monologue listening research, such as social role and speaker familiarity, 635 
+
+communication accommodation, social anxiety, and many others (Di Liberto & Ip, 636 
+
+2025 ). However, this opportunity comes with the important challenge of having to 637 
+
+isolate the phenomena of interests from a much richer and harder -to -control set of 638 
+
+behaviours and neural processes. One key for disentangling those processes and 639 
+
+phenomena is to pinpoint how exactly these socially -relevant factors impact the spatial 640 
+
+and temporal patterns reflecting the neural processing of speech and language . Here, 641 
+
+we take a first step in that direction by means of a principled step -by -step approach ,642 
+
+determining the impact of including a social element in speech listening tasks 643 
+
+(excluding interaction in our scope of investigation) .644 
+
+The results from Experiment 1 indicate that social relevance substantially enhances 645 
+
+the neural tracking of speech . Importantly, this effect cannot be explained by 646 
+
+differences in low -level acoustic or speech -structure properties across stimulus 647 
+
+categories. To assess this possibility, we quantified several stimulus characteristics, 648 
+
+including duration, root -mean -square (RMS) amplitude, mean fundamental frequency 649 
+
+(F0), F0 variability, and word rate. No systematic differences were observed between 650 
+
+conditions, nor between monologue and dialogue stimuli. These findings indicate that 651 
+
+the observed neural effects are unlikely to be driven by basic acoustic or speech -rate 652 
+
+differences and instead reflect modulation by socially relevant aspects of the stimuli. 653 
+
+The increase d encoding emerged specifically for the speech envelope, but not for 654 
+
+word -level processing (EEG prediction correlation metric; Fig ure 1A ). Previous work 655 
+
+on selective attention has also shown similar increases in envelope tracking. 656 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Interestingly, however, the increased speech tracking in selective attention tasks also 657 
+
+corresponded with changes in the TRF patterns, especially with a modulation of the 658 
+
+TRF -P2 component (Carta et al., 2024 ; Power et al., 2012 ; Vanthornhout et al., 2018 ),659 
+
+while the increased envelope tracking here does not correspond to changes in the 660 
+
+temporal or spatial dynamics of the TRF ( Fig ure 1D ). As such, our results are 661 
+
+compatible with a general increased engagement with the task and stimulus , but with 662 
+
+important differences from the widely studied selective attention phenomenon . It 663 
+
+should be noted that we also detected sensitivity to the social relevance of speech in 664 
+
+the beta band , specifically for word onset encoding. This result supports the potential 665 
+
+and relevance of measuring cortical tracking at higher EEG rates (even though 666 
+
+stronger speech tracking typically emerges in the delta and theta bands). While we did 667 
+
+not have specific hypotheses pertaining to the EEG beta band in this study, we note 668 
+
+that studying speech tracking at different frequency rates may provide an additional 669 
+
+dimension for more clearly disentangl ing the cortical tracking of distinct speech 670 
+
+features , and should be considered (without forgetting about the risks that come with 671 
+
+filtering operations) (De Cheveigné & Nelken, 2019 ).672 
+
+While Experiment 1 isolated the impact of social relevance on speech tracking , our 673 
+
+design in Experiment 2 takes us a step further by measuring neural dynamics in more 674 
+
+naturalistic settings, wherein spontaneous speech introduces additional complexities .675 
+
+The results in Experiment 2 (Figure 2) demonstrated temporal response 676 
+
+characterisations that are not only consistent with previous monologue -listening 677 
+
+literature (Broderick et al., 2018 ; Di Liberto et al., 2021 ; Heilbron et al., 2022 ), but also 678 
+
+with the neural speech encoding results obtained in Experiment 1 ( Figure 3 ). Our 679 
+
+results indicated similar spatial and temporal patterns for synthesised and real speech 680 
+
+recordings; the EEG encoding of speech features , including the speech envelope and 681 
+
+word onset , was highly correlated across synthesised and real speech record ings ,682 
+
+achieving correlations of up to 0.92 for word onset TRFs . This is quite remarkable, 683 
+
+considering that the two experiments involved completely different speech material 684 
+
+and distinct participant cohorts. The fact that we observed a consistent increase in that 685 
+
+similarity with social relevance is also a strong indication that the impact of social 686 
+
+relevance on the spatial and temporal patterns of speech is consistent across material 687 
+
+and participants. Further work is needed to better characterise and test the boundaries 688 
+
+of consistency in neural tracking of speech features across synthesised and real 689 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+speech and to characterise the sensitivity of TRFs to variations in synthesiser model 690 
+
+and configuration . Nonetheless , our findings suggest that the similarity between 691 
+
+synthesised and real speech TRFs and their modulation by the social relevance of 692 
+
+speech are remarkably high .693 
+
+Experiment 2 demonstrate s the feasibility of employing the TRF using naturalistic and 694 
+
+socially -relevant speech material . Our dysfluenc y analysis indicated that the presence 695 
+
+of dysfluencies observed in the podcast stimuli utilised does not impact the ability to 696 
+
+derive indices of surprise and entropy, which can , in turn , be used to improve TRF 697 
+
+models . This is promising for future research, as it suggests the possibility of studying 698 
+
+speech tracking even in presence of dysfluencies. However, note here that the LLM 699 
+
+dysfluency simulation analysis highlights that when a larger portion of the speech 700 
+
+material includes dysfluencies , they can exert a notable impact on lexical expectation 701 
+
+indices. 702 
+
+From this analysis, two key conclusions emerge. First, dysfluencies do not pose a 703 
+
+problem up to a certain threshold, which may eliminate the need for manual transcript 704 
+
+cleaning when using LLMs. Second, it is essential to quantify and report the dysfluency 705 
+
+profile - both type and frequency - used in a given experiment, particularly when 706 
+
+generating new stimuli. This task is relatively straightforward in listening experiments, 707 
+
+where all participants are exposed to identical stimuli. In contrast, speech interaction 708 
+
+paradigms, such as hyperscanning studies, introduce greater methodological 709 
+
+complexity. A central challenge is that individual participants often exhibit unique 710 
+
+dysfluency profiles (Befi -Lopes et al., 2014 ; Pistono et al., 2024 ), which can 711 
+
+differentially affect measures of lexical expectations - both in terms of LLM -based 712 
+
+estimation and neural encoding (Goldstein et al., 2022 ). This variability reinforces the 713 
+
+need for systematic dysfluency measurement and individuali sed reporting to ensure 714 
+
+robust and interpretable findings. Finally, it is worth noting that the observed sensitivity 715 
+
+of LLMs to dysfluency opens new avenues for research focused on its impact on the 716 
+
+neural encoding of speech. Future investigations could specifically examine this effect 717 
+
+in participant cohorts with speech production challenges, such as individuals who 718 
+
+stutter or those experiencing social anxiety. Such studies would not only deepen our 719 
+
+understanding of speech processing under naturalistic conditions but also offer 720 
+
+insights into the neural mechanisms underlying communicative difficulties. 721 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+In summary, this study demonstrates that incorporating social relevance into speech 722 
+
+listening tasks enhances the neural tracking of speech and reveals remarkable 723 
+
+consistent spatial -temporal patterns across varied speech materials and participant 724 
+
+cohorts. By extending analysis to spontaneous speech and dysfluency, we 725 
+
+demonstrate the possibility of modelling the neural tracking of speech , as well as 726 
+
+lexical prediction mechanisms even in presence of dysfluencies. Based on our 727 
+
+simulation, we provide evidence for the importance of considering the issue of 728 
+
+dysfluency when studying social speech, when listening to speech interactions and 729 
+
+especially in experiments where participants engage in dialogue. Altogether, t hese 730 
+
+findings lay the groundwork for future investigations into the neural encoding of socially 731 
+
+complex and dysfluent speech, offering a principled path toward understanding 732 
+
+communication in real -world contexts. 733 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+# Supplementary 734 
+
+Figure S1. EEG prediction correlations for different frequency bands 735 
+
+(Experiment 1) . Univariate forward TRFs were fitted for envelope, envelope 736 
+
+derivative, and word onset features to predict the EEG signal at frequency bands delta 737 
+
+(A), theta (B) , alpha (C) , and beta (D ). EEG prediction correlations (Pearson’s r), 738 
+
+averaged over all channels and participants, are presented as mean ± SEM, 739 
+
+comparing the three experimental conditions: undirected monologue, directed 740 
+
+monologue, and dialogue. One -way ANOVA and Wilcoxon signed -rank post hoc tests 741 
+
+were conducted ( *p < 0.05, **p < 0.01 ). This data extend s the results in Figure 1. 742 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Figure S2 . TRF weights for the envelope derivative feature from Experiment 2 at three 743 
+
+selected EEG channels. This data extend s the results in Figure 2. 744 
+
+Dysfluency Type  Definition 
+
+Fillers  uh / um, you know, sort of, like, I’ll say, I don’t know 
+
+Repetitions  I-I-I
+
+Restarts (also 
+
+coined false start in 
+
+(Shriberg, 1999 ))
+
+The speaker abandons completely the initial utterance and 
+
+restarts it. This type of dysfluency does not actually involve a 
+
+repair as the speaker begins a completely new 
+
+utterance (Passali et al., 2022 ).
+
+Replacements (also 
+
+coined repair in 
+
+(Shriberg, 1999 ))
+
+The speaker replaces the dysflu ent word(s) or phrase with 
+
+the fluent one. In replacements, the reparandum is replaced 
+
+by the repair (Passali et al., 2022 )
+
+Table S1. Dysfluency types. The dysfluency analys es in Figures 4 and 5 constitute 745 
+
+a preliminary approach for handling dysflu encies that are a natural part of social 746 
+
+speech . This table indicates the f our dysfluency types that were identified – fillers, 747 
+
+repetitions, restarts (also known as false starts ), and replacements (also known as 748 
+
+repairs ) (Shriberg, 1999 ). See Figure 4B for the distribution of these dysfluency types 749 
+
+in the speech material for Experiment 2. Note that Experiment 1 did not include any 750 
+
+dysfluenc ies .751 
+
+Mean 
+
+Difference  SE  t Cohen's d  pholm 
+
+Fillers  Repetitions  5.812500  0.801358  7.253313  1.671350  7.394361×10 -9
+
+Replacements  6.718750  0.801358  8.384206  1.931937  9.777329×10 -11 
+
+Restart  6.968750  0.801358  8.696177  2.003823  3.213573×10 -11 
+
+Table S2 . Post Hoc Comparisons o f dysfluency type s. A statistically significant 752 
+
+main effect of dysfluency type emerged when c omparing the frequency distribution of 753 
+
+dysfluencies across trials in both AA and AC conditions with a repeated measures 754 
+
+ANOVA . Post hoc tests show how fillers significantly outnumber any other dysfluency 755 
+
+produced in real podcast dialogues. This data extend s the results in Figure 4B. 756 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+757 Figure S3. Investigating the impact of dysfluencies on speech TRFs. (C) 758 
+
+Multivariate TRFs were computed to predic t the EEG signal using the dysfluent or non -759 
+
+dysfluent vectors, concatenated with nuisance regressors capturing speech acoustics 760 
+
+and word segmentation (envelope, envelope derivative, and word onset). We report 761 
+
+the TRF weights corresponding to the dysfluent and non -dysfluent surprise features 762 
+
+at electrode Cz. (D) Both versions of the models that included acoustics and dysfluent 763 
+
+surprises returned a significant gain in the average EEG prediction correlations in 764 
+
+comparison to the acoustics -only mTRF, reflecting a statistically significant neural 765 
+
+encoding of lexical surprise. These data extend the results in Figure 4. 766 
+
+Forward multivariate TRFs were fit for each of the two vectors and including the three 767 
+
+features used in the earlier analysis as nuisance regressors (envelope, envelope 768 
+
+derivative, and word onsets), leading to a non -dysfluent surprise TRF and a dysfluent 769 
+
+surprise TRF . Note that, for sake of comparison, dysfluent and non -dysfluent vectors 770 
+
+were built to be identical in everything but the surprise values i.e., they had the same 771 
+
+word onsets. Finally, a third TRF was fit for the nuisance regressors without any lexical 772 
+
+surprise information ( baseline TRF). When comparing the model weights between the 773 
+
+non -dysfluent and dysfluent surprise TRFs (Wilcoxon paired signed -rank test: p =774 
+
+0.951; Figure S3a ), no statistically significant differences emerged. In addition, EEG 775 
+
+prediction correlations were compared across the three TRF models, showing a 776 
+
+statistically significant differences across the three TRF models (repeated measures 777 
+
+ANOVA: F(1, 19) = 7.96, p = 0.001, η² = 0.30; Figure S3b ). Post hoc comparisons 778 
+
+indicated larger EEG prediction correlations when including either surprise vector ( t-779 
+
+tests; rnon -dysfluent surprise > rno -surprise , t(19) = -3.54, pholm = 0.003, Cohen’s d = -0.16; rdysfluent 780  
+
+> surprise
+
+> rno -surprise , t(19) = -3.36, pholm = 0.004, Cohen’s d = -0.16). As expected, no 781 
+
+statistically significant differences were measured between non -dysfluent and 782 
+
+dysfluent surprise TRF prediction correlations ( t-test: t(19) = -0.18, pholm = 0.861, 783 
+
+Cohen’s d = -0.01). 784 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+785 
+
+Figure S4. Behavio ural validation of stimulus categorisation into directed vs. 786 
+
+undirected . An independent group of participants ( N = 15) was asked to categorise 787 
+
+speech recordings as directed or undirected. 16 recordings, each ~2 -minute long, 788 
+
+were used in this experiment. The confusion matrix reports correct and incorrect 789 
+
+classification rates .790 
+
+Measure  Comparison  Test  p-value  Effect size 
+
+Duration 
+
+Undirected vs 
+
+Directed vs 
+
+Dialogue 
+
+Kruskal –Wallis  0.57  0.01 (ε²) 
+
+RMS 
+
+amplitude 
+
+Undirected vs 
+
+Directed vs 
+
+Dialogue 
+
+Kruskal –Wallis  0.17  0.08  (ε²) 
+
+Mean F0 
+
+Undirected vs 
+
+Directed vs 
+
+Dialogue 
+
+Kruskal –Wallis  0.93  0.01  (ε²) 
+
+F0 
+
+variability 
+
+Undirected vs 
+
+Directed vs 
+
+Dialogue 
+
+Kruskal –Wallis  0.40  0.02  (ε²) 
+
+Word rate 
+
+Undirected vs 
+
+Directed vs 
+
+Dialogue 
+
+Kruskal –Wallis  0.15  0.09  (ε²) 
+
+Duration  Monologue vs 
+
+Dialogue  Wilcoxon rank -sum  0.30  0.18 (r) 
+
+RMS 
+
+amplitude 
+
+Monologue vs 
+
+Dialogue  Wilcoxon rank -sum  0.51  0.12 (r) 
+
+Mean F0  Monologue vs 
+
+Dialogue  Wilcoxon rank -sum  0.72  0.06 (r) 
+
+F0 
+
+variability 
+
+Monologue vs 
+
+Dialogue  Wilcoxon rank -sum  0.51  0.11 (r) 
+
+Word rate  Monologue vs 
+
+Dialogue  Wilcoxon rank -sum  0.32  0.18 (r) 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Table S3 . Acoustic and speech -structure properties across conditions . No 791 
+
+significant differences were observed between undirected monologue, directed 792 
+
+monologue, and dialogue conditions, nor between monologue and dialogue stimuli. 793 
+
+.CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint References 794 
+
+Befi -Lopes, D. M., Cáceres -Assenço, A. M., Marques, S. F., & Vieira, M. (2014). School -age 795 
+
+children with specific language impairment produce more speech disfluencies than 796 
+
+their peers. CoDAS, 797 
+
+Benjamini, Y., & Yekutieli, D. (2001). The control of the false discovery rate in multiple testing 798 
+
+under dependency. Annals of statistics , 29 (4), 1165 -1188. 799 
+
+Bernabei, J. M., Arnold, T. C., Shah, P., Revell, A., Ong, I. Z., Kini, L. G., Stein, J. M., 800 
+
+Shinohara, R. T., Lucas, T. H., Davis, K. A., Bassett, D. S., & Litt, B. (2021). 801 
+
+Electrocorticography and stereo EEG provide distinct measures of brain connectivity: 802 
+
+implications for network models. Brain Communications , 3(3), fcab156. 803 
+
+https://doi.org/10.1093/braincomms/fcab156 804 
+
+Bosker, H. R., Quené, H., Sanders, T., & de Jong, N. H. (2014). What makes speech sound 805 
+
+fluent? The contributions of pauses, speed and repairs. Language Testing , 31 (2), 159 -806 
+
+175. 807 
+
+Brainard, D. H. (1997). The Psychophysics Toolbox. Spatial Vision , 10 (4), 433 -436. 808 
+
+https://doi.org/10.1163/156856897X00357 809 
+
+Broderick, M. P., Anderson, A. J., Di Liberto, G. M., Crosse, M. J., & Lalor, E. C. (2018). 810 
+
+Electrophysiological Correlates of Semantic Dissimilarity Reflect the Comprehension 811 
+
+of Natural, Narrative Speech. Current Biology , 28 (5), 803 -809.e803. 812 
+
+https://doi.org/10.1016/J.CUB.2018.01.080 813 
+
+Broderick, M. P., Anderson, A. J., Di Liberto, G. M., Crosse, M. J., & Lalor, E. C. (2018). 814 
+
+Electrophysiological Correlates of Semantic Dissimilarity Reflect the Comprehension 815 
+
+of Natural, Narrative Speech. Current Biology , 28 .816 
+
+Broderick, M. P., Di Liberto, G. M., Anderson, A. J., Rofes, A., Lalor, E. C., Broderick, M. P., 817 
+
+Di Liberto, G. M., Anderson, A. J., Rofes, A., & Lalor, E. C. (2021). Dissociable 818 
+
+electrophysiological measures of natural language processing reveal differences in 819 
+
+speech comprehension strategy in healthy ageing. Scientific Reports 2021 11:1 , 11 (1). 820 
+
+https://doi.org/10.1038/s41598 -021 -84597 -9821 
+
+Butler, L. K., Kiran, S., & Tager -Flusberg, H. (2020). Functional Near -Infrared Spectroscopy 822 
+
+in the Study of Speech and Language Impairment Across the Life Span: A Systematic 823 
+
+Review. American Journal of Speech -Language Pathology , 29 (3), 1674 -1701. 824 
+
+https://doi.org/10.1044/2020_AJSLP -19 -00050 825 
+
+Carreiras, M., Vergara, M., & Barber, H. (2005). Early event -related potential effects of syllabic 826 
+
+processing during visual word recognition. Journal of cognitive neuroscience , 17 (11), 827 
+
+1803 -1817.  https://doi.org/10.1162/089892905774589217 828 
+
+Carta, S., Aličković, E., Zaar, J., Valdés, A. L., & Di Liberto, G. M. (2024). Cortical encoding of 829 
+
+phonetic onsets of both attended and ignored speech in hearing impaired individuals. 830 
+
+PLoS One , 19 (11), e0308554.  https://doi.org/10.1371/journal.pone.0308554 831 
+
+Chalehchaleh, A., Winchester, M. M., & Di Liberto, G. M. (2025). Robust assessment of the 832 
+
+cortical encoding of word -level expectations using the temporal response function. 833 
+
+Journal of Neural Engineering , 22 (1), 016004.  https://doi.org/10.1088/1741 -834 
+
+2552/ada30a 835 
+
+Chen, W. -L., Wagner, J., Heugel, N., Sugar, J., Lee, Y. -W., Conant, L., Malloy, M., Heffernan, 836 
+
+J., Quirk, B., Zinos, A., Beardsley, S. A., Prost, R., & Whelan, H. T. (2020). Functional 837 
+
+Near -Infrared Spectroscopy and Its Clinical Application in the Field of Neuroscience: 838 
+
+Advances and Future Directions. Frontiers in Neuroscience , 14 .839 
+
+https://doi.org/10.3389/fnins.2020.00724 840 
+
+Clark, H. H., & Tree, J. E. F. (2002). Using uh and um in spontaneous speaking. Cognition ,841 
+
+84 (1), 73 -111. 842 
+
+Corley, M., MacGregor, L. J., & Donaldson, D. I. (2007). It’s the way that you, er, say it: 843 
+
+Hesitations in speech affect language comprehension. Cognition , 105 (3), 658 -668. 844 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Crosse, M. J., Di Liberto, G. M., Bednar, A., & Lalor, E. C. (2016a). The Multivariate Temporal 845 
+
+Response Function (mTRF) Toolbox: A MATLAB Toolbox for Relating Neural Signals 846 
+
+to Continuous Stimuli. Frontiers in Human Neuroscience .847 
+
+https://doi.org/10.3389/fnhum.2016.00604 848 
+
+Crosse, M. J., Di Liberto, G. M., Bednar, A., & Lalor, E. C. (2016b). The multivariate temporal 849 
+
+response function (mTRF) toolbox: A MATLAB toolbox for relating neural signals to 850 
+
+continuous stimuli. Frontiers in Human Neuroscience , 10 (NOV2016), 219245 -219245. 851 
+
+https://doi.org/10.3389/FNHUM.2016.00604/BIBTEX 852 
+
+Crosse, M. J., Zuk, N. J., Di Liberto, G. M., Nidiffer, A. R., Molholm, S., & Lalor, E. C. (2021). 853 
+
+Linear Modeling of Neurophysiological Responses to Speech and Other Continuous 854 
+
+Stimuli: Methodological Considerations for Applied Research. Frontiers in 855 
+
+Neuroscience , 15 . https://doi.org/10.3389/fnins.2021.705621 856 
+
+De Cheveigné, A., & Nelken, I. (2019). Filters: when, why, and how (not) to use them. Neuron ,857 
+
+102 (2), 280 -293. 858 
+
+Défossez, A., Caucheteux, C., Rapin, J., Kabeli, O., & King, J. -R. (2023). Decoding speech 859 
+
+perception from non -invasive brain recordings. Nature Machine Intelligence , 5(10), 860 
+
+1097 -1107.  https://doi.org/10.1038/s42256 -023 -00714 -5861 
+
+Delorme, A., & Makeig, S. (2004). EEGLAB: an open source toolbox for analysis of single -trial 862 
+
+EEG dynamics including independent component analysis. Journal of Neuroscience 863 
+
+Methods , 134 (1), 9 -21.  https://doi.org/10.1016/j.jneumeth.2003.10.009 864 
+
+Destoky, F., Philippe, M., Bertels, J., Verhasselt, M., Coquelet, N., Vander Ghinst, M., Wens, 865 
+
+V., De Tiège, X., & Bourguignon, M. (2019). Comparing the potential of MEG and EEG 866 
+
+to uncover brain tracking of speech temporal envelope. NeuroImage , 184 , 201 -213. 867 
+
+https://doi.org/10.1016/j.neuroimage.2018.09.006 868 
+
+Di Liberto, G. M., & Ip, E. Y. J. (2025). Speech Neurophysiology in Realistic Contexts: Big 869 
+
+Hype or Big Leap? arXiv preprint arXiv:2506.05494 .870 
+
+Di Liberto, G. M., Nidiffer, A., Crosse, M. J., Zuk, N., Haro, S., Cantisani, G., Winchester, M. 871 
+
+M., Igoe, A., McCrann, R., & Chandra, S. (2024). A standardised open science 872 
+
+framework for sharing and re -analysing neural data acquired to continuous stimuli. 873 
+
+Neurons, Behavior, Data analysis, and Theory , 1 -25. 874 
+
+Di Liberto, G. M., Nie, J., Yeaton, J., Khalighinejad, B., Shamma, S. A., & Mesgarani, N. 875 
+
+(2021). Neural representation of linguistic feature hierarchy reflects second -language 876 
+
+proficiency. NeuroImage , 227 , 117586 -117586. 877 
+
+https://doi.org/10.1016/J.NEUROIMAGE.2020.117586 878 
+
+Di Liberto, G. M., O’Sullivan, J. A., & Lalor, E. C. (2015). Low -Frequency Cortical Entrainment 879 
+
+to Speech Reflects Phoneme -Level Processing. Current Biology , 25 (19), 2457 -2465. 880 
+
+https://doi.org/10.1016/j.cub.2015.08.030 881 
+
+Ding, N., & Simon, J. Z. (2012). Emergence of neural encoding of auditory objects while 882 
+
+listening to competing speakers. Proceedings of the National Academy of Sciences ,883 
+
+109 (29), 11854 -11859.  https://doi.org/10.1073/pnas.1205381109 884 
+
+Doelling, K. B., Arnal, L. H., Ghitza, O., & Poeppel, D. (2014). Acoustic landmarks drive delta –885 
+
+theta oscillations to enable speech comprehension by facilitating perceptual parsing. 886 
+
+NeuroImage , 85 , 761 -768. 887 
+
+https://doi.org/https://doi.org/10.1016/j.neuroimage.2013.06.035 888 
+
+Dou, J., Anderson, A. J., White, A. S., Norman -Haignere, S. V., & Lalor, E. C. (2024). Dynamic 889 
+
+modeling of EEG responses to natural speech reveals earlier processing of predictable 890 
+
+words. bioRxiv , 2024.2008.2026.609779.  https://doi.org/10.1101/2024.08.26.609779 891 
+
+Edmund C. Lalor, A. J. P., Richard B. Reilly and John J. Foxe. (2009). Resolving Precise 892 
+
+Temporal Processing Properties of the Auditory System Using Continuous Stimuli. 893 
+
+Journal of Neurophysiology , 102 (1).  https://doi.org/10.1152/jn.90896.2008 894 
+
+Ferreira, F., & Bailey, K. G. D. (2004). Disfluencies and human language comprehension. 895 
+
+Trends in Cognitive Sciences , 8(5), 231 -237. 896 
+
+Ferreira, V. S. (2019). A Mechanistic Framework for Explaining Audience Design in Language 897 
+
+Production. Annual Review of Psychology , 70 (Volume 70, 2019), 29 -51. 898 
+
+https://doi.org/https://doi.org/10.1146/annurev -psych -122216 -011653 899 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Ferreira, V. S., & Ferreira, V. S. (2019). A Mechanistic Framework for Explaining Audience 900 
+
+Design in Language Production. Annual review of psychology , 70 (Volume 70, 2019). 901 
+
+https://doi.org/10.1146/annurev -psych -122216 -011653 902 
+
+Formisano, E., De Martino, F., Bonte, M., & Goebel, R. (2008). "Who" Is Saying "What"? Brain -903 
+
+Based Decoding of Human Voice and Speech. Science , 322 (5903), 970 -973. 904 
+
+https://doi.org/10.1126/science.1164318 905 
+
+Fox Tree, J. E. (2001). Listeners' uses of um and uh in speech comprehension. Memory & 906 
+
+cognition , 29 (2), 320 -326. 907 
+
+Friederici, A. D. (2011). The brain basis of language processing: from structure to function. 908 
+
+Physiological Reviews , 91 (4), 1357 -1392. 909 
+
+Garrod, S., & Pickering, M. J. (2004). Why is conversation so easy? Trends in Cognitive 910 
+
+Sciences , 8(1), 8 -11.  https://doi.org/10.1016/j.tics.2003.10.016 911 
+
+Goldstein, A., Zada, Z., Buchnik, E., Schain, M., Price, A., Aubrey, B., Nastase, S. A., Feder, 912 
+
+A., Emanuel, D., Cohen, A., Jansen, A., Gazula, H., Choe, G., Rao, A., Kim, C., Casto, 913 
+
+C., Fanda, L., Doyle, W., Friedman, D.,…Hasson, U. (2022). Shared computational 914 
+
+principles for language processing in humans and deep language models. Nature 915 
+
+Neuroscience 2022 25:3 , 25 (3).  https://doi.org/10.1038/s41593 -022 -01026 -4916 
+
+Gwilliams, L., Marantz, A., Poeppel, D., & King, J. -R. (2023). Top -down information shapes 917 
+
+lexical processing when listening to continuous speech. Language, Cognition and 918 
+
+Neuroscience , 39 , 1 -14.  https://doi.org/10.1080/23273798.2023.2171072 919 
+
+Haegens, S., Vergara, J., Rossi -Pool, R., Lemus, L., & Romo, R. (2017). Beta oscillations 920 
+
+reflect supramodal information during perceptual judgment. Proceedings of the 921 
+
+National Academy of Sciences , 114 (52), 13810 -13815. 922 
+
+https://doi.org/10.1073/pnas.1714633115 923 
+
+Hamilton, L. S., Oganian, Y., Hall, J., & Chang, E. F. (2021). Parallel and distributed encoding 924 
+
+of speech across human auditory cortex. Cell , 184 (18), 4626 -4639.e4613. 925 
+
+https://doi.org/10.1016/j.cell.2021.07.019 926 
+
+Heilbron, M., Armeni, K., Schoffelen, J. M., Hagoort, P., & De Lange, F. P. (2022). A hierarchy 927 
+
+of linguistic predictions during natural language comprehension. Proceedings of the 928 
+
+National Academy of Sciences of the United States of America , 119 (32), 929 
+
+e2201968119 -e2201968119. 930 
+
+https://doi.org/10.1073/PNAS.2201968119/SUPPL_FILE/PNAS.2201968119.SAPP.P 931 
+
+DF 932 
+
+Jiang, A. Q., Sablayrolles, A., Mensch, A., Bamford, C., Chaplot, D. S., Casas, D., Bressand, 933 
+
+F., Lengyel, G., Lample, G., & Saulnier, L. (2023). Mistral 7b. arxiv. arXiv preprint 934 
+
+arXiv:2310.06825 , 10 .935 
+
+Kinreich, S., Djalovski, A., Kraus, L., Louzoun, Y., & Feldman, R. (2017). Brain -to -Brain 936 
+
+Synchrony during Naturalistic Social Interactions. Scientific Reports , 7(1), 17060. 937 
+
+https://doi.org/10.1038/s41598 -017 -17339 -5938 
+
+Kocagoncu, E., Clarke, A., Devereux, B. J., & Tyler, L. K. (2017). Decoding the Cortical 939 
+
+Dynamics of Sound -Meaning Mapping. The Journal of Neuroscience: The Official 940 
+
+Journal of the Society for Neuroscience , 37 (5), 1312 -1319. 941 
+
+https://doi.org/10.1523/JNEUROSCI.2858 -16.2016 942 
+
+Kutas, M., & Federmeier, K. D. (2011). Thirty years and counting: finding meaning in the N400 943 
+
+component of the event -related brain potential (ERP). Annual review of psychology ,944 
+
+62 , 621 -647.  https://doi.org/10.1146/annurev.psych.093008.131123 945 
+
+Lalor, E. C., & Foxe, J. J. (2010). Neural responses to uninterrupted natural speech can be 946 
+
+extracted with precise temporal resolution. European Journal of Neuroscience , 31 (1), 947 
+
+189 -193.  https://doi.org/10.1111/j.1460 -9568.2009.07055.x 948 
+
+Lalor, E. C., Power, A. J., Reilly, R. B., & Foxe, J. J. (2009). Resolving precise temporal 949 
+
+processing properties of the auditory system using continuous stimuli. Journal of 950 
+
+neurophysiology , 102 (1), 349 -359. 951 
+
+Lalor, E. C. P., Alan J.; Reilly, Richard B.; Foxe, John J. . (2009). Resolving Precise Temporal 952 
+
+Processing Properties of the Auditory System Using Continuous Stimuli. Journal of 953 
+
+Neurophysiology , 102 (1).  https://doi.org/10.1152/jn.90896.2008 954 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Love, J., Selker, R., Marsman, M., Jamil, T., Dropmann, D., Verhagen, J., Ly, A., Gronau, Q. 955 
+
+F., Šmíra, M., & Epskamp, S. (2019). JASP: Graphical statistical software for common 956 
+
+statistical designs. Journal of Statistical Software , 88 , 1 -17. 957 
+
+Mesgarani, N., Cheung, C., Johnson, K., & Chang, E. F. (2014). Phonetic feature encoding in 958 
+
+human superior temporal gyrus. Science , 343 (6174), 1006 -1010. 959 
+
+Mousavi, S. M., Roccabruna, G., Alghisi, S., Rizzoli, M., Ravanelli, M., & Riccardi, G. (2024). 960 
+
+Are LLMs Robust for Spoken Dialogues? arXiv preprint arXiv:2401.02297 .961 
+
+Muncke, J., Kuruvila, I., & Hoppe, U. (2022). Prediction of Speech Intelligibility by Means of 962 
+
+EEG Responses to Sentences in Noise. Frontiers in Neuroscience , 16 , 876421. 963 
+
+https://doi.org/10.3389/fnins.2022.876421 964 
+
+O'Sullivan, J. A., Power, A. J., Mesgarani, N., Rajaram, S., Foxe, J. J., Shinn -Cunningham, B. 965 
+
+G., Slaney, M., Shamma, S. A., & Lalor, E. C. (2015). Attentional Selection in a Cocktail 966 
+
+Party Environment Can Be Decoded from Single -Trial EEG. Cerebral Cortex (New 967 
+
+York, N.Y.: 1991) , 25 (7), 1697 -1706.  https://doi.org/10.1093/cercor/bht355 968 
+
+Osterhout, L., & Holcomb, P. (1993). Event -Related Potentials and Syntactic Anomaly: 969 
+
+Evidence of Anomaly Detection during the Perception of Continuous Speech. 970 
+
+Language and Cognitive Processes , 8, 413 -437. 971 
+
+https://doi.org/10.1080/01690969308407584 972 
+
+Passali, T., Mavropoulos, T., Tsoumakas, G., Meditskos, G., & Vrochidis, S. (2022). LARD: 973 
+
+Large -scale artificial disfluency generation. arXiv preprint arXiv:2201.05041 .974 
+
+Peirce, J., Gray, J. R., Simpson, S., MacAskill, M., Höchenberger, R., Sogo, H., Kastman, E., 975 
+
+& Lindeløv, J. K. (2019). PsychoPy2: Experiments in behavior made easy. Behavior 976 
+
+research methods , 51 , 195 -203. 977 
+
+Perrin, F., Pernier, J., Bertrand, O., & Echallier, J. F. (1989). Spherical splines for scalp 978 
+
+potential and current density mapping. Electroencephalography and clinical 979 
+
+Neurophysiology , 72 (2), 184 -187.  https://doi.org/10.1016/0013 -4694(89)90180 -6980 
+
+Piazza, G., Carta, S., Ip, E. Y., Pérez -Navarro, J., Kalashnikova, M., Martin, C. D., & Di Liberto, 981 
+
+G. M. (2025). Are you talking to me? How the choice of speech register impacts 982 
+
+listeners’ hierarchical encoding of speech. Imaging Neuroscience .983 
+
+Pistono, A., Maziero, S., Chaix, Y., & Jucla, M. (2024). Speech disfluencies in children with 984 
+
+developmental dyslexia: How do they differ from typical development? International 985 
+
+Journal of Language & Communication Disorders , 59 (3), 1032 -1042. 986 
+
+Poeppel, D., Emmorey, K., Hickok, G., & Pylkkänen, L. (2012). Towards a New Neurobiology 987 
+
+of Language. Journal of Neuroscience , 32 (41), 14125 -14131. 988 
+
+https://doi.org/10.1523/JNEUROSCI.3244 -12.2012 989 
+
+Power, A. J., Foxe, J. J., Forde, E. -J., Reilly, R. B., & Lalor, E. C. (2012). At what time is the 990 
+
+cocktail party? A late locus of selective attention to natural speech. European Journal 991 
+
+of Neuroscience , 35 (9).  https://doi.org/10.1111/j.1460 -9568.2012.08060.x 992 
+
+Reddy, S., & Stanford, J. (2015, 2015). A web application for automated dialect analysis. 993 
+
+Samaha, J., Bauer, P., Cimaroli, S., & Postle, B. R. (2015). Top -down control of the phase of 994 
+
+alpha -band oscillations as a mechanism for temporal prediction. Proceedings of the 995 
+
+National Academy of Sciences , 112 (27), 8439 -8444. 996 
+
+https://doi.org/10.1073/pnas.1503686112 997 
+
+Schwartz, L., Levy, J., Hayut, O., Netzer, O., Endevelt -Shapira, Y., & Feldman, R. (2024). 998 
+
+Generation WhatsApp: inter -brain synchrony during face -to -face and texting 999 
+
+communication. Scientific Reports , 14 (1), 2672.  https://doi.org/10.1038/s41598 -024 -1000 
+
+52587 -21001 
+
+Shriberg, E. (2001). To ‘errrr’is human: ecology and acoustics of speech disfluencies. Journal 1002 
+
+of the international phonetic association , 31 (1), 153 -169. 1003 
+
+Shriberg, E. E. (1999). Phonetic consequences of speech disfluency. 1004 
+
+Slaats, S., & Martin, A. E. (2025). What’s surprising about surprisal. Computational Brain & 1005 
+
+Behavior , 8(2), 233 -248. 1006 
+
+Snow, C. E. (1972). Mothers' Speech to Children Learning Language. Child Development ,1007 
+
+43 (2).  https://doi.org/10.2307/1127555 1008 
+
+> .CC-BY 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted April 27, 2026. ;https://doi.org/10.1101/2025.09.23.674728 doi: bioRxiv preprint
+
+Tree, J. E. F. (1995). The Effects of False Starts and Repetitions on the Processing of 1009 
+
+Subsequent Words in Spontaneous Speech. Journal of Memory and Language , 34 (6), 1010 
+
+709 -738.  https://doi.org/10.1006/jmla.1995.1032 1011 
+
+Uusvuori, J., Parviainen, T., Inkinen, M., & Salmelin, R. (2008). Spatiotemporal Interaction 1012 
+
+between Sound Form and Meaning during Spoken Word Perception. Cerebral Cortex ,1013 
+
+18 (2), 456 -466.  https://doi.org/10.1093/cercor/bhm076 1014 
+
+Vanthornhout, J., Decruy, L., Wouters, J., Simon, J. Z., & Francart, T. (2018). Speech 
+
+Intelligibility Predicted from Neural Entrainment of the Speech Envelope. Journal of the 
+
+Association for Research in Otolaryngology , 19 (2), 181 -191. 
+
+https://doi.org/10.1007/s10162 -018 -0654 -z
