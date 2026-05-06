@@ -1,0 +1,667 @@
+Title: Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding
+
+URL Source: https://arxiv.org/pdf/2604.25618v1
+
+Published Time: Wed, 29 Apr 2026 01:10:02 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding 
+
+# Zhaoyan Pan *
+
+zhaoyanpan@zju.edu.cn Zhejiang University Hangzhou, China 
+
+# Hengyang Zhou *
+
+hengyangzhou@smail.nju.edu.cn Nanjing University Nanjing, China 
+
+# Xiangdong Li 
+
+xiangdong.li@zju.edu.cn Zhejiang University Hangzhou, China 
+
+# Yuning Wang 
+
+yuning.wang@zju.edu.cn Zhejiang University Hangzhou, China 
+
+# Ye Lou 
+
+ye_lou@zju.edu.cn Zhejiang University Hangzhou, China 
+
+# Jiatong Pan 
+
+jiatongpan@zju.edu.cn Zhejiang University Hangzhou, China 
+
+# Ji Zhou 
+
+jizhou@zju.edu.cn Zhejiang University Hangzhou, China 
+
+# Wei Zhang †
+
+cstzhangwei@zju.edu.cn Zhejiang University Hangzhou, China 
+
+## Abstract 
+
+Conversational multimodal understanding aims to infer the mean-ing or label of the current utterance from its preceding dialogue context together with textual, acoustic, and visual signals. Existing methods mainly strengthen contextual modeling through enhanced encoding, fusion, or propagation, but rarely abstract the context-utterance dependency into an explicit cue and incorporate it into later multimodal reasoning. To address this issue, we propose CUCI-Net for conversational multimodal understanding. CUCI-Net fully preserves the structural distinction between context and utterance during encoding, effectively abstracts their dependency into an in-terpretation cue by combining local modality evidence with global contextual evidence, and seamlessly integrates the resulting cue into the final multimodal interaction stage for context-conditioned pre-diction. Extensive experiments on mainstream benchmark datasets fully demonstrate the effectiveness of the proposed method. 
+
+## CCS Concepts 
+
+• Computing methodologies → Discourse, dialogue and prag-matics .
+
+## Keywords 
+
+multimodal learning, multimodal sentiment analysis, conversa-tional understanding, multimodal fusion 
+
+## 1 Introduction 
+
+Conversational multimodal understanding aims to predict the mean-ing or label of the current utterance from its preceding dialogue con-text together with textual, acoustic, and visual signals [ 5, 15 , 22 , 36 ]. Unlike sentence-level multimodal prediction, the current utterance in a conversation is often ambiguous in isolation: its sentiment, humorous effect, or non-literal intent may only become clear af-ter considering how the preceding discourse frames or shifts its meaning [ 12 , 17 , 21 , 60 ]. Meanwhile, facial behaviors and vocal                         
+
+> *Equal contribution. †Corresponding author. [EE: H appy / IE: H appy /Sent: Positive ]
+> You liked it ?You really Liked it?
+> [EE: Excited /IE:Fear / Sent: Negative ]
+> Oh-ho-ho, Yea h!
+> [EE: H appy /IE: H appy /Sent: Positive ]
+> Which part Exactly?
+> [EE: Excited /IE:Fear /Sent: Negative ]
+> The whole thing! Can we go?
+
+Context 
+
+Utterance 
+
+Figure 1: An example where the current utterance can only be correctly understood with the help of its preceding con-versational context. EE, IE, and Sent denote Explicit Emotion, Implicit Emotion, and sentiment, respectively. 
+
+expressions further modulate whether the utterance should be in-terpreted as sincere, ironic, exaggerated, or emotionally shifted [5 , 15 , 61 ]. Therefore, the challenge lies not only in collecting multi-modal signals, but in preserving the context-utterance dependency and using this dependency to guide the final interpretation. This is especially central in conversational benchmarks, where the label of the current utterance is often determined more by context-utterance dependency than by the utterance alone [5, 15, 36]. Prior studies have shown the importance of contextual modeling for conversational understanding [ 12 , 17 , 21 , 39 , 60 , 61 ]. Recent multimodal methods improve contextual modeling through en-hanced fusion, graph-based interaction, or auxiliary supervision [1 , 20 , 46 , 56 , 63 , 65 ]. However, most of them still strengthen context modeling mainly through latent encoding, propagation, or fusion.  
+
+> arXiv:2604.25618v1 [cs.MM] 28 Apr 2026 Preprint, 2026, arXiv Pan, Zhou et al.
+
+Even when contextual structure is modeled more carefully, what is preserved is usually contextual content itself, rather than an explicit characterization of how the context conditions the inter-pretation of the current utterance [ 1, 20 , 54 , 56 ]. As a result, the fine-grained context-utterance dependency is rarely abstracted into an explicit interpretation cue, and even less often explicitly incorpo-rated into the subsequent complex multimodal reasoning process to reasonably regulate how later interaction unfolds. Effective conversational multimodal understanding therefore re-quires more than stronger context-aware fusion. It requires strictly preserving the context-utterance structure during representation learning, abstracting the resulting dependency into a clear explicit interpretation cue, and incorporating this cue into later multimodal reasoning so that it can shape the final interpretation process rather than remain a passive byproduct of encoding. Such a targeted de-sign enables the model to capture latent semantic constraints and deliver more coherent dialogue comprehension results. Based on this idea, we propose CUCI-Net, a Context-Utterance and Cue-guided Interaction Net work for conversational multi-modal understanding. CUCI-Net follows a three-stage interpretation-cue-guided reasoning framework. It first preserves the structural distinction between the contextual segment and the current utter-ance during representation learning and derives a text-anchored relation representation for the acoustic and visual modalities. It then constructs the final interpretation cue by combining local modal-ity evidence with global contextual evidence, so that the context-utterance dependency becomes available in a compact form for later reasoning. Finally, it effectively injects this interpretation cue into the subsequent multimodal interaction process, so that the cue not only represents how context conditions the current utterance, but also steers how later multimodal reasoning and interaction evolve toward the accurate final prediction. Our contributions are summarized as follows: 
+
+• We propose CUCI-Net, a three-stage cue-guided framework for conversational multimodal understanding that explicitly preserves the context-utterance structure, abstracts their dependency into an interpretation cue, and incorporates this cue into the final multimodal reasoning stage for context-conditioned prediction. 
+
+• We develop a structure-aware modeling scheme that pre-serves context-utterance distinction during encoding and uses a text-anchored relation representation to guide acous-tic and visual representation learning. We further design a cue-guided interaction mechanism that constructs an in-terpretation cue from global contextual and local modality evidence and injects it into guided multimodal interaction layers for context-conditioned reasoning. 
+
+• Extensive experiments on the MUStARD and MUStARD++ datasets show that CUCI-Net outperforms strong baselines, confirming the effectiveness of the proposed design. 
+
+## 2 Related Work 2.1 Multimodal Dialogue Understanding 
+
+Multimodal dialogue understanding has been widely studied in emotion-centric settings, where the goal is to identify the emotion of each utterance from dialogue context together with multimodal be-havioral signals. Early work has established the importance of con-text and speaker interaction through representative paradigms such as conversational memory modeling in ICON [ 16 ], speaker-aware recurrent reasoning in DialogueRNN [ 35 ], commonsense-enhanced contextual modeling in COSMIC [ 11 ], and multimodal graph fusion in MMGCN [ 23 ]. Subsequent studies further strengthen dialogue understanding with topic- or knowledge-aware contextual encod-ing and graph-based multimodal reasoning [ 25 , 27 , 49 , 50 , 53 , 62 , 66 ]. These works consistently show that multimodal dialogue under-standing greatly benefits from modeling conversational history, speaker dependency, and cross-modal complementarity rather than naively interpreting each utterance in isolation. Beyond emotion recognition, multimodal dialogue understand-ing has also been explored in sarcasm and humor-related tasks, where meaning often arises from contextual incongruity, prag-matic reversal, or subtle audiovisual cues. Representative studies incorporate sentiment and emotion signals for humor understand-ing [ 7], model humor intensity from multimodal evidence [ 2], ex-ploit additional cues such as gaze [ 42 ], and introduce prompt-based adaptation, context-aware fusion, or ambiguity-aware incongruity modeling for sarcasm understanding [ 24 , 28 , 51 , 54 , 55 , 64 ]. Related efforts also extend multimodal understanding to comic-context scenarios and multilingual humor corpora [ 3, 13 ]. Together, these works firmly reinforce the broader view that dialogue-level multi-modal understanding is fundamentally context-sensitive, and that the interpretation of the current utterance often depends on how surrounding discourse deeply reshapes its surface meaning. 
+
+## 2.2 Context-Aware Multimodal Reasoning 
+
+Another related line of research concerns how multimodal rea-soning is organized under structural or contextual constraints. Representative methods explore graph-based multimodal inter-action in MMGCN [ 23 ], topic- and knowledge-aware contextual modeling [ 66 ], joint fusion with graph contrastive learning in Joy-ful [ 27 ], dual-graph dependency modeling in DualGATs [ 58 ], and knowledge-enhanced interaction or explicit reasoning-oriented ar-chitectures [ 19 , 46 ]. These studies strongly suggest that multimodal prediction should not rely on simple flat concatenation alone, but should instead be shaped by dialogue structure, modality interac-tion, and task-relevant guidance. Nevertheless, in most existing approaches, such guidance is still realized mainly through latent fusion, graph propagation, con-trastive optimization, or encoder-side modulation [ 45 , 46 ]. Even when context-sensitive interaction is strengthened, the context-utterance dependency is rarely abstracted into an explicit inter-pretation cue for subsequent reasoning. Recent multimodal dia-logue models continue to improve dependency modeling, evidence aggregation, and dynamic interaction, such as through dual con-trastive learning, dynamic graph evolution, and evidence-cause attention [ 40 , 52 , 59 ], yet the final decision is still often made from implicitly fused representations. Our method instead explic-itly preserves fine-grained context-utterance structure, derives a text-anchored relation representation, and then systematically sum-marizes the context-utterance dependency into a reliable interpre-tation cue that guides later multimodal interaction. Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding Preprint, 2026, arXiv You really Liked it? 
+
+> Oh-ho-ho, Yeah!
+> Which part Exactly?
+> The whole thing!
+> Can we go?
+> Acoustic
+> Text
+> Visual
+> Modality-Specific Encoders
+
+Multimodal Inputs 
+
+Primary 
+
+Reasoning Branch 
+
+Structure 
+
+Preserving Branch 
+
+Context-Utterance 
+
+Structure Encoding  
+
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> Local Feature
+> Summ arizer
+> Local Feature
+> Summ arizer
+> Local Feature
+> Summ arizer
+> Pairwise Cue
+> Constructor
+
+Local Branch 
+
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> Cross-Attention
+> Cross-Attention
+
+Globa l Branch 
+
+> Cross-Attention
+
+Global-Local Interpretation 
+
+Cue Construction   
+
+> Concat
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> 𝐀 𝐀
+> Cue-Guided Interaction
+> Cross-Modal Interaction
+> Self-Attention Refinement
+> NInteraction Layers
+> Adaptive Aggregation
+
+Interpretation-Cue-Guided 
+
+Multimoda l Interaction  
+
+> 𝐀
+> Classifier
+> Prediction Label context query
+> context query
+> context query
+
+Figure 2: CUCI-Net consists of three stages: Context-Utterance Structure Encoding , Global-Local Interpretation Cue Construction ,and Interpretation-Cue-Guided Multimodal Interaction . The first stage learns the primary modality representations {𝐻 𝑝 𝑚 }𝑚 ∈ { 𝑡,𝑎,𝑣 }
+
+and the structure-preserving representations {𝐻 𝑠 𝑚 }𝑚 ∈ { 𝑡,𝑎,𝑣 } . The second stage constructs the interpretation cue 𝑢 𝑓 by combining local pairwise cues with global evidence read out from contextual text. The third stage injects 𝑢 𝑓 into stacked multimodal interaction layers for final adaptive prediction. Blue, green, and red denote the visual, textual, and acoustic modalities, respectively, while light and dark shades denote the context and utterance parts. 
+
+## 3 Methodology 3.1 Task Formulation 
+
+Let M = {𝑡, 𝑎, 𝑣 } denote the textual, acoustic, and visual modalities. Each conversational sample is represented as X = {( 𝐶 𝑚 , 𝑈 𝑚 ) | 
+
+𝑚 ∈ M} , where 𝐶 𝑚 ∈ R𝑇 𝑚 𝑐 ×𝑑 𝑚 and 𝑈 𝑚 ∈ R𝑇 𝑚 𝑢 ×𝑑 𝑚 denote the con-textual segment and the current utterance of modality 𝑚 , respec-tively. Here, 𝑇 𝑚 𝑐 , 𝑇 𝑚 𝑢 , and 𝑑 𝑚 denote the context length, utterance length, and feature dimension of modality 𝑚 . For convenience, let 
+
+𝑇 𝑚 = 𝑇 𝑚 𝑐 + 𝑇 𝑚 𝑢 denote the length of the joint context-utterance sequence of modality 𝑚 . The goal is to predict the label 𝑦 of the current utterance from the multimodal conversational input X.
+
+## 3.2 Overview of CUCI-Net 
+
+Cue-guided rationale. Conversational multimodal understanding requires more than jointly encoding the contextual segment and the current utterance. The contextual segment determines how the current utterance should be interpreted. CUCI-Net therefore follows an interpretation-cue-guided reasoning process: it first preserves context-utterance structure, then abstracts an interpretation cue from this preserved structure, and finally uses the interpretation cue to guide multimodal reasoning over the current utterance. 
+
+Three-stage architecture. CUCI-Net (Context-Utterance and Cue-guided Interaction Network) comprises three stages: Context-Utter-ance Structure Encoding, Global-Local Interpretation Cue Construc-tion, and Interpretation-Cue-Guided Multimodal Interaction. Given the contextual segment and the current utterance from the tex-tual, acoustic, and visual modalities, the first stage instantiates two architecture-identical but parameter-independent branches. The two branches share the same textual ALBERT encoder, while us-ing separate acoustic and visual Transformers, and serve different downstream roles. One branch provides the primary modality rep-resentations for the final reasoning stage, while the other preserves context-utterance structure for relation representation estimation and interpretation-cue construction. The second stage effectively summarizes complementary local modality evidence and global contextual evidence into the compact final interpretation cue, and the third stage strategically injects this interpretation cue into the final multimodal reasoning stage through a learnable interaction guidance vector. We denote by 𝐻 𝑝 𝑚 the primary modality represen-tations and by 𝐻 𝑠 𝑚 the structure-preserving representations. 
+
+## 3.3 Context-Utterance Structure Encoding 
+
+Context-Utterance Structure Encoding establishes the structural basis for subsequent interpretation-cue abstraction. It preserves the structural distinction between context and utterance and derives a text-anchored relation representation for the acoustic and visual modalities. We first encode the textual stream with an ALBERT-based textual encoder and derive the text-anchored relation repre-sentation. Conditioned on this relation representation, the acoustic and visual streams are then encoded by dual-expert Transformer encoders in the same shared interaction space of dimension 𝑑 . Here, “nonverbal” refers specifically to the acoustic and visual modalities. A binary context-utterance partition indicator is used to inject learn-able, modality-specific structure embeddings at the input stage, and the same indicator is reused after encoding to separate the hidden se-quence into contextual and utterance parts for relation construction. Preprint, 2026, arXiv Pan, Zhou et al. 
+
+For clarity, we first concisely describe the shared first-stage encod-ing pipeline without redundant branch superscripts, and formally re-introduce branch-specific notation only when branch-specific outputs are clearly explicitly used. 
+
+Text-anchored relation representation. Following prior text-guided multimodal modeling studies [ 31 , 47 ], we use the textual modality as the anchor for relation modeling. Text provides the most stable semantic reference for estimating the coarse relation between context and the current utterance. The textual sequence is encoded by the ALBERT-based textual encoder to obtain 𝐻 𝑡 ∈
+
+R𝑇 𝑡 ×𝑑 , where 𝑇 𝑡 = 𝑇 𝑡 𝑐 + 𝑇 𝑡 𝑢 denotes the length of the joint textual sequence. Using the same partition indicator, 𝐻 𝑡 is separated into contextual and utterance parts, and masked mean pooling is applied to obtain a context summary ℎ𝑐 𝑡 and an utterance summary ℎ𝑢 𝑡 .Inspired by previous work [ 8], we then construct a text-anchored relation representation 𝑟 by concatenating the context summary, the utterance summary, and their difference. The difference term explicitly captures the semantic shift from the preceding context to the current utterance. The relation representation is further mapped by a sigmoid-activated scorer to a stable scalar relation prior score 𝑠 ∈ ( 0, 1). It acts as a soft regularizer rather than an exact routing controller. Larger 𝑠 indicates a stronger inherent consistency tendency between context and utterance, while smaller 
+
+𝑠 indicates a stronger discrepancy tendency. 
+
+Relation-guided nonverbal encoding. Conditioned on the text-anchored relation representation, the acoustic and visual streams are encoded by relation-guided dual-expert Transformer encoders, where experts correspond to two separate FFN branches. The re-lation prior score provides a coarse sample-level regularizer, and each modality-specific router makes layer-wise decisions jointly from the current hidden states and the projected relation repre-sentation. For each nonverbal modality 𝑚 ∈ { 𝑎, 𝑣 }, the relation representation 𝑟 is first projected into the corresponding modality space to obtain a modality-specific relation guidance vector ˜𝑟 𝑚 ,which is reused across all encoder layers. At layer 𝑙 , the current hidden states are summarized by sequence-level mean pooling to obtain 𝑧 𝑙 𝑚 . The concatenation [𝑧 𝑙 𝑚 ; ˜𝑟 𝑚 ] is then fed into a lightweight linear router to produce a modality- and layer-specific coefficient 
+
+𝜌 𝑙 𝑚 ∈ (0, 1). The coefficient 𝜌 𝑙 𝑚 controls the trade-off between two parallel feed-forward experts, corresponding to consistency-oriented and discrepancy-oriented nonverbal transformations. The feed-forward sublayer is thus rewritten as 
+
+FFN 𝑙 𝑚 (𝑥 ) = 𝜌 𝑙 𝑚 𝐸 𝑙 𝑚, con (𝑥 ) + ( 1 − 𝜌 𝑙 𝑚 )𝐸 𝑙 𝑚, dis (𝑥 ), 𝑚 ∈ { 𝑎, 𝑣 }. (1) Accordingly, we define the routing regularization as 
+
+Lgate =∑︁  
+
+> 𝑚 ∈ { 𝑎,𝑣 }
+
+∑︁ 𝑙 
+
+BCE (𝜌 𝑙 𝑚 , sg (𝑠 )) + 𝜆 bias (𝜏 ) L bias , (2) where sg (·) denotes stop-gradient, Lbias = Í𝑚 ∈ { 𝑎,𝑣 }
+
+Í𝑙 
+
+ 𝜌 𝑙 𝑚 − 12
+
+2
+
+is a lightweight balancing regularizer that discourages early routing collapse by keeping the routing coefficients away from premature one-sided concentration, and 𝜆 bias (𝜏 ) is linearly decayed with the training epoch 𝜏 so that the balancing effect is stronger in early training and gradually weakened afterward. 𝐀 𝐀 
+
+> 𝐀
+> 𝐀 𝐀
+> 𝐀
+> BiGRU
+> Conv1 D
+> SigMoid gate
+
+GateEnc 
+
+> Concat
+> Project
+
+Fuse 
+
+> MaxPooling
+> BiGRU
+> Conv1 D
+> SigMoid gate
+> Concat
+> Project
+> MaxPooling
+> Stack
+> Layer  Norm
+> 𝐀 𝐀𝐀
+
+Figure 3: Detailed local pairwise cue construction. Here, only the text-visual pair is shown for clarity; the other modality pairs are constructed analogously. GateEnc + Fuse + Max-Pooling perform local feature summarization, while the sub-sequent modules form the Pairwise Cue Constructor. 
+
+## 3.4 Global-Local Interpretation Cue 
+
+Given the structure-preserving representations produced by the first stage, denoted as 𝐻 𝑠 𝑚 ∈ R𝑇 𝑚 ×𝑑 for 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }, we next abstract the final interpretation cue for subsequent multimodal reasoning. The local branch preserves utterance-centered local evidence from the joint conversational sequence and explicit pair-wise cross-modal organization, while the global branch provides discourse-level interpretation guidance from contextual text. 
+
+Local pairwise cue construction. The local branch captures utterance-centered local evidence from the joint conversational sequence and pairwise cross-modal compatibility before they are absorbed into the final interpretation cue. It first compresses each modality into a compact local summary and then explicitly con-structs modality-pair cues from these summaries. For each modality 
+
+𝑚 ∈ { 𝑡, 𝑎, 𝑣 }, the sequence 𝐻 𝑠 𝑚 is first encoded by a bidirectional GRU, and the recurrent hidden states are further modulated by a lightweight convolutional sigmoid gate to obtain a gated sequence representation: 
+
+¯𝐻 𝑚 = GateEnc (𝐻 𝑠 𝑚 ), 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }. (3) 
+
+𝑧 𝑚 = MaxPool  Fuse (𝐻 𝑠 𝑚 , ¯𝐻 𝑚 ), 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }. (4) Here, GateEnc (·) denotes a BiGRU followed by a lightweight con-volutional sigmoid gate for compact local summarization. Fuse (· , ·) 
+
+denotes concatenation-based gated fusion between the original se-quence and the gated sequence, followed by a linear projection. The three modality summaries are then projected into a shared local space, denoted by ˆ𝑧 𝑚 = 𝑊 𝑚 𝑧 𝑚 , from which three pairwise local cues are constructed as 
+
+𝑝 𝑖 𝑗 = vec  Norm (Stack ( ˆ𝑧 𝑖 , ˆ𝑧 𝑗 )) , (𝑖, 𝑗 ) ∈ {( 𝑡, 𝑎 ), (𝑡, 𝑣 ), (𝑎, 𝑣 )} , (5) where Stack (· , ·) neatly stacks two projected modality summaries along a new pair dimension to form a compact two-slot pair repre-sentation, Norm (·) denotes a lightweight normalization step over the stacked pair representation, and vec (·) fully vectorizes the nor-malized pair representation into a local cue vector. Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding Preprint, 2026, arXiv 
+
+Global evidence readout via textual context query. The global branch derives a shared query from the contextual textual states. These contextual textual states serve as the textual anchor for discourse-level interpretation of the current utterance across modal-ities. Using the structure-preserving textual states 𝐻 𝑠 𝑡 and the same partition indicator as in the first stage, we apply masked mean pool-ing to the contextual part of the textual sequence to obtain a context summary ℎ𝑐 𝑡 . This context summary is then projected as the global query, denoted by ˆ𝑞 = 𝑊 𝑞 ℎ𝑐 𝑡 . For each modality 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }, the same partition indicator is reused to retain only the utterance-part sequence, denoted by 𝐻 𝑢 𝑚 . The global query then reads utterance-level evidence from each modality through cross-attention: 
+
+𝑔 𝑚 = Attn ( ˆ𝑞, 𝐻 𝑢 𝑚 , 𝐻 𝑢 𝑚 ), 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }, (6) where ˆ𝑞 serves as the query, 𝐻 𝑢 𝑚 serves as the key and the value. Finally, the three local pairwise cues and the projected global re-sponse are concatenated to form the resulting interpretation cue. Let 
+
+ˆ𝑔 𝑓 = 𝑊 𝑜 [ 𝑔 𝑡 ; 𝑔 𝑎 ; 𝑔 𝑣 ] denote the projected global response. Then, 
+
+𝑢 𝑓 = [ 𝑝 𝑡𝑎 ; 𝑝 𝑡 𝑣 ; 𝑝 𝑎𝑣 ; ˆ 𝑔 𝑓 ]. (7) 
+
+## 3.5 Cue-Guided Multimodal Interaction 
+
+Given the modality-specific outputs from the first stage, denoted by 𝐻 𝑝 𝑚 ∈ R𝑇 𝑚 ×𝑑 for 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }, we initialize the three modality-centered streams as 𝐻 0 
+
+> 𝑚
+
+= 𝐻 𝑝 𝑚 . Interpretation-Cue-Guided Multi-modal Interaction is the final multimodal reasoning stage. Starting from the primary modality representations 𝐻 𝑝 𝑚 , it maps the resulting interpretation cue 𝑢 𝑓 to an interaction guidance vector for subse-quent layer-wise multimodal interaction. The interpretation cue is compressed into an interaction guidance vector and injected into all modality-centered streams while preserving their modality-specific sequential structure: 
+
+𝐺 𝑠 = Γ(𝑢 𝑓 ), 𝐺 𝑠 ∈ R1×𝑑 , (8) where Γ(·) is a guidance projection implemented by one linear layer in the shared interaction space. 
+
+Layer-wise guidance-conditioned multimodal reasoning. This stage is composed of multiple interaction layers. At the 𝑙 -th layer, each modality stream is first updated with the interaction guidance vector: 
+
+˜𝐻 𝑙 𝑚 = 𝐻 𝑙 −1 
+
+> 𝑚
+
++ Φ𝑚 
+
+
+
+𝐻 𝑙 −1 
+
+> 𝑚
+
+, 𝐺 𝑠 
+
+
+
+, 𝑚 ∈ { 𝑡, 𝑎, 𝑣 }, (9) where Φ𝑚 (· , ·) denotes a dedicated guidance-conditioned attention block consisting of one cross-attention sublayer followed by one elaborate self-attention refinement sublayer, each equipped with standard residual projection and LayerNorm. The current modality stream serves as the query, and the interaction guidance vector provides the conditioning key and value. Each guidance-aware modality stream then interacts with the other two modalities. For an anchor modality 𝑚 , let 𝑚 1 and 𝑚 2 de-note the remaining two modalities. The two cross-modal responses are computed as 
+
+𝑅 𝑙 𝑚 ←𝑚 1 = Attn 
+
+ ˜𝐻 𝑙 𝑚 , ˜𝐻 𝑙 𝑚 1 , ˜𝐻 𝑙 𝑚 1
+
+
+
+, (10) 
+
+𝑅 𝑙 𝑚 ←𝑚 2 = Attn 
+
+ ˜𝐻 𝑙 𝑚 , ˜𝐻 𝑙 𝑚 2 , ˜𝐻 𝑙 𝑚 2
+
+
+
+. (11) Since the informativeness of the two supporting modalities may vary across samples, interaction layers, and feature dimensions, we use an element-wise sigmoid gate to integrate the two cross-modal responses: 
+
+𝐶 𝑙 𝑚 = 𝛽 𝑙 𝑚 ⊙ 𝑅 𝑙 𝑚 ←𝑚 1 +
+
+
+
+1 − 𝛽 𝑙 𝑚 
+
+
+
+⊙ 𝑅 𝑙 𝑚 ←𝑚 2 , (12) 
+
+𝛽 𝑙 𝑚 denotes an element-wise sigmoid gate parameterized by affine projections of the two cross-modal responses. The integrated cross-modal response is then used to update the modality stream: 
+
+𝐻 𝑙 𝑚 = ˜𝐻 𝑙 𝑚 + Ψ𝑚 
+
+
+
+𝐶 𝑙 𝑚 
+
+
+
+, (13) where Ψ𝑚 (·) denotes a lightweight self-attentive refinement block with residual projection and LayerNorm consistently applied to the rich integrated cross-modal response. 
+
+Adaptive multimodal aggregation. After the stacked interaction layers, the refined text, acoustic, and visual streams are adaptively aggregated to produce the final multimodal representation. For each modality 𝑚 , we first obtain a temporally pooled modality summary 
+
+¯ℎ𝑚 from the final modality stream and then map ¯ℎ𝑚 to a scalar score 
+
+𝑜 𝑚 through a lightweight modality-specific scoring projection. The modality weights are normalized across modalities: 
+
+𝛼 𝑚 = exp (𝑜 𝑚 )
+
+Í𝑗 ∈ { 𝑡,𝑎,𝑣 } exp (𝑜 𝑗 ) . (14) The final multimodal representation is obtained as 
+
+𝑧 =∑︁  
+
+> 𝑚 ∈ { 𝑡,𝑎,𝑣 }
+
+𝛼 𝑚 ¯ℎ𝑚 . (15) This representation is finally fed into the classifier for prediction. 
+
+Learning Objective. The overall training objective combines the task loss and the gate regularization loss: 
+
+L = Ltask + 𝜆 gate Lgate , (16) where Ltask denotes the cross-entropy loss for downstream label classification, Lgate denotes the gate regularization loss defined in Eq. (2), and 𝜆 gate is a balancing coefficient that controls the contri-bution of the gate term. In this way, the model is jointly optimized for downstream prediction and relation-guided expert routing. 
+
+## 4 Experiment 4.1 Dataset 
+
+MUStARD. MUStARD is a multimodal conversational sarcasm detection dataset proposed by Castro et al. [ 5 ]. It consists of textual, visual, and acoustic modalities, and contains 690 dialogue instances ,where each instance includes a contextual segment and a current utterance annotated with a sarcasm label. Since sarcasm in MUS-tARD is often determined by the dependency between the preceding dialogue and the current utterance, the dataset is widely used to evaluate context-sensitive multimodal understanding. This setting requires models to jointly capture contextual cues, utterance-level semantics, and nonverbal signals, rather than relying only on the isolated target utterance. Later, Chauhan et al. [ 6] further extended MUStARD with explicit and implicit sentiment annotations. 
+
+MUStARD++. MUStARD++ is an extension of MUStARD built by Ray et al. [38 ]. It retains textual, visual, and acoustic modali-ties, expands the dataset to 1202 dialogue instances , and provides richer annotations including sarcasm, sentiment, emotion, valence, arousal, and sarcasm type. Compared with MUStARD, MUStARD++ Preprint, 2026, arXiv Pan, Zhou et al. 
+
+Table 1: Performance comparison on the MUStARD and MUStARD++ benchmarks. Results for all baselines except DLF and MFMB-Net are taken from the PS2RI paper under its ALBERT-based evaluation protocol. Following the same setting, we further implement DLF and MFMB-Net for a more complete comparison. For our method, the text, audio, and visual encoder settings are kept consistent with PS2RI, except that the original interaction encoder is replaced by our proposed dual-expert design. The publication venue of each baseline is also reported for reference.                                                                                                                                                                                                                                          
+
+> Benchmark Method Venue Entire Set Subset 1 Subset 2 Pre(%) Rec(%) F1(%) Pre(%) Rec(%) F1(%) Pre(%) Rec(%) F1(%) MUStARD
+> TFN [57] EMNLP’17 49.36 45.57 48.39 53.92 49.41 50.99 45.63 47.21 46.44 LMF [32] ACL’18 52.14 54.41 52.66 58.45 60.78 58.57 45.46 48.04 45.58 MulT [43] ACL’19 51.89 55.15 52.83 54.82 58.82 56.74 44.41 50.56 48.90 MISA [18] MM’20 54.07 49.82 52.93 60.07 55.62 58.96 43.57 48.41 46.13 MAG [37] ACL’20 52.76 54.27 53.85 62.53 59.74 59.16 42.56 50.42 47.32
+> F-MTL [6] ACL’20 52.13 57.42 54.86 58.24 62.17 60.43 42.11 53.95 46.94 DMD [29] CVPR’23 54.29 59.08 56.27 60.71 62.49 61.71 44.97 52.82 49.66 PS2RI [10] MM’24 57.46 62.06 58.45 61.73 66.47 63.52 52.42 57.65 53.50 DLF [48] AAAI’25 52.30 63.24 55.35 57.13 68.53 62.73 52.70 55.88 52.37 MFMB-Net [41] AAAI’25 55.24 60.29 56.66 55.82 58.82 57.08 56.48 61.76 56.71
+> CUCI-Net (Ours) –61.76 67.65 64.37 66.79 70.59 68.63 58.24 64.71 60.28 MUStARD++
+> TFN [57] EMNLP’17 14.62 20.51 16.95 9.05 14.90 12.71 27.33 30.71 29.35 LMF [32] ACL’18 15.24 19.17 17.76 13.34 15.63 14.21 26.86 23.21 24.86 MulT [43] ACL’19 15.96 25.01 18.03 14.15 12.37 13.82 31.34 25.74 29.21 MISA [18] MM’20 16.01 25.83 18.56 15.63 17.19 15.58 26.67 30.17 28.62 MAG [37] ACL’20 17.46 22.51 19.38 17.07 20.31 18.35 26.22 35.71 29.76
+> F-MTL [6] ACL’20 19.29 21.33 19.82 17.61 19.06 18.41 26.26 29.77 27.58 DMD [29] CVPR’23 20.37 24.16 22.81 22.14 17.31 19.04 34.56 33.46 34.07 PS2RI [10] MM’24 24.06 25.83 24.28 22.96 18.75 19.27 37.59 33.93 35.04 DLF [48] AAAI’25 23.18 26.47 23.56 22.41 19.52 19.74 35.86 34.71 34.28 MFMB-Net [41] AAAI’25 24.02 25.94 23.97 21.94 18.87 19.02 37.21 35.36 36.08
+> CUCI-Net (Ours) –27.43 29.89 28.50 25.74 23.27 25.79 41.13 36.82 39.17
+
+introduces broader annotation coverage and greater diversity in contextual and affective patterns, making it a more challenging benchmark for conversational multimodal reasoning. Its multi-level affective labels further allow evaluation beyond binary sarcasm de-tection, especially on whether models can distinguish different emotional and pragmatic effects under dialogue context. 
+
+## 4.2 Implementation Details 
+
+Optimization settings. Following prior work [ 10 , 14 ], we adopt modality-specific learning rates for different encoders and optimiza-tion blocks. Specifically, the learning rate is set to 3 × 10 −3 for the acoustic and visual encoders, and 2 × 10 −6 for the language encoder and the remaining modules. We use Adam with cosine learning rate decay. The dropout rate is set to 0.4, and early stopping with a patience of 10 is used to alleviate overfitting. 
+
+Model configuration. For Context-Utterance Structure Encod-ing, we use a 12-layer ALBERT for text, an 8-layer Transformer for vision, and a 1-layer Transformer for acoustics, with a unified hidden dimension of 192. The framework contains two architecture-identical but parameter-independent branches: a primary branch for final multimodal reasoning and a structure-preserving branch for interpretation-cue construction. For relation-guided nonverbal encoding, the two experts are initialized by duplicating the stan-dard feed-forward block and then optimized separately. The gate regularization coefficient is set to 𝜆 gate = 0.05 .
+
+## 4.3 Main Result 
+
+Task Settings. We evaluate CUCI-Net on context-dependent affect recognition using MUStARD and MUStARD++. As shown in Table 1, the model predicts the utterance sentiment polarity label on MUS-tARD and the utterance implicit emotion label on MUStARD++. For both datasets, we further report results on two sarcasm-conditioned subsets: Subset 1 denotes samples with sar = 1, while Subset 2 de-notes samples with sar = 0. This split examines whether the model can handle both sarcastic cases with context-shifted affective mean-ings and non-sarcastic cases with more direct surface expressions. Precision, Recall, and F1 are reported as evaluation metrics. 
+
+Baselines. We compare CUCI-Net with representative multimodal baselines in Table 1, including TFN, LMF, MulT, MISA, MAG, F-MTL, DMD, PS2RI, DLF, and MFMB-Net [ 6, 10 , 17 , 29 , 32 , 37 , 41 , 43 , 48 , 57 ]. These methods cover tensor-based fusion, low-rank fusion, cross-modal attention, language-guided fusion, representation disentan-glement, and recent relation-aware multimodal modeling. This comparison verifies whether explicit context–utterance structure modeling and interpretation cue construction bring advantages over holistic fusion and implicit contextual encoding. 
+
+Performance Analysis. As shown in Table 1, CUCI-Net achieves the best overall performance on both MUStARD and MUStARD++. On the Entire Set, CUCI-Net consistently outperforms all baselines in Precision, Recall, and F1, demonstrating its effectiveness for context-dependent affect recognition. The gains are also maintained Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding Preprint, 2026, arXiv 
+
+Table 2: Ablation results on Context-Utterance Structure En-coding. F1 (%) is reported on MUStARD and MUStARD++ over the Entire Set and Subset 1.                      
+
+> Variant MUStARD MUStARD++ Entire S1 Entire S1
+> Full model 64.37 68.63 28.50 25.79
+> w/o role embeddings 60.06 61.64 26.52 25.13 w/o dual-experts 56.78 61.23 23.92 21.16 w/o independent dual branches 47.79 45.23 13.29 11.72
+
+Table 3: Ablation results on pairwise local cue combinations. F1 (%) is reported on MUStARD and MUStARD++ over the Entire Set and Subset 1.                      
+
+> Variant MUStARD MUStARD++ Entire S1 Entire S1
+> (𝑡, 𝑎 ) + ( 𝑡, 𝑣 ) + ( 𝑎, 𝑣 )64.37 68.63 28.50 25.79
+> (𝑡, 𝑣 ) + ( 𝑡, 𝑎 )61.92 67.35 26.89 24.09
+> (𝑡, 𝑎 ) + ( 𝑎, 𝑣 )62.00 66.78 25.91 24.37
+> (𝑡, 𝑣 ) + ( 𝑎, 𝑣 )58.82 60.28 22.28 23.02
+
+Table 4: Ablation results on Global-Local Interpretation Cue Construction. F1 (%) is reported on MUStARD and MUStARD++ over the Entire Set and Subset 1.                  
+
+> Variant MUStARD MUStARD++ Entire S1 Entire S1
+> Full model 64.37 68.63 28.50 25.79
+> w/o local cue branch 58.82 56.71 24.63 21.29 w/o global cue branch 61.27 63.35 25.21 23.61
+
+Table 5: Ablation results on Interpretation-Cue-Guided Multi-modal Interaction. F1 (%) is reported on MUStARD and MUS-tARD++ over the Entire Set and Subset 1.                  
+
+> Variant MUStARD MUStARD++ Entire S1 Entire S1
+> Full model 64.37 68.63 28.50 25.79
+> w/o guidance cue 60.06 58.24 26.89 24.09 w/o adaptive aggregation 58.82 57.68 25.67 22.32
+
+on both sarcasm-conditioned subsets, indicating that CUCI-Net handles context-shifted sarcastic cases as well as non-sarcastic cases with more direct affective expressions. Overall, these results show the benefit of preserving context–utterance structure and using interpretation cues to guide multimodal interaction. 
+
+## 4.4 Ablation Study 
+
+We conduct comprehensive ablation studies to systematically exam-ine the contributions of the major designs in CUCI-Net, including the Context-Utterance Structure Encoding stage, the Global-Local Interpretation Cue Construction stage, and the Interpretation-Cue-Guided Multimodal Interaction stage. In particular, we investigate the effects of the text-anchored relation-guided dual-expert en-coding, the global-local interpretation cue construction, and the cue-guided multimodal interaction mechanism, in order to clar-ify how each component contributes to the overall conversational multimodal understanding performance. 
+
+Ablation on Context-Utterance Structure Encoding. Table 2 evaluates the first stage of CUCI-Net. The first-stage ablation mainly reveals what kind of representation the later cue module actually needs. When role embeddings are removed, the model loses an explicit marker of whether a token belongs to context or to the current utterance, so the projected sequence becomes less suit-able for relation construction; this effect is especially visible on Subset 1 of MUStARD, where fine-grained context-utterance dis-tinction matters more. Replacing the dual-expert design with a single path further weakens performance, suggesting that nonver-bal encoding should preserve multiple transformation tendencies before cue construction rather than compressing them into one un-differentiated stream. The most severe degradation appears when the two branches are merged, which shows that the primary rea-soning branch and the structure-preserving branch should serve different purposes: one for downstream multimodal decision mak-ing, and the other for maintaining a cleaner structural view for interpretation-cue derivation. 
+
+Ablation on Global-Local Interpretation Cue Construction. 
+
+Table 4 evaluates the second stage of CUCI-Net. The second-stage ablation clarifies how the interpretation cue should be composed rather than merely confirming that “more branches are better.” Removing either the local cue branch or the global cue branch weakens performance on both datasets, but the larger drop with-out the local branch suggests that discourse-level context is most useful when it is grounded in concrete pairwise evidence from the current utterance. Table 3 further shows that the full three-pair setting (𝑡, 𝑣 ) + ( 𝑡, 𝑎 ) + ( 𝑎, 𝑣 ) performs best, indicating that the cue should summarize multiple complementary local relations instead of relying on one dominant pair. The pairwise comparison also suggests different roles for the three relations: the two combina-tions containing (𝑡, 𝑎 ) remain relatively competitive, implying that text-audio interaction provides a comparatively stable semantic an-chor for contextual incongruity, whereas the setting without (𝑡, 𝑎 ),i.e., (𝑡, 𝑣 ) + ( 𝑎, 𝑣 ), degrades the most, showing that visual-acoustic evidence alone is not sufficient to support local interpretation. 
+
+Ablation on Interpretation-Cue-Guided Multimodal Interac-tion. Table 5 evaluates the third stage of CUCI-Net. The third-stage ablation highlights the difference between having an interpretation cue and actually exploiting it effectively. Removing the guidance cue turns the interaction stack into a largely unguided multimodal en-coder, which weakens the model because the later layers no longer receive an explicit relational condition derived from context and utterance. Removing adaptive aggregation causes a further drop, suggesting that even after cue-guided interaction, the resulting modality summaries should not be treated as uniformly informa-tive. Instead, the final decision still depends on a sample-specific Preprint, 2026, arXiv Pan, Zhou et al. 
+
+Figure 4: Layer sensitivity analysis of CUCI-Net on MUStARD and MUStARD++. We report F1 (%) on the Entire Set, Subset 1, and Subset 2 under different interaction depths. Blue and orange curves correspond to MUStARD and MUStARD++, respectively. 
+
+consolidation step that can emphasize the most reliable modality mixture for the current conversational case. 
+
+## 5 Further Study 5.1 Layer Sensitivity Analysis 
+
+We further examine how interaction depth affects CUCI-Net. As the number of interaction layers increases, performance first im-proves from shallow to moderate depths and then declines when the stack becomes too deep, indicating a transition from insuffi-cient interaction to over-transformation. The initial improvement suggests that a small number of layers cannot adequately integrate context-utterance dependency with cross-modal evidence, whereas moderate depth enables structured multimodal interactions. This also implies that the interpretation cue needs propagation steps to guide multimodal representation learning. This trend is consistently observed on both datasets and across the Entire Set, Subset 1, and Subset 2, suggesting that the effect of layer depth reflects a general property of the interaction module rather than a phenomenon restricted to one partition. In particular, the peak performance at moderate depth indicates that CUCI-Net does not benefit from unlimited interaction stacking; instead, once the key contextual relations have been sufficiently propagated, addi-tional layers may introduce redundant transformations and weaken the discriminative structure formed in earlier stages. Therefore, a moderate interaction depth provides a better balance between cue-guided reasoning and representation stability. 
+
+## 5.2 Routing Behavior Analysis 
+
+To further examine whether the proposed relation-guided routing learns meaningful weight allocation patterns, we visualize the rout-ing weights of the acoustic and visual branches. Since the acoustic branch contains only one Transformer layer, we directly report its routing matrix. For the visual branch, we visualize the fifth layer, which lies in the stable high-alignment region indicated by the layer-wise analysis and therefore provides a representative view of mature routing behavior. As shown in Fig. 5, both the acoustic and visual branches exhibit clear label-dependent weight allocation patterns on MUStARD and MUStARD++. Each entry in the routing matrix denotes the average routing weight assigned to a specific expert under a given label subset. The diagonal entries consistently dominate the off-diagonal ones, indicating that sarcastic and non-sarcastic samples tend to 
+
+Figure 5: Left: routing heatmaps of the acoustic branch and the fifth visual layer on MUStARD and MUStARD++, illustrat-ing the label-dependent expert preferences, where S/NS de-note sarcastic and non-sarcastic subsets, and Con/Dis denote the consistency- and discrepancy-oriented experts. Right: layer-wise expert consistency score of the visual branch on MUStARD, showing how expert specialization becomes clearer across depth. 
+
+allocate larger weights to different experts. This suggests that the routing module captures subset-sensitive relation patterns rather than assigning experts uniformly. This trend is more pronounced on MUStARD, whereas the routing matrices on MUStARD++ re-main structured but comparatively less separable, consistent with its greater diversity and difficulty. The observation suggests that the proposed routing mechanism does not collapse to uniform allo-cation, but instead learns subset-sensitive expert preferences that remain interpretable across datasets. To further quantify how this weight allocation evolves across depth, we compute a layer-wise expert consistency score for the visual branch on MUStARD by averaging the two diagonal entries of the routing matrix at each layer. This score reflects the average routing weight assigned to the expert that is more aligned with the corresponding subset. The resulting bar plot shows that the expert consistency score increases from shallow layers to middle layers and then remains in a relatively stable high-value region. This indicates that expert specialization is progressively refined through the hierarchy rather than being imposed at the first layer. It also motivates our choice of the fifth visual layer for visualization, since by this stage routing weights have become clearly structured while preserving enough variation to reveal the specialization process. 
+
+## 6 Conclusion 
+
+We proposed CUCI-Net, a three-stage interpretation-cue-guided framework for conversational multimodal understanding. CUCI-Net preserves the context-utterance structure during encoding, abstracts the resulting dependency into an explicit interpretation cue, and injects this cue into the final multimodal reasoning stage for context-conditioned prediction. Extensive experiments on MUS-tARD, MUStARD++, and UR-FUNNY demonstrate that the pro-posed framework achieves competitive strong performance under the current comparison setting, while the ablation studies further verify the core effectiveness of its three major stages, and in-depth analyses further illustrate the rationality and interpretability of our cue-guided reasoning mechanism. Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding Preprint, 2026, arXiv 
+
+## A Implementation Details 
+
+Feature Extraction. Following the standard preprocessing proto-col for conversational multimodal understanding, we extract textual, acoustic, and visual features for each conversational sample and organize them into a unified input format for subsequent model-ing. Each sample consists of the preceding conversational context and the target utterance. For text, we use ALBERT [ 26 ] to obtain 768-dimensional token-level representations on all three bench-marks. For the nonverbal modalities, we directly adopt the released benchmark features for fair comparison with prior work. Specifi-cally, on MUStARD, we use 81-dimensional COVAREP [ 9 ] acoustic features and 91-dimensional OpenFace 2.0 [ 4] visual features. On MUStARD++, we use the released 513-dimensional acoustic fea-tures and 768-dimensional visual features. On UR-FUNNY, we use 81-dimensional COVAREP acoustic features and 371-dimensional OpenFace 2.0 visual features. 
+
+Input Construction. For each sample, we construct a paired context–utterance sequence. The preceding utterances are con-catenated into a context sequence, while the current utterance is treated as the target utterance. After ALBERT tokenization, the textual input is organized as 
+
+𝑋 𝑡 = [[CLS] ; 𝐶 𝑡 ; [SEP] ; 𝑈 𝑡 ; [SEP] ], (17) where 𝐶 𝑡 and 𝑈 𝑡 denote the subword token sequences of the context and the target utterance, respectively. Since the acoustic and visual features are originally extracted at the word level, they are aligned to the subword timeline through a word-to-subword copy operation, where each subword token inher-its the acoustic or visual feature vector of its source word. Let ˜𝐶 𝑚 
+
+and ˜𝑈 𝑚 , where 𝑚 ∈ { 𝑎, 𝑣 }, denote the resulting subword-aligned context and target sequences. To keep all modalities synchronized with the text input, zero vectors are inserted at the special-token positions, yielding 
+
+𝑋 𝑚 = [0; ˜ 𝐶 𝑚 ; 0; ˜ 𝑈 𝑚 ; 0], 𝑚 ∈ { 𝑎, 𝑣 }, (18) where the three zero vectors correspond to [CLS] , the first [SEP] ,and the final [SEP], respectively. Finally, all modality sequences are padded to the same maximum length. We further assign segment IDs to distinguish the two parts of the conversation: segment ID 0 is used for [CLS] + context + [SEP] , while segment ID 1 is used for target utterance + [SEP] .In this way, the model receives temporally aligned multimodal inputs while explicitly preserving the boundary between contextual evidence and the target utterance. 
+
+## B Cross-Dataset Experiment B.1 Cross-Dataset Sentiment Generalization 
+
+Task Setting. We further evaluate CUCI-Net on CMU-MOSEI and CMU-MOSI to examine whether the proposed architecture can generalize to standard utterance-level multimodal sentiment bench-marks. Following the official data splits, we adopt the standard non-neutral setting, where neutral samples are removed and only non-neutral samples are retained for evaluation. We report F1, MAE, and Acc-2 as the primary metrics. 
+
+Table 6: Performance comparison on CMU-MOSEI and CMU-MOSI under the non-neutral setting. For fair comparison, the baseline results are quoted from the DLF paper except for MFMB-Net, whose results are taken from its original paper.                                                   
+
+> Method Venue CMU-MOSEI CMU-MOSI F1 MAE Acc-2 F1 MAE Acc-2
+> MulT[44] ACL’19 82.30 0.580 82.50 82.00 0.871 83.00 MISA[18] MM’20 84.66 0.558 84.67 83.58 0.777 83.54 DMD[30] CVPR’23 84.62 0.543 84.62 83.29 0.752 83.23 DLF[48] AAAI’25 85.27 0.530 85.42 85.04 0.731 85.06 MFMB-Net[41] AAAI’25 85.10 0.532 85.10 86.00 0.709 85.70
+> CUCI-Net (Ours) –86.32 0.537 86.26 87.00 0.749 86.20
+
+Table 7: Results on UR-FUNNY and MUStARD are reported following the standard evaluation protocols and benchmark settings from the original publications of baseline methods.                        
+
+> Method Venue UR-FUNNY (↑)MUStARD (↑)MISA [18] MM’20 69.82 66.18 MAG [37] ACL’20 67.20 69.12 HKT [14] AAAI’21 77.36 79.41 MCL [33] IF’23 77.70 77.90 MGCL [34] IF’23 78.10 77.90
+> CUCI-Net (Ours) –78.92 80.21
+
+Dataset Adaptation. Since CMU-MOSEI and CMU-MOSI do not provide explicit conversational context in the same form as MUStARD-style benchmarks, we use a simple input adaptation for CUCI-Net. Specifically, for each sample, we duplicate the three-modal utter-ance inputs and use the duplicated copy as a pseudo-context branch, the original sample is treated as the target utterance branch. This design does not introduce additional external information, but pre-serves the context–utterance input format required by CUCI-Net. 
+
+Baselines. As shown in Table 6, we compare CUCI-Net with repre-sentative multimodal sentiment analysis baselines, including MulT, MISA, DMD, DLF, and MFMB-Net. For fair comparison, most base-line results are quoted from the DLF paper, except for MFMB-Net, whose results are taken from its original paper. 
+
+Analysis. CUCI-Net achieves the best F1 and Acc-2 on both CMU-MOSEI and CMU-MOSI, indicating that its structure-aware repre-sentation learning, interpretation cue construction, and cue-guided multimodal interaction are not restricted to context-dependent sarcasm-style benchmarks. Meanwhile, its MAE is not always the best, which is reasonable because CUCI-Net is mainly developed for discriminative context-sensitive understanding rather than fine-grained sentiment regression. Overall, these results provide auxil-iary evidence that the proposed architecture can transfer to broader utterance-level multimodal sentiment analysis settings. 
+
+## B.2 Non-Literal Expression 
+
+Task Setting. We also evaluate CUCI-Net on UR-FUNNY and MUS-tARD to further test its generalization under binary humor and Preprint, 2026, arXiv Pan, Zhou et al. 
+
+sarcasm recognition settings. Following prior work, the model pre-dicts the humor label on UR-FUNNY and the sarcasm label on MUStARD. Acc-2 is reported for both datasets under their standard evaluation protocols. 
+
+Datasets. UR-FUNNY is a multimodal humor detection dataset proposed by Hasan et al. [15 ], containing 16,514 utterance instances from 1,866 TED talks with textual, acoustic, and visual modalities. MUStARD is a multimodal conversational sarcasm detection dataset proposed by Castro et al. [ 5], containing 690 dialogue instances with contextual segments and target utterances annotated with sarcasm labels. Compared with utterance-level sentiment analysis, these two datasets require stronger modeling of non-literal intent, humor cues, and context-sensitive interpretation. 
+
+Baselines. As shown in Table 7, we compare CUCI-Net with repre-sentative multimodal baselines, including MISA, MAG, HKT, MCL, and MGCL. baseline results are reported from their publications. 
+
+Analysis. CUCI-Net achieves the best performance on both UR-FUNNY and MUStARD, obtaining 78.92 on UR-FUNNY and 80.21 on MUStARD. The improvement over recent baselines suggests that CUCI-Net can handle not only affect polarity prediction, but also broader pragmatic understanding problems such as humor and sarcasm recognition. This result is consistent with our motivation: by preserving context–utterance structure and converting their dependency into an explicit interpretation cue, the model can better support multimodal reasoning when the final label depends on contextual incongruity, non-literal intent, or cross-modal evidence rather than isolated utterance semantics alone. 
+
+## C Visualization 
+
+Feature Visualization. Fig. 6 presents the t-SNE visualization of the learned representations on MUStARD and UR-FUNNY. On both datasets, samples from the two classes show a clear tendency to form distinguishable distributions, suggesting that CUCI-Net learns discriminative multimodal representations for context-dependent understanding. On MUStARD, the two classes are largely separa-ble, although a small overlap remains near the decision boundary, which is reasonable given the ambiguity of sarcasm recognition. On UR-FUNNY, the class structure appears more compact and better separated, indicating that the learned representations also transfer well to humor recognition. Overall, these visualizations provide strong qualitative evidence that CUCI-Net can effectively capture class-relevant multimodal patterns and further organize them into a more discriminative feature space. 
+
+## D Case Study 
+
+We present two representative cases to further illustrate the ad-vantages of CUCI-Net in context-aware cue construction and cue-guided multimodal reasoning. Specifically, both cases are correctly classified by CUCI-Net and are selected to exemplify two typical forms of context-dependent multimodal understanding. 
+
+Case 1 (MUStARD, hid: 1_3293): Context-conditioned sarcas-tic reversal. The preceding context starts with a discussion about scientific interests and then shifts to Leonard’s physics research, including statements such as “Actually, my tests of the Bohm quan-tum interference effect have reached an interesting point,” “Right now we’re testing the phase shift due to an electric potential,” and 
+
+Algorithm 1 Overall Forward Procedure of CUCI-Net 
+
+Require: Multimodal inputs {𝐶 𝑚 , 𝑈 𝑚 }𝑚 ∈ { 𝑡,𝑎,𝑣 }
+
+Ensure: Prediction ˆ𝑦  
+
+> 1:
+
+for each modality 𝑚 ∈ { 𝑡, 𝑎, 𝑣 } do  
+
+> 2:
+
+Construct the joint sequence 𝑋 𝑚 = [𝐶 𝑚 ; 𝑈 𝑚 ] 
+
+> 3:
+
+end for  
+
+> 4:
+
+Stage 1: Context–Utterance Structure Encoding  
+
+> 5:
+
+for each modality 𝑚 ∈ { 𝑡, 𝑎, 𝑣 } do  
+
+> 6:
+
+Encode 𝑋 𝑚 into primary features 𝐻 𝑝 𝑚 and structure-preserving features 𝐻 𝑠 𝑚  
+
+> 7:
+
+end for  
+
+> 8:
+
+Derive the text-anchored relation representation 𝑟 from 𝐻 𝑠 𝑡  
+
+> 9:
+
+Stage 2: Global–Local Interpretation Cue Construction  
+
+> 10:
+
+Summarize modality-specific local evidence from 
+
+{𝐻 𝑠 𝑚 }𝑚 ∈ { 𝑡,𝑎,𝑣 } 
+
+> 11:
+
+Construct pairwise local cues and global evidence guided by the textual context  
+
+> 12:
+
+Form the interpretation cue 𝑢 𝑓 and map it to the guidance token 𝐺 𝑠 = Γ(𝑢 𝑓 ) 
+
+> 13:
+
+Stage 3: Interpretation-Cue-Guided Multimodal Interac-tion  
+
+> 14:
+
+Initialize 𝐻 𝑝, 0 
+
+> 𝑚
+
+= 𝐻 𝑝 𝑚 for each modality 𝑚  
+
+> 15:
+
+for 𝑙 = 1 to 𝐿 do  
+
+> 16:
+
+for each modality 𝑚 ∈ { 𝑡, 𝑎, 𝑣 } do  
+
+> 17:
+
+Update 𝐻 𝑝,𝑙 𝑚 = Φ𝑚 (𝐻 𝑝,𝑙 −1 
+
+> 𝑚
+
+, 𝐺 𝑠 ) 
+
+> 18:
+
+end for  
+
+> 19:
+
+end for  
+
+> 20:
+
+Fuse {𝐻 𝑝,𝐿 𝑚 }𝑚 ∈ { 𝑡,𝑎,𝑣 } into 𝑍  
+
+> 21:
+
+Predict ˆ𝑦 = Classifier (𝑍 ) 
+
+> 22:
+
+return ˆ𝑦 
+
+Figure 6: t-SNE visualization of the learned feature distribu-tions. Red points denote sarcastic/funny samples, and blue points denote non-sarcastic/non-funny samples. Left: MUS-tARD. Right: UR-FUNNY. 
+
+the response “That’s amazing.” The target utterance then concludes with “Leonard’s work is nearly as amazing as third graders growing Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding Preprint, 2026, arXiv 
+
+Table 8: Representative case studies of CUCI-Net on MUS-tARD. Both cases are correctly classified by CUCI-Net and il-lustrate two typical forms of context-dependent multimodal understanding. For each case, we report the sample ID, the SI and SE labels, the preceding conversational context, and the target utterance to show how the final meaning depends on context–utterance interaction rather than on the target utterance alone. 
+
+hid SI SE Context Utterance 
+
+1_3293 Neg Pos “Are you interested in physics?” “Oh, I find it fascinating.” “If I hadn’t gone into microbiology, I probably would have gone into ice dancing.” “Actually, my tests of the Bohm quantum interfer-ence effect have reached an interesting point.” “Right now we’re testing the phase shift due to an electric potential.” “That’s amazing.” “Yes.” “Leonard’s work is nearly as amazing as third graders growing lima beans in wet paper towels.” 1_5679 Neg Pos “The organism responsible for Michelob Lite.” “Is there something wrong with your neck?” “It’s a little stiff.” “What a remarkably fragile structure to support such a valuable payload.” “Not unlike balancing aFabergé egg on a pixie stick.” “Have you considered mas-sage?” “I’d like to respond to that sarcastically.” “Yes, I relish the thought of a stranger covering my body with oil and rubbing it.” 
+
+lima beans in wet paper towels.” This sample is difficult to interpret from the target utterance alone, because the intended meaning is not triggered by a single lexical marker, but by the sharp mismatch between the seemingly appreciative scientific context and the trivial comparison introduced at the end. CUCI-Net preserves the context– utterance structure in the first stage, extracts a discrepancy-aware interpretation cue from the contrast between the contextual buildup and the final expression, and then uses this cue to guide the final multimodal interaction. As a result, the model is better able to rec-ognize that the target utterance is not a literal compliment, but a context-conditioned sarcastic response. 
+
+Case 2 (MUStARD, hid: 1_5679): Pragmatic sarcasm under explicit conversational setup. In this example, the context be-gins with a humorous remark, then moves to a discussion of the speaker’s stiff neck, followed by the question “Have you consid-ered massage?” The target utterance responds: “I’d like to respond to that sarcastically. Yes, I relish the thought of a stranger cov-ering my body with oil and rubbing it.” Although the utterance contains a superficially positive expression such as “I relish the thought,” its intended meaning is clearly negative in the given con-versational setting. The effect arises from pragmatic inversion: the literal wording appears favorable, while the surrounding context reveals discomfort and resistance. For this type of sample, CUCI-Net benefits from explicitly modeling the dependency between the preceding conversational trigger and the current utterance. The resulting interpretation cue helps the model precisely focus on the mismatch between literal sentiment and intended attitude, thereby greatly supporting more reliable sarcasm recognition. Overall, these cases suggest that the advantage of CUCI-Net lies not only in learning stronger multimodal representations, but also in explicitly converting context–utterance dependency into an interpretation cue for downstream reasoning. This is particularly useful when the final meaning is expressed through semantic rever-sal, pragmatic mismatch, or context-sensitive attitude shift rather than through obvious lexical indicators alone. 
+
+## E Acknowledgement 
+
+This work was supported by the Science and Technology Innovation 2025 Major Project of Ningbo City (Grant No. 2023Z130) 
+
+## References 
+
+[1] Wei Ai, Fuchen Zhang, Yuntao Shou, Tao Meng, Haowen Chen, and Keqin Li. 2025. Revisiting Multimodal Emotion Recognition in Conversation from the Perspective of Graph Spectrum. In Proceedings of the AAAI Conference on Artificial Intelligence ,Vol. 39. 11418–11426. doi:10.1609/AAAI.V39I11.33242 [2] Khalid Alnajjar, Mika Hämäläinen, Jörg Tiedemann, Jorma Laaksonen, and Mikko Kurimo. 2022. When to Laugh and How Hard? A Multimodal Ap-proach to Detecting Humor and Its Intensity. In Proceedings of the 29th In-ternational Conference on Computational Linguistics . International Commit-tee on Computational Linguistics, Gyeongju, Republic of Korea, 6875–6886. https://aclanthology.org/2022.coling-1.598/ [3] Elaheh Baharlouei, Mahsa Shafaei, Yigeng Zhang, Hugo Jair Escalante, and Thamar Solorio. 2024. Labeling Comic Mischief Content in Online Videos with a Multimodal Hierarchical-Cross-Attention Model. In Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024) . ELRA and ICCL, Torino, Italia, 9999–10013. https://aclanthology.org/2024.lrec-main.874/ [4] Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe Morency. 2018. OpenFace 2.0: Facial Behavior Analysis Toolkit. In 2018 13th IEEE Inter-national Conference on Automatic Face & Gesture Recognition (FG 2018) . 59–66. doi:10.1109/FG.2018.00019 [5] Santiago Castro, Devamanyu Hazarika, Verónica Pérez-Rosas, Roger Zimmer-mann, Rada Mihalcea, and Soujanya Poria. 2019. Towards Multimodal Sarcasm Detection (An Obviously Perfect Paper). In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, Florence, Italy, 4619–4629. doi:10.18653/v1/P19-1455 [6] Dushyant Singh Chauhan, Dhanush S R, Asif Ekbal, and Pushpak Bhattacharyya. 2020. Sentiment and Emotion help Sarcasm? A Multi-task Learning Framework for Multi-Modal Sarcasm, Sentiment and Emotion Analysis. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, 4351–4360. doi:10.18653/v1/2020.acl-main.401 [7] Dushyant Singh Chauhan, Gopendra Vikram Singh, Aseem Arora, Asif Ekbal, and Pushpak Bhattacharyya. 2022. A Sentiment and Emotion Aware Multi-modal Multiparty Humor Recognition in Multilingual Conversational Setting. In Proceedings of the 29th International Conference on Computational Linguistics .International Committee on Computational Linguistics, Gyeongju, Republic of Korea, 6752–6761. https://aclanthology.org/2022.coling-1.587/ [8] Alexis Conneau, Douwe Kiela, Holger Schwenk, Loic Barrault, and Antoine Bordes. 2017. Supervised Learning of Universal Sentence Representations from Natural Language Inference Data. In Proceedings of the 2017 Conference on Empir-ical Methods in Natural Language Processing . 670–680. doi:10.18653/v1/D17-1070 [9] Gilles Degottex, John Kane, Thomas Drugman, Tuomo Raitio, and Stefan Scherer. 2014. COVAREP: A Collaborative Voice Analysis Repository for Speech Tech-nologies. In Proceedings of the IEEE International Conference on Acoustics, Speech and Signal Processing . 960–964. doi:10.1109/ICASSP.2014.6853739 [10] Junlin Fang, Wenya Wang, Guosheng Lin, and Fengmao Lv. 2024. Sentiment-oriented Sarcasm Integration for Video Sentiment Analysis Enhancement with Sarcasm Assistance. In Proceedings of the 32nd ACM International Conference on Multimedia (MM ’24) . ACM, Melbourne, VIC, Australia, 5810–5819. doi:10.1145/ 3664647.3680703 [11] Deepanway Ghosal, Navonil Majumder, Alexander Gelbukh, Rada Mihalcea, and Soujanya Poria. 2020. COSMIC: COmmonSense knowledge for eMotion Preprint, 2026, arXiv Pan, Zhou et al. 
+
+Identification in Conversations. In Findings of the Association for Computational Linguistics: EMNLP 2020 . Association for Computational Linguistics, Online, 2470–2481. doi:10.18653/v1/2020.findings-emnlp.224 [12] Deepanway Ghosal, Navonil Majumder, Soujanya Poria, Niyati Chhaya, and Alexander Gelbukh. 2019. DialogueGCN: A Graph Convolutional Neural Network for Emotion Recognition in Conversation. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) . Association for Computational Linguistics, Hong Kong, China, 154–164. doi:10.18653/v1/D19-1015 [13] Hongyu Guo, Wenbo Shang, Xueyao Zhang, Shubo Zhang, Xu Han, and Binyang Li. 2024. MUCH: A Multimodal Corpus Construction for Conversational Humor Recognition Based on Chinese Sitcom. In Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024) . ELRA and ICCL, Torino, Italia, 11692–11698. https:// aclanthology.org/2024.lrec-main.1021/ [14] Md Kamrul Hasan, Sangwu Lee, Wasifur Rahman, AmirAli Bagher Zadeh, Rada Mihalcea, Louis-Philippe Morency, and Enamul Hoque. 2021. Humor Knowledge Enriched Transformer for Understanding Multimodal Humor. In Proceedings of the AAAI Conference on Artificial Intelligence , Vol. 35. 12972–12980. doi:10.1609/ aaai.v35i14.17534 [15] Md Kamrul Hasan, Wasifur Rahman, AmirAli Bagher Zadeh, Jianyuan Zhong, Md Iftekhar Tanveer, Louis-Philippe Morency, and Mohammed (Ehsan) Hoque. 2019. UR-FUNNY: A Multimodal Language Dataset for Understanding Humor. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Pro-cessing (EMNLP-IJCNLP) . Association for Computational Linguistics, Hong Kong, China, 2046–2056. doi:10.18653/v1/D19-1211 [16] Devamanyu Hazarika, Soujanya Poria, Rada Mihalcea, Erik Cambria, and Roger Zimmermann. 2018. ICON: Interactive Conversational Memory Network for Multimodal Emotion Detection. In Proceedings of the 2018 Conference on Em-pirical Methods in Natural Language Processing . Association for Computational Linguistics, Brussels, Belgium, 2594–2604. doi:10.18653/v1/D18-1280 [17] Devamanyu Hazarika, Soujanya Poria, Amir Zadeh, Erik Cambria, Louis-Philippe Morency, and Roger Zimmermann. 2018. Conversational Memory Network for Emotion Recognition in Dyadic Dialogue Videos. In Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long Papers) . Association for Computational Linguistics, New Orleans, Louisiana, 2122–2132. doi:10.18653/ v1/N18-1193 [18] Devamanyu Hazarika, Roger Zimmermann, and Soujanya Poria. 2020. MISA: Modality-Invariant and -Specific Representations for Multimodal Sentiment Anal-ysis. In Proceedings of the 28th ACM International Conference on Multimedia . ACM, 1122–1131. doi:10.1145/3394171.3413678 [19] Simin Hong, Jun Sun, and Taihao Li. 2024. DetectiveNN: Imitating Human Emo-tional Reasoning with a Recall-Detect-Predict Framework for Emotion Recogni-tion in Conversations. In Findings of the Association for Computational Linguistics: EMNLP 2024 . Association for Computational Linguistics, Miami, Florida, USA, 9170–9180. doi:10.18653/v1/2024.findings-emnlp.536 [20] Sayed Muddashir Hossain, Jan Alexandersson, and Philipp Müller. 2024. M3TCM: Multi-modal Multi-task Context Model for Utterance Classification in Motiva-tional Interviews. In Proceedings of the 2024 Joint International Conference on Com-putational Linguistics, Language Resources and Evaluation (LREC-COLING 2024) .ELRA and ICCL, Torino, Italia, 10872–10879. https://aclanthology.org/2024.lrec-main.949/ [21] Dou Hu, Lingwei Wei, and Xiaoyong Huai. 2021. DialogueCRN: Contextual Reasoning Networks for Emotion Recognition in Conversations. In Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) . Association for Computational Linguistics, Online, 7042–7052. doi:10.18653/v1/2021.acl-long.547 [22] Guimin Hu, Ting-En Lin, Yi Zhao, Guangming Lu, Yuchuan Wu, and Yongbin Li. 2022. UniMSE: Towards Unified Multimodal Sentiment Analysis and Emotion Recognition. In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing . Association for Computational Linguistics, Abu Dhabi, United Arab Emirates, 7837–7851. doi:10.18653/v1/2022.emnlp-main.534 [23] Jingwen Hu, Yuchen Liu, Jinming Zhao, and Qin Jin. 2021. MMGCN: Multi-modal Fusion via Deep Graph Convolution Network for Emotion Recognition in Conversation. In Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) . Association for Computational Linguistics, Online, 5666–5675. doi:10.18653/v1/2021.acl-long.440 [24] Soumyadeep Jana, Animesh Dey, and Ranbir Singh Sanasam. 2024. Continuous Attentive Multimodal Prompt Tuning for Few-Shot Multimodal Sarcasm Detec-tion. In Proceedings of the 28th Conference on Computational Natural Language Learning . Association for Computational Linguistics, Miami, FL, USA, 314–326. doi:10.18653/v1/2024.conll-1.25 [25] Abhinav Joshi, Ashwani Bhat, Ayush Jain, Atin Singh, and Ashutosh Modi. 2022. COGMEN: COntextualized GNN based Multimodal Emotion recognitioN. In 
+
+Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies . Association for Computational Linguistics, Seattle, United States, 4148–4164. doi:10.18653/v1/ 2022.naacl-main.306 [26] Zhenzhong Lan, Mingda Chen, Sebastian Goodman, Kevin Gimpel, Piyush Sharma, and Radu Soricut. 2020. ALBERT: A Lite BERT for Self-supervised Learning of Language Representations. In International Conference on Learning Representations .[27] Dongyuan Li, Yusong Wang, Kotaro Funakoshi, and Manabu Okumura. 2023. Joyful: Joint Modality Fusion and Graph Contrastive Learning for Multimodal Emotion Recognition. In Proceedings of the 2023 Conference on Empirical Meth-ods in Natural Language Processing . Association for Computational Linguistics, Singapore, 16051–16069. doi:10.18653/v1/2023.emnlp-main.996 [28] Kuntao Li, Yifan Chen, Qiaofeng Wu, Weixing Mai, Fenghuan Li, and Yun Xue. 2025. Ambiguity-aware Multi-level Incongruity Fusion Network for Multi-Modal Sarcasm Detection. In Proceedings of the 31st International Conference on Compu-tational Linguistics . Association for Computational Linguistics, Abu Dhabi, UAE, 380–391. https://aclanthology.org/2025.coling-main.26/ [29] Yong Li, Yuanzhi Wang, and Zhen Cui. 2023. Decoupled Multi-modal Distilling for Emotion Recognition. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) . 6631– 6640. https://openaccess.thecvf.com/content/CVPR2023/html/Li_Decoupled_ Multimodal_Distilling_for_Emotion_Recognition_CVPR_2023_paper.html [30] Yong Li, Yuanzhi Wang, and Zhen Cui. 2023. Decoupled Multimodal Distilling for Emotion Recognition. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) . 6631–6640. [31] Zuocheng Li and Lishuang Li. 2025. t-HNE: A Text-guided Hierarchical Noise Eliminator for Multimodal Sentiment Analysis. In Proceedings of the 31st Interna-tional Conference on Computational Linguistics . Association for Computational Linguistics, Abu Dhabi, UAE, 2834–2844. https://aclanthology.org/2025.coling-main.192/ [32] Zhun Liu, Ying Shen, Varun Bharadhwaj Lakshminarasimhan, Paul Pu Liang, Amir Zadeh, and Louis-Philippe Morency. 2018. Efficient Low-rank Multimodal Fusion With Modality-Specific Factors. In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Associa-tion for Computational Linguistics, 2247–2256. doi:10.18653/v1/P18-1209 [33] Sijie Mai, Ya Sun, Ying Zeng, and Haifeng Hu. 2023. Excavating Multimodal Correlation for Representation Learning. Information Fusion 91 (2023), 542–555. doi:10.1016/j.inffus.2022.11.003 [34] Sijie Mai, Ying Zeng, and Haifeng Hu. 2023. Learning from the Global View: Supervised Contrastive Learning of Multimodal Representation. Information Fusion 100 (2023), 101920. doi:10.1016/j.inffus.2023.101920 [35] Navonil Majumder, Soujanya Poria, Devamanyu Hazarika, Rada Mihalcea, Alexander F. Gelbukh, and Erik Cambria. 2019. DialogueRNN: An Attentive RNN for Emotion Detection in Conversations. In Proceedings of the AAAI Confer-ence on Artificial Intelligence , Vol. 33. 6818–6825. https://ojs.aaai.org/index.php/ AAAI/article/view/4657 [36] Soujanya Poria, Devamanyu Hazarika, Navonil Majumder, Gautam Naik, Erik Cambria, and Rada Mihalcea. 2019. MELD: A Multimodal Multi-Party Dataset for Emotion Recognition in Conversations. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, Florence, Italy, 527–536. doi:10.18653/v1/P19-1050 [37] Wasifur Rahman, Md Kamrul Hasan, Sangwu Lee, AmirAli Bagher Zadeh, Chengfeng Mao, Louis-Philippe Morency, and Ehsan Hoque. 2020. Integrating Multimodal Information in Large Pretrained Transformers. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, 2359–2369. doi:10.18653/v1/2020.acl-main.214 [38] Anupama Ray, Shubham Mishra, Apoorva Nunna, and Pushpak Bhattacharyya. 2022. A Multimodal Corpus for Emotion Recognition in Sarcasm. In Proceedings of the Thirteenth Language Resources and Evaluation Conference , Nicoletta Calzolari, Frédéric Béchet, Philippe Blache, Khalid Choukri, Christopher Cieri, Thierry Declerck, Sara Goggi, Hitoshi Isahara, Bente Maegaard, Joseph Mariani, Hélène Mazo, Jan Odijk, and Stelios Piperidis (Eds.). European Language Resources Association, Marseille, France, 6992–7003. https://aclanthology.org/2022.lrec-1.756/ [39] Tao Shi and Shao-Lun Huang. 2023. MultiEMO: An Attention-Based Correlation-Aware Multimodal Fusion Framework for Emotion Recognition in Conversations. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Toronto, Canada, 14752–14766. doi:10.18653/v1/2023.acl-long.824 [40] Yuntao Shou, Tao Meng, Wei Ai, and Keqin Li. 2025. Dynamic Graph Neural ODE Network for Multi-modal Emotion Recognition in Conversation. In Proceedings of the 31st International Conference on Computational Linguistics . Association for Computational Linguistics, Abu Dhabi, UAE, 256–268. https://aclanthology.org/ 2025.coling-main.18/ Beyond Isolated Utterances: Cue-Guided Interaction for Context-Dependent Conversational Multimodal Understanding Preprint, 2026, arXiv 
+
+[41] Chuanqi Tao, Jiaming Li, Tianzi Zang, and Peng Gao. 2025. A Multi-Focus-Driven Multi-Branch Network for Robust Multimodal Sentiment Analysis. In 
+
+Proceedings of the AAAI Conference on Artificial Intelligence , Vol. 39. 1547–1555. doi:10.1609/aaai.v39i2.32146 [42] Divyank Tiwari, Diptesh Kanojia, Anupama Ray, Apoorva Nunna, and Pushpak Bhattacharyya. 2023. Predict and Use: Harnessing Predicted Gaze to Improve Multimodal Sarcasm Detection. In Proceedings of the 2023 Conference on Em-pirical Methods in Natural Language Processing . Association for Computational Linguistics, Singapore, 15933–15948. doi:10.18653/v1/2023.emnlp-main.988 [43] Yao-Hung Hubert Tsai, Shaojie Bai, Paul Pu Liang, J. Zico Kolter, Louis-Philippe Morency, and Ruslan Salakhutdinov. 2019. Multimodal Transformer for Unaligned Multimodal Language Sequences. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, 6558–6569. doi:10.18653/v1/P19-1656 [44] Yao-Hung Hubert Tsai, Shaojie Bai, Paul Pu Liang, J. Zico Kolter, Louis-Philippe Morency, and Ruslan Salakhutdinov. 2019. Multimodal Transformer for Unaligned Multimodal Language Sequences. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, Florence, Italy, 6558–6569. doi:10.18653/v1/P19-1656 [45] Geng Tu, Bin Liang, Ruibin Mao, Min Yang, and Ruifeng Xu. 2023. Context or Knowledge is Not Always Necessary: A Contrastive Learning Framework for Emotion Recognition in Conversations. In Findings of the Association for Computational Linguistics: ACL 2023 . Association for Computational Linguistics, Toronto, Canada, 14054–14067. doi:10.18653/v1/2023.findings-acl.883 [46] Geng Tu, Jun Wang, Zhenyu Li, Shiwei Chen, Bin Liang, Xi Zeng, Min Yang, and Ruifeng Xu. 2024. Multiple Knowledge-Enhanced Interactive Graph Net-work for Multimodal Conversational Emotion Recognition. In Findings of the Association for Computational Linguistics: EMNLP 2024 . Association for Computa-tional Linguistics, Miami, Florida, USA, 3861–3874. doi:10.18653/v1/2024.findings-emnlp.222 [47] Di Wang, Xutong Guo, Yumin Tian, Jinhui Liu, Lihuo He, and Xuemei Luo. 2023. TETFN: A Text Enhanced Transformer Fusion Network for Multimodal Sentiment Analysis. Pattern Recognition 136 (2023), 109259. doi:10.1016/j.patcog.2022.109259 [48] Pan Wang, Qiang Zhou, Yawen Wu, Tianlong Chen, and Jingtong Hu. 2025. DLF: Disentangled-Language-Focused Multimodal Sentiment Analysis. In Proceedings of the AAAI Conference on Artificial Intelligence , Vol. 39. 21180–21188. doi:10. 1609/aaai.v39i20.35416 [49] Yiwei Wei, Maomao Duan, Hengyang Zhou, Zhiyang Jia, Zengwei Gao, and Longbiao Wang. 2024. Towards multimodal sarcasm detection via label-aware graph contrastive learning with back-translation augmentation. Knowledge-Based Systems 300 (2024), 112109. [50] Yiwei Wei, Shaozu Yuan, Hengyang Zhou, Longbiao Wang, Zhiling Yan, Ruosong Yang, and Meng Chen. 2024. Gˆ 2SAM: Graph-Based Global Semantic Awareness Method for Multimodal Sarcasm Detection. In Proceedings of the AAAI Conference on Artificial Intelligence , Vol. 38. 9151–9159. [51] Yiwei Wei, Hengyang Zhou, Shaozu Yuan, Meng Chen, Haitao Shi, Zhiyang Jia, Longbiao Wang, and Xiaodong He. 2025. DeepMSD: Advancing Multimodal Sarcasm Detection through Knowledge-augmented Graph Reasoning. IEEE Transactions on Circuits and Systems for Video Technology (2025). [52] Yunhe Xie, Chengjie Sun, Ziyi Cao, Bingquan Liu, Zhenzhou Ji, Yuanchao Liu, and Lili Shan. 2025. A Dual Contrastive Learning Framework for Enhanced Multimodal Conversational Emotion Recognition. In Proceedings of the 31st Inter-national Conference on Computational Linguistics . Association for Computational Linguistics, Abu Dhabi, UAE, 4055–4065. https://aclanthology.org/2025.coling-main.272/ [53] Qinfu Xu, Yiwei Wei, Chunlei Wu, Leiquan Wang, Shaozu Yuan, Jie Wu, Jing Lu, and Hengyang Zhou. 2025. Towards Multimodal Sentiment Analysis via Hierarchical Correlation Modeling with Semantic Distribution Constraints. In 
+
+Proceedings of the AAAI Conference on Artificial Intelligence , Vol. 39. 21788–21796. [54] Hongfei Xue, Linyan Xu, Yu Tong, Rui Li, Jiali Lin, and Dazhi Jiang. 2024. Break-through from Nuance and Inconsistency: Enhancing Multimodal Sarcasm Detec-tion with Context-Aware Self-Attention Fusion and Word Weight Calculation.. In 
+
+Proceedings of the 2024 Joint International Conference on Computational Linguis-tics, Language Resources and Evaluation (LREC-COLING 2024) . ELRA and ICCL, Torino, Italia, 2493–2503. https://aclanthology.org/2024.lrec-main.224/ [55] Shaozu Yuan, Yiwei Wei, Hengyang Zhou, Qinfu Xu, Meng Chen, and Xiaodong He. 2025. Enhancing Semantic Awareness by Sentimental Constraint with Auto-matic Outlier Masking for Multimodal Sarcasm Detection. IEEE Transactions on Multimedia (2025). [56] Taeyang Yun, Hyunkuk Lim, Jeonghwan Lee, and Min Song. 2024. TelME: Teacher-leading Multimodal Fusion Network for Emotion Recognition in Con-versation. In Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) . Association for Computational Linguistics, Mexico City, Mexico, 82–95. doi:10.18653/v1/2024.naacl-long.5 [57] Amir Zadeh, Minghai Chen, Soujanya Poria, Erik Cambria, and Louis-Philippe Morency. 2017. Tensor Fusion Network for Multimodal Sentiment Analysis. In 
+
+Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing . Association for Computational Linguistics, 1103–1114. doi:10.18653/ v1/D17-1115 [58] Duzhen Zhang, Feilong Chen, and Xiuyi Chen. 2023. DualGATs: Dual Graph Attention Networks for Emotion Recognition in Conversations. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Toronto, Canada, 7395–7408. doi:10.18653/v1/2023.acl-long.408 [59] Tao Zhang and Zhenhua Tan. 2025. ECERC: Evidence-Cause Attention Network for Multi-Modal Emotion Recognition in Conversation. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Vienna, Austria, 2064–2077. doi:10.18653/v1/2025.acl-long.102 [60] Xiaoheng Zhang and Yang Li. 2023. A Cross-Modality Context Fusion and Seman-tic Refinement Network for Emotion Recognition in Conversation. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Vol-ume 1: Long Papers) . Association for Computational Linguistics, Toronto, Canada, 13099–13110. doi:10.18653/v1/2023.acl-long.732 [61] Wenjie Zheng, Jianfei Yu, Rui Xia, and Shijin Wang. 2023. A Facial Expression-Aware Multimodal Multi-task Learning Framework for Emotion Recognition in Multi-party Conversations. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Toronto, Canada, 15445–15459. doi:10.18653/v1/ 2023.acl-long.861 [62] Peixiang Zhong, Di Wang, and Chunyan Miao. 2019. Knowledge-Enriched Transformer for Emotion Detection in Textual Conversations. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) . Association for Computational Linguistics, Hong Kong, China, 165–176. doi:10.18653/v1/D19-1016 [63] Hengyang Zhou, Yiwei Wei, Jian Yang, and Zhenyu Zhang. 2025. Towards Robust and Realible Multimodal Misinformation Recognition with Incomplete Modality. arXiv:2510.05839 [cs.MM] https://arxiv.org/abs/2510.05839 [64] Hengyang Zhou, Jinwu Yan, Yaqing Chen, Rongman Hong, Wenbo Zuo, and Keyan Jin. 2025. LDGNet: LLMs Debate-Guided Network for Multimodal Sarcasm Detection. In ICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) . IEEE, 1–5. [65] Weilin Zhou, Zonghao Ying, Chunlei Meng, Jiahui Liu, Hengyang Zhou, Quanchen Zou, Deyue Zhang, Dongdong Yang, and Xiangzheng Zhang. 2026. DIVER: Dynamic Iterative Visual Evidence Reasoning for Multimodal Fake News Detection. arXiv:2601.07178 [cs.CV] https://arxiv.org/abs/2601.07178 [66] Lixing Zhu, Gabriele Pergola, Lin Gui, Deyu Zhou, and Yulan He. 2021. Topic-Driven and Knowledge-Aware Transformer for Dialogue Emotion Detection. In 
+
+Proceedings of the 59th Annual Meeting of the Association for Computational Lin-guistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) . Association for Computational Linguistics, Online, 1571– 1582. doi:10.18653/v1/2021.acl-long.125

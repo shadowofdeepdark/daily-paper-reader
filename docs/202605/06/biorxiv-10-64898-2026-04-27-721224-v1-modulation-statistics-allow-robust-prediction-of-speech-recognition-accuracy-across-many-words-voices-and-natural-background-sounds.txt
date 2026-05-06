@@ -1,0 +1,1745 @@
+Title: Modulation statistics allow robust prediction of speech recognition accuracy across many words, voices, and natural background sounds
+
+URL Source: https://www.biorxiv.org/content/10.64898/2026.04.27.721224v1.full.pdf
+
+Number of Pages: 37
+
+Markdown Content:
+1
+
+2
+
+3
+
+4
+
+Modulation statistics allow robust prediction of speech recognition accuracy 5
+
+across many words, voices, and natural background sounds. 6
+
+7
+
+8
+
+9
+
+10 
+
+11 
+
+Alex C. Clonan 1,2,4 , Ian H. Stevenson 2-4 , Monty A. Escabí 1-4 ,12 
+
+13 1Electrical and Computer Engineering, University of Connecticut, Storrs, CT 06269 14 2Biomedical Engineering, University of Connecticut, Storrs, CT 06269 15 3Psychological Sciences, University of Connecticut, Storrs, CT 06269 16 4Institute of Brain and Cognitive Sciences, University of Connecticut, Storrs, CT 06269 17 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+Abstract 18 
+
+Although humans excel at speech recognition, recognition accuracy can vary widely due 19 
+
+to differences in background environments as well as the speaker’s voice quality, intonation, and 20 
+
+pitch. Predicting when speech recognition will succeed or fail, however, remains an ongoing 21 
+
+challenge in hearing research. Here we characterize recognition abilities across a wide range of 22 
+
+natural conditions using digits spoken by many male and female talkers of multiple ages with 33 23 
+
+unique backgrounds. Across this diverse set of sounds, speech recognition is most strongly 24 
+
+influenced by the spectrum and modulation statistics of the noise. Yet, articulatory features of the 25 
+
+speech, including fundamental and formant frequencies, show categorically distinct modulatory 26 
+
+effects on accuracy across age, gender, and words. We then show that a low-dimensional model of 27 
+
+sound, based on computations in the auditory midbrain, accounts for participants’ single-trial 28 
+
+recognition behavior across voices, words and backgrounds. Thus, speech-in-noise perception 29 
+
+across extremely diverse natural conditions depends largely on a simple set of spectrotemporal 30 
+
+statistics likely encoded by central neural populations. 31 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+Introduction 32 
+
+Listening in the everyday world is seldom a simple task, since background sounds 33 
+
+frequently distort or mask sounds of interest 1. Yet, the human auditory system is surprisingly 34 
+
+robust to noise, allowing us to hear one another in a noisy restaurant filled with many voices or 35 
+
+while walking down a city street with a cacophony of traffic and construction sounds. Recognizing 36 
+
+speech in noise is a major challenge for individuals with hearing impairment, language processing 37 
+
+differences, and even machine systems. Thus, understanding what speech and background factors 38 
+
+impact the acuity, robustness, and efficiency of human hearing under natural distortions is of 39 
+
+critical scientific and clinical interest. Recognition abilities vary based on the relative intensity of 40 
+
+the foreground to the background, but even at a fixed signal-to-noise ratio (SNR), recognition 41 
+
+accuracy varies widely across different backgrounds 2,3 . The details of the speech – the specific 42 
+
+talker, phonemes, their quality, intonation, and pitch – impact speech recognition as well 4-7 , and 43 
+
+these effects are likely background-dependent. Accurately accounting for the moment-by-moment 44 
+
+contributions of the background, foreground, and interaction between them is an ongoing 45 
+
+challenge for understanding the perception of speech in natural listening environments. Here, using 46 
+
+a combination of human perceptual experiments and computational modeling, we aim to 47 
+
+characterize foreground effects on speech recognition and foreground-background interactions on 48 
+
+the timescale of single words. 49 
+
+Many previous studies have examined the specific sound features that impact speech 50 
+
+perception, such as the fundamental frequency, consonants, phoneme-level features and other 51 
+
+talker characteristics 8-12 . Energetic masking, where the spectrum of the noise overlaps with or 52 
+
+exceeds the energy of the competing speech, is a critical factor influencing speech perception 13 .53 
+
+Since many environmental sounds are rich with transient acoustic events and are nonstationary, 54 
+
+times of decreased power can allow speech to stand out, in a phenomenon known as glimpsing 55 14,15 . Informational factors, such as spectrotemporal modulations that underlie word identity and 56 
+
+contextual cues that influence word uncertainty 13,16,17 , along with spatial cues 18-21 all also 57 
+
+influence speech perception in noise. One limitation of many previous speech-in-noise studies is 58 
+
+that they have not focused on the interactions between speech and natural background features and 59 
+
+often have not focused on single-trial predictions. Here we aim to address these limitations by 60 
+
+using highly diverse natural backgrounds and speech from multiple talkers to characterize the 61 
+
+mechanisms underlying speech-in-noise perception. 62 
+
+Theories of auditory processing have proposed that humans rely on statistical sound 63 
+
+information for perception and that statistics related to the spectral and modulation profiles of 64 
+
+speech and stationary natural sounds can explain many aspects of human perception 2,22,23 . Mid-65 
+
+level regions of the auditory pathway, such as the inferior colliculus, are specifically sensitive to 66 
+
+both the spectral and modulation statistics of natural sounds 24-27 and neural activity in these 67 
+
+subcortical regions can well describe both the identity of individual sound stimuli and categorical 68 
+
+information about the sound type 28-30 . Additionally, models based on spectrotemporal sound 69 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+representations that account for modulation selectivity at this level can partly explain speech 70 
+
+recognition abilities in natural noises 2.71 
+
+Here we evaluate the hypothesis that spectrotemporal modulations in natural background 72 
+
+sounds interfere with the representation of speech articulatory features in noise. Using both 73 
+
+psychophysical measurements and biologically plausible modelling techniques, we find that the 74 
+
+ability to recognize speech varies widely depending on the foreground word, the speaker’s voice, 75 
+
+and the background statistics. Some backgrounds give rise to consistent impairment in speech 76 
+
+recognition, regardless of the foreground, while in some cases the background and foreground 77 
+
+interact, and both determine listeners’ speech recognition accuracy. These interactions are linked 78 
+
+to specific speech articulatory features, including fundamental and formant frequencies, which 79 
+
+cluster across words as well as the talker’s age and gender. However, we find that the detailed 80 
+
+behavioral effects can be directly explained on a sound-by-sound basis across words, talkers, and 81 
+
+backgrounds by a model of central auditory representations of the foreground and background 82 
+
+modulation statistics. 83 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+Results 84 
+
+To determine how voice features and background statistics together impact speech 85 
+
+recognition, we used a block randomized design and tested digit recognition abilities of n=10 86 
+
+participants using foreground English speech produced by many distinct speakers (n=326) mixed 87 
+
+with many natural and perturbed backgrounds (9,900 mixtures; see Methods). 88 
+
+For a specific background, we mix foregrounds from different speakers producing the same 89 
+
+word (Fig. 1A left) and the same speaker producing different words (Fig. 1A, right). By comparing 90 
+
+across these trials, we can quantify how features of a speaker’s voice impact recognition in noise 91 
+
+and how features of the word impact recognition in noise. By comparing multiple backgrounds 92 
+
+where the speaker (Fig. 1B left) or word (Fig 1B, right) is fixed, we can also determine to what 93 
+
+extent foreground features interact with the spectral and temporal statistics of these different 94 
+
+backgrounds. Participants were tasked with recognizing three digits (Fig. 1C) within natural 95 
+
+background sounds (Fig. 1D, Original, OR) and manipulated variants which isolate the spectrum 96 
+
+(Fig. 1D, Spectrum Matched, SM) or the modulations (Fig. 1D, Modulation Matched, MM). 97 
+
+Sounds were block randomized across backgrounds and their variants and balanced across 4 98 
+
+different speaker populations (Adult Male, AM, n=111; Child Male, CM, n=50; Adult Female, AF, 99 
+
+n=114; Child Female CF, n=51) (Fig. 1E). Altogether, participants’ recognition accuracy was 100 
+
+measured across a wide range of natural conditions, allowing us to characterize and model the 101 
+
+effects of different background statistics and foreground articulatory features. 102 
+
+Accuracy variation is associated with foreground articulatory features 103 
+
+Participants listened to sounds over headphones (Fig. 2A) and were instructed to identify 104 
+
+the digits in the sound mixture via keyboard entry (e.g., 7-9-2). In previous work, we found that 105 
+
+digit recognition accuracy varied extensively across backgrounds depending on their spectrum and 106 
+
+modulation statistics 2. Here we additionally find that accuracy varies based on the foreground 107 
+
+speaker group (Fig. 2B1-3) and across digits (Fig. 2C1-3). Comparing the OR backgrounds, 108 
+
+accuracy for babble-8 and factory backgrounds was the lowest, while accuracy for fire and white 109 
+
+noise was the highest among the 11 backgrounds (see Methods). Additionally, by comparing 110 
+
+accuracy, across OR, SM, and MM conditions, we can attribute performance to spectral or 111 
+
+modulation statistics of the background. Across backgrounds, the voice group effects are 112 
+
+influenced by the background spectrum and modulation cues, however they do not appear to be 113 
+
+purely the result of one or the other. For babble-8 backgrounds, children’s speech is more 114 
+
+recognizable than adult speech both for the OR background (15±2%, 36±3%, , AM, AF vs 59±2%, 115 
+
+63±3%, , CM, CF; mean±sem) and when the background modulations are whitened (SM, Fig. 116 
+
+2B2) (72±2%, 74±2%, , AM, AF vs 86±2%, , 85±1%, , CM, CF; mean±sem). This suggests that 117 
+
+the background spectrum alone is sufficient to cause voice group effects. At the same time, even 118 
+
+when the spectra are matched across backgrounds (MM, Fig. 2B3) the voice group effects still 119 
+
+differ across backgrounds (15±2%, 34±3%, , AM, AF vs 52±2%, , 44±3%, , CM, CF; mean±sem), 120 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+suggesting that the background modulations cues must also play a role in driving accuracy 121 
+
+differences across voice groups. 122 
+
+Accuracy also varied when the target digit was changed. For instance, with the original 123 
+
+backgrounds (Fig. 2C1), the accuracy for the spoken digit two was lower across all backgrounds 124 
+
+in comparison to the spoken digit seven . Certain digits, such as seven , eight and six had higher 125 
+
+accuracy in backgrounds such as babble-8, factory, city, and babble-2, which were difficult 126 
+
+backgrounds overall, while other digits four, three and two have lower accuracy. Beyond these 127 
+
+broad trends, some digit-background combinations appear to be unexpectedly good or 128 
+
+unexpectedly bad. For instance, six +city and seven +water have higher accuracy than expected 129 
+
+from their marginal effects. In contrast, three +babble-8 and two +fire have lower accuracy than 130 
+
+expected. Furthermore, these trends appear to depend on both the background spectrum and 131 
+
+modulation statistics. For instance, when the modulations are removed from the jackhammer sound 132 
+
+(SM), digits zero , three , and four show lower accuracy compared to OR, whereas seven maintains 133 
+
+a similar accuracy compared to OR (Fig. 2C2). 134 
+
+The effects of background spectrum and modulation cues can be summarized by looking 135 
+
+at the difference in accuracy between the perturbed and original backgrounds (Fig. 3A and B). 136 
+
+Here we compute a modulation (OR-SM) and a spectrum effect (OR-MM). As in previous work 2,137 
+
+we find that the babble-8 background has a large modulation effect where the modulations in the 138 
+
+original sound lead to reduced recognition. Additionally, adult male and female voices in babble-139 
+
+8 have this same modulation masking effect, but children’s voices appear to benefit from the 140 
+
+spectrum of the original background sound (Fig. 3A, red). In comparison, the modulations of the 141 
+
+original jackhammer background appear to improve recognition (positive modulation effect), with 142 
+
+minimal differences between the different voice groups (Fig. 3A, medium blue). Similar trends 143 
+
+appear when looking at individual words, where there is large variability across words in the 144 
+
+babble-8 condition (Fig. 3B, red), but restricted variability in the construction sound (Fig. 3B, light 145 
+
+gray). Overall, the variation in recognition accuracy across words, speakers, and background 146 
+
+presents a complex picture where many different acoustic factors impact recognition. However, 147 
+
+there is substantial consistency across normal hearing participants (pair-wise correlations across 148 
+
+all voice groups and backgrounds, r=0.92±0.002; pair-wise correlation across all digits and 149 
+
+backgrounds, r = 0.85±0.004; mean±sem). 150 
+
+Recognition abilities associated with articulatory features 151 
+
+To better understand what foreground features might lead to accuracy differences, we 152 
+
+extracted four articulatory features from each spoken digit: the fundamental frequency (F0), first 153 
+
+formant (F1), second formant (F2), and harmonicity index (see Methods). Combining data across 154 
+
+digits, we found that AM voices had lower fundamental frequency (116.8 ±18.4 Hz, mean ±std; Fig. 155 
+
+4A), compared to the CM and CF groups (CM, 236.7 ±32.9 Hz; CF, 233.4 ±24.3 Hz, mean ±std, 156 
+
+mean ±std ) and the AF group (201.0 ±27.5, mean ±std). These distributions are consistent with 157 
+
+differences in larynx size between voice groups 31 . Distributions for F1 and F2 (Fig. 4A) are closer 158 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+across voice groups but maintain a similar organization with AM voices being the lowest frequency 159 
+
+(473.1/1469.3 Hz, mean), followed by AF voices (532.4/1689.4 Hz, mean), and then the CM 160 
+
+(585.8/1845.6 Hz, mean) and CF (621.0/1857.5 Hz, mean) voices, as expected from the vocal tract 161 
+
+anatomy and length 32 . Harmonicity measures follow a similar trend with AM voices having the 162 
+
+lowest harmonicity and with AF, CM, and CF voices having substantial overlap in harmonicity. 163 
+
+Note that some of the overlap in these distributions, particularly the F1 and F2 distributions, is 164 
+
+likely driven by the fact that here we are combining data from all 10 target words, which differ in 165 
+
+their vowels. 166 
+
+Next, we characterized the variability and covariability in vocal features across digits, 167 
+
+combining data across the different voice populations. Here, average F0 does not vary substantially 168 
+
+between digits (Fig. 4B, top) but has substantial variability across speakers – with the 20th 169 
+
+percentile having an F0 of 110Hz and the 80th percentile 260 Hz (Fig. 4A). Harmonicity, on the 170 
+
+other hand, does vary somewhat between digits with two having the highest harmonicity and six 171 
+
+having the lowest (Fig. 4B, top). Additionally, we find that harmonicity appears to be positively 172 
+
+correlated with F0 (r=0.41). F1 and F2 show substantial variation across digits, with each digit 173 
+
+having different formant frequencies, largely driven by differences in vowels. For instance, the 174 
+
+spoken digit five has a center F1 frequency of ~890 Hz, while the spoken digit three appears to 175 
+
+have a center F1 frequency of ~440 Hz. Similarly, there appears to be a separation in F2 for 176 
+
+different digits, where eight has a high center F2 at ~2300 Hz, where four by contrast has a center 177 
+
+F2 lower at ~1000 Hz. Both F1 and F2 also have slight positive correlations with F0 (r=0.29; 178 
+
+r=0.36), consistent with the group ordering. Comparing F1 and F2 together (Fig 4B, bottom), 179 
+
+shows a nearly non-overlapping digit representation. Here, the spoken digit eight is spatially 180 
+
+located at a center F1 ~540 Hz and F2 ~2300 Hz, whereas five is spatially located at a center F1 181 
+
+~890 Hz and F2 ~1500 Hz. Speaker variability appears to be driven by F0, while the variability in 182 
+
+different words comes from F1 and F2. 183 
+
+We then sought to explore how recognition accuracy varied as a function of the 184 
+
+fundamental and formant frequencies and harmonicity for different backgrounds (Fig. 4C) and 185 
+
+digits (Fig. 4D). Here, the association between speech articulatory features and accuracy depends 186 
+
+on the background. For instance, in the presence of babble-8 noise, accuracy increases with F0 187 
+
+from 17% for the lowest F0 quantile to 64% for the highest F0 quantile (Fig. 4C, top, left). This is 188 
+
+consistent with the result above, where CM/CF foregrounds had higher accuracy in the babble-8 189 
+
+condition compared to AM/AF. The babble-8 background is comprised of multiple adult speakers 190 
+
+(see supplemental audio), suggesting that lower fundamental frequency voices will overlap more 191 
+
+with the background. In contrast, in the presence of bird babble noise, accuracy slightly decreases 192 
+
+as a function of F0 from 96% accuracy for the lowest F0 quantile to about 89% for the highest 193 
+
+quantile. Since the frequency content of the bird chorus is higher than babble (90% percent of 194 
+
+power within ~0.45-3.6 vs ~0.06-1.0 kHz ), masking may occur more for higher F0 voices. Lastly, 195 
+
+in the presence of the water background, there is little to no change in accuracy across F0. Although 196 
+
+these three backgrounds are only a subset of the data, they illustrate how F0 can interact with the 197 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+background to determine recognition accuracy, and we find similar interactions for F1, F2, and 198 
+
+harmonicity (Fig 4C, top). 199 
+
+In contrast, we find that the foreground features, while they affect accuracy, generally do 200 
+
+not interact strongly with the digit identity (Fig 4D). Accuracy slightly increased for all digits as 201 
+
+F0 increases (Fig. 4D, left). Accuracy also increases with increasing F1 and F2 but does not change 202 
+
+substantially with increasing harmonicity. Although the digits differ in their F1, F2, and 203 
+
+harmonicity distributions, and each digit has a different baseline accuracy, the effect of the different 204 
+
+vocal features on accuracy is largely consistent across digits. The digit two had the lowest average 205 
+
+recognition accuracy, while seven has the highest accuracy, but accuracy for both digits increases 206 
+
+as a function of F0, F1, and F2 in a similar way. There is minimal interaction between vocal 207 
+
+features and digit identity when describing recognition accuracy. 208 
+
+To quantify the magnitude of the foreground feature effects we developed a Generalized 209 
+
+Linear Mixed Effects Model (GLME, See Methods) and identified the best fixed-effects structure 210 
+
+using model comparison for each participant. Single-trial accuracy data was best explained by a 211 
+
+model with fixed effects for the background category, digit category, digit position (first, second, 212 
+
+or third), with an effect of F0, and with background*F0 interactions, but no effects of F1, F2, or 213 
+
+harmonicity. The predictions of this GLME (Fig. 4C, bottom) are shown for accuracy across F0, 214 
+
+F1, F2, and harmonicity. At least in this data, the associations between foreground features and 215 
+
+accuracy across backgrounds (Fig 4C) and across digits (Fig 4D) appear to be largely explained 216 
+
+by F0 alone. There are also substantial differences across backgrounds (F(10,98923)=132.48, 217 
+
+p<0.001, 0.10-686.3, odds ratio range referenced to babble-2) and digits (F(9,98923)=357.82, p= 218 
+
+p<0.001, 0.33-1.91, odds ratio range referenced to zero ). We also find that the order of the digits 219 
+
+plays a role (F(2, 98923)=70.94, p<0.001), with recognition accuracy being higher when the digit 220 
+
+is in the 2nd (odds ratio 1.10) or 3rd position (odds ratio 1.28). The main effect of F0 was 221 
+
+substantial (F(1, 98923)=229.52, p<0.001) with an odds ratio of 1.02/Hz, and a statistically 222 
+
+significant interaction with the background (F=66.10, p<0.001). 223 
+
+Subband modulations preserve articulatory feature representations 224 
+
+Next, we test whether spectrotemporal summary statistics can account for speech 225 
+
+articulatory features among a wide range of male and female talkers of multiple ages. Here, we 226 
+
+use a biologically motivated, hierarchical model of the auditory midbrain containing 227 
+
+spectrotemporal receptive fields that allow for measuring the modulation statistics for each spoken 228 
+
+digit (Fig. 5A, See Methods). The model output statistic, the midbrain modulation power spectrum 229 
+
+(mMPS), accounts for the sound’s power distribution in three acoustic dimensions: frequency, 230 
+
+temporal and spectral modulation. To visualize how well articulatory features are preserved in this 231 
+
+statistic, we applied t-distributed stochastic neighbor embedding (t-SNE) to the mMPS to represent 232 
+
+each digit in a low dimensional 2D space. 233 
+
+In the embeddings, we find that different digits and voice groups are well differentiated 234 
+
+(Fig 5B, left) and there is substantial variability in the clustering across digits. For instance, the 235 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+spoken digit three spans a broad range of the embedding space, while six is localized to a small 236 
+
+part of the space. The mMPS features are also differentiated by voice group in the embedding at 237 
+
+the level of the whole dataset and within individual digits. The embeddings of the different voice 238 
+
+groups are mirrored by the patterns across F0 and, to a lesser extent, F1 and F2 (Fig 5B, right). In 239 
+
+the mMPS space, articulatory features vary systematically across the different word and voice 240 
+
+categories. Since the mMPS preserves differences in both articulatory features and digits, it may 241 
+
+be able to account for the behavioral trends described above. 242 
+
+Subband modulation masking explains variability in recognition accuracy across words and voices 243 
+
+To determine whether the mMPS can account for both foreground- and background-driven 244 
+
+changes in recognition accuracy, we next apply a previously developed, generalized perceptual 245 
+
+regression (GPR) approach 2 (Fig. 6A; see Methods). Here the background and foreground mMPS 246 
+
+(Fig. 6A, left) and their interaction (point-wise products) are dimensionality reduced using 247 
+
+principal components analysis (PCA). The resulting neural model embeddings (Fig. 6A, middle), 248 
+
+here with 15 principal components each, are then used as input features to a logistic regression 249 
+
+model that predicts whether the participant identifies the digit correctly (see Methods). 250 
+
+We evaluated cross-validated predictions for individual participants’ recognition accuracy 251 
+
+across a digit projection (DP) where the data and predictions are averaged across speakers and a 252 
+
+voice projection (VP) where the data and predictions are averaged across digits (Fig 6B, shown 253 
+
+for one participant). GPR accurately replicates the overall patterns in recognition accuracy across 254 
+
+different voice groups, spoken digits, and backgrounds. For instance, in the case of the original 255 
+
+sounds (Fig 6B, top left), the GPR scores replicate the pattern of low accuracy for babble-8, factory, 256 
+
+city and water for most digits, as well as trends across different voices and backgrounds where 257 
+
+AM/AF have a lower accuracy than CM/CF for babble-8, factory, city, and water backgrounds. 258 
+
+The model also captures accuracy differences in SM (Fig 6B, middle) and MM (Fig 6B, bottom) 259 
+
+backgrounds, which are driven by changes in the background spectrum or modulation content. 260 
+
+Together, these predictions suggest that spectrotemporal modulations, and the interaction between 261 
+
+foreground and background mMPS features, are sufficient to reconstruct human perceptual 262 
+
+performance in the task. For this individual participant, the GPR explains 73% of the perceptual 263 
+
+variance across digits (Fig. 6 C1 and C2, white dots) and 78% of the perceptual variance across 264 
+
+voice groups (Fig. 6 D1 and D2, white dots). 265 
+
+Across participants, the variance explained by the model for the digit projection ranged 266 
+
+between 66.0-73.2% (69.4 ± 0.8%, mean ±sem; Fig. 6C2), with the digit two having the lowest 267 
+
+explained variance for the digit projection (62.5±0.1%; mean±sem) and eight having the highest 268 
+
+prediction quality (75.4±0.1%). For the voice projection the model explained 75.6 – 83.3% of the 269 
+
+variance across participants (80.2 ± 0.9%, mean ±sem , Fig. 6D2), with the lowest prediction 270 
+
+quality for CF voices (73.6±0.1%) and the highest for AM voices (85.8±0.1%). 271 
+
+GPR also provides an interpretable framework that allows visualizing the specific 272 
+
+frequency and modulation features, in both the foreground and background, that influence 273 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+accuracy. Here, the participant-fitted model regression weights are interpreted as perceptual 274 
+
+transfer functions (pTF; see Methods) that indicate each listener’s sensitivity to foreground and 275 
+
+background modulation features (Fig. 6A, bottom right). The foreground and background pTF are 276 
+
+shown for the 0 cycle/oct spectral modulation, which dominates the perceptual sensitivity 2. The 277 
+
+pTFs of different participants and the population (Fig. 7A) share similar structure (inter-participant 278 
+
+correlation: foreground=0.92 ±0.01, background=0.97 ±0.01; mean ±sem) and cover a broad range 279 
+
+of frequencies. However, the pTF extent in the temporal modulation dimension differed between 280 
+
+the foreground and background. For the foreground, pTFs were restricted to below ~8 Hz, 281 
+
+consistent with prior studies showing that slow temporal modulations are critical for speech 282 
+
+recognition 23 . By comparison, the background temporal modulations have a broader influence on 283 
+
+accuracy, since visible components in the background pTF can exceed 64 Hz (Fig. 7A). 284 
+
+The foreground and background pTFs also exhibit frequency and modulation specific 285 
+
+excitatory (increased accuracy) and suppressive (decreased accuracy) domains that provide a direct 286 
+
+description of perceptual sensitivity. Predicted accuracy is derived as a dot product between the 287 
+
+foreground mMPS (Fig. 7B) and its pTF (Fig. 7A, left) and the background mMPS (Fig. 7C) with 288 
+
+its pTF (Fig. 7A, right), followed by a logistic nonlinearity. Background-driven accuracy 289 
+
+differences can be explained by the combination of the stimulus mMPS and the participant’s pTF. 290 
+
+For instance, compared to the OR and SM conditions, the MM bird-babble (Fig 7C, bottom row) 291 
+
+has very high power directly overlapping the background pTF inhibitory domain (~2-8 Hz; Fig. 292 
+
+7A, right), producing a lower predicted accuracy than the SM and OR conditions. The OR and 293 
+
+MM jackhammer background (Fig. 7C, top row), in contrast, contain high power overlapping the 294 
+
+excitatory pTF domains (~16-64 Hz temporal modulation; Fig. 7A, right), producing a high 295 
+
+accuracy. For this same background, the SM manipulation substantially reduces the power that 296 
+
+overlaps the pTF excitatory domains, thus reducing predicted accuracy. Across speakers or digits, 297 
+
+the foreground pTF is similarly combined with the foreground mMPS to account for the measured 298 
+
+accuracy. For a fixed digit, the mMPS can vary substantially across speakers (Fig. 7B, left) and, 299 
+
+for a fixed speaker the mMPS shows substantial word-related variability (Fig. 7B, right). While 300 
+
+these sounds represent only a small fraction of sounds used, this variability in the mMPS across 301 
+
+words and speakers naturally leads to many possible interactions with the excitatory and 302 
+
+suppressive domains in the foreground pTF (Fig. 7A, left), reducing or increasing the predicted 303 
+
+recognition accuracy. 304 
+
+Contributions of spectrum & modulation, foreground & background, and glimpsing 305 
+
+We also consider several reduced GPR models to determine which background and 306 
+
+foreground statistics contribute to speech recognition accuracy in noise. The full GPR model takes 307 
+
+the background and foreground mMPS and its nonlinear interaction as predictor variables 308 
+
+(mMPS !+mMPS " + MPS ! × MPS "). To determine how each of these terms contributes to the 309 
+
+prediction quality we selectively remove different components from the model (Fig. 8A). Cross-310 
+
+validated prediction quality for the voice and digit projections as well as the single trial predictions 311 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+follows a rank order where the full model has highest accuracy, followed by the mMPS !+mMPS "312 
+
+model, mMPS ! model, and finally the mMPS " model configuration. Including both the foreground 313 
+
+and background mMPS accounts for most of the model predicted variance, although the 314 
+
+background only model is far more predictive than the foreground only model. Thus, the 315 
+
+background statistics provide the largest contribution to perceptual sensitivity, while the 316 
+
+foreground statistics have a smaller, but reliable, influence that allows for word- and speaker-317 
+
+related refinements to prediction accuracy. 318 
+
+In addition to characterizing sounds and perception with the mMPS we also consider the 319 
+
+cochlear power spectrum (cPS) as the input predictor variable to the GPR 2. The cPS statistic 320 
+
+accounts for power density of the sound as derived through our cochlear model, such that, it 321 
+
+contains frequency related information but lacks information about the modulation statistics. The 322 
+
+cPS predictions across the full and reduced models (Fig. 8A, right) follows a similar trend for the 323 
+
+mMPS model (Fig. 8A, left; VP: 53.1 ±0.7%, DP: 42.2 ± 0.6%, AUC: 69.8 ±0.3). However, the cPS 324 
+
+model has significantly lower predictive power than that of the mMPS (VP Fisher z-transform 325 
+
+paired t-test, t(9) = 21.1, p < 10 -8 ; DP Fisher z-transform paired t-test, t(9) = 25.85, p < 10 -9 ; AUC 326 
+
+paired t-test, t(9) = 29.60, p < 10 -9 ), consistent with our prior findings 2. Thus, although the 327 
+
+frequency content of each sound contributes, the modulation statistics are critical to explain 328 
+
+perception. 329 
+
+We also examine generalization across participants by testing whether a population average 330 
+
+model can account for perceptual sensitivity from held-out participants. Here we find that the 331 
+
+individual participant models are significantly better than the population average model 332 
+
+predictions (VP: t(9) = 7.4, p < 10 -4 ; DP: t(9) = 3.78, p < 10 -2 ; AUC t(9) = 10.18, p < 10 -5 ). However, 333 
+
+the individualized models provide relatively small improvements in prediction quality (Fig. 8B, 334 
+
+VP: 81.4 ±0.8% vs. 79.7 ±0.7%; DP: 70.2 ±0.8% vs. 67.5 ±1.2%; AUC: 75.5 ±0.4 vs. 75.0 ±0.4), 335 
+
+suggesting that recognition patterns are largely consistent across this sample of typically hearing 336 
+
+participants. 337 
+
+Finally, we tested whether glimpsing 14,15 contributed to the perceptual trends and model 338 
+
+predictions. By design, the background mMPS used in the full model is computed for the sound 339 
+
+segment directly overlapping each digit, so that it accounts for momentary changes in the 340 
+
+background sound power and has the potential to account for glimpsing effects. Here, rather than 341 
+
+using these time-localized mMPS, we consider a time-averaged mMPS for the background as input 342 
+
+to the GPR model. This “static” version of the model does not account for momentary changes in 343 
+
+background power and, thus, it cannot account for glimpsing effects. Here we find that the average 344 
+
+prediction quality for the voice and digit projections and single trials of the static model is 345 
+
+comparable to that of the full glimpsing model (Fig. 8C; VP: 82.8 ±0.8% vs. 80.2 ±0.9%, DP: 346 
+
+70.7 ±0.8% vs. 69.4 ±0.8%, AUC: 76.6 ±1.0 vs. 74.7 ±0.4). However, notable differences in the 347 
+
+prediction quality can be observed for the predictions within individual backgrounds (Fig. 8D). 348 
+
+Glimpsing effects, where there is a difference between the original and static models, appear to be 349 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+exclusive to nonstationary background sounds such as the freeway noise (sparsely passing cars), 350 
+
+two-speaker babble, and bird babble (a chorus of 2-3 geese). For each of these sounds, there is an 351 
+
+increase in the prediction quality for the glimpsing model compared to the static version, and this 352 
+
+effect is particularly noticeable for the MM condition (bottom). In contrast, the glimpsing and 353 
+
+static model perform near-equally well for the SM sounds (middle). This is expected since the SM 354 
+
+sounds have whitened modulations and are stationary by design. 355 
+
+Discussion 356 
+
+The findings demonstrate that the spectrum and modulation statistics of speech interact 357 
+
+with those of a competing background sound to influence word recognition accuracy. Beyond the 358 
+
+interference effects driven by the background sound statistics 2, word-level and speaker-dependent 359 
+
+articulatory features, including the voice fundamental frequency and formants, have a more 360 
+
+nuanced influence on accuracy. These articulatory features vary systematically between words and 361 
+
+speaker groups, and we demonstrate that low-dimensional auditory model embeddings capture 362 
+
+word and voice related information. More broadly, a low-dimensional regression model that uses 363 
+
+auditory modulation statistics produces accurate behavioral predictions across 9,900 sounds 364 
+
+encompassing many talkers, backgrounds, and words on a trial-by-trial basis. Altogether, these 365 
+
+results demonstrate how using modulation statistics in a generalized perceptual regression (GPR) 366 
+
+model framework can provide a biologically interpretable account of speech recognition behavior 367 
+
+in highly variable and realistic listening scenarios. 368 
+
+How humans solve the cocktail party problem 1 remains an important challenge in auditory 369 
+
+neuroscience, since everyday hearing invariably occurs in cluttered auditory scenes and such 370 
+
+scenarios severely impair abilities for those with hearing loss 33,34 . Prior studies have focused 371 
+
+mostly on perception of controlled speech stimuli and simplified backgrounds that lack diverse 372 
+
+statistical structure of real-world backgrounds 22,35,36 . Although these studies have highlighted how 373 
+
+specific foreground or background features can impact speech recognition, limited stimulus 374 
+
+variability may make it difficult to identify the broader representations that underlie hearing any 375 
+
+speech in any noise. 376 
+
+Our findings here suggest that spectrum-based interference, or energetic masking 16 , alone 377 
+
+is insufficient to fully explain voice, word, and background related effects and that spectrotemporal 378 
+
+modulations may allow a generalizable explanation for speech perception in its full variability. Of 379 
+
+all the factors tested, the background sound has the strongest impact on accuracy, yet word-level 380 
+
+and speaker-level statistics interact with the background to modulate perceptual accuracy. 381 
+
+Additionally, although speech articulatory features, such as the fundamental and formant 382 
+
+frequencies, can account for word and voice driven recognition effects (Fig. 2), here we find that 383 
+
+these features need not be explicitly computed to explain behavioral findings . Instead, a 384 
+
+biologically plausible representation involving frequency and modulation selective filters that 385 
+
+mirror the representation in subcortical regions can explain behavioral findings across diverse 386 
+
+backgrounds, talkers, and words on a single trial basis. This is consistent with a computational 387 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+framework whereby interference occurs within specific subbands, with spectrotemporal filters that 388 
+
+are jointly selective for frequency and spectrotemporal modulations. The auditory midbrain is 389 
+
+likely a key brain region where such a decomposition and any interference would occur, since it is 390 
+
+the first stage in the auditory system exhibiting a preponderance of modulation tuning 37 , covering 391 
+
+an extensive range of spectrotemporal modulations (to ~500 Hz) 37,38 . This is in contrast to cortical 392 
+
+regions, which have a more restricted range of modulation selectivity (mostly < 20 Hz) 37,39,40 and 393 
+
+would be less likely to account for modulation-driven behavioral effects shown here. 394 
+
+Our approach is related to several existing measures of speech intelligibility 41,42 . Although 395 
+
+these previous measures have focused on speech quality ratings after distortion or compression, 396 
+
+they often use similar statistical features to those used here. There are a wide variety of sound 397 
+
+representations, and modulations are likely to play a key role in many tasks 23,43-46 . Our results also 398 
+
+provide an alternative and complementary modeling framework to task optimized deep neural 399 
+
+network models 47-49 . Such models can replicate some aspects of human behavior but often have 400 
+
+tens of layers and thousands to millions of parameters. The parameters of neural network models 401 
+
+can also be difficult to interpret and attempts to probe such networks have revealed that these 402 
+
+models can differ substantially from human perception. For instance, task-optimized neural 403 
+
+networks seem to use different invariances for sound recognition compared to humans 50 , and the 404 
+
+modulation statistics influencing machine perception are not well matched to human speech-in-405 
+
+noise behavior 2. Unlike neural networks, which are optimized to perform a particular task (e.g., 406 
+
+predict words), GPR is optimized to predict a listener’s behavioral sensitivity (correct or incorrect 407 
+
+judgments). In this manner, GPR takes the sound representation and predicts behavioral outcomes, 408 
+
+requiring few dimensions (45 here) and producing linear perceptual transfer functions for each 409 
+
+listener that directly indicate which modulation statistics impact perception. Since the GPR 410 
+
+framework produces a listener-specific model of hearing and identifies the statistical features 411 
+
+underlying individual behavior, it could potentially be applied to compare perception across 412 
+
+people, animals, or machine systems and could also be used as a diagnostic for hearing disorders 44 
+
+413 
+
+or speech perception difficulties. 414 
+
+Although our results here provide a new, generalizable model of speech in noise perception, 415 
+
+there are several limitations for our approach and important open questions. First, our findings are 416 
+
+based on semi-realistic listening conditions using natural background sounds and speech consisting 417 
+
+of multiple words, talkers, and voice categories. While these experimental sounds are acoustically 418 
+
+diverse, natural auditory scenes also contain variability in reverberation and spatial cues that distort 419 
+
+spectrotemporal content and alter speech perception 18-21 . It is important to note that here we also 420 
+
+presented sounds at a fixed SNR and intensity. Testing perception under more variable conditions 421 
+
+could potentially alter the model performance. The model itself is also based on trial-wise 422 
+
+prediction. Using a convolutional GPR 44 , with unknown word onsets and offsets, may better 423 
+
+account for the temporal dynamics of continuous speech perception, such as glimpsing and co-424 
+
+articulation. Finally, neural and behavioral measurements alongside GPR may provide a more 425 
+
+thorough test of how spectrotemporal modulation cues are represented for sound mixtures. 426 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+427 
+
+Materials and Methods 428 
+
+Human Psychoacoustics 429 
+
+Experiments were approved according to the University of Connecticut Institutional 430 
+
+Review Board (IRB). We recruited female (n=7) and male (n=5) native English speakers, ages 21-431 
+
+47 who had normal hearing sensitivity (>20 dB HL for left and right ears, 0.25, 0.5, 1, 2, 4, 8 kHz, 432 
+
+tested with a GSI Audiostar Pro audiometer [Grason-Stadler], with a Radioear 3045 supra-aural 433 
+
+headset). Participant responses were recorded with anonymized participant IDs for confidentiality. 434 
+
+Of the (n=12) enrolled participants, (n=2) did not complete the study and were thus excluded from 435 
+
+the data analysis. The experiments were conducted at the University of Connecticut Storrs Campus 436 
+
+and in a sound shield room (Industrial Acoustics Co.). Sounds were delivered through a Fireface 437 
+
+UC digital audio interface (RME Audio Inc.) amplified with a BHA-1 headphone amplifier 438 
+
+(Bryston Ltd.) and sent to HD 820 headphones (Sennheiser Co.). All sounds were calibrated to 65 439 
+
+dB SPL. Sound delivery and the acquisition of behavioral responses via keyboard entry were 440 
+
+controlled using custom software using Psychtoolbox 51 in Matlab (Mathworks Inc.) on a Mac 441 
+
+Mini M1 computer (Apple, Inc.). 442 
+
+Participants were presented with sound mixtures consisting of foreground speech and 443 
+
+background environmental noises to assess how both foreground and background features impact 444 
+
+recognition performance in natural auditory scenes. Each speech sequence (Fig. 1C) consisted of 445 
+
+a randomly chosen triplet of English digits (D1-D2-D3), delivered with a random inter-digit time 446 
+
+interval during each trial (T1-T2-T3) and with different speakers (S1, S2, and S3). During each 447 
+
+trial the three speakers were randomly selected from one voice group population: Adult Male 448 
+
+(AM), Child Male (CM), Adult Female (AF), or Child Female (CF) (see Fig. 1E). Speech digits 449 
+
+were selected from the TIDIGITS corpus 52 which contains 326 talkers (111 AM; 114 AF; 50 CM; 450 
+
+51 CF). Each foreground triplet sequence was paired with a natural or perturbed background 451 
+
+masker at an SNR of -9 dB. The instantaneous timing of each digit was used to calculate the SNR, 452 
+
+such that the silent gaps (intervals between digits) did not contribute to the SNR measurement, 453 
+
+which would create an artificially lower SNR. The onset and offset segments of all sounds were 454 
+
+windowed with a 100 ms B-spline ramp to minimize transients at the beginning and end of each 455 
+
+sound. For each sound, participants were tasked with reporting the three digits sequence that was 456 
+
+presented. 457 
+
+Background Sounds and Manipulations 458 
+
+Ten natural background sounds (speech babble, running water, traffic noise, jackhammer 459 
+
+and factory sound, etc.) and white noise (control) were used as masker stimuli, similar to previous 460 
+
+experiments 2. For some trials, we altered the statistical structure of the background stimuli to 461 
+
+characterize how the spectrum and modulation statistics of the backgrounds specifically influence 462 
+
+recognition. As a reference, natural backgrounds were presented in their unaltered original (OR) 463 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+state with their full acoustic structure. We also delivered spectrum matched (SM) variants which 464 
+
+were generated by computing the Fourier transform, preserving the magnitude spectrum and 465 
+
+randomizing the phase spectrum, and then using an inverse Fourier transform. Although SM 466 
+
+backgrounds have power spectra that are matched to the OR, they have a whitened modulation 467 
+
+power spectrum (Fig. 1D). We also generated modulation matched (MM) variants of each 468 
+
+background. Here the power spectrum of the background sound is equalized to a 1/f power spectra 469 
+
+in the Fourier domain while the phase spectrum is preserved. This manipulation alters the spectral 470 
+
+profile of each background, while maintaining (or matching) the modulation statistics (Fig. 1D). 471 
+
+The SM manipulation is analogous spectrum shaped noise, in which the identity of the sound is 472 
+
+ambiguous. In contrast, MM variants maintain the original time varying fluctuations of the OR 473 
+
+stimulus, and sound categories can still be identified. MM variants of multi-speaker babble, for 474 
+
+instance, have identifiable speech content but with noticeable different timber compared to the OR 475 
+
+variant. 476 
+
+Experiment Block Structure 477 
+
+The experiment was broken up into 25 experimental blocks, each containing 25 different 478 
+
+trials for each stimulus condition (Fig. 1E). Each participant completed two experimental blocks 479 
+
+at a time, typically comprising 6 hours of testing split in two 3-hour sessions. In each experimental 480 
+
+block, each of the 11 backgrounds and their 3 perturbations were tested (33 background sounds) 481 
+
+across the 4 voice conditions shown in Fig. 1E such that there were 132 trials per block and 3,300 482 
+
+trials across the experiment. Each foreground stimulus was constrained to a randomly selected set 483 
+
+of 3 speakers (S1-S2-S3) from the designated speaker population (AM, CM, AF, CF), random time 484 
+
+delays (T1-T2-T3) and a random digit triplet (D1-D2-D3). 485 
+
+Scoring Criteria, Voice and Digit Projections 486 
+
+Single digit recognition performance was scored according to digit identity and serial 487 
+
+position with 9,900 single digit measurements total for each participant. On a single trial with a 488 
+
+target foreground digit sequence of 9-8-3, for instance, a response 8-8-1 is scored as 0-1-0 489 
+
+(1=correct; 0=incorrect). We then averaged single digit recognition accuracy across subsets of trial 490 
+
+conditions to identify variations in accuracy (Fig. 2). First compute a “Voice Projection” (VP) by 491 
+
+sub-selecting trials corresponding the unique combinations of Background (11 Natural 492 
+
+Backgrounds), Perturbation (OR, SM, MM), and Voice Identity (AM, CM, AF, CF), with averages 493 
+
+calculated for each participant averaging over digits and repeated trials. We then calculated a “Digit 494 
+
+Projection” (DP) where single trial responses were averaged across unique combinations of 495 
+
+Backgrounds (11 Natural Backgrounds), Perturbations (OR, SM, MM), and Digits (0-9). Note that 496 
+
+trials are balanced across voice-background-perturbation conditions and unbalanced (but 497 
+
+uniformly distributed and randomized) across digit-background-perturbation conditions. That is, 498 
+
+voice-background-perturbation conditions have identical numbers of trials, but digit conditions do 499 
+
+not. 500 
+
+Characterizing how Articulatory Parameters Contribute to Speech in Noise Accuracy 501 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+To explore how articulatory parameters of the different digits and voices contributes 502 
+
+towards digit recognition accuracy, we also projected accuracy as a function of the fundamental 503 
+
+frequency (F0), first formant (F1), second formant (F2), and harmonicity (HM) of the vocalization 504 
+
+of the measurement. We used the FastTrack plugin for PRAAT 53 to calculate F0, F1, F2, and HM 505 
+
+for each foreground digit. The FastTrack PRAAT plugin was run using the default parameters, and 506 
+
+the recommended highest and lowest frequencies based on voice groups (Adult Males 4500-6500 507 
+
+Hz, Adult Females 5000-7000 Hz, and Children 5500-7500 Hz). The time varying outputs over 508 
+
+the active F0 window identified by PRATT were used to estimate articulatory parameters, where 509 
+
+F0, F1, F2 and HM are defined as the median value of PRATT’s time varying outputs across each 510 
+
+digit. 511 
+
+We first explore how the articulatory features vary across voice and word identities. First, 512 
+
+we estimated the marginal distributions (kernel density estimates) for F0, F1, F2, HM, conditioned 513 
+
+on the speaker identity. These conditional distributions depict the variability in the dataset 514 
+
+accounted by the articulatory parameters for different speaker groups. Next, we estimated joint 515 
+
+conditional distributions of the articulatory parameters for each of the spoken digits. This was done 516 
+
+by fitting multi-variate gaussian mixture distributions jointly for F0/HM, F0/F1, F0/F2 and F1/F2 517 
+
+combinations, for each of the spoken digits. 518 
+
+Next, we projected the accuracy across participants onto the F0/F1/F2/HM distribution for 519 
+
+1) select backgrounds and 2) different digits. First, we sub-selected participant responses from 520 
+
+trials in all digits and voices, at each background, calculated 5 different quantiles of F0/F1/F2/HM 521 
+
+measurements within each set to calculate accuracy at different backgrounds covarying with 522 
+
+F0/F1/F2/HM intensity. Secondly, we sub-selected participant responses from trials in all 523 
+
+backgrounds and voices, at a specific digit, calculated 5 different quantiles of F0/F1/F2/HM 524 
+
+measurements within each set to calculate accuracy per digit, covarying with F0/F1/F2/HM 525 
+
+intensity. 526 
+
+Generalized Linear Mixed Effects Model 527 
+
+To characterize the relationships between articulatory features, background conditions, and 528 
+
+digit recognition accuracy, we fit a generalized linear mixed effect (GLME). Using data from all 529 
+
+participants and trials, we aimed to describe all n = 99,000 correct vs incorrect digit recognition 530 
+
+judgements. Here we used the ‘fitglme’ function (MATLAB 2022b) with binomial observations 531 
+
+and a logistic link function with random effects (intercepts) for each participant listener and each 532 
+
+TIDIGITS speaker (n=326). 533 
+
+We compared multiple models for the fixed effect structure including categorical 534 
+
+descriptions of the background and perturbation, as well as, categorical descriptions of the 535 
+
+foreground, including digit category and digit position (D1-D2-D3), and the continuous 536 
+
+articulatory features F0, F1, F2, HM. We evaluated the model goodness-of-fit using the Akaike 537 
+
+information criterion (AIC). We hypothesized that accuracy was driven by background effects 538 
+
+interacting with the pitch of the speaker and modulated by the identity of the target word. To 539 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+parametrize the model, we ran different variants testing this theory altering the speech articulation 540 
+
+measurements and categorical labels and selected the model with the best Akaike information 541 
+
+criterion (AIC). This selection ensured that our model maximized predictive power, while 542 
+
+maintained minimal complexity. The best model, among those tested, contained fixed effects for 543 
+
+target digit and digit position and interaction terms between the background, perturbation category, 544 
+
+and F0. 545 
+
+Local Mid-Level Acoustic Feature Extraction 546 
+
+In addition to describing single trial digit recognition in terms of background categories 547 
+
+and foreground articulatory features, we also sought to evaluate whether performance can be 548 
+
+explained by the interference of more general foreground and background sound statistics. To 549 
+
+develop a sound computable measurement of brain-inspired auditory processing, we decomposed 550 
+
+sounds through a two-stage hierarchical model of the auditory pathway 36 . Target vocalizations 551 
+
+and background noise excerpts were first expanded through a cochlear model filter bank. The 552 
+
+cochlear output is comprised of 82 overlapping frequency-selective gammatone filters (20-20k Hz, 553 
+
+50% overlap, equivalent rectangular bandwidths), followed by nonlinear rectification and lowpass 554 
+
+filtering (750 Hz) designed mimic hair cell rectification and synaptic filtering in the cochlea. The 555 
+
+output, referred to as the cochleogram, represents the transformation from the waveform 𝑋 (𝑡) to 556 
+
+band-limited envelopes 𝑆 # (𝑡, 𝐹 $), where 𝐹 $ represents the frequency of the lth channel. 557 
+
+The second stage of the hierarchical model is designed to account for spectrotmeporal 558 
+
+modulation filtering described in auditory midbrain. Here, the cochleogram 𝑆 #(𝑡, 𝐹 $ ), is passed 559 
+
+through a set of spectrotemporal modulation filters spanning 0.5-512 Hz temporal modulations 560 
+
+(𝑓 %, in 1/2 octave steps) and 0.25-8 cycles/octave spectral modulations ( Ω&, 1/2 octave steps). 561 
+
+Thus, the resulting output tensor, 𝑆 %(𝑡 , 𝐹 $, 𝑓 %, Ω&), represents individual envelopes at the output 562 
+
+of a given, frequency, temporal modulation, and spectral modulation channel. 563 
+
+To estimate time-averaged local summary statistics from each sound, we first generate the 564 
+
+time-varying midbrainogram representation ( 𝑆 %) for the entire 3.5 second sound in each trial. We 565 
+
+use the onset and offset time of each digit D' where p denotes digit position 1, 2, or 3 to temporally 566 
+
+segment 𝑆 % in order to measure the local power of both the foreground and background: 567 
+
+mMPS %𝐹 !, 𝑓 ", Ω #, D $+ = 1𝑡 %&&  
+
+> $
+
+− 𝑡 %#  
+
+> $
+
+0 𝑆 "(𝑡, 𝐹 !, 𝑓 ", Ω #)'
+
+> (!""
+> #
+> (!$
+> #
+
+568 
+
+where 𝑡 %#  
+
+> $
+
+and 𝑡 %&&  
+
+> $
+
+represent the onset and offset time of the pth digit (Fig. 5A). This local summary 569 
+
+statistic accounts for the sound power distribution across frequencies, temporal and spectral 570 
+
+modulations as estimated using a midbrain auditory model. We thus refer to it as the midbrain 571 
+
+Modulation Power Spectrum (mMPS). 572 
+
+Distributed Stochastic Neighbor Embedding (t-SNE) of Time Averaged Mid-Level Statistics 573 
+
+Represent Speech Articulatory Features 574 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+We then explored whether the midbrain model summary statistics account for speech 575 
+
+articulatory features, even in its time averaged state. To do this, we projected our high 576 
+
+dimensionality mMPS for each spoken digit in the experimental sounds, into a low dimensional 577 
+
+space through t-distributed stochastic neighbor embedding (t-SNE) 54 . This method projects the 578 
+
+mMPS of each vocalization onto a 2-D space that optimally preserves the Euclidean distance 579 
+
+between vocalizations, thus allow for visualizing the mMPS of all vocalizations in a low-580 
+
+dimensional space. To relate this spatial mapping to our proposed speech features, we visualized 581 
+
+our speech measurements (F0, F1, F2) and speech groupings in the same space (Voice Group, 582 
+
+Spoken Digit). Due to the correlation between F0 and HM (shown in Fig. 4B) we omitted HM 583 
+
+from this analysis. Different speech groups were categorically visualized (Voice Group, Spoken 584 
+
+Digit), while speech measurements (F0/F1/F2) were split into 20% quantiles across the whole 585 
+
+dataset to simplify visualization. 586 
+
+Generalized Perceptual Regression Modelling 587 
+
+Although, GLME can be used to identify factors contributing to perception, it requires 588 
+
+categorical labels (e.g., backgrounds, words, perturbations) and articulatory measurements that are 589 
+
+not directly represented in the auditory system. Here we use Generalized Perceptual 590 
+
+Regression 2,44 , a modelling framework that links dimensionality reduced neural summary statistics 591 
+
+of sounds to perceptual outcomes. Using a sound computable auditory model, the mMPS is used 592 
+
+as a biologically plausible feature set to predict human perceptual trends. These auditory model 593 
+
+features (mMPS) are then mapped to behavioral responses with a logistic regression output model. 594 
+
+Thus, GPR combines an auditory model front end with a logistic regression output to produce a 595 
+
+quasi-linear mapping between sound summary statistics and behavioral responses. The GPR model 596 
+
+is fit to behavioral measurements using Bayesian optimization and validated using a 25-fold cross 597 
+
+validation. The model was fit for each individual participant, using the 9,900 single digit responses, 598 
+
+and mMPS features for both the foreground and background. 599 
+
+Given the high dimensionality of the mMPS feature space (82 frequencies x 38 temporal 600 
+
+modulations x 8 spectral modulations = 24,928 ), we first performed dimensionality reduction to 601 
+
+minimize the possibility of overfitting. Principal component analysis was applied to each training 602 
+
+set fold during optimization and individually for each mMPS (Foreground, Background, 603 
+
+Interaction): 604 
+
+𝐳 = 𝐗 𝐡 605 
+
+where 606 
+
+𝐗 = 8𝒙 )
+
+𝒙 '
+
+⋮𝒙 *
+
+;607 
+
+is a N x M matrix ( N training sounds, M=24,928 features) containing the sound features, 𝒙 # (1 x M), 𝐳 (N608 
+
+x L) is a matrix containing the dimensionality reduces sound features (principal component scores), and 𝐡 609 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+(M x L) is a whitening matrix containing the top L=15 singular values of the covariance matrix 610 
+
+𝐗 (𝐗 and which transforms the sound feature set from M (24,928 features) to L (15 features) 611 
+
+dimensions. This procedure was applied separately for the foreground ( f), background ( b) and 612 
+
+interaction ( i) mMPS terms and each component was combined to generate 613 
+
+𝐙 = [𝒛 & 𝒛 + 𝒛 ,]614 
+
+a dimensionality reduced input feature matrix ( N x 45) that is used to predict behavioral responses. 615 
+
+Predictions for single sound trials are performed with a logistic regression model that maps the 616 
+
+dimensionality reduced features ( 𝐙 ) to probabilities for performing correct decisions. The predicted outputs 617 
+
+are obtained by first predicting the log-odds ratio: 618 
+
+𝐲 = 𝑦 - + 𝐙 𝐛 619 
+
+620 
+
+where 621 
+
+𝐛 = D𝐛 &
+
+𝐛 +
+
+𝐛 ,
+
+E622 
+
+and where the 𝐛 &, 𝐛 + and 𝐛 , are each column vectors ( L x 1) containing the logistic regression weights 623 
+
+associated with each of the three input features (foreground, background, interaction). Finally, the predicted 624 
+
+output probabilities of performing a correct decision are obtained by applying a logistic nonlinearity to the 625 
+
+log-odds ratio: 626 
+
+𝑝 (𝐙) = 11 + e .𝐲 = 11 + e .(1 %2𝐙 𝐛) .627 
+
+The model can also be fit with ancillary regressors and, here, we paired the training features with the serial 628 
+
+position of the digit (1, 2 or 3) to account for any potential ordering effects. 629 
+
+Finally, we note that the regression weight vectors, 𝐛 &, 𝐛 + and 𝐛 ,, represent regression model 630 
+
+weights that map biologically plausible dimensionality-reduced sound representations to the log-odds ratio, 631 
+
+and thus the probability of performing correct behavioral decisions. Thus, they can be thought of as 632 
+
+perceptual transfer functions that represent the perceptual sensitivity and map the dimensionality reduced 633 
+
+sound features to correct decisions. These regression weights can be projected back onto the original 634 
+
+midbrain model space to allow for ease of visualization: 635 
+
+𝐰 = 𝐇 𝐛 636 
+
+where 637 
+
+𝐰 = K𝒘 &
+
+𝐰 +
+
+𝐰 ,
+
+M = D 𝐡 &𝐛 &
+
+𝐡 +𝐛 +
+
+𝐡 ,𝐛 ,
+
+E638 
+
+contain the vectorized perceptual transfer functions in the original auditory model space and where 639 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+𝐇 = D𝐡 & 𝟎 𝟎 𝟎 𝐡 + 𝟎 𝟎 𝟎 𝐡 ,
+
+E640 
+
+is a diagonal matrix containing the principal component whitening matrices for each feature representation 641 
+
+(foreground, background, interaction). Thus, the individual weighting vectors can be re-ordered and 642 
+
+visualized in the original midbrain model space ( 𝐹 ! vs. 𝑓 " vs. Ω#) which provides an interpretable account 643 
+
+of how features map onto perception. Throughout, we refer to the GPR model weights 𝐰 as perceptual 644 
+
+transfer functions since they provide an interpretable account of each participant’s perceptual sensitivity to 645 
+
+different acoustic features as represented in the original auditory model space. 646 
+
+Reduced Feature Models 647 
+
+To explore what features may be driving variability in accuracy in both the voice and digit 648 
+
+projections, we compared the performance of the full GPR model with several reduced models. 649 
+
+Specifically, we varied the stimulus task features used in the model (foreground, background, 650 
+
+foreground-background interaction) and varied the stimulus representation (spectral features alone 651 
+
+or including spectral and temporal modulations). We fit GPR to each reduced feature set, using the 652 
+
+method described above. Here, to prevent overfitting and ensure an equitable comparison across 653 
+
+models, each feature set was dimensionality reduced to 15 PCs. We then evaluated the k-fold cross 654 
+
+validated prediction sets scored according to the R 2 for the voice and digit projection average 655 
+
+accuracy, as well as single trial accuracy. Single-trial accuracy was assessed using receiver 656 
+
+operating characteristic (ROC) relative to the single-digit behavioral responses, resulting in a 657 
+
+summary area under the curve (AUC) metric for each participant. Separate from the averaged VP 658 
+
+and DP scores, the AUC allows us to observe fluctuations in performance for single trials. Thus, 659 
+
+the AUC could be helpful in exploring the effects of individual trial differences that could be 660 
+
+accounted by the local mMPS statistics. Reduced models were compared for each of the different 661 
+
+model metrics, reduced model comparisons for the DP and VP were done through a paired fisher 662 
+
+z-transform test, while the AUC was compared via paired t-test. These statistical analyses were 663 
+
+extended to both the population model and glimpsing/static model (see below). 664 
+
+Individual vs Population Models to Predict Within and Across-Participant Behavior 665 
+
+While the perceptual transfer functions have the advantage that they reflect single-666 
+
+participant behavior, we also sought to test whether a single population-level model could 667 
+
+generalize and predict performance on unseen participants. Thus, we altered our GPR method to 668 
+
+do leave-one-out cross validation across participants. We sub-selected an individual K-fold from 669 
+
+the original models per participant and averaged across 9 participants to predict the remaining, 670 
+
+held-out participant. We then compared the performance of these “population models” to the 671 
+
+“individual models” described above. 672 
+
+Comparing Glimpsing vs Static Background Models 673 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+Glimpsing, the idea that soft sound segments or silent gaps in a background sound produce 674 
+
+local increases in SNR, has been proposed as one mechanism for segregating speech from noise 675 14,15 . Since our model estimates the local mMPS summary statistics overlapping each digit, it has 676 
+
+access to stimulus power of the speech and background at a given time point during the digit 677 
+
+duration. Thus, in its original form, the model could potentially account for “classical glimpsing”. 678 
+
+To test whether glimpsing can be measured with the GPR model, we compared the above described 679 
+
+GPR model (referred to here as the glimpsing model ) to a static GPR model variant which uses the 680 
+
+time-average mMPS over the background segments that overlap the three digits in each sound to 681 
+
+make accuracy predictions (the static model ). As with the reduced, and population models, we 682 
+
+assessed the performance by calculating the variance explained for the VP and DP averages, in 683 
+
+addition to calculating the AUC for both the static and glimpsing models. While the VP and DP 684 
+
+variance explained could be less susceptible to single trial variance, the AUC represents single trial 685 
+
+performance. To explore if certain backgrounds were prone to glimpsing, and whether specific 686 
+
+background features contributing to glimpsing could be identified, we compared the AUC from 687 
+
+the glimpsing and static models for each background (OR, SM and MM). Here positive AUC 688 
+
+difference suggests that the background is sound is prone to glimpsing, while a negative difference 689 
+
+suggests that time-averaged summary statistics better describe perception 55 .690 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+691 
+
+Figure 1: Measuring speech recognition sensitivity with variable foregrounds and backgrounds. 692 
+
+To differentiate the effects of foreground voice and word-level acoustics we used a block 693 
+
+randomized design consisting of trials that vary in foreground and background. A) For a specific 694 
+
+background, the speaker (left, orange to blue) or the target word can vary (right, seven to one ). B) 695 
+
+To determine how specific speech features potentially interact with natural backgrounds statistics, 696 
+
+we also compare speech recognition accuracy for the same voice (left) or target word (right), while 697 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+varying the background. C) Speech in noise stimuli (SNR -9dB) were generated by mixing a 698 
+
+background excerpt and three spoken digits (D1-D2-D3) from three variable speakers (S1-S2-S3) 699 
+
+at random time intervals (T1-T2-T3). D) We tested original (OR) natural background sounds (e.g. 700 
+
+fire, multi-speaker babble, water) along with white noise. Additionally, we generated perturbated 701 
+
+backgrounds with matched spectral (SM) or modulation (MM) statistics. The cochlear power 702 
+
+spectrum (top) (cPS) and 90% power contour for the modulation power spectrum (bottom) (MPS) 703 
+
+are shown for an original (OR) excerpt of fire (left), a spectrum matched (SM) perturbation 704 
+
+(middle), and a modulation matched (MM) perturbation (right). E) In each experimental block, 705 
+
+each of 11 backgrounds was presented for each background condition (OR, SM, and MM) and 706 
+
+mixed with each of four voice groups: adult/child and male/female (AM, CM, AF, CF). 707 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+708 
+
+Figure 2: A) Participants listened to speech in noise sounds over headphones and were required 709 
+
+to identify the digits in the sound mixture via keyboard (e.g., 7-9-2). B1-B3) Digit recognition 710 
+
+accuracy for each voice identity (adult/child, male/female), background and perturbation (OR, SM, 711 
+
+MM) averaged across participants (n=10). Error bars indicate sem across participants. C1-C3) 712 
+
+Single-digit recognition accuracy for individual digits, backgrounds and perturbations (OR, SM, 713 
+
+MM) – averaged across participants. 714 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+715 
+
+Figure 3: Spectrum- and modulation-driven accuracy effects. To quantify the contributions of 716 
+
+spectrum and modulation statistics on accuracy we compared performance on OR trials to trials 717 
+
+where the background was perturbed. The difference OR–SM indicates the change in accuracy 718 
+
+associated with the modulations in the original background sound (Modulation Effect). The 719 
+
+difference OR–MM indicates the change in accuracy associated with the spectrum of the original 720 
+
+sound (Spectrum Effect). A) Modulation vs spectrum effects for each voice Adult Male (M), Adult 721 
+
+Female (F), Child Male (B; Boy), and Child Female (G; Girl), shown for every background. B) 722 
+
+Modulation vs spectrum effect for each foreground digit ( zero through nine ) for each background. 723 
+
+Results are averages across n=10 participants. 724 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+725 
+
+Figure 4: Contributions of voice features. For each foreground digit we extracted four voice 726 
+
+features: fundamental frequency (F0), first formant frequency (F1), second formant frequency (F2) 727 
+
+and harmonicity (HM). A) Distributions of F0, F1, F2, and HM according to voice group 728 
+
+(adult/child and male/female). B) Bivariate Gaussian distributions fit to F0, F1, F2 and HM pairs 729 
+
+to visualize differences across target digits. Ellipses denote 1 standard deviation and are centered 730 
+
+on the mean. C) Participant digit recognition accuracy (top) varies across backgrounds and its 731 
+
+associated voice features (top). Trends denote participant averages for trials split into 20% quantile 732 
+
+bins for F0, F1, F2 and HM and for three different backgrounds: Bird Babble OR (Bir, cyan,), 733 
+
+Water OR (Wat, blue) and Babble 8 OR (Bab, indigo). Additionally, we fit a mixed-effects model 734 
+
+(GLME; see Methods) with fixed background and F0 effects, but without other voice features. 735 
+
+Predictions are shown at the bottom. D) Participant accuracy (top) and GLME predictions (bottom) 736 
+
+for the different target digits (0-9). Data is again split into 20% quantile bins for F0, F1, F2 and 737 
+
+HM, and averaged across participants. 738 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+739 
+
+Figure 5: Auditory midbrain model statistics capture foreground digit information and voice 740 
+
+features. A) Speech sounds were characterized with a two-stage hierarchical auditory model 741 
+
+composed of 1) logarithmically spaced frequency-tuned filters that mimic the auditory periphery 742 
+
+and 2) logarithmic spectral and temporal modulation filters that mimic the decomposition of the 743 
+
+auditory midbrain. The resulting auditory model outputs, subbands, contain the time-varying 744 
+
+envelopes for each frequency, temporal and spectral modulation channel. By computing the time 745 
+
+averaged power for each subband we estimate the midbrain modulation power spectrum (mMPS) 746 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+summary statistic of each sound (right), which represents the sound power density along frequency, 747 
+
+temporal and spectral modulation. B) T-distributed stochastic neighbor embedding (t-SNE) was 748 
+
+used to perform dimensionality reduction on the auditory representation by projecting the mMPS 749 
+
+of each sound onto a 2-D spatial mapping that groups sounds according to their mMPS similarity. 750 
+
+We then visualize mMPS features as a function of word and articulatory features (e.g., digit, 751 
+
+speaker, F0, etc.; left to right). The overall organization for digit, voice group, F0, F1, and F2 are 752 
+
+shown on the top row. Bottom rows highlight foregrounds from individual digits (3, 5 and 6) with 753 
+
+all other digits in gray. The dot positions in all plots are identical. 754 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+755 
+
+.CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint Figure 6: Generalized perceptual regression (GPR) applied to auditory midbrain model statistics 756 
+
+predicts speech recognition in noise behavior. A) To predict single-trial digit recognition outcomes, 757 
+
+we use the auditory midbrain decomposition to first extract local summary statistics (mMPS) from 758 
+
+each foreground digit (red) and its overlapping background (black), and multiple the two mMPS 759 
+
+to create an interaction term (cyan). Each term is then dimensionality reduced using principal 760 
+
+component analysis (PCA). Low-dimensional features, along with the serial position of the digit 761 
+
+are then used as input predictors to a logistic regression model that is optimized using behavioral 762 
+
+measurements to predict the likelihood of correct decisions. The principal components and model 763 
+
+weights can be used to derive perceptual transfer functions that indicate which specific mMPS 764 
+
+features improve or reduce recognition accuracy. B) Average single-digit recognition accuracy 765 
+
+scores for an individual participant (participant 9) are shown for each background and perturbation 766 
+
+(OR, SM, MM, top to bottom) for both the digit (left) and voice projections (right). Right panels 767 
+
+show cross-validated GPR model predictions for the individual participant (model constrained to 768 
+
+15 PCs for each input). C1) Observed vs predicted accuracy for each digit and background for the 769 
+
+example participant. C2) Violin plots (right) show variance explained across participants for each 770 
+
+digit, white dot represents the example participant. D1) Observed vs predicted accuracy for each 771 
+
+voice group and background for the example participant. D2) Violin plots (right) show variance 772 
+
+explained across participants in each voice group, white dot represents the example participant. 773 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+774 
+
+Figure 7: Generalized perceptual regression (GPR) weights and model comparison. A) Using the 775 
+
+principal components and GPR model weights, we calculate a perceptual transfer function that 776 
+
+can be used to interpret the contribution of individual mMPS components (see Methods). Transfer 777 
+
+functions are shown at ripple density 0 cycles/oct for three participants (top) alongside the 778 
+
+population average (bottom) for both the foreground (left) and background (right) features. 779 
+
+Positive weights (red) indicate features that improve accuracy while negative weights (blue) 780 
+
+indicate features that decrease accuracy. Weights for other spectral modulation frequencies and the 781 
+
+foreground x background interaction term are omitted for clarity. B) Example foreground stimuli 782 
+
+shown in the same mMPS space (ripple density 0 cycles/oct). C) Example background stimuli 783 
+
+shown in the same mMPS space for different backgrounds (left) and their corresponding 784 
+
+perturbations (right). 785 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+786 
+
+Figure 8: GPR model goodness-of-fit along with comparisons for reduced models. A) Violin plots 787 
+
+indicate results across participants for variance explained in average digit recognition accuracy 788 
+
+across voice group, background, and perturbations (voice projection, top), across digit, 789 
+
+background, and perturbations (digit projection, middle), and single digit accuracy area-under-the-790 
+
+curve (AUC). Reduced models vary in either 1) task features (Foreground, Background, 791 
+
+Interaction) and/or 2) auditory features (midbrain features, mMPS, or cochlear features, cPS). B) 792 
+
+Violin plots show goodness-of-fit results for the full (mMPS interaction) model across participants 793 
+
+for individually fit and population level models (leave-one-participant-out cross-validation). C) 794 
+
+Violin plots show results for a model that accounts for local summary statistics (glimpsing), and a 795 
+
+model that uses average summary statistics (static). D) Change in AUC (glimpsing – static) for 796 
+
+each background and perturbation (OR, top; SM, middle; MM, bottom) combination. 797 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+Funding 798 
+
+This work was supported by the National Institute on Deafness and Other Communication 799 Disorders of the National Institutes of Health under awards R01DC020097 and 800 R01DC023478. The content is solely the responsibility of the authors and does not 801 necessarily represent the oIicial views of the NIH. The funders had no role in study design, 802 data collection and analysis, decision to publish, or preparation of the manuscript. 803 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+REFERENCES 804 1 Cherry, E. C. Some Experiments on the Recognition of Speech, with One and with 805 Two Ears. J Acoust Soc Am 5, 975–979 (1953). https://doi.org:10.1121/1.1907229 806 2 Clonan, A. C., Zhai, X., Stevenson, I. H. & Escabi, M. A. Interference of Mid-level 807 Speech and Noise Statistics Underlies Human Speech Recognition Sensitivity in 808 Natural Environmental Noise. J Neurosci 45 (2025). 809 https://doi.org:10.1523/JNEUROSCI.1751-24.2025 810 3 Kell, A. J. E., Yamins, D. L. K., Shook, E. N., Norman-Haignere, S. V. & McDermott, J. 811 H. A Task-Optimized Neural Network Replicates Human Auditory Behavior, Predicts 812 Brain Responses, and Reveals a Cortical Processing Hierarchy. Neuron 98 , 630-644 813 e616 (2018). https://doi.org:10.1016/j.neuron.2018.03.044 814 4 McPherson, M. J., Grace, R. C. & McDermott, J. H. Harmonicity aids hearing in noise. 815 
+
+Atten Percept Psychophys 84 , 1016-1042 (2022). https://doi.org:10.3758/s13414-816 021-02376-0 817 5 Micheyl, C. & Oxenham, A. J. Pitch, harmonicity and concurrent sound segregation: 818 psychoacoustical and neurophysiological findings. Hear Res 266 , 36-51 (2010). 819 https://doi.org:10.1016/j.heares.2009.09.012 820 6 Oxenham, A. J. Pitch perception and auditory stream segregation: implications for 821 hearing loss and cochlear implants. Trends Amplif 12 , 316-331 (2008). 822 https://doi.org:10.1177/1084713808325881 823 7 Villard, S. & Kidd, G., Jr. Speech intelligibility and talker gender classification with 824 noise-vocoded and tone-vocoded speech. JASA Express Lett 1, 094401 (2021). 825 https://doi.org:10.1121/10.0006285 826 8 Phatak, S. A. & Allen, J. B. Consonant and vowel confusions in speech-weighted 827 noise. The Journal of the Acoustical Society of America 121 , 2312-2326 (2007). 828 https://doi.org:10.1121/1.2642397 829 9 Wang, M. D. & Bilger, R. C. Consonant confusions in noise: a study of perceptual 830 features. The Journal of the Acoustical Society of America 54 , 1248-1266 (1973). 831 https://doi.org:10.1121/1.1914417 832 10 Miller, G. A. & Nicely, P. E. An Analysis of Perceptual Confusions Among Some 833 English Consonants. The Journal of the Acoustical Society of America 27 , 338-352 834 (1955). https://doi.org:10.1121/1.1907526 835 11 Bradlow, A. R., Torretta, G. M. & Pisoni, D. B. Intelligibility of normal speech I: Global 836 and fine-grained acoustic-phonetic talker characteristics. Speech Communication 837 
+
+20 , 255-272 (1996). https://doi.org:https://doi.org/10.1016/S0167-6393(96)00063-5 838 12 Brown, C. A. & Bacon, S. P. Fundamental frequency and speech intelligibility in 839 background noise. Hearing Research 266 , 52-59 (2010). 840 https://doi.org:https://doi.org/10.1016/j.heares.2009.08.011 841 13 Brungart, D. S. Informational and energetic masking eIects in the perception of two 842 simultaneous talkers. J Acoust Soc Am 109 , 1101-1109 (2001). 843 14 Cooke, M. A glimpsing model of speech perception in noise. J Acoust Soc Am 119 ,844 1562-1573 (2006). https://doi.org:10.1121/1.2166600 845 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+15 Raghavan, V. S., O'Sullivan, J., Bickel, S., Mehta, A. D. & Mesgarani, N. Distinct 846 neural encoding of glimpsed and masked speech in multitalker situations. PLoS 847 
+
+biology 21 , e3002128 (2023). https://doi.org:10.1371/journal.pbio.3002128 848 16 Durlach, N. I. et al. Note on informational masking. J Acoust Soc Am 113 , 2984-2987 849 (2003). 850 17 Best, V., Conroy, C. & Kidd, G., Jr. Can background noise increase the informational 851 masking in a speech mixture? J Acoust Soc Am 147 , EL144 (2020). 852 https://doi.org:10.1121/10.0000719 853 18 Shinn-Cunningham, B. G., Schickler, J., Kopco, N. & Litovsky, R. Spatial unmasking 854 of nearby speech sources in a simulated anechoic environment. J Acoust Soc Am 855 
+
+110 , 1118-1129 (2001). 856 19 Lavandier, M. & Culling, J. F. Speech segregation in rooms: monaural, binaural, and 857 interacting eIects of reverberation on target and interferer. J Acoust Soc Am 123 ,858 2237-2248 (2008). https://doi.org:10.1121/1.2871943 859 20 Culling, J. F., Hodder, K. I. & Toh, C. Y. EIects of reverberation on perceptual 860 segregation of competing voices. J Acoust Soc Am 114 , 2871-2876 (2003). 861 21 Houtgast, T., Steeneken, H. J. M. & Plomp, R. Predicting speech intelligibility in 862 rooms from modulation transfer functions. I. General room acoustics. Acustica 46 ,863 60-72 (1980). 864 22 McDermott, J. H. & Simoncelli, E. P. Sound texture perception via statistics of the 865 auditory periphery: evidence from sound synthesis. Neuron 71 , 926-940 (2011). 866 https://doi.org:10.1016/j.neuron.2011.06.032 867 23 Elliott, T. M. & Theunissen, F. E. The modulation transfer function for speech 868 intelligibility. PLoS Comput Biol 5, e1000302 (2009). 869 https://doi.org:10.1371/journal.pcbi.1000302 870 24 Rodriguez, F. A., Chen, C., Read, H. L. & Escabi, M. A. Neural modulation tuning 871 characteristics scale to eIiciently encode natural sound statistics. J Neurosci 30 ,872 15969-15980 (2010). https://doi.org:10.1523/JNEUROSCI.0966-10.2010 873 25 Escabi, M. A. & Schreiner, C. E. Nonlinear spectrotemporal sound analysis by 874 neurons in the auditory midbrain. J Neurosci 22 , 4114-4131 (2002). 875 https://doi.org:20026325 876 26 Andoni, S., Li, N. & Pollak, G. D. Spectrotemporal receptive fields in the inferior 877 colliculus revealing selectivity for spectral motion in conspecific vocalizations. J878 
+
+Neurosci 27 , 4882-4893 (2007). 879 27 Escabi, M. A., Miller, L. M., Read, H. L. & Schreiner, C. E. Naturalistic auditory 880 contrast improves spectrotemporal coding in the cat inferior colliculus. J Neurosci 881 
+
+23 , 11489-11504 (2003). 882 28 Zhai, X. et al. Distinct neural ensemble response statistics are associated with 883 recognition and discrimination of natural sound textures. Proc Natl Acad Sci U S A 884 
+
+117 , 31482-31493 (2020). https://doi.org:10.1073/pnas.2005644117 885 29 Sadeghi, M., Zhai, X., Stevenson, I. H. & Escabi, M. A. A neural ensemble correlation 886 code for sound category identification. PLoS biology 17 , e3000449 (2019). 887 https://doi.org:10.1371/journal.pbio.3000449 888 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+30 Peng, F., Harper, N. S., Mishra, A. P., Auksztulewicz, R. & Schnupp, J. W. H. 889 Dissociable Roles of the Auditory Midbrain and Cortex in Processing the Statistical 890 Features of Natural Sound Textures. J Neurosci 44 (2024). 891 https://doi.org:10.1523/JNEUROSCI.1115-23.2023 892 31 Riede, T. & Brown, C. Body Size, Vocal Fold Length, and Fundamental Frequency – 893 Implications for Mammal Vocal Communication. Nova Acta Leopoldina 111 , 295-894 314 (2013). 895 32 Serrurier, A. & Neuschaefer-Rube, C. Morphological and acoustic modeling of the 896 vocal tract. J Acoust Soc Am 153 , 1867 (2023). https://doi.org:10.1121/10.0017356 897 33 Lorenzi, C., Gilbert, G., Carn, H., Garnier, S. & Moore, B. C. Speech perception 898 problems of the hearing impaired reflect inability to use temporal fine structure. 899 
+
+Proc Natl Acad Sci U S A 103 , 18866-18869 (2006). 900 https://doi.org:10.1073/pnas.0607364103 901 34 Marrufo-Perez, M. I., Fumero, M. J., Eustaquio-Martin, A. & Lopez-Poveda, E. A. 902 Impaired noise adaptation contributes to speech intelligibility problems in people 903 with hearing loss. Sci Rep 14 , 28807 (2024). https://doi.org:10.1038/s41598-024-904 80131-9 905 35 Singh, N. C. & Theunissen, F. E. Modulation spectra of natural sounds and 906 ethological theories of auditory processing. J Acoust Soc Am 114 , 3394-3411 (2003). 907 36 He, F., Stevenson, I. H. & Escabi, M. A. Two stages of bandwidth scaling drives 908 eIicient neural coding of natural sounds. PLoS computational biology 19 , e1010862 909 (2023). https://doi.org:10.1371/journal.pcbi.1010862 910 37 Joris, P. X., Schreiner, C. E. & Rees, A. Neural processing of amplitude-modulated 911 sounds. Physiol Rev 84 , 541-577 (2004). 912 38 Rodriguez, F. A., Read, H. L. & Escabi, M. A. Spectral and temporal modulation 913 tradeoI in the inferior colliculus. J Neurophysiol 103 , 887-903 (2010). 914 https://doi.org:10.1152/jn.00813.2009 915 39 Mahajan, N. R., Mesgarani, N. & Hermansky, H. General properties of auditory 916 spectro-temporal receptive fields. J Acoust Soc Am 146 , EL459 (2019). 917 https://doi.org:10.1121/1.5135021 918 40 Miller, L. M., Escabi, M. A., Read, H. L. & Schreiner, C. E. Spectrotemporal receptive 919 fields in the lemniscal auditory thalamus and cortex. J Neurophysiol 87 , 516-527 920 (2002). 921 41 Steeneken, H. J. & Houtgast, T. A physical method for measuring speech-922 transmission quality. Journal of the Acoustical Society of America, The 67 , 318-326 923 (1980). 924 42 C.H.Taal, R.C.Hendriks, R.Heusdens & J.Jensen. in ICASSP (Dallas, Texas, 2010). 925 43 Chi, T., Gao, Y., Guyton, M. C., Ru, P. & Shamma, S. Spectro-temporal modulation 926 transfer functions and speech intelligibility. J Acoust Soc Am 106 , 2719-2732 (1999). 927 44 Clonan, A. C., Stevenson, I. H. & Escabi, M. A. Identifying the acoustic fingerprints of 928 trigger sounds and predicting discomfort for misophonia. Hear Res 470 , 109478 929 (2026). https://doi.org:10.1016/j.heares.2025.109478 930 
+
+> .CC-BY-NC-ND 4.0 International license available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint this version posted April 30, 2026. ;https://doi.org/10.64898/2026.04.27.721224 doi: bioRxiv preprint
+
+45 Kumar, S., Forster, H. M., Bailey, P. & GriIiths, T. D. Mapping unpleasantness of 931 sounds to their auditory representation. J Acoust Soc Am 124 , 3810-3817 (2008). 932 https://doi.org:10.1121/1.3006380 933 46 Patil, K., Pressnitzer, D., Shamma, S. & Elhilali, M. Music in our ears: the biological 934 bases of musical timbre perception. PLoS Comput Biol 8, e1002759 (2012). 935 https://doi.org:10.1371/journal.pcbi.1002759 936 47 Saddler, M. R. & McDermott, J. H. Models optimized for real-world tasks reveal the 937 task-dependent necessity of precise temporal coding in hearing. Nat Commun 15 ,938 10590 (2024). https://doi.org:10.1038/s41467-024-54700-5 939 48 Kell, A. J. & McDermott, J. H. Deep neural network models of sensory systems: 940 windows onto the role of task constraints. Curr Opin Neurobiol 55 , 121-132 (2019). 941 https://doi.org:10.1016/j.conb.2019.02.003 942 49 Koumura, T., Terashima, H. & Furukawa, S. Human-Like Modulation Sensitivity 943 Emerging through Optimization to Natural Sound Recognition. The Journal of 944 
+
+neuroscience : the oIicial journal of the Society for Neuroscience 43 , 3876-3894 945 (2023). https://doi.org:10.1523/JNEUROSCI.2002-22.2023 946 50 Feather, J., Leclerc, G., Madry, A. & McDermott, J. H. Model metamers reveal 947 divergent invariances between biological and artificial neural networks. Nat 948 
+
+Neurosci 26 , 2017-2034 (2023). https://doi.org:10.1038/s41593-023-01442-0 949 51 Psychotoolbox (2017). 950 52 Leonard, R. G. & Doddington, G. R. (Linguistic Data Consortium, Philadelphia, 951 1993). 952 53 Boersma, P. & van Heuven, V. Speak and unSpeak with PRAAT. Glot International 5,953 341-347 (2001). 954 54 van der Maaten, L. & Hinton, G. Visualizing Data using t-SNE. J Machine Learning 955 
+
+Research 9, 2579−2605 (2008). 956 55 Hicks, J. M. & McDermott, J. H. Noise schemas aid hearing in noise. Proceedings of 957 
+
+the National Academy of Sciences of the United States of America 121 ,958 e2408995121 (2024). https://doi.org:10.1073/pnas.2408995121 959 960
