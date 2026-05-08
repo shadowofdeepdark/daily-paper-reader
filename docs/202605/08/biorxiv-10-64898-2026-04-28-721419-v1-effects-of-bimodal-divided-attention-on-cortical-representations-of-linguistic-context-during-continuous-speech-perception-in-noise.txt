@@ -1,0 +1,1788 @@
+Title: Effects of bimodal divided attention on cortical representations of linguistic context during continuous speech perception in noise
+
+URL Source: https://www.biorxiv.org/content/10.64898/2026.04.28.721419v1.full.pdf
+
+Number of Pages: 42
+
+Markdown Content:
+Effects of bimodal divided attention on cortical representations of linguistic context during 1
+
+continuous speech perception in noise 2
+
+> 3
+
+(Running title: Bimodal attention and linguistic context) 4
+
+> 5
+
+Zilong Xie 6
+
+School of Communication Science and Disorders, Florida State University, 7
+
+Tallahassee, Florida, USA 8
+
+> 9
+
+Correspondence: Zilong Xie (zx22c@fsu.edu) 10 
+
+> 11
+
+Acknowledgements: This research was funded by a startup fund from Florida State University 12 
+
+to Z.X. The author thanks Dr. Christian Brodbeck for his valuable suggestions during the early 13 
+
+development of the study, and Anya Chatani and Grace Frerking for their assistance with data 14 
+
+collection and data entry. Portions of this work were presented at the 47th MidWinter Meeting of 15 
+
+the Association for Research in Otolaryngology. The manuscript was proofread using Microsoft 16 
+
+Copilot, after which the author conducted a thorough review and made necessary revisions, 17 
+
+assuming full responsibility for the final content. 18 
+
+> 19
+
+Conflict of Interest : The author declares no conflict of interest. 20 
+
+> 21
+
+Data Availability Statement : The data that support the findings of this study are available from 22 
+
+the corresponding author upon reasonable request. 23 
+
+> 24
+
+Author Contributions : Zilong Xie: conceptualization, methodology, software, formal analysis, 25 
+
+investigation, resources, data curation, writing–original draft, writing–review and editing, 26 
+
+visualization, supervision, project administration, and funding acquisition. 27 
+
+> 28
+
+ORCID: Zilong Xie https://orcid.org/0000-0002-6851-7554 29 
+
+> 30
+> 31
+> 32
+> 33
+> 34
+> 35
+> 36
+> 37
+> 38
+> 39
+> 40
+> 41
+> 42
+> 43
+> 44
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+## Abstract 45 
+
+Speech perception often takes place in environments with competing sensory inputs, both within 46 
+
+the auditory modality and across modalities; for example, following a conversation in a noisy 47 
+
+cafe while simultaneously reading a menu. This study examined the extent to which dividing 48 
+
+attention between auditory and visual modalities (bimodal divided attention) influences linguistic 49 
+
+context processing across hierarchical levels during continuous speech perception in noise. 50 
+
+Electroencephalographic (EEG) responses were recorded while participants listened to 51 
+
+audiobook stories in multitalker babble as a secondary task, concurrently performing a52 
+
+demanding primary visual task that imposed either low or high cognitive load. Behaviorally, 53 
+
+speech comprehension accuracy was significantly lower under high-load than low-load dual-task 54 
+
+conditions. Multivariate temporal response function (mTRF) encoding models were used to 55 
+
+predict EEG responses from information-theoretic measures (entropy and surprisal) indexing 56 
+
+linguistic context at sublexical, word-form, and sentence levels. Significant neutral tracking was 57 
+
+observed at the word-form and sentence levels, but not the sublexical level. Critically, neutral 58 
+
+tracking of sentence-level linguistic representations was significantly reduced under high 59 
+
+compared to low load, with effects emerging at latencies beyond 200 ms. In contrast, neutral 60 
+
+tracking of word-form-level representations was unaffected by dual-task load. mTRF analyses 61 
+
+further revealed that neutral tracking of acoustic features was not modulated by dual-task load. 62 
+
+These findings indicate that bimodal divided attention selectively disrupts cortical 63 
+
+representations of sentence-level linguistic context, while lower-level processing remains 64 
+
+relatively preserved. Such impairments in higher-level linguistic processing may contribute to 65 
+
+reduced speech comprehension during multitasking in noisy environments. 66 
+
+> 67
+> 68
+
+Keywords : continuous speech processing, noise, linguistic context, crossmodal, divided 69 
+
+attention, EEG 70 
+
+> 71
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+## Introduction 72 
+
+In everyday life, speech perception often unfolds amid competing sensory inputs, both within the 73 
+
+auditory modality and across other modalities; for example, following a conversation in a noisy 74 
+
+cafe while simultaneously reading a menu. Such complex listening environments place 75 
+
+substantial demands on perceptual and cognitive resources and can lead to communication 76 
+
+breakdowns. Successful speech perception under these conditions requires listeners to allocate 77 
+
+attention to the auditory modality while managing demands from nonauditory inputs, to 78 
+
+segregate target speech from background noise, and to engage selective attention mechanisms 79 
+
+that enhance target speech while suppressing interfering sounds (Shinn-Cunningham, 2008). The 80 
+
+present study investigated the neural mechanisms underlying the effects of dividing attention 81 
+
+between modalities—specifically audition and vision (i.e., bimodal divided attention)—on the 82 
+
+processing of natural continuous speech in noise. 83 
+
+Speech processing entails the extraction and encoding of acoustic information from the 84 
+
+speech signal and its progressive transformation into linguistic representations of increasing 85 
+
+complexity (Brodbeck & Simon, 2020; Hickok & Poeppel, 2007). A key mechanism proposed to 86 
+
+support this transformation is the use of linguistic context across multiple hierarchical levels to 87 
+
+facilitate the interpretation of incoming speech input (Kuperberg & Jaeger, 2016; Ryskin & 88 
+
+Nieuwland, 2023). Research on linguistic context processing has traditionally relied on 89 
+
+paradigms employing highly controlled, constructed stimuli, such as isolated words (e.g., 90 
+
+Ganong, 1980; Giovannone & Theodore, 2021; Gwilliams et al., 2018; Lam et al., 2017; Sohoglu 91 
+
+et al., 2024) or sentences (e.g., Connine et al., 1991; Hsin et al., 2023; Hsin & Lee, 2024; Obleser 92 
+
+& Kotz, 2011; Sarrett et al., 2020; Strauß et al., 2013; Xie, 2025). Over the past decade, 93 
+
+however, there has been a growing shift toward paradigms that use natural, continuous speech, 94 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+which more closely approximates real-word speech and language processing (Brodbeck & 95 
+
+Simon, 2020; Gillis et al., 2022; Hamilton & Huth, 2020). 96 
+
+Of relevance to the present study, Brodbeck et al. (2022) asked participants to listen to 97 
+
+continuous narrative speech (i.e., audiobook stories) under quiet listening conditions while neural 98 
+
+responses were recorded. They examined how linguistic context at three hierarchical levels 99 
+
+modulated neural responses to phonemes. The sublexical-level context incorporated local 100 
+
+phoneme context (i.e., the preceding four phonemes) to predict upcoming phonemes. The word-101 
+
+form-level context, grounded in the cohort model of word recognition (Marslen-Wilson, 1987), 102 
+
+incorporated word statistics (i.e., the probability of words with a given phoneme sequence in the 103 
+
+lexicon) to predict upcoming phonemes. The sentence-level context extended the word-form 104 
+
+model by additionally incorporating sentence context (i.e., the four preceding words) to estimate 105 
+
+word-level statistics. The authors found that linguistic context at all three levels significantly 106 
+
+modulated neural responses to phonemes. Effects for all context levels were observed in the 107 
+
+superior temporal gyrus, with the sentence-level context additionally engaging more ventral 108 
+
+regions of the temporal lobe. In terms of temporal dynamics, all context levels modulated early 109 
+
+neural responses within the first 100 ms; however, only the sentence-level context influenced 110 
+
+later responses, emerging after approximately 150 ms and persisting up to ~500 ms. Together, 111 
+
+these findings suggest that continuous speech processing involves the parallel use of linguistic 112 
+
+context across multiple hierarchical levels, including sublexical-, word-form-, and sentence-level 113 
+
+representations (see also, e.g., Brodbeck et al., 2024; Karunathilake et al., 2025). 114 
+
+However, because this and other related work have focused on speech processing under 115 
+
+auditory-only attention, it remains unclear whether and how bimodal divided attention modulates 116 
+
+linguistic context processing across these hierarchical levels. Addressing this issue is essential 117 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+for advancing our understanding of the role of domain-general cognitive processes in linguistic 118 
+
+prediction during speech and language comprehension (Ryskin et al., 2020; Ryskin &119 
+
+Nieuwland, 2023). Recently, Xie et al. (2023) examined this question using 120 
+
+electroencephalography (EEG) in conjunction with an audiovisual dual-task paradigm. Bimodal 121 
+
+divided attention was operationalized by requiring participants to perform a demanding primary 122 
+
+visual task under either low or high cognitive load while concurrently listening to continuous 123 
+
+speech presented in quiet as a secondary task. These two dual-task conditions were compared 124 
+
+with an auditory single-task condition, in which participants focused exclusively on the speech 125 
+
+stimuli while disregarding concurrent visual stimuli. 126 
+
+Xie et al. (2023) replicated the core findings from Brodbeck et al. (2022), demonstrating 127 
+
+that linguistic context at sublexical, word-form, and sentence levels significantly modulated 128 
+
+neural responses to phonemes. Crucially, neural responses reflecting these context effects were 129 
+
+stronger in the auditory single-task condition than in either dual-task condition, with no 130 
+
+significant difference observed between the low- and high-load dual-task conditions. Although 131 
+
+divided attention across modalities attenuated context-related neural responses, these effects 132 
+
+were not eliminated under dual-task conditions. Moreover, the magnitude and pattern of 133 
+
+attention-related modulation was comparable across all three levels of linguistic context. 134 
+
+Collectively, these findings suggest that bimodal divided attention may reduce—but does not 135 
+
+abolish—the use of linguistic context during continuous speech processing and that its influence 136 
+
+appears relatively uniform across hierarchical levels of linguistic representations. 137 
+
+Notably, however, this study examined speech processing exclusively under quiet 138 
+
+listening conditions. As a result, it remains unclear to what extent additional processing demands 139 
+
+imposed by background noise further influence the attentional modulation of linguistic context 140 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+processing in crossmodal settings. Prior work examining attentional effects on linguistic context 141 
+
+processing during continuous speech perception in noise have largely emphasized auditory 142 
+
+selective attention and has rarely explicitly tested attentional effects across multiple hierarchical 143 
+
+levels of linguistic context processing. For example, several studies have used a two-talker 144 
+
+paradigm in which listeners selectively attended to one of two competing talkers narrating 145 
+
+different audiobook stories. One study focused on neural responses indexing sentence-level 146 
+
+context processing and showed that these responses were significantly stronger for attended 147 
+
+speech than for unattended speech (Broderick et al., 2018). Another study examined neural 148 
+
+responses indexing sublexical-level context processing and demonstrated that these responses 149 
+
+were robust for attended speech but were abolished for unattended speech (Brodbeck et al., 150 
+
+2018a). Importantly, selective and divided attention are thought to be supported by distinct 151 
+
+underlying mechanisms (Johnson & Zatorre, 2006; Loose et al., 2003), and their effects on 152 
+
+continuous speech processing may therefore differ (e.g., selective attention in Brodbeck et al., 153 
+
+2018 versus divided attention in Xie et al., 2023). Accordingly, the present study aims to 154 
+
+investigate how bimodal divided attention modulates linguistic context processing across 155 
+
+multiple hierarchical levels during continuous speech perception in noise. 156 
+
+Here, we adopted the audiovisual dual-task paradigm from Xie et al. (2023) to 157 
+
+manipulate bimodal divided attention. Participants performed a demanding primary visual task 158 
+
+under either low or high cognitive load while concurrently listening to continuous speech in 159 
+
+noise as a secondary task. We compared the two dual-task conditions (low versus high load) to 160 
+
+assess the effects of bimodal divided attention on linguistic context processing. We tested the 161 
+
+hypothesis that sentence-level context processing would be more susceptible to attentional 162 
+
+modulation than word-form and sublexical context processing, owing to its reliance on tracking 163 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+and integrating contextual information over longer timescales, which may necessitate the 164 
+
+involvement of cognitive resources (Alexander & Brown, 2018; Miller & Cohen, 2001; Shain et 165 
+
+al., 2022). 166 
+
+## Materials & Methods 167 
+
+Participants 168 
+
+The study included 24 younger adults (20 females) aged 18-23, recruited from the Tallahassee, 169 
+
+Florida, area. The sample size was determined based on previous research on bimodal attention 170 
+
+and its effects on the neural processing of speech (e.g., Gennari et al., 2018; Kasper et al., 2014; 171 
+
+Xie et al., 2023). All participants had normal hearing and normal or corrected-to-normal vision. 172 
+
+Normal hearing was defined as having pure-tone air-conduction thresholds  ≤ 25  dB hearing 173 
+
+level at octave frequencies from 0.25 to 8  kHz in both ears, assessed using an Interacoustics 174 
+
+Equinox 2.0 PC-based audiometer (Interacoustics, Middelfart, Denmark). All participants were 175 
+
+native speakers of English; four reported speaking a second language (three in Spanish and one 176 
+
+in Hindi). No participant reported a history of head trauma. The study protocol was approved by 177 
+
+the Institutional Review Board at Florida State University (IRB#: STUDY00003674). Written 178 
+
+informed consent was obtained from all participants, who received monetary compensation for 179 
+
+their participation. 180 
+
+Experimental design and stimuli 181 
+
+The experimental design and stimuli were adapted from Xie et al. (2023); readers are referred to 182 
+
+that work for additional details. 183 
+
+In this study, participants completed a dual-task paradigm comprising a primary 184 
+
+visuospatial n-back task of varying cognitive load and a secondary task of listening to continuous 185 
+
+speech in noise. Visual stimuli were blue squares appearing at one of eight positions surrounding 186 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+a central fixation cross on a black background. Auditory target stimuli were approximately 60-187 
+
+second excerpts from the audiobook Alice’s Adventures in Wonderland 188 
+
+(http://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-5), narrated by an adult 189 
+
+male speaker of American English at a 22.05 kHz sampling rate. Each excerpt was resampled to 190 
+
+20 kHz and calibrated to 65 dB sound pressure level. The background noise was multi-talker 191 
+
+babble originally described by Varga and Steeneken (1993) and obtained from Bechtold (2020). 192 
+
+This recording features 100 people conversing in a canteen, sampled at 19,980 Hz with a total 193 
+
+duration of approximately 235 seconds. For this study, the noise was resampled to match the 194 
+
+speech stimuli, and the first 69 seconds were extracted. A 10-ms ramp was applied to the onset 195 
+
+and offset. This segment was then mixed with the story excerpts at a signal-to-noise ratio of 5 196 
+
+dB. To help participants focus on the target speech, it began 3 seconds after the onset of the noise 197 
+
+and ended before the noise segment concluded. 198 
+
+Visual stimuli were displayed on a 23.8-inch monitor (resolution: 1920 × 1080, refresh 199 
+
+rate: 60 Hz) positioned approximately 150 cm from participants. Auditory stimuli were presented 200 
+
+monaurally to the right ear through ER-2 insert earphones (Etymotic Research, Elk Grove 201 
+
+Village, IL). Monaural presentation was chosen because this study was part of a larger 202 
+
+investigation on aging and continuous speech processing, and this approach increases the 203 
+
+likelihood of recruiting older adults with clinically normal hearing. 204 
+
+Cognitive load was manipulated using 3- and 0-back visual tasks. In the high-load 205 
+
+condition (3-back), participants responded when the current square matched the one presented 206 
+
+three positions back earlier. In the low-load condition (0-back), they responded when the square 207 
+
+matched the first in the sequence. The auditory task remained constant across conditions: 208 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+participants answered two multiple-choice comprehension questions about the story segment at 209 
+
+the end of each trial. 210 
+
+Each condition comprised 15 trials, pairing unique visual sequences with distinct story 211 
+
+segments. The two conditions were presented in separate blocks, with block order 212 
+
+counterbalanced across participants. At the start of each condition, two practice trials were 213 
+
+administered. These practice trials were similar to the actual task, except that the auditory stimuli 214 
+
+consisted of story segments not used in the actual trials. The same auditory stimuli were used for 215 
+
+practice in both the low- and high-load conditions. The experiment was programmed and 216 
+
+controlled using E-Prime 3.0.3.214 (Schneider et al., 2002). 217 
+
+At the end of each condition, participants rated the effort required to complete the task on 218 
+
+a 10-point scale (1 = no effort, 10 = extreme effort) and estimated the percentage of the story 219 
+
+they understood (0–100%). The high-load condition was associated with significantly greater 220 
+
+perceived effort and lower story understanding compared to the low-load condition: Effort: high-221 
+
+load (mean = 8.5, SD = 1.50) vs. low-load (mean = 4.83, SD = 2.22), t(23) = 10.498, p < 0.001; 222 
+
+Story understanding: high-load (mean = 49.6%, SD = 23.4%) vs. low-load (mean = 77.0%, SD = 223 
+
+18.0%), t(23) = -5.983, p < 0.001. 224 
+
+Following the experiment, participants completed an exit questionnaire to assess their 225 
+
+familiarity with the story segments. They indicated whether they had previously read Alice’s 226 
+
+Adventures in Wonderland or watched a film adaptation, and if so, approximately when. They 227 
+
+also rated the extent to which prior exposure aided task performance on a 10-point scale (1 = not 228 
+
+at all, 10 = very much). Of the 24 participants, nine reported having read the book, and sixteen 229 
+
+had seen the movie. A two-way mixed ANOVA examined whether prior familiarity (book or 230 
+
+movie) influenced auditory task accuracy under low- and high-load conditions. No significant 231 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+main effects of reading ( p = 0.899, η²p = 0.0006) or watching ( p = 0.47, η²p = 0.019) were 232 
+
+observed, nor were any interactions with task condition significant ( ps > 0.72, η²p < 0.002), 233 
+
+indicating that prior familiarity did not meaningfully affect performance. 234 
+
+Electrophysiological data acquisition and preprocessing 235 
+
+Acquisition 236 
+
+The experiment took place in a dimly lit, sound-attenuating booth. Participants were seated 237 
+
+comfortably throughout the tasks. Electroencephalography (EEG) signals were recorded at a 238 
+
+sampling rate of 5 kHz using an Easycap recording cap (www.easycap.de) equipped with 64 239 
+
+actiCAP active electrodes (Brain Products, Gilching, Munich, Germany). Electrode placement 240 
+
+followed the extended 10-20 system (Oostenveld & Praamstra, 2001), with the Fpz site serving 241 
+
+as the ground and Fz as the reference. All electrode impedances were maintained below 25 k Ω.242 
+
+EEG data were acquired using a Brainvision actiCHamp Plus amplifier linked to BrainVision 243 
+
+Recorder software V. 1.25.0001. 244 
+
+Preprocessing 245 
+
+The raw EEG data were preprocessed offline using custom scripts implemented in MNE-Python 246 
+
+(Gramfort et al., 2013) and EEGLAB (Delorme & Makeig, 2004). The raw data were re-247 
+
+referenced to the average of electrodes TP9 and TP10, followed by band-pass filtering between 1 248 
+
+and 15 Hz using a Hamming-windowed sinc FIR filter with default EEGLAB settings. The data 249 
+
+were then segmented into 66-second epochs, time-locked to the onset of the corresponding story 250 
+
+segments, and downsampled to 500 Hz. Independent component analysis was applied to the 251 
+
+epoched data pooled across both task conditions for each participant using the Infomax 252 
+
+algorithm. Artifact-related components, specifically those associated with muscle activity and 253 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+eye movements, were automatically detected using ICLabel (Pion-Tonachini et al., 2019) with 254 
+
+threshold values between 0.8 and 1.0 and subsequently removed. 255 
+
+Assessing neural tracking of visual and auditory stimuli 256 
+
+The multivariate temporal response function (mTRF) approach (Crosse et al., 2016; Ding & 257 
+
+Simon, 2012), implemented via the Eelbrain Python toolkit (Brodbeck et al., 2023) was used to 258 
+
+assess neural tracking of visual and auditory stimuli. This technique employs time-delayed 259 
+
+multiple regression to predict EEG signals from stimulus-derived predictor variables. The 260 
+
+predictive power of each predictor set (e.g., visual features) was interpreted as an index of the 261 
+
+strength of the corresponding neural representation. Examples of these predictors are shown in 262 
+
+Figure 1. Visual and acoustic predictors were estimated following procedures similar to those 263 
+
+described in Xie et al. (2023), while linguistic predictors were directly adopted from that work. A 264 
+
+brief overview of these predictors is provided below; for additional methodological details, see 265 
+
+Xie et al. (2023). To enhance computational efficiency, both EEG data and predictor variables 266 
+
+were downsampled to 100 Hz before the mTRF analysis. Additionally, only the first 56 seconds 267 
+
+of each trial were included for the mTRF analysis to match the shortest trial duration. 268 
+
+> 269
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint 270
+
+Figure 1. Examples of visual, acoustic, and linguistic predictors used to model the EEG 271 
+
+responses in the mTRF analysis. 272 
+
+> 273
+
+.CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint Visual and acoustic predictors 274 
+
+The visual predictor consisted of a one-dimensional time series with an impulse at the onset and 275 
+
+offset of each blue square. To account for potential neural activity related to participants’ 276 
+
+responses, an additional one-dimensional time series was included, containing impulses at time 277 
+
+points when participants responded to the visual stimuli. 278 
+
+Acoustic predictors were designed to capture the spectro-temporal properties of both the 279 
+
+target speech and background noise. These predictors were derived from high-resolution 280 
+
+gammatone spectrograms spanning 256 frequency bands from 20 to 10,000 Hz. An envelope 281 
+
+spectrogram predictor was obtained by summing the 256-band spectrogram into eight 282 
+
+logarithmically spaced frequency bands. Additionally, an onset spectrogram predictor was 283 
+
+created by applying an auditory edge detection model (Brodbeck et al., 2020; Fishbach et al., 284 
+
+2001) to each band of the 256-band spectrograms, and then summing them into eight 285 
+
+logarithmically spaced frequency bands. 286 
+
+Linguistic predictors 287 
+
+Linguistic predictors were computed only for the target speech, comprising information-theoretic 288 
+
+measures—surprisal and entropy—of phoneme sequences using sublexical, word-form, and 289 
+
+sentence models (briefly described below). These measures were expressed as time series with 290 
+
+impulses of varying magnitude at each phoneme onset. Phoneme sequences and their onsets were 291 
+
+obtained from the speech stimuli through forced alignment with the Montreal Forced Aligner 292 
+
+(McAuliffe et al., 2017). 293 
+
+Sublexical model . The sublexical model uses a 5-gram model (Heafield, 2011) trained 294 
+
+on phoneme sequences from all sentences in the SUBTLEX-US corpus (Keuleers et al., 2010), 295 
+
+without word boundary removed. It predicts each current phoneme from the four preceding ones 296 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+and was applied to target phoneme sequences to generate sublexical surprisal and entropy 297 
+
+predictors. Sublexical surprisal represents the level of probabilistic surprisal of the current 298 
+
+phoneme given its four-phoneme context, while sublexical entropy captures the uncertainty 299 
+
+about the next phoneme based on the same context. These predictors are limited to simple 300 
+
+phoneme sequence statistics and do not account for word boundaries (Brodbeck et al., 2022; 301 
+
+Vitevitch & Luce, 1999, 2016). 302 
+
+Word-form model. The word-form model is grounded in the cohort model of word 303 
+
+recognition (Brodbeck et al., 2018b; Marslen-Wilson, 1987). Each word was assigned a prior 304 
+
+probability based on its count frequency in the SUBTLEX corpus (Keuleers et al., 2010), with a 305 
+
+default value of 1 for words not present in the corpus. For each word in the target speech, the 306 
+
+model begins with the full lexicon and progressively removes words that do not match the 307 
+
+observed phoneme sequence as each phoneme is processed. The evolving probability 308 
+
+distribution over the lexicon at each phoneme position was used to compute word-form surprisal 309 
+
+and entropy predictors. Word-form surprisal reflects the level of probabilistic surprisal of the 310 
+
+current phoneme given the preceding phonemes within the word, while word-form entropy 311 
+
+represents the uncertainty of all words currently in the cohort that match the observed phoneme 312 
+
+sequence. The lexicon was constructed by combining pronunciations from the Montreal Forced 313 
+
+Aligner English dictionary and the Carnegie Mellon University Pronouncing Dictionary 314 
+
+(http://www.speech.cs.cmu.edu/cgi-bin/cmudict). 315 
+
+Sentence model. The sentence model applies the same procedure to the word-form 316 
+
+model to compute sentence surprisal and entropy predictors, with one key difference: the prior 317 
+
+probability of each word was defined from the four preceding words, using a lexical 5-gram 318 
+
+model (Heafield, 2011) trained on the whole SUBTLEX-US corpus (Keuleers et al., 2010). 319 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Thus, sentence-level predictors incorporate a broader linguistic context, spanning 320 
+
+multiple words, compared to sublexical and word-form predictors. Further, to account for the 321 
+
+effects of linguistic segmentation, two additional predictors were included: a word-onset 322 
+
+predictor, assigning a unit impulse at the onset of each word-initial phoneme, and a phoneme-323 
+
+onset predictor, assigning a unit impulse at the onsets of all other phonemes. 324 
+
+Estimation of neural tracking 325 
+
+This study examined to extent to which neutral tracking of visual information and the acoustic 326 
+
+and linguistic properties of target speech differ across the two task conditions. For each 327 
+
+participant and condition, a forward encoding mTRF model was applied, using the previously 328 
+
+defined predictors to model EEG responses at individual electrodes. Models were estimated 329 
+
+using a boosting algorithm with 5-fold cross-validation, implemented in Eelbrain. The mTRFs 330 
+
+were parameterized with 50-ms Hamming basis functions spanning the stimulus-EEG lag from -331 
+
+100 to 500 ms, and all predictors were jointly optimized via coordinate descent to minimize ℓ2332 
+
+loss. 333 
+
+To implement 5-fold cross-validation, the data (n = 15 trials) were partitioned into 5 folds 334 
+
+(3 trials per fold). In each iteration, one fold was held out for testing, while the remaining folds 335 
+
+rotated as the validation set, yielding four mTRFs per testing fold. These mTRFs were averaged 336 
+
+to produce a single mTRF for that iteration, which was then used to predict EEG in the held-out 337 
+
+(testing) fold. Predicted EEG responses from all five testing folds were concatenated to estimate 338 
+
+a per-electrode measure of model performance, i.e., the proportion of the variation in the actual 339 
+
+EEG response that is explained by the model (i.e., % explained variance). Final mTRFs per 340 
+
+electrode were obtained by averaging the mTRFs across all testing folds. 341 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+To quantify neural tracking of specific speech features, we contrasted a full model with 342 
+
+reduced models in which the predictor(s) of interest were removed. The full model included 343 
+
+visual predictors (onsets, offsets, and responses), acoustic predictors for background noise 344 
+
+(envelope and onset spectrograms), acoustic predictors for target speech (envelope and onset 345 
+
+spectrograms), and linguistic predictors (sublexical surprisal and entropy; word-form surprisal 346 
+
+and entropy; sentence surprisal and entropy; plus word and phoneme onsets). Visual tracking 347 
+
+was assessed by removing visual onsets and offsets; acoustic tracking of the target speech by 348 
+
+removing the target envelope and onset spectrograms; sublexical-level processing by removing 349 
+
+sublexical surprisal and entropy; word  form-level processing by removing word  form surprisal 350 
+
+and entropy; and sentence  level processing by removing sentence surprisal and entropy. The 351 
+
+change in % explained variance (i.e., Δ% explained) between the full and reduced models was 352 
+
+used to index the strength of neutral tracking for the corresponding predictor(s). 353 
+
+Statistical analysis 354 
+
+All statistical analyses were performed in Eelbrain, unless otherwise noted. 355 
+
+First, we examined the impact of task condition (low vs. high load) on behavioral 356 
+
+performance and on neural tracking of visual, acoustic, and linguistic properties, using one-sided 357 
+
+paired t-tests with an alpha level of .05. Effect sizes (Cohen’s d) and Bayes Factors (BF) were 358 
+
+also estimated. Additional details are provided below. 359 
+
+Behavioral performance was indexed by three measures: visual accuracy, visual reaction 360 
+
+time (RT), and auditory accuracy. Visual accuracy was calculated as the hit rate (i.e., correct 361 
+
+responses to targets) minus the false alarm rate (i.e., incorrect identification of non-targets as 362 
+
+targets). Visual RT was defined as the median RT for hits only. Auditory accuracy was 363 
+
+expressed as the percentage of correctly answered story comprehension questions. The analyses 364 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+were performed in R (version 4.5.1; Team, 2022), and BF values were estimated using the 365 
+
+BayesFactor package (version 0.9.12.4.7; Morey et al., 2022). 366 
+
+Neural tracking was quantified by the Δ% explained by each predictor or predictor set. 367 
+
+The Δ% explained values were averaged across task conditions and tested against zero using a 368 
+
+one-sided, cluster-based permutation test (Maris & Oostenveld, 2007). Clusters were identified 369 
+
+using a t-threshold corresponding to uncorrected p ≤ 0.05, and corrected p-values were derived 370 
+
+from a null distribution of 10,000 permutations (or all possible permutations if fewer). The 371 
+
+largest t-value within each cluster (tmax) was reported as an effect size estimate (Brodbeck et al., 372 
+
+2018a). Significant clusters were treated as regions of interest (ROIs), and Δ% explained values 373 
+
+were averaged within these ROIs for subsequent condition comparisons. Further, when a 374 
+
+significant task-condition effect was observed, follow-up tests tested whether neural tracking for 375 
+
+the relevant predictor(s) persisted within each condition, by testing Δ% explained values against 376 
+
+zero using one-sided one-sample t-tests. 377 
+
+Finally, we analyzed the effect of task conditions on TRFs for visual, acoustic, and 378 
+
+linguistic predictors. The TRFs were extracted from the full model, and the global field power 379 
+
+(GFP) was computed across the corresponding ROI(s) identified above. GFP values were 380 
+
+compared between conditions using two-sided, cluster-based permutation tests in Eelbrain with 381 
+
+default parameters, except for the analysis time window. For visual predictors, TRFs for visual 382 
+
+onsets and offsets were concatenated to capture responses to visual stimuli as a whole, resulting 383 
+
+in TRFs spanning with lags from -100 to 1000 ms relative to stimulus onset because the visual 384 
+
+stimuli lasted exactly 500 ms. The analysis window was 0–000 ms for visual predictors and 0– 385 
+
+500 ms for acoustic and linguistic predictors. For the acoustic predictors, TRFs were averaged 386 
+
+across the eight frequency bands before analysis. 387 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+## Results 388 
+
+Table 1 summarizes the key findings regarding the effects of task conditions on behavioral 389 
+
+performance and neural visual, acoustic, and linguistic processing. 390 
+
+Table 1. Task Effects on Continuous Speech Processing 391 
+
+Type Measure Key Results 
+
+Behavioral Visual accuracy Low load > High load Visual RT Low load < High load Auditory Accuracy Low load > High load Neural (Δ% explained) Visual Low load < High load Acoustic Envelope spectrogram No significant task effect Onset spectrogram No significant task effect Linguistic Sublexical No significant neural tracking Word-form No significant task effect Sentence Low load > High load 
+
+> 392
+> 393
+> 394
+> 395
+> 396
+> 397
+> 398
+> 399
+> 400
+> 401
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Visual task load impairs behavioral visual and auditory performance 402 
+
+> 403
+> 404
+
+Figure 2. Behavioral performance on visual and auditory tasks. (A) Accuracy for the low load 405 
+
+(0-back) and high load (3-back) visual tasks, computed as hit rate (i.e., correct target responses) 406 
+
+minus false alarm rate (i.e., identifying a non-target as being a target). (B) Median reaction time 407 
+
+(RTs) for hits only (correct target responses) in the low- and high-load visual tasks. (C) Accuracy 408 
+
+on the auditory task, quantified as the proportion of story comprehension questions answered 409 
+
+correctly. Each line in panels (A to C) corresponds to an individual participant (n = 24). 410 
+
+> 411
+
+Figure 2A and 2B display the accuracy and RT of the visual task for individual participants. 412 
+
+Compared to the low load (0-back) condition, the high load (3-back) condition was associated 413 
+
+with lower accuracy [ t (23) = 8.791, p < 0.001, Cohen’s d = 1.79, BF = 1.55×10 6] and slower RT 414 
+
+[t (23) = -6.866, p < 0.001, Cohen’s d = 1.40, BF = 3.21×10 4]. These results confirmed that the 415 
+
+manipulation of cognitive load in the visual task was successful. 416 
+
+Figure 2C displays the auditory task accuracy for individual participants. The mean 417 
+
+accuracy was 79.4% ( SD = 13.0%) in the low load dual-task condition and 60.2% ( SD = 13.7%) 418 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+in the high load dual-task condition. The effect of task condition was significant [ t (23) = 7.981, 419 
+
+p < 0.001, Cohen’s d = 1.63, BF = 3.18×10 5]. 420 
+
+Further, we examined the relationship between visual and auditory task performance 421 
+
+during the dual-task conditions. The change in auditory accuracy [i.e., (low load – high load)/low 422 
+
+load] was not significantly correlated with the change in visual RT [i.e., (high load – low 423 
+
+load)/low load] (Spearman’s ρ = -0.08, p = 0.707, BF = 0.448) or the change in visual accuracy 424 
+
+(Spearman’s ρ = 0.074, p = 0.733, BF = 0.461). 425 
+
+Neural tracking of sentence-level linguistic information reduced with visual task load, but 426 
+
+not at sublexical or word-form levels 427 
+
+> 428
+> 429
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Figure 3. Neural tracking of sentence-level linguistic information across dual-task 430 
+
+conditions . (A) The topographic map illustrates the increase in prediction power (expressed as 431 
+
+> Δ
+
+% variance explained) attributed to sentence-level linguistic predictors (sentence surprisal and 432 
+
+entropy). A statistically significant increase was observed within a single cluster, marked by the 433 
+
+highlighted yellow electrodes. (B) Prediction power across dual-task conditions, with blue lines 434 
+
+representing individual participants. A red asterisk indicates the statistical significance of the 435 
+
+difference between conditions, while a black asterisk marks whether the prediction power for 436 
+
+each condition was significantly above zero. Error bars reflect the 95% within-subject 437 
+
+confidence interval. (C) The global field power of the TRFs for the sentence-level predictors. 438 
+
+The TRFs were derived by averaging responses across the surprisal and entropy predictors. 439 
+
+Shaded regions represent within-subject standard errors around the mean (color coding as in 440 
+
+panel B). A blue horizontal line highlights the time interval where TRFs significantly differed 441 
+
+between conditions. (D) Scalp topographies at selected time points (indicated by grey vertical 442 
+
+lines in panel C). * p < 0.05, *** p < 0.001. 443 
+
+> 444
+
+The sentence-level linguistic predictors significantly enhanced model performance beyond 445 
+
+visual, acoustic, and other linguistic predictors, with a small cluster at central regions ( tmax =446 
+
+3.94, p = .008; Figure 3A). These results provide evidence for robust cortical tracking of 447 
+
+sentence-level linguistic information. Furthermore, as illustrated in Figure 3B, the high load 448 
+
+dual-task condition yielded significantly lower predictive power (mean = 0.006, SD = 0.013) 449 
+
+than the low load dual-task condition (mean = 0.012, SD = 0.012) [ t(23) = 1.818, p = 0.041, 450 
+
+Cohen’s d = 0.499, BF = 1.771]. These results suggest that increased visual task load impairs 451 
+
+neural tracking of linguistic information at the sentence-level. Finally, to understand how 452 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+differences in model predictive power manifest in the cortical responses, we compared the 453 
+
+mTRFs between the two dual-task conditions. In line with the findings on predictive power, as 454 
+
+shown in Figure 3C, the high load dual-task condition produced significantly smaller mTRF 455 
+
+amplitudes than the low load dual-task condition from 220 to 300 ms ( p = 0.005). 456 
+
+> 457
+> 458
+
+Figure 4. Neural tracking of word-form level linguistic predictors across dual-task 459 
+
+conditions . (A) The topographic map illustrates the increase in prediction power (expressed as 460 
+
+> Δ
+
+% variance explained) attributed to word-form level predictors (word-form surprisal and 461 
+
+entropy). A statistically significant increase was observed within a single cluster, marked by the 462 
+
+highlighted yellow electrodes. (B) Prediction power across dual-task conditions, with blue lines 463 
+
+representing individual participants. A black asterisk marks whether the prediction power for 464 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+each condition was significantly above zero. Error bars reflect the 95% within-subject 465 
+
+confidence interval. (C) The global field power of the TRFs for the word-form level predictors. 466 
+
+The TRFs were derived by averaging responses across the surprisal and entropy predictors. 467 
+
+Shaded regions represent within-subject standard errors around the mean (color coding as in 468 
+
+panel B). (D) Scalp topographies at selected time points (indicated by grey vertical lines in panel 469 
+
+C). ** p < 0.01, *** p < 0.001. 470 
+
+> 471
+
+The word-form level predictors significantly enhanced model performance beyond visual, 472 
+
+acoustic, and other linguistic predictors, with a cluster at central regions ( tmax = 5.09, p < 0.001; 473 
+
+Figure 4A). These results provide evidence for robust neural tracking of linguistic information at 474 
+
+the word-form level. Additionally, task condition did not significantly influence the predictive 475 
+
+power for the word-form level predictors [ t(23) = 0.618, p = 0.271, Cohen’s d = 0.176, BF = 476 
+
+0.511; Figure 4B]. Finally, the mTRFs for the word-form level predictors (Figure 4C) were not 477 
+
+significantly different between the two dual-task conditions. 478 
+
+The sublexical level predictors did not significantly enhance model performance beyond 479 
+
+visual, acoustic, and other linguistic predictors ( tmax = 2.64, p = 0.220). These results did not 480 
+
+provide evidence for robust neural tracking of linguistic information at the sublexical level. 481 
+
+In summary, the results indicate that visual task load may impair neural tracking of 482 
+
+linguistic information at the sentence level, while leaving sublexical and word-form level 483 
+
+processing unaffected. 484 
+
+Neural tracking of acoustic features did not significantly change with visual task load 485 
+
+> 486
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint 487
+
+Figure 5. Neural tracking of the acoustic envelope of speech across dual-task conditions .488 
+
+(A) The topographic map illustrates the increase in prediction power (expressed as Δ% variance 489 
+
+explained) attributed to the acoustic envelope of speech. A statistically significant increase was 490 
+
+observed within a single cluster, marked by the highlighted yellow electrodes. (B) Prediction 491 
+
+power across dual-task conditions, with blue lines representing individual participants. A black 492 
+
+asterisk marks whether the prediction power for each condition was significantly above zero. 493 
+
+Error bars reflect the 95% within-subject confidence interval. (C) The global field power of 494 
+
+TRFs for the acoustic envelope. The TRFs were derived by averaging responses across the eight 495 
+
+frequency bands for the envelope predictors. Shaded regions represent within-subject standard 496 
+
+errors around the mean (color coding as in panel B). (D) Scalp topographies at selected time 497 
+
+points (indicated by grey vertical lines in panel C). *** p < 0.001. 498 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint 499
+
+The acoustic envelope predictor significantly enhanced model performance beyond visual, 500 
+
+acoustic onsets, and linguistic predictors, with a widespread cluster across nearly all electrodes 501 
+
+and peak effects at temporal-central regions ( tmax = 6.89, p < 0.001; Figure 5A). These results 502 
+
+provide evidence for robust neural tracking of the speech acoustic envelope. Additionally, task 503 
+
+condition did not significantly influence the prediction power for the acoustic envelope predictor 504 
+
+[t(23) = 0.34, p = 0.365, Cohen’s d = 0.076, BF = 0.454; Figure 5B]. Finally, the mTRFs for the 505 
+
+acoustic envelope (Figure 5C), which can be interpreted as cortical evoked responses to an 506 
+
+elementary event in the stimulus (i.e., the impulse response), were not significantly different 507 
+
+between the high and low load dual-task conditions. 508 
+
+> 509
+> 510
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Figure 6. Neural tracking of the acoustic onsets of speech across dual-task conditions . (A) 511 
+
+The topographic map illustrates the increase in prediction power (expressed as Δ% variance 512 
+
+explained) attributed to the acoustic onsets of speech. A statistically significant increase was 513 
+
+observed within a single cluster, marked by the highlighted yellow electrodes. (B) Prediction 514 
+
+power across dual-task conditions, with blue lines representing individual participants. A black 515 
+
+asterisk marks whether the prediction power for each condition was significantly above zero. 516 
+
+Error bars reflect the 95% within-subject confidence interval. (C) The global field power of 517 
+
+TRFs for the acoustic onsets. The TRFs were derived by averaging responses across the eight 518 
+
+frequency bands for the onset predictors. Shaded regions represent within-subject standard errors 519 
+
+around the mean (color coding as in panel B). (D) Scalp topographies at selected time points 520 
+
+(indicated by grey vertical lines in panel C). *** p < 0.001. 521 
+
+> 522
+
+The acoustic onsets predictor significantly enhanced model performance beyond visual, 523 
+
+acoustic envelope, and linguistic predictors, with a cluster at temporal-central regions ( tmax =524 
+
+6.35, p < 0.001; Figure 6A). These results provide evidence for robust neural tracking of the 525 
+
+speech acoustic onsets. Additionally, task condition did not significantly influence the prediction 526 
+
+power for the acoustic envelope predictor [ t(23) = 1.498, p = 0.074, Cohen’s d = 0.332, BF = 527 
+
+1.147; Figure 6B]. Finally, the mTRFs for the acoustic onsets (Figure 6C) were not significantly 528 
+
+different between the high and low load dual-task conditions. 529 
+
+Neural tracking of visual stimuli was enhanced with visual task load 530 
+
+> 531
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint 532
+
+Figure 7. Neural tracking of visual stimuli across dual-task conditions . (A) The topographic 533 
+
+map illustrates the increase in prediction power (expressed as Δ% variance explained) attributed 534 
+
+to visual stimulus predictors. A statistically significant increase was observed within a single 535 
+
+cluster, marked by the highlighted yellow electrodes. (B) Prediction power across dual-task 536 
+
+conditions, with blue lines representing individual participants. A red asterisk indicates the 537 
+
+statistical significance of the difference between conditions, while a black asterisk marks 538 
+
+whether the prediction power for each condition was significantly above zero. Error bars reflect 539 
+
+the 95% within-subject confidence interval (Loftus & Masson, 1994). (C) The global field power 540 
+
+of the visual temporal response functions (TRFs). Each visual stimulus was displayed for a 541 
+
+period ranging from 0 to 500 ms. Shaded regions represent within-subject standard errors around 542 
+
+the mean (color coding as in panel B). Blue horizontal lines highlight time intervals where TRFs 543 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+significantly differed between conditions. (D) Scalp topographies at selected time points 544 
+
+(indicated by grey vertical lines in panel C). *** p < 0.001. 545 
+
+> 546
+
+To evaluate neural tracking of the visual stimuli, we examined the predictive power of visual 547 
+
+predictors while accounting for all speech-related predictors, including acoustic and linguistic 548 
+
+predictors. Incorporating visual predictors into a model that initially included only the speech-549 
+
+related predictors led to a significant increase in predictive power ( tmax = 9.86, p < 0.001), 550 
+
+providing evidence for neural tracking of the visual stimuli. A cluster-based analysis revealed a 551 
+
+single significant cluster encompassing all electrodes, with the strongest effect observed in the 552 
+
+parietal and occipital regions (Figure 7A). Furthermore, as illustrated in Figure 7B, the high load 553 
+
+dual-task condition yielded significantly higher predictive power (mean = 0.907, SD = 0.504) 554 
+
+than the low load dual-task condition (mean = 0.573, SD = 0.469) [ t(23) = 3.571, p < 0.001, 555 
+
+Cohen’s d = 0.684, BF = 45.993]. These results suggest that an increased visual task load 556 
+
+enhances neural tracking of visual stimuli. 557 
+
+Finally, to understand how differences in model predictive power manifest in the cortical 558 
+
+responses, we compared the mTRFs between the two dual-task conditions. These visual mTRFs 559 
+
+can be interpreted as cortical evoked responses to the visual stimuli. In line with the findings on 560 
+
+predictive power, as shown in Figure 7C, the high load dual-task condition produced 561 
+
+significantly greater mTRF amplitudes than the low load dual-task condition during two time 562 
+
+windows: from 0 to 190 ms ( p < 0.001) and from 520 to 690 ms ( p = 0.002). 563 
+
+## Discussion 564 
+
+The present study examined the extent to which bimodal divided attention modulates linguistic 565 
+
+context processing at sublexical, word-form, and sentence levels during continuous speech 566 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+perception in multi-talker babble. Consistent with the hypothesis, increasing dual-task load 567 
+
+selectively reduced neural tracking of sentence-level linguistic information (Figure 3), whereas 568 
+
+no significant effects were observed at the sublexical or word-form levels (Figure 4). 569 
+
+Furthermore, dual-task load did not significantly alter neural tracking of acoustic features in 570 
+
+continuous speech (Figure 5 and 6), even though both behavioral performance (Figure 2) and 571 
+
+neural indices (Figure 7) clearly indicated that the high-load condition imposed greater 572 
+
+processing demands. 573 
+
+Hierarchical levels of linguistic context processing in quiet and noise 574 
+
+This study largely replicated prior findings demonstrating the parallel use of linguistic context 575 
+
+across multiple hierarchical levels (e.g., Brodbeck et al., 2022, 2024; Karunathilake et al., 2025; 576 
+
+Xie et al., 2023). However, unlike previous work, the current study did not observe significant 577 
+
+cortical tracking of sublexical information. A key methodological difference is that earlier 578 
+
+studies presented continuous speech stimuli under quiet listening conditions (e.g., Brodbeck et 579 
+
+al., 2022, 2024; Karunathilake et al., 2025; Xie et al., 2023), whereas the present study 580 
+
+introduced background noise. Prior research has shown that neural responses associated with 581 
+
+sublexical context processing were relatively weaker than those observed at word-form and 582 
+
+sentence levels (Brodbeck et al., 2022). Consequently, sublexical context processing may be 583 
+
+more vulnerable to noise interferences, potentially accounting for the absence of significant 584 
+
+neural tracking of sublexical information in the current study. 585 
+
+The central question of the present study was whether and how these multiple levels of 586 
+
+linguistic context processing are differentially affected by bimodal divided attention. Our results 587 
+
+showed that increasing dual-task load selectively attenuated neural tracking of sentence-level 588 
+
+linguistic information, whereas sublexical or word-form context processing remained unaffected. 589 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+The absence of dual-task load effects at the sublexical or word-form levels is consistent with 590 
+
+previous findings reported by Xie et al. (2023), who examined continuous speech perception 591 
+
+under quiet listening conditions. In contrast, the selective reduction in sentence-level tracking 592 
+
+observed here diverges from their results, which showed no dual-task load effects at this level. 593 
+
+One possible explanation is that relative to sublexical or word-form levels, sentence-level 594 
+
+context processing depends on the tracking and integration of linguistic information over longer 595 
+
+timescale and therefore draws more heavily on domain-general cognitive resources (Alexander 596 
+
+& Brown, 2018; Miller & Cohen, 2001; Shain et al., 2022). When background noise is 597 
+
+introduced, these cognitive demands are likely amplified, rendering sentence-level processing 598 
+
+more susceptible to the effects of increased dual-task load. 599 
+
+Our observation that higher-level linguistic processing is selectively reduced under 600 
+
+increased dual-task demands appear to align with prior work using highly controlled, laboratory-601 
+
+based stimuli. For instance, studies examining lexical context effects on word identification 602 
+
+within the Ganong paradigm (Ganong, 1980) have shown that increasing cognitive load via dual-603 
+
+task manipulations resulted in only modest changes in the lexical context effect among younger 604 
+
+adults with normal hearing (Derawi et al., 2022; Mattys & Scharenborg, 2014). By contrast, 605 
+
+previous research has demonstrated that neural indices of sentence-level context processing (e.g., 606 
+
+the N400) were substantially attenuated when attention was diverted away from the language 607 
+
+stimuli (e.g., Erlbeck et al., 2014; Hubbard & Federmeier, 2021). 608 
+
+Locus of effects of bimodal divided attention on continuous speech processing 609 
+
+At the behavioral level, increased dual-task load clearly impaired listeners’ performance on 610 
+
+auditory comprehension questions for continuous speech, both in noise in the current study and 611 
+
+in quiet in Xie et al. (2023). This raises the question of where, within the speech-processing 612 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+hierarchy, bimodal divided attention exerts its primary influence on behavior. Across both 613 
+
+studies, dual-task load did not significantly modulate cortical tracking of acoustic features or 614 
+
+lower-level linguistic representations at the sublexical or word-form level, with the only neural 615 
+
+effects observed at the sentence level in the current study. Notably, these sentence-level effects 616 
+
+emerged in relatively late neural responses, occurring after approximately 220 ms. Together, 617 
+
+these findings indicate that behavioral declines under dual-task conditions predominantly reflect 618 
+
+disruptions to later, post-perceptual stages of continuous speech processing (Xie et al., 2023). 619 
+
+Moreover, the sentence-level effects observed in the present study under noise conditions 620 
+
+suggest that, when background noise is present, reduced behavioral performance may partly stem 621 
+
+from limitations in higher-order cognitive processes involved in probabilistic word-sequence 622 
+
+processes, such as semantic integration. Finally, the interpretation of the dual-task effects— 623 
+
+namely, that dual-task interference in continuous speech perception primarily affects higher-624 
+
+order processing stages—is broadly consistent with the load theory of attention (Lavie, 2005; 625 
+
+Lavie & Tsal, 1994). According to this framework, increases in cognitive load, such as those 626 
+
+introduced by the visual working memory demands of our dual-task paradigm (also in Xie et al., 627 
+
+2023), preferentially impact later stages of stimulus processing, including memory and 628 
+
+behavioral output (Lavie, 2005; Murphy et al., 2016; however see for example, Sörqvist et al., 629 
+
+2012). 630 
+
+Selective versus divided attention in continuous speech processing 631 
+
+Prior research on auditory selective attention in continuous speech perception has shown that 632 
+
+neural tracking of linguistic representations at sublexical or sentence levels is robust for attended 633 
+
+speech but largely absent for unattended speech (Brodbeck et al., 2018a; Broderick et al., 2018). 634 
+
+In contrast, findings from the present study, together with those of Xie et al. (2023), indicate that 635 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+under bimodal divided attention, neural tracking at sublexical, word-form, and sentence levels is 636 
+
+attenuated but not abolished. Notably, the effects of bimodal divided attention emerged relatively 637 
+
+late, occurring after 200 ms. The effects of bimodal divided attention were even more limited 638 
+
+when comparing low- and high-load dual-task conditions. 639 
+
+As proposed by Xie et al. (2023), these differences in attentional modulation between 640 
+
+selective and divided attention may reflect distinct underlying mechanisms (Johnson & Zatorre, 641 
+
+2006; Loose et al., 2003). Selective attention costs are often attributed to “filter” mechanisms 642 
+
+that prioritize task-relevant information while suppressing irrelevant inputs (Broadbent, 1958; 643 
+
+Lachter et al., 2004). In contrast, the costs associated with divided attention are more likely to 644 
+
+arise from limitations in executive control required to coordinate concurrent task demands, rather 645 
+
+than from direct competition for shared sensory resources (Katus & Eimer, 2019; Loose et al., 646 
+
+2003). Nonetheless, future research is needed to more fully characterize the mechanisms that 647 
+
+differentiate continuous speech processing under selective versus divided attention. 648 
+
+Implications for domain-general cognitive processes in linguistic prediction 649 
+
+It remains an open question to what extent linguistic prediction during speech and language 650 
+
+comprehension relies on domain-general cognitive processes (Ryskin et al., 2020; Ryskin & 651 
+
+Nieuwland, 2023). The present findings, demonstrating divided attention effects on linguistic 652 
+
+context processing in continuous speech perception, together with prior evidence from studies of 653 
+
+selective attention, indicate that certain aspects of linguistic prediction may engage domain-654 
+
+general cognitive mechanisms. This appears particularly likely for predictive processes operating 655 
+
+over longer timescales (e.g., sentence-level context) and under acoustically challenging 656 
+
+conditions, such as in the presence of background noise. However, it remains unclear whether 657 
+
+these cognitive processes directly modulate linguistic prediction itself or instead influence 658 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+downstream measures that index predictive processing. Future research will be necessary to 659 
+
+dissociate these possibilities and to more precisely characterize the role of domain-general 660 
+
+cognitive processes in linguistic prediction during real-world speech comprehension. 661 
+
+Study limitations 662 
+
+The present study employed a fixed segment of multi-talker babble as the noise and presented at 663 
+
+a single signal-noise ratio of 5 dB. Prior research has demonstrated that the cognitive demands 664 
+
+associated with speech perception in noise vary with both noise types (e.g., Koelewijn et al., 665 
+
+2012; Xie et al., 2015) and signal-to-noise ratio (e.g., Zekveld et al., 2011, 2026). Hence, it 666 
+
+remains unclear whether the findings observed here extend to other types of background noise or 667 
+
+to more negative or favorable signal-to-noise ratios. In addition, the extent of dual-task costs may 668 
+
+depend on the specific characteristics of the tasks. For instance, dual-task interference may be 669 
+
+reduced when an auditory task is paired with a visual-object task rather than a visual-spatial, 670 
+
+such as the visuospatial n-back task used in the present study (Wahn & König, 2017). Future 671 
+
+work should therefore examine whether the effects of bimodal divided attention on continuous 672 
+
+speech processing vary across different combinations of auditory and visual tasks. 673 
+
+## Conclusion 674 
+
+This study suggests that bimodal divided attention may selectively disrupt cortical tracking of 675 
+
+sentence-level linguistic representations, while leaving sublexical and word-form processing 676 
+
+relatively unaffected during continuous speech perception in noise. Such impairments in higher-677 
+
+level linguistic processing may, in turn, contribute to the observed reductions in behavioral 678 
+
+speech comprehension during multitasking in noisy environments. 679 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+## References 680 
+
+Alexander, W. H., & Brown, J. W. (2018). Frontal cortex function as derived from hierarchical 681 
+
+predictive coding. Scientific Reports , 8(1), 3843. 682 
+
+Bechtold, B. (2020). Speech and Noise Corpora for Pitch Estimation of Human Speech (Version 683 
+
+1.1.0) [Dataset]. Zenodo. https://doi.org/10.5281/zenodo.3921794 684 
+
+Broadbent, D. E. (1958). Perception and communication . Pergamon Press. 685 
+
+Brodbeck, C., Bhattasali, S., Cruz Heredia, A. A., Resnik, P., Simon, J. Z., & Lau, E. (2022). 686 
+
+Parallel processing in speech perception with local and global representations of 687 
+
+linguistic context. eLife , 11 , e72056. https://doi.org/10.7554/eLife.72056 688 
+
+Brodbeck, C., Das, P., Gillis, M., Kulasingham, J. P., Bhattasali, S., Gaston, P., Resnik, P., & 689 
+
+Simon, J. Z. (2023). Eelbrain, a Python toolkit for time-continuous analysis with 690 
+
+temporal response functions. Elife , 12 , e85012. 691 
+
+Brodbeck, C., Hong, L. E., & Simon, J. Z. (2018a). Rapid Transformation from Auditory to 692 
+
+Linguistic Representations of Continuous Speech. Current Biology , 28 (24), 3976-693 
+
+3983.e5. https://doi.org/10.1016/j.cub.2018.10.042 694 
+
+Brodbeck, C., Hong, L. E., & Simon, J. Z. (2018b). Rapid transformation from auditory to 695 
+
+linguistic representations of continuous speech. Current Biology , 28 (24), 3976–3983. 696 
+
+Brodbeck, C., Jiao, A., Hong, L. E., & Simon, J. Z. (2020). Neural speech restoration at the 697 
+
+cocktail party: Auditory cortex recovers masked speech of both attended and ignored 698 
+
+speakers. PLOS Biology , 18 (10), e3000883. https://doi.org/10.1371/journal.pbio.3000883 699 
+
+Brodbeck, C., Kandylaki, K. D., & Scharenborg, O. (2024). Neural representations of non-native 700 
+
+speech reflect proficiency and interference from native language knowledge. Journal of 701 
+
+Neuroscience , 44 (1). 702 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Brodbeck, C., & Simon, J. Z. (2020). Continuous speech processing. Current Opinion in 703 
+
+Physiology , 18 , 25–31. https://doi.org/10.1016/j.cophys.2020.07.014 704 
+
+Broderick, M. P., Anderson, A. J., Di Liberto, G. M., Crosse, M. J., & Lalor, E. C. (2018). 705 
+
+Electrophysiological Correlates of Semantic Dissimilarity Reflect the Comprehension of 706 
+
+Natural, Narrative Speech. Current Biology , 28 (5), 803-809.e3. 707 
+
+https://doi.org/10.1016/j.cub.2018.01.080 708 
+
+Connine, C. M., Blasko, D. G., & Hall, M. (1991). Effects of subsequent sentence context in 709 
+
+auditory word recognition: Temporal and linguistic constrainst. Journal of Memory and 710 
+
+Language , 30 (2), 234–250. 711 
+
+Crosse, M. J., Di Liberto, G. M., Bednar, A., & Lalor, E. C. (2016). The multivariate temporal 712 
+
+response function (mTRF) toolbox: A MATLAB toolbox for relating neural signals to 713 
+
+continuous stimuli. Frontiers in Human Neuroscience , 10 , 604. 714 
+
+Delorme, A., & Makeig, S. (2004). EEGLAB: an open source toolbox for analysis of single-trial 715 
+
+EEG dynamics including independent component analysis. Journal of Neuroscience 716 
+
+Methods , 134 (1), 9–21. 717 
+
+Derawi, H., Reinisch, E., & Gabay, Y. (2022). Increased reliance on top-down information to 718 
+
+compensate for reduced bottom-up use of acoustic cues in dyslexia. Psychonomic 719 
+
+Bulletin & Review , 29 (1), 281–292. https://doi.org/10.3758/s13423-021-01996-9 720 
+
+Ding, N., & Simon, J. Z. (2012). Neural coding of continuous speech in auditory cortex during 721 
+
+monaural and dichotic listening. Journal of Neurophysiology , 107 (1), 78–89. 722 
+
+Erlbeck, H., KÃ¼bler, A., Kotchoubey, B., & Veser, S. (2014). Task instructions modulate the 723 
+
+attentional mode affecting the auditory MMN and the semantic N400. Frontiers in 724 
+
+Human Neuroscience , 8. https://doi.org/10.3389/fnhum.2014.00654 725 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Fishbach, A., Nelken, I., & Yeshurun, Y. (2001). Auditory edge detection: A neural model for 726 
+
+physiological and psychoacoustical responses to amplitude transients. Journal of 727 
+
+Neurophysiology , 85 (6), 2303–2323. 728 
+
+Ganong, W. F. (1980). Phonetic categorization in auditory word perception. Journal of 729 
+
+Experimental Psychology: Human Perception and Performance , 6(1), 110. 730 
+
+Gennari, S. P., Millman, R. E., Hymers, M., & Mattys, S. L. (2018). Anterior paracingulate and 731 
+
+cingulate cortex mediates the effects of cognitive load on speech sound discrimination. 732 
+
+NeuroImage , 178 , 735–743. 733 
+
+Gillis, M., Van Canneyt, J., Francart, T., & Vanthornhout, J. (2022). Neural tracking as a 734 
+
+diagnostic tool to assess the auditory pathway. Hearing Research , 426 , 108607. 735 
+
+Giovannone, N., & Theodore, R. M. (2021). Individual Differences in Lexical Contributions to 736 
+
+Speech Perception. Journal of Speech, Language, and Hearing Research , 64 (3), 707– 737 
+
+724. https://doi.org/10.1044/2020_JSLHR-20-00283 738 
+
+Gramfort, A., Luessi, M., Larson, E., Engemann, D. A., Strohmeier, D., Brodbeck, C., Goj, R., 739 
+
+Jas, M., Brooks, T., & Parkkonen, L. (2013). MEG and EEG data analysis with MNE-740 
+
+Python. Frontiers in Neuroinformatics , 7, 267. 741 
+
+Gwilliams, L., Linzen, T., Poeppel, D., & Marantz, A. (2018). In Spoken Word Recognition, the 742 
+
+Future Predicts the Past. The Journal of Neuroscience , 38 (35), 7585–7599. 743 
+
+https://doi.org/10.1523/JNEUROSCI.0065-18.2018 744 
+
+Hamilton, L. S., & Huth, A. G. (2020). The revolution will not be controlled: Natural stimuli in 745 
+
+speech neuroscience. Language, Cognition and Neuroscience , 35 (5), 573–582. 746 
+
+https://doi.org/10.1080/23273798.2018.1499946 747 
+
+Heafield, K. (2011). KenLM: Faster and smaller language model queries . 187–197. 748 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Hickok, G., & Poeppel, D. (2007). The cortical organization of speech processing. Nature 749 
+
+Reviews Neuroscience , 8(5), 393–402. 750 
+
+Hsin, C.-H., Chao, P.-C., & Lee, C.-Y. (2023). Speech comprehension in noisy environments: 751 
+
+Evidence from the predictability effects on the N400 and LPC. Frontiers in Psychology ,752 
+
+14 , 1105346. https://doi.org/10.3389/fpsyg.2023.1105346 753 
+
+Hsin, C.-H., & Lee, C.-Y. (2024). Noise Influence on Context Formation and Lexical Retrieval 754 
+
+in Speech Comprehension . SSRN. https://doi.org/10.2139/ssrn.4921233 755 
+
+Hubbard, R. J., & Federmeier, K. D. (2021). Dividing attention influences contextual facilitation 756 
+
+and revision during language comprehension. Brain Research , 1764 , 147466. 757 
+
+https://doi.org/10.1016/j.brainres.2021.147466 758 
+
+Johnson, J. A., & Zatorre, R. J. (2006). Neural substrates for dividing and focusing attention 759 
+
+between simultaneous auditory and visual events. NeuroImage , 31 (4), 1673–1681. 760 
+
+https://doi.org/10.1016/j.neuroimage.2006.02.026 761 
+
+Karunathilake, I. M. D., Brodbeck, C., Bhattasali, S., Resnik, P., & Simon, J. Z. (2025). Neural 762 
+
+Dynamics of the Processing of Speech Features: Evidence for a Progression of Features 763 
+
+from Acoustic to Sentential Processing. The Journal of Neuroscience , 45 (11), 764 
+
+e1143242025. https://doi.org/10.1523/JNEUROSCI.1143-24.2025 765 
+
+Kasper, R. W., Cecotti, H., Touryan, J., Eckstein, M. P., & Giesbrecht, B. (2014). Isolating the 766 
+
+neural mechanisms of interference during continuous multisensory dual-task 767 
+
+performance. Journal of Cognitive Neuroscience , 26 (3), 476–489. 768 
+
+Katus, T., & Eimer, M. (2019). The sources of dual-task costs in multisensory working memory 769 
+
+tasks. Journal of Cognitive Neuroscience , 31 (2), 175–185. 770 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Keuleers, E., Brysbaert, M., & New, B. (2010). SUBTLEX-NL: A new measure for Dutch word 771 
+
+frequency based on film subtitles. Behavior Research Methods , 42 (3), 643–650. 772 
+
+Koelewijn, T., Zekveld, A. A., Festen, J. M., & Kramer, S. E. (2012). Pupil dilation uncovers 773 
+
+extra listening effort in the presence of a single-talker masker. Ear and Hearing , 33 (2), 774 
+
+291–300. 775 
+
+Kuperberg, G. R., & Jaeger, T. F. (2016). What do we mean by prediction in language 776 
+
+comprehension? Language, Cognition and Neuroscience , 31 (1), 32–59. 777 
+
+Lachter, J., Forster, K. I., & Ruthruff, E. (2004). Forty-five years after Broadbent (1958): Still no 778 
+
+identification without attention. Psychological Review , 111 (4), 880. 779 
+
+Lam, B. P. W., Xie, Z., Tessmer, R., & Chandrasekaran, B. (2017). The Downside of Greater 780 
+
+Lexical Influences: Selectively Poorer Speech Perception in Noise. Journal of Speech, 781 
+
+Language, and Hearing Research , 60 (6), 1662–1673. 782 
+
+https://doi.org/10.1044/2017_JSLHR-H-16-0133 783 
+
+Lavie, N. (2005). Distracted and confused?: Selective attention under load. Trends in Cognitive 784 
+
+Sciences , 9(2), 75–82. 785 
+
+Lavie, N., & Tsal, Y. (1994). Perceptual load as a major determinant of the locus of selection in 786 
+
+visual attention. Perception & Psychophysics , 56 (2), 183–197. 787 
+
+Loftus, G. R., & Masson, M. E. (1994). Using confidence intervals in within-subject designs. 788 
+
+Psychonomic Bulletin & Review , 1(4), 476–490. 789 
+
+Loose, R., Kaufmann, C., Auer, D. P., & Lange, K. W. (2003). Human prefrontal and sensory 790 
+
+cortical activity during divided attention tasks. Human Brain Mapping , 18 (4), 249–259. 791 
+
+Maris, E., & Oostenveld, R. (2007). Nonparametric statistical testing of EEG-and MEG-data. 792 
+
+Journal of Neuroscience Methods , 164 (1), 177–190. 793 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Marslen-Wilson, W. D. (1987). Functional parallelism in spoken word-recognition. Cognition ,794 
+
+25 (1–2), 71–102. 795 
+
+Mattys, S. L., & Scharenborg, O. (2014). Phoneme categorization and discrimination in younger 796 
+
+and older adults: A comparative analysis of perceptual, lexical, and attentional factors. 797 
+
+Psychology and Aging , 29 (1), 150–162. https://doi.org/10.1037/a0035387 798 
+
+McAuliffe, M., Socolof, M., Mihuc, S., Wagner, M., & Sonderegger, M. (2017). Montreal 799 
+
+Forced Aligner: Trainable Text-Speech Alignment Using Kaldi. 2017 , 498–502. 800 
+
+Miller, E. K., & Cohen, J. D. (2001). An integrative theory of prefrontal cortex function. Annual 801 
+
+Review of Neuroscience , 24 (1), 167–202. 802 
+
+Morey, R. D., Rouder, J. N., Jamil, T., & Morey, M. R. D. (2022). BayesFactor: Computation of 803 
+
+Bayes Factors for Common Designs [Computer software]. https://CRAN.R-804 
+
+project.org/package=BayesFactor 805 
+
+Murphy, G., Groeger, J. A., & Greene, C. M. (2016). Twenty years of load theory—Where are 806 
+
+we now, and where should we go next? Psychonomic Bulletin & Review , 23 (5), 1316– 807 
+
+1340. 808 
+
+Obleser, J., & Kotz, S. A. (2011). Multiple brain signatures of integration in the comprehension 809 
+
+of degraded speech. NeuroImage , 55 (2), 713–723. 810 
+
+https://doi.org/10.1016/j.neuroimage.2010.12.020 811 
+
+Oostenveld, R., & Praamstra, P. (2001). The five percent electrode system for high-resolution 812 
+
+EEG and ERP measurements. Clinical Neurophysiology , 112 (4), 713–719. 813 
+
+Pion-Tonachini, L., Kreutz-Delgado, K., & Makeig, S. (2019). ICLabel: An automated 814 
+
+electroencephalographic independent component classifier, dataset, and website. 815 
+
+NeuroImage , 198 , 181–197. 816 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Ryskin, R., Levy, R. P., & Fedorenko, E. (2020). Do domain-general executive resources play a 817 
+
+role in linguistic prediction? Re-evaluation of the evidence and a path forward. 818 
+
+Neuropsychologia , 136 , 107258. https://doi.org/10.1016/j.neuropsychologia.2019.107258 819 
+
+Ryskin, R., & Nieuwland, M. S. (2023). Prediction during language comprehension: What is 820 
+
+next? Trends in Cognitive Sciences , 27 (11), 1032–1052. 821 
+
+https://doi.org/10.1016/j.tics.2023.08.003 822 
+
+Sarrett, M. E., McMurray, B., & Kapnoula, E. C. (2020). Dynamic EEG analysis during 823 
+
+language comprehension reveals interactive cascades between perceptual processing and 824 
+
+sentential expectations. Brain and Language , 211 , 104875. 825 
+
+https://doi.org/10.1016/j.bandl.2020.104875 826 
+
+Schneider, W., Eschman, A., & Zuccolotto, A. (2002). E-Prime: User’s guide. Reference guide. 827 
+
+Getting started guide . Psychology Software Tools, Incorporated. 828 
+
+Shain, C., Blank, I. A., Fedorenko, E., Gibson, E., & Schuler, W. (2022). Robust effects of 829 
+
+working memory demand during naturalistic language comprehension in language-830 
+
+selective cortex. Journal of Neuroscience , 42 (39), 7412–7430. 831 
+
+Shinn-Cunningham, B. G. (2008). Object-based auditory and visual attention. Trends in 832 
+
+Cognitive Sciences , 12 (5), 182–186. 833 
+
+Sohoglu, E., Beckers, L., & Davis, M. H. (2024). Convergent neural signatures of speech 834 
+
+prediction error are a biological marker for spoken word recognition. Nature 835 
+
+Communications , 15 (1), 9984. https://doi.org/10.1038/s41467-024-53782-5 836 
+
+Sörqvist, P., Stenfelt, S., & Rönnberg, J. (2012). Working Memory Capacity and Visual–Verbal 837 
+
+Cognitive Load Modulate Auditory–Sensory Gating in the Brainstem: Toward a Unified 838 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+View of Attention. Journal of Cognitive Neuroscience , 24 (11), 2147–2154. 839 
+
+https://doi.org/10.1162/jocn_a_00275 840 
+
+Strauß, A., Kotz, S. A., & Obleser, J. (2013). Narrowed Expectancies under Degraded Speech: 841 
+
+Revisiting the N400. Journal of Cognitive Neuroscience , 25 (8), 1383–1395. 842 
+
+https://doi.org/10.1162/jocn_a_00389 843 
+
+Team, R. C. (2022). R: A language and environment for statistical computing [Computer 844 
+
+software]. https://www.R-project.org/. 845 
+
+Varga, A., & Steeneken, H. J. (1993). Assessment for automatic speech recognition: II. 846 
+
+NOISEX-92: A database and an experiment to study the effect of additive noise on 847 
+
+speech recognition systems. Speech Communication , 12 (3), 247–251. 848 
+
+Vitevitch, M. S., & Luce, P. A. (1999). Probabilistic phonotactics and neighborhood activation in 849 
+
+spoken word recognition. Journal of Memory and Language , 40 (3), 374–408. 850 
+
+Vitevitch, M. S., & Luce, P. A. (2016). Phonological neighborhood effects in spoken word 851 
+
+perception and production. Annual Review of Linguistics , 2, 75–94. 852 
+
+Wahn, B., & König, P. (2017). Is attentional resource allocation across sensory modalities task-853 
+
+dependent? Advances in Cognitive Psychology .854 
+
+Xie, Z. (2025). Age and sentence context effects on auditory temporal processing in noise. JASA 855 
+
+Express Letters , 5(8), 084402. https://doi.org/10.1121/10.0038985 856 
+
+Xie, Z., Brodbeck, C., & Chandrasekaran, B. (2023). Cortical Tracking of Continuous Speech 857 
+
+Under Bimodal Divided Attention. Neurobiology of Language , 4(2), 318–343. 858 
+
+https://doi.org/10.1162/nol_a_00100 859 
+
+> .CC-BY-NC-ND 4.0 International license available under a was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made The copyright holder for this preprint (which this version posted May 1, 2026. ;https://doi.org/10.64898/2026.04.28.721419 doi: bioRxiv preprint
+
+Xie, Z., Maddox, W. T., Knopik, V. S., McGeary, J. E., & Chandrasekaran, B. (2015). Dopamine 860 
+
+receptor D4 (DRD4) gene modulates the influence of informational masking on speech 861 
+
+recognition. Neuropsychologia , 67 , 121–131. 862 
+
+Zekveld, A. A., Kramer, S. E., & Festen, J. M. (2011). Cognitive load during speech perception 863 
+
+in noise: The influence of age, hearing loss, and cognition on the pupil response. Ear and 864 
+
+Hearing , 32 (4), 498–510. 865 
+
+Zekveld, A. A., Visser, V. W., Kramer, S. E., Sangers, J., & Smits, C. (2026). The Influence of 866 
+
+Memory Load, Speech-to-Noise Ratio, and Stimulus Rehearsal on the Pupil Dilation 867 
+
+Response: Implications for the Assessment of Listening Effort. Journal of Speech, 868 
+
+Language, and Hearing Research , 1–16. 869
