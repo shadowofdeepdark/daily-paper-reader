@@ -1,0 +1,788 @@
+Title: Raising the Ceiling: Better Empirical Fixation Densities for Saliency Benchmarking
+
+URL Source: https://arxiv.org/pdf/2605.03885v1
+
+Published Time: Wed, 06 May 2026 01:22:51 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+## Raising the Ceiling: Better Empirical Fixation Densities for Saliency Benchmarking 
+
+Susmit Agrawal 1, Jannis Hollmann 1, and Matthias Kümmerer 1
+
+Tübingen AI Center, University of Tübingen, Germany 
+
+Abstract. Empirical fixation densities, spatial distributions estimated from human eye-tracking data, are foundational to saliency benchmark-ing. They directly shape benchmark conclusions, leaderboard rankings, failure case analyses, and scientific claims about human visual behavior. Yet the standard estimation method, fixed-bandwidth isotropic Gaussian KDE, has gone essentially unchanged for decades. This matters now more than ever: as the field shifts toward sample-level evaluation (failure case analysis, inverse benchmarking, per-image model comparison), reliable per-image density estimates become critical. We propose a principled mixture model that combines an adaptive-bandwidth KDE based on Abramson’s method, center bias and uniform components, and a state-of-the-art saliency model, to capture different spatial and semantic types of interobserver consistency, and optimize all parameters per image via leave-one-subject-out cross-validation. Our method yields substantially higher interobserver consistency estimates across multiple benchmarks, with median per-image gains of 5–15% in log-likelihood and up to 2 percentage points in AUC. For the most af-fected images — precisely those most relevant to failure case analysis — improvements exceed 25%. We leverage these improved estimates to identify and analyze remaining failure cases of state-of-the-art saliency models, demonstrating that significant headroom for model improvement remains. More broadly, our findings highlight that empirical fixation den-sities should not be treated as fixed ground truths but as evolving esti-mates that improve with better methodology. 
+
+Keywords: Fixation density estimation · Saliency benchmarking · In-terobserver consistency · Sample-level evaluation 
+
+1 Introduction 
+
+Humans sample visual information through sequences of fixations. While scan-path dynamics are informative [4, 17, 23, 29, 30, 48, 50, 51], for many purposes it suffices to ignore the sequential structure and treat fixations as samples from an unknown probability distribution over locations [2, 22, 24, 34, 52, 53]. This em-pirical fixation density —our best estimate of the spatial structure shared across observers—underpins saliency benchmarking, model evaluation, and scientific claims about visual attention.       
+
+> arXiv:2605.03885v1 [cs.CV] 5 May 2026 LL: 0.73 bit/fix LL: 0.47 bit/fix
+> old model LL: 1.19 bit/fix
+> new model 2015 2020 2025 First Public Date
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4 information gain [bit/fix]
+> DeepGaze MSDB
+> Clueify Emotiva
+> DeepGaze IIE
+> UNISAL SalFBNet TransSalNet GazeGAN MSI-NET
+> EML-NET
+> CASNet II DeepVA SalGAN SAM-VGG SAM-ResNet
+> DeepGaze II SALICON DeepGaze I ML-Net ICF
+> old ceiling
+> new ceiling
+> MIT300 (MIT/Tuebingen Saliency Benchmark)
+
+(a) 
+
+(b) 
+
+Fig. 1: (a) We propose a new model of empir-ical fixation densities that shows that existing methods sometimes substantially underesti-mated interobserver consistency. (b) This re-stores headroom on saliency benchmarks for future progress (see Appendix G for details). 
+
+Empirical fixation densities are not only used to report average benchmark performance; they in-creasingly drive how we reason about models. First, they define the interobserver consistency (IOC): the leave-one-subject-out predic-tive performance of human fix-ations against the density esti-mated from other observers [15, 55], which acts as the ceiling against which computational saliency mod-els are compared. Second, they en-able case studies and failure analy-sis by supporting reliable per-image 
+
+comparisons—for example, identify-ing images where models system-atically disagree with humans and characterizing the failure modes be-hind these errors [9,36,39,40]. Third, they are frequently used as stand-ins for saliency maps in downstream models of gaze and attention, including scanpath models, to avoid confounders introduced by imperfect intermediate saliency predictors [17, 47]. Crucially, the quality of an empirical density estimate can affect more than a single topline number. For metrics computed directly from fixation locations (e.g., log-likelihood, AUC, NSS), the estimated density primarily determines only the ceiling estimate (IOC), while model scores remain tied to the raw fixation data. In contrast, for also commonly used map-comparison metrics (e.g., CC, KL-divergence), the empirical density is itself the target map; changing the density changes model scores and can therefore affect rankings and scientific conclusions about which models are better [38]. This dependence becomes more consequential as the field shifts from ag-gregate leaderboard comparisons toward sample-level evaluation [19]: per-image analyses [54], inverse benchmarking [14] (finding stimuli of maximal model er-ror), and fine-grained failure mode characterization [9]. These settings require reliable per-image gold standards. If density estimates vary substantially in qual-ity across images, then sample-level conclusions can become unstable precisely for the images where detailed analysis matters most. Beyond benchmarking, interobserver consistency plays a broader method-ological role: it provides an estimate of the explainable variance in gaze be-havior [32, 37]. Statistical significance can establish that an effect exists, but comparing an effect’s explanatory power to the explainable variance indicates whether it is behaviorally meaningful. In practice, it is possible to obtain highly significant results that explain only a small fraction of what is explainable; with-2out a reliable topline, such results are difficult to calibrate. This calibration also benefits from sample-level analysis. Effects that are small on average may be highly consequential for specific subsets of images (e.g., rare but semantically important events). Both the topline estimate and its sample-level decomposition depend on accurate empirical fixation densities. Despite the importance of accurate density estimates across all of these set-tings, the estimation procedure has changed remarkably little. Bandwidth choice is typically justified heuristically—often motivated by foveal size [49] and “com-monly accepted” to be one degree of visual angle [42], despite there being “no governing rule” [10]. This status quo has become a practical bottleneck. State-of-the-art saliency models now match or exceed classical gold standard estimates on several benchmarks [36]. Since interobserver consistency is intended as a ceiling on achievable prediction performance, a model surpassing this ceiling signals that the ceiling estimate itself is too low: the density estimation method, not human consistency, is the limiting factor. When the ceiling is too low, both benchmark interpretation and sample-level failure analysis become unreliable. We introduce a principled mixture model framework for estimating empirical fixation densities that combines adaptive-bandwidth KDE based on Abramson’s method with center-bias and uniform components as spatial priors and a state-of-the-art saliency model as a semantic regularizer, with all parameters optimized per image via leave-one-subject-out (LOSO) cross-validation. Our contributions are: (i) the first application of adaptive-bandwidth KDE (Abramson’s method) to fixation density estimation, capturing multi-scale spatial structure; (ii) a mixture-model framework combining spatial and semantic components with per-image optimization; (iii) comprehensive empirical analysis showing substantially higher interobserver consistency across multiple datasets and the MIT/Tübingen Saliency Benchmark holdout sets; and (iv) per-image analysis revealing even larger improvements in the tail, which is crucial for sample-level benchmarking and case studies. We additionally introduce an improved density visualization method for meaningful qualitative comparison of fixation distributions. Our re-sults demonstrate that interobserver consistency is not a fixed property of a dataset but depends critically on the quality of density estimation. 
+
+2 Related Work 
+
+Fixation Density Estimation and Saliency Evaluation Kernel density es-timation has been the standard method for constructing empirical fixation den-sities since at least [56].The most common choice is a fixed-bandwidth isotropic Gaussian kernel, with bandwidth typically set to one degree of visual angle [8, 20, 42] or derived from rules of thumb such as Scott’s rule [17, 45]. Caldara and Miellet [10] note the absence of a principled bandwidth selection criterion. Due to historical reasons [25], fixation prediction models traditionally out-put saliency maps , which were originally conceived as internal representations rather than quantitative predictions and whose relationship to actual fixation be-havior was only loosely specified. Different evaluation metrics (e.g. AUC, NSS, 3CC, KL-divergence) imposed different implicit assumptions and often yielded contradictory rankings [8, 44, 55], making progress difficult to assess. To address this, a probabilistic evaluation framework was proposed [34,37] in which fixation prediction is cast as density estimation (see also [2,3]) and model performance is measured in information-theoretic units (bits per fixation). This framework motivates cross-validated bandwidth optimization and naturally ac-commodates mixture components such as center bias and uniform regularization. Mixture models provide a natural framework for incorporating prior knowl-edge into empirical density estimation. Center bias—the tendency to fixate near the image center—is well documented [12,49] and has been modeled as a separate mixture component in fixation prediction [34, 37]. Kümmerer and Bethge [34] introduced a three-component mixture (KDE, center bias, and uniform) with cross-validated bandwidth optimization. Kümmerer et al. [36] extended this with dataset-level bias parameters and per-image optimization of the mixture weights; despite this per-image optimization, state-of-the-art models still exceed the re-sulting consistency estimates. D’Agostino et al. [14] subsequently included a saliency model component in the mixture, but only as input for a scanpath model, not for density estimation. 
+
+Interobserver Consistency and Upper Bounds Interobserver consistency— how well one observer’s fixations can be predicted from those of others—provides a natural ceiling for fixation prediction models. Wilming et al. [55] derived lower and upper bounds for saliency metrics and showed that approximately 20 ob-servers suffice for a stable AUC upper bound. Judd et al. [27] used a single held-out observer to estimate performance ceilings on the MIT300 benchmark. Koehler et al. [31] provided per-category consistency estimates, revealing sub-stantial variation across image types. Engelke et al. [18] analysed consistency across different laboratories, and more recently, Wu et al. [57] examined cross-subject and cross-device consistency, finding that individual-to-average consis-tency varies substantially across observers and devices. Recently, [36] showed that state-of-the-art models can exceed classical consistency estimates, hinting at problems with current ceiling estimation methodology. De Haas et al. [21] showed that interobserver variability is structured along semantic dimensions (e.g., faces, text) rather than being pure noise, suggesting that the gap between individual observers and the average density contains systematic signal that bet-ter estimation methods might capture. 
+
+Adaptive Bandwidth Methods Adaptive bandwidth methods address a fun-damental limitation of fixed-bandwidth KDE: a single bandwidth cannot simul-taneously resolve fine structure in dense regions and avoid noise amplification in sparse regions. Early work on nearest-neighbor methods [6, 41] determined bandwidth from local data spacing, effectively adapting to local density. Abram-son [1] subsequently proposed scaling the bandwidth at each data point inversely with the square root of a pilot density estimate, yielding a simple and effective adaptive estimator. Despite their widespread use in spatial statistics, adaptive 4bandwidth methods have not previously been applied to fixation density estima-tion. Our approach combines adaptive bandwidth estimation with the mixture model framework reviewed above. 
+
+3 Methods 
+
+3.1 Background: Probabilistic Framework 
+
+We formulate fixation prediction as a density estimation problem following Küm-merer et al. [37]. Given an image I, we seek a probability density p(x | I) over spatial locations x = ( x, y ) that assigns high probability to locations where ob-servers fixate. Model quality is measured by the average log-likelihood assigned to held-out fixations, 
+
+L = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+log p(xi | I) , (1) where {xi}Ni=1 are fixation locations not used to fit p. This information-theoretic evaluation avoids the pathologies of map-comparison metrics and provides a principled, calibration-free measure in units of bits per fixation (after converting to log 2, an usually reported relative to a baseline model). The standard approach to constructing an empirical fixation density is Gaus-sian kernel density estimation. Given fixations {xj }Mj=1 from M observers on a single image, the fixed-bandwidth Gaussian KDE is 
+
+ˆpKDE (x) = 1
+
+M
+
+> M
+
+X
+
+> j=1
+
+N (x; xj , h 2I) , (2) where h is a scalar bandwidth and I the 2 × 2 identity matrix. In practice, 
+
+h is typically set to a fixed constant (often one degree of visual angle) and held constant across images. Evaluating Eq. 1 via leave-one-subject-out (LOSO) cross-validation—training on fixations from all but one observer and scoring on the held-out observer—yields the interobserver consistency (IOC), which serves as the ceiling against which saliency models are compared. 
+
+3.2 Mixture Model for Empirical Fixation Densities 
+
+A pure KDE must explain every fixation from the Gaussian kernels placed at other observers’ fixation locations alone. With only ∼15 observers per image (a typical number in eye-tracking datasets [11, 28]), this may be insufficient: some fixations fall in the tails of all training kernels, receiving very low probability. In particular, there is a set of fixation patterns that are common across all images— most prominently the well-documented center bias [12, 49]—that would need to be learned anew by the KDE for every image. We address this by embedding the KDE in a mixture model. For an image I
+
+with training fixations {xj }, the empirical density is 
+
+p(x | I) = wKDE ˆpKDE (x) + wCB pCB (x) + wU pU(x) + wS pS(x | I) , (3) 5where the weights satisfy P 
+
+> k
+
+wk = 1 , wk ≥ 0. Here ˆpKDE is the kernel density estimate from other observers’ fixations on the same image, pCB a center-bias prior estimated from all other images [37], pU = 1 /(W · H) a uniform regulariza-tion floor, and pS the density from a state-of-the-art saliency model (DeepGaze MSDB [36]). The KDE captures image-specific spatial structure (where do other observers look in this image), the center bias captures general spatial tenden-cies (where do people look in other images), and the saliency model captures general semantic tendencies (what image features do people look at in other images). The uniform component accounts for noise and idiosyncratic fixations. Together, they regularize the image-specific KDE with prior information that a small number of observers cannot provide on their own. 
+
+3.3 Adaptive Bandwidth KDE LL: 0.28 bits/fix 
+
+> constant bandwidth
+> LL: 1.44 bits/fix
+> adaptive bandwidth
+
+Fig. 2: Adaptive bandwidth KDE. Left: clas-sic fixed-bandwidth Gaussian KDE. Right: Abramson adaptive bandwidth KDE, where each source fixation contributes with a dif-ferent bandwidth determined by the pilot density estimate. Where fixations cluster, bandwidths shrink to preserve spatial detail; where fixations are sparse, bandwidths grow to remain smooth. In both cases, parameters are optimized for leave-one-subject-out pre-diction. 
+
+A fixed bandwidth h imposes the same spatial resolution everywhere: in regions where fixations cluster tightly (e.g., around a salient face), the kernels are too broad and blur genuine structure; in sparse regions (e.g., background), the same band-width may overfit to individual fix-ation locations. With only ∼15 ob-servers per image, this trade-off is especially acute. Abramson [1] proposed a sim-ple two-stage adaptive estimator. In the first stage , a pilot density ˜p
+
+is estimated. Here, we use a stan-dard fixed-bandwidth KDE with pi-lot bandwidth h0. In the second stage , each data point receives its own bandwidth inversely proportional to the square root of the pilot density evaluated at that point: hj = α√˜p(xj ) , where α is a proportionality constant. The adaptive KDE is then ˆpKDE (x) = 1
+
+> M
+
+PMj=1 N (x; xj , h 2 
+
+> j
+
+I). Where fixations are dense, the pilot density is high and bandwidths shrink, preserving fine-grained spatial structure. Where fixations are sparse, the pilot density is low and bandwidths grow, al-lowing the estimate to remain smooth rather than over-fitting to isolated points (see Figure 2). 
+
+3.4 Parameter Optimization 
+
+The full model has the following free parameters: for the KDE component, either a single bandwidth h (fixed-bandwidth KDE) or the pilot bandwidth h0 and scaling constant α (adaptive KDE); and for the mixture, one log-weight per regularizer component (center bias, uniform, saliency model). All parameters 6pooled KDE LOSO density Fig. 3: Locally crossvalidated density. Pooling all fixations into a single KDE (left) overfits to individual fixation positions. Our locally weighted averaging of LOSO mod-els (right) constructs a spatial density where each location is dominated by the fold that excluded the nearest observer, providing a more faithful density representation of interobserver consistency. 
+
+are optimized jointly per image by maximizing the LOSO cross-validated log-likelihood (Eq. 1). The entire computation graph is implemented in PyTorch and is fully differentiable, providing exact gradients and enabling efficient per-image optimization. Implementation details are provided in Appendix D. 
+
+3.5 LOSO Density Estimation 
+
+Many downstream uses require a single spatial density map per image—for vi-sualization, map-comparison metrics, or scanpath models. Simply pooling all fixations into one KDE introduces a subtle overfitting problem: each fixation has a kernel centered at its own location, inflating density at observed posi-tions (Figure 3, left). We instead construct a locally crossvalidated density via weighted averaging of LOSO models. The key property is that at each fixa-tion location, the density is dominated by the LOSO model that excluded that fixation’s observer: precisely the model used during cross-validated evaluation (Figure 3, right). Details are in Appendix B. All visualizations in this paper use the locally crossvalidated density. 
+
+3.6 Density Visualization 
+
+Fixation densities are most commonly visualized as heatmaps overlaid on the stimulus image [9]. However, standard approaches have systematic shortcomings: per-image normalization makes cross-image comparison impossible (a nearly uni-form distribution and a highly peaked one can appear equally “hot”), while shared color scales hide weaker structure and still provide only coarse qualitative im-pressions, obscuring quantitative structure such as the relative magnitude of secondary peaks. We propose a visualization that addresses both issues by combining a satu-rating heatmap with log-spaced contour lines . The heatmap expresses density as a ratio to the uniform density and applies a saturating nonlinearity, so that near-uniform distributions appear pale while peaked distributions saturate—enabling immediate cross-image comparison of overall “peakedness” without per-image rescaling. The contour lines are placed at density levels that are integer powers of a base γ relative to the uniform density, with a thicker line at the uniform level. 7Image Heatmap (Full Range)  
+
+> Heatmap (Shared Range)
+> Quantile Contours Our method
+
+Fig. 4: Comparison of density visualization methods on three images with increasing peakedness. For each image, we visualize our empirical density with four different meth-ods: Per-image heatmaps (first column) suggest strong patterns even in near-uniform distributions. Shared-scale heatmaps [7] (second column) enable comparison but ob-scure detail. Quantile contours [33, 36, 38, 40] (third column) overemphasize structure in uniform distributions and suppress secondary peaks in peaked ones. Our method (fourth column) combines a saturating heatmap anchored at uniform density with log-spaced contour lines, providing both immediate qualitative comparison across images and quantitative spatial detail within each image. 
+
+Each contour crossing thus represents a fixed multiplicative change in density, providing quantitative reference points that faithfully reflect the actual dynamic range—unlike quantile-based contours [33, 38], which can suggest strong spatial structure even in nearly uniform distributions. The exact formulas and parame-ter choices are given in Appendix C. Figure 4 compares our method against the mentioned alternatives (per-image heatmaps, shared-scale heatmaps, and quantile contours) on images spanning a range of peakedness. Our method avoids the pitfalls of each: it neither fabricates structure in uniform distributions nor hides weaker structure, and enables both qualitative and quantitative comparisons across and within images. 
+
+4 Experiments 
+
+4.1 Experimental Setup 
+
+We evaluate our method on four datasets spanning a range of observer counts: MIT1003 [28] (1003 images, 15 subjects), CAT2000 train split [5] (2000 images, 18 subjects), COCO-Freeview validation split [11, 58] (603 images, 10 subjects), and DAEMONS validation split [46] (200 images, 200 subjects). We additionally report results on the MIT300 [27], CAT2000 and COCO-Freeview test holdout sets from the MIT/Tübingen Saliency Benchmark [35]. We remove the artifact reported by [36] from the CAT2000 dataset (see also Appendix A). 81° kde +uni. +cb +DG              
+
+> 2.0
+> 2.2
+> 2.4
+> LL [bit/fix]
+> fixed 1° (most common) MIT/Tübingen benchmark
+> full model (ours)
+> MIT1003 1° kde +uni. +cb +DG
+> 1.7
+> 1.8
+> 1.9
+> 2.0
+> CAT2000 1° kde +uni. +cb +DG
+> 1.6
+> 1.8
+> 2.0
+> COCO-Freeview 1° kde +uni. +cb +DG
+> 1.5
+> 1.6
+> 1.7
+> DAEMONS kde type
+> adaptive
+> standard
+> parameter type
+> joint
+> per-image
+> DeepGaze MSDB
+
+Fig. 5: Interobserver Consistency Estimates: For four datasets, we compare estimates of inter-observer consistency (IOC) using different variants of our proposed model. We vary the KDE type (classic vs. Abramson adaptive bandwidth), the optimization procedure (global vs. per-image), and the mixture components (KDE only, KDE with uniform and center bias, and full model with additional DeepGaze MSDB component). For comparison we also add the commonly used Gaussian KDE with a fixed bandwidth of one degree of visual angle, which is not optimized for the data. 
+
+Our primary metric is log-likelihood (LL), measured in bits per fixation rela-tive to a uniform basline model [37]. Log-likelihood is information-theoretic, un-bounded above, and—unlike AUC—does not saturate as models improve, mak-ing it ideal for detecting differences between high-performing density estimates. We report AUC as secondary metric for comparability with prior work. The baseline follows the current MIT/Tübingen Saliency Benchmark proto-col: a fixed-bandwidth Gaussian KDE (Eq. 2) mixed with uniform and center bias components, with all parameters optimized jointly across the dataset. The full model uses the mixture defined in Eq. 3: adaptive-bandwidth KDE via Abram-son’s method (Sec. 3.3), uniform and center bias components, and DeepGaze MSDB [36] as a saliency regularizer. DeepGaze MSDB was trained jointly on all four development datasets plus FIGRIM, making it well-suited as a cross-image semantic prior; for each image, we use a checkpoint trained without ever seeing that image to ensure proper cross-validation of the saliency component. All parameters are optimized per image via leave-one-subject-out (LOSO) cross-validation (Sec. 3.4), yielding image-specific density estimates. To trace where improvements originate, we also run differently ablated model variants, including the still commonly used fixed-bandwidth KDE with one degree of visual angle. We extend our analysis to video with the LEDOV video saliency dataset [26] (538 videos, 32 subjects). For the saliency model component in this setting, in place of DeepGaze MSDB, we use UniformerSal [16], one of the best-performing models on this dataset. 
+
+4.2 Results Interobserver consistency is substantially higher than previously es-timated. Figure 5 traces the progression from baseline density estimation to our full model across four datasets. In all cases, the full model yields substan-tially higher IOC estimates—gains range from approximately 0.15 to 0.4 bit/fix depending on dataset characteristics. These improvements are confirmed on held-out benchmark data (Table 1, Figure 1), where we observe consistent gains in both information-theoretic and AUC-based metrics. 9Table 1: Interobserver consistency estimates on the MIT/Tübingen Saliency Bench-mark holdout sets. We compare the old method used in the Benchmark so far against our new method, and include the current SOTA model on all three datasets, DeepGaze MSDB. We find substantially higher IOC estimates on all datasets dataset MIT300 CAT2000 COCO-Freeview IG AUC IG AUC IG AUC model DeepGaze MSDB 1.26 89.4% 0.52 88.7% 1.07 89.7% old IOC estimate 1.34 89.9% 0.49 88.5% 0.87 88.3% new IOC estimate 1.45 90.5% 0.59 89.1% 1.14 90.0% 
+
+Notably, the still commonly used fixed-bandwidth KDE with one degree of visual angle performs so poorly that we truncate it in most panels to preserve vis-ibility of other effects—a clear indication that this practice should be abandoned in favor of optimized alternatives. The improved estimates also clarify the gap between current models and human consistency: under the old methodology, IOC appeared below DeepGaze MSDB on nearly all datasets, but our new estimates restore a meaningful ceiling, indicating that substantial room for model improvement remains. 
+
+Individual images can gain far more than the dataset average. Table 2 reveals that per-image improvements substantially exceed the dataset averages. While median gains are already meaningful (0.21–0.26 bit/fix in LL, 1.1–1.7 percentage points in AUC), the 95th and 99th percentiles reach 2–3 × these val-ues. Maximum improvements approach 0.73 bit/fix in LL and exceed 5.3% in AUC—for context, the entire gap between center bias and state-of-the-art models on MIT1003 is approximately 1.2 bit/fix. Figure 6 illustrates images achieving the largest gains from baseline to our full model. Notably, LL and AUC im-provements are driven by complementary failure modes: LL gains are largest on images with tightly clustered fixations, where fixed-bandwidth kernels blur fine 
+
+Table 2: Per-image improvement quantiles for the full model over the baseline model across datasets. We report improvements as differences in LL and AUC, and for LL additionally relative improvements compared to the baseline performance. MIT1003 CAT2000 COCO-Freeview DAEMONS Quantile LL LL rel AUC LL LL rel AUC LL LL rel AUC LL LL rel AUC 50% 0.21 0.10 1.1% 0.11 0.06 0.7% 0.26 0.15 1.7% 0.08 0.05 0.7% 75% 0.28 0.14 1.6% 0.14 0.08 1.0% 0.33 0.20 2.3% 0.10 0.07 0.9% 95% 0.39 0.26 2.7% 0.20 0.12 1.6% 0.43 0.35 3.5% 0.13 0.13 1.4% 99% 0.54 0.40 3.8% 0.23 0.16 2.1% 0.50 0.51 4.7% 0.14 0.15 1.7% 100% 0.73 2.23 5.3% 0.33 0.32 3.6% 0.68 0.85 5.5% 0.17 0.20 2.0% 
+
+10 LL: 0.726 bits/fix LL: 0.682 bits/fix LL: 0.651 bits/fix AUC: 5.49% AUC: 5.28%         
+
+> 2.139 bits/fix 0.800 bits/fix 2.891 bits/fix 76.22% 73.13%
+> 2.865 bits/fix 1.482 bits/fix 3.543 bits/fix 81.72% 78.41%
+
+Fig. 6: Images where LOSO prediction improves most from baseline to full model in terms of LL or AUC. 
+
+structure, while AUC gains dominate on images with dispersed fixations, where the baseline overfits to sparse samples. This dichotomy has direct implications for sample-level analyses such as failure case studies or inverse benchmarking: the old density estimates were most inadequate precisely for the images where accurate estimation matters most. 
+
+Adaptive bandwidth and saliency regularization are the main drivers. 
+
+Figure 5 also includes the commonly used fixed one-degree bandwidth KDE (of-ten cut off due to substantially worse performance) and intermediate ablation variants. Adaptive KDE alone—without any regularizers—already yields sub-stantial gains across all datasets. By adapting bandwidths to local data density, it provides implicit regularization that captures multi-scale spatial structure. Notably, this holds even on DAEMONS (200 subjects/image), indicating the benefit stems from fundamentally better density estimation rather than merely compensating for sparse data. The saliency regularizer (DeepGaze MSDB) con-tributes significant additional gains, but its magnitude is dataset-dependent: large on COCO-Freeview (10 subjects/image), modest on DAEMONS. This clean interaction—fewer observers yield more benefit from cross-image semantic priors—confirms that the regularizer fills gaps left by limited fixation counts. Per-image bandwidth optimization provides the smallest aggregate contribution but remains important for specific images. Figure 7 reveals that each component rescues a distinct failure mode. Per-image optimization shows the largest effect on images where object size deviates strongly from the global average bandwidth—small faces requiring narrow ker-nels, or global scene layouts requiring broad ones. Adaptive KDE contributes most when small and large structures co-occur within the same image, where no single bandwidth suffices. The saliency regularizer provides the greatest benefit for small objects with too few fixations to estimate shape, or for images dense with many interesting objects where per-object fixation counts are low. Criti-11 LL: 0.50 bits/fix AUC: 3.09% LL: 0.44 bits/fix AUC: 3.61% LL: 0.49 bits/fix AUC: 4.55%              
+
+> Before
+> 4.03 bits/fix 73.13% 2.15 bits/fix 83.48% 3.19 bits/fix 81.68%
+> After
+> 4.53 bits/fix 76.22% 2.59 bits/fix 87.09% 3.68 bits/fix 86.23%
+> Baseline Per-image Adaptive KDE + DeepGaze
+
+Fig. 7: Per-component case studies. Starting with a classic Gaussian KDE with uniform and centerbias mixture components and parameters optimized on the full dataset, we (1) change to parameters optimized per image, (2) switch to Abramson adaptive bandwidth KDE, and (3) add the DeepGaze MSDB mixture component. For each step, we show the two images where performance improves most in terms of LL and AUC. See Appendix E for extended per-image analyses for each step, also including even simpler model variants. 
+
+cally, all three components yield gains of similar magnitude on their respective most-affected images ( ∼0.5 bit/fix in LL, 3–5% in AUC). See Appendix E for extended per-image analyses for each step. 
+
+Cross-validation design matters: LOSO and LOFO yield different con-sistency estimates. All results above use leave-one-subject-out (LOSO) cross-validation, which estimates how well fixations from a new, previously unseen observer can be predicted. An alternative is leave-one-fixation-out (LOFO) cross-validation, which holds out individual fixations rather than entire subjects. LOFO estimates how well a new fixation from an unknown subject within a 
+
+known pool of observers can be predicted—it conditions on knowledge of the subject population without knowing which subject produced a given fixation. Which design is appropriate depends on the benchmark: MIT300, where test fixations come from genuinely different observers recorded years later [27], calls for LOSO; benchmarks where the same subjects appear in both training and test sets are better served by LOFO. We use LOSO throughout this paper because it answers the more practically relevant question “how well can we predict a new observer?”, which is the setting faced by most applications and also the stan-dard interpretation of interobserver consistency. However, all of our proposed improvements apply equally to LOFO estimation. Figure 8a compares LOSO and LOFO on a crossvalidation fold of MIT1003 (75 images) for our full model across three DeepGaze configurations: no saliency model, a DeepGaze variant trained in a matched LOSO fashion (excluding the 12 No DG LOSO DG All Subjects DG Deepgaze regularizer  
+
+> 2.12
+> 2.14
+> 2.16
+> 2.18
+> 2.20
+> 2.22
+> 2.24
+> 2.26 IG [bits/fix]
+> cv_type
+> loso
+> lofo LOSO LOFO Crossvalidation type
+> 2.2
+> 2.3
+> 2.4
+> 2.5
+> 2.6 IG (bits/fix)
+> model_type
+> crossval
+> upper
+
+(a) (b) 
+
+Fig. 8: Cross-validation design for interobserver consistency estimation on MIT1003. (a) LOSO vs. LOFO cross-validation for our full model with different DeepGaze config-urations. LOFO consistently yields higher consistency estimates, reflecting its access to subject pool information. The difference between the standard DeepGaze MSDB and a LOSO-trained variant is small, justifying the use of the standard model. (b) Crossvali-dated vs. pooled (“upper”) density estimation. Pooled estimates, which include each fix-ation’s own kernel, overfit by 0.30–0.35 bit/fix compared to proper cross-validation. The LOSO–LOFO difference (small within each group) is dwarfed by the crossvalidation– pooling gap. 
+
+test subject’s data from DeepGaze training), and the standard DeepGaze MSDB. LOFO consistently yields higher consistency estimates than LOSO (2.25 vs. 2.22 bit/fix with standard DeepGaze, a gap of 0.04 bit/fix), as expected: condi-tioning on the known subject pool provides strictly more information. The gap is largest without any saliency model component (0.06 bit/fix), suggesting that DeepGaze already captures some between-subject variation. A secondary concern is that our standard DeepGaze MSDB was trained on data including the test subjects’ fixations, potentially leaking subject-specific information into the LOSO evaluation. Comparing against the LOSO-trained DeepGaze variant reveals a difference of only 0.014 bit/fix, confirming that this leakage is minor. We therefore use the standard DeepGaze MSDB throughout, accepting this small methodological impurity to avoid the substantial compu-tational cost of training separate LOSO DeepGaze models for each fold and dataset. 
+
+Pooled fixation densities massively overfit and should be replaced by crossvalidated estimates. A common practice in saliency benchmarking is to estimate interobserver consistency by pooling all observers’ fixations into a single density without cross-validation of the KDE—the approach currently used for the “upper gold standard” on the MIT/Tübingen Saliency Benchmark [35]. Unlike proper cross-validation, this pooled estimate includes each fixation’s own kernel in the density used to evaluate it, inflating scores at observed fixation positions. 13 Image                
+
+> IG : -1.07 bit/fix IG : -0.89 bit/fix IG : -0.87 bit/fix IG : -0.86 bit/fix IG : -0.85 bit/fix IG : -0.84 bit/fix
+> Empirical density  IG : 2.72 bit/fix IG : 3.22 bit/fix IG : 3.31 bit/fix IG : 2.44 bit/fix IG : 3.04 bit/fix IG : 2.27 bit/fix
+> DeepGaze MSDB  IG : 1.65 bit/fix IG : 2.32 bit/fix IG : 2.44 bit/fix IG : 1.59 bit/fix IG : 2.20 bit/fix IG : 1.43 bit/fix
+> Pixel wise IG difference
+
+Fig. 9: Remaining SOTA model failures. We show the six images where DeepGaze MSDB [36] loses most performance compared to our improved empirical density, in terms of LL. Pixel-space information gain [37] reveals precisely where model predictions are most discrepant from the empirical density. We find clear failure categories such as paintings, context-dependent saliency, and semantic text importance. 
+
+Figure 8b quantifies the resulting overfitting. Pooled estimates exceed their properly crossvalidated counterparts by 0.30–0.35 bit/fix—an overestimation comparable in magnitude to the entire improvement from baseline to full model reported in Section 4.2. We therefore recommend that benchmarks replace pooled “upper” gold standards with properly crossvalidated estimates: LOFO as the primary within-dataset ceiling (since most benchmarks share subjects between training and test), supplemented by LOSO to characterize generalization to new observers. An extended analysis across all DeepGaze configurations (Appendix H, Fig-ure 23) reveals that the overfitting is most severe without a saliency model component (0.52 bit/fix for LOSO) and, strikingly, that the ordering between DeepGaze variants reverses between crossvalidated and pooled evaluation: adding DeepGaze improves crossvalidated estimates but decreases pooled scores, be-cause without DeepGaze the KDE receives all mixture weight and the self-prediction artifact is amplified. This reversal confirms that pooled estimates reflect the degree of self-prediction rather than genuine predictive performance. 
+
+Better density estimates reveal previously hidden SOTA model fail-ures. To demonstrate the practical value of improved density estimation, we compare per-image performance of DeepGaze MSDB [36], the current state-of-the-art saliency model, against our improved IOC estimate. Figure 9 shows the 14 six images where DeepGaze MSDB loses most log-likelihood; pixel-wise informa-tion gain maps [37] reveal precisely where predictions diverge from the empirical density in data-relevant locations. Three failure categories emerge. First, two of the six worst images are paintings. Second, the model struggles with context-dependent saliency: objects that are not inherently salient but become so due to scene composition, such as road markings in the foreground of a river scene. Third, DeepGaze predicts visually prominent text (large fonts, special styling) rather than semantically important text (e.g., an artist name on a small ticket). The quality of the density estimate determines which failures are visible: the original DeepGaze MSDB paper [36] performed a similar failure analysis us-ing the old IOC but identified different failure images with much smaller errors (0.2–0.35 bit/fix vs. 0.84–1.0 bit/fix here). Improved density estimation increases the signal-to-noise ratio of per-image analysis, allowing genuine model failures to surface more reliably rather than being obscured by noise in the gold stan-dard itself. These results indicate substantial remaining headroom for model improvement, with concrete directions: better handling of unusual image types, context-dependent saliency, and semantic text importance. kde +uniform +center bias  
+
+> +sal
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> LL [bit/fix]
+> LEDOV (Video Saliency) kde type
+> adaptive
+> standard
+> parameter type
+> global
+> per_video
+> per_frame
+> UniformerSal
+
+Fig. 10: Extension to video: IOC estimates on LEDOV for different model variants and optimization granularities. Our full model reveals substantial headroom beyond what standard methodology suggested. 
+
+Video saliency is far from solved. We extend our framework to video saliency on LEDOV (Fig-ure 10). In the video setting, only 
+
+∼30ms of gaze data is available per subject and frame, making den-sity estimation particularly chal-lenging. Under standard method-ology, UniformerSal (1.91 bit/fix) nearly matches IOC (2.00 bit/fix), suggesting the benchmark is solved. Our framework revises this dramat-ically: IOC rises to 3.05 bit/fix, re-vealing that SOTA leaves more than half the explainable information unexplained. In this low-data regime, the video saliency model provides semantic and dynamic scaffolding while adaptive band-widths prevents oversmoothing or overfitting. 
+
+5 Discussion and Conclusion 
+
+Our results demonstrate that interobserver consistency—the ceiling against which saliency models are measured—is not a fixed property of a dataset but an evolv-ing estimate that depends critically on the quality of density estimation. As estimation methods improve, the ceiling rises, benchmark headroom increases, and sample-level analyses become more reliable. This has a practical implica-tion: benchmarks should be periodically re-evaluated with improved estimation 15 methods rather than treated as static. We will make the code of our method available for easy application. 
+
+Modularity and implications for model development. Our framework is modular: substantial gains accrue even without a saliency model component. This matters because strong saliency models exist mainly for natural scene free-viewing; in ap-plied domains such as radiology, pathology, or driving, no comparably effective model is available. Where no suitable model exists, adaptive-bandwidth KDE with per-image optimization becomes the critical improvement. Beyond raising the ceiling, improved density estimates enable sharper failure case analysis: the images where DeepGaze MSDB underperforms (Fig. 9) reveal concrete failure modes—context-dependent saliency, paintings, semantic text—that provide ac-tionable directions for continued model development. 
+
+Practical recommendations. At minimum, bandwidth should be optimized via leave-one-subject-out cross-validation rather than set to a fixed default—this costs almost nothing and always helps. Better yet, adaptive-bandwidth KDE (Abramson’s method) captures multi-scale spatial structure even with many observers. If a suitable saliency model exists, including it as a mixture component provides additional gains, especially with few observers. Per-image parameter optimization should be the default, particularly with variable image content or few observers. Finally, for comparability, estimation method and parameters should always be documented. Practitioners should also choose between LOSO and LOFO cross-validation based on their benchmark design: LOSO when test subjects are genuinely different from training subjects (e.g., MIT300), LOFO when the subject pool is shared between training and test sets. In either case, properly crossvalidated estimates should replace pooled “upper” gold standards, which we show overfit substantially (Section 4.2). 
+
+Limitations. Including a saliency model in the empirical density may seem cir-cular, but the concern is misplaced: the saliency model contributes cross-image information—what image features people tend to fixate on across other images— that complements the image-specific KDE. It regularizes sparse fixation data with learned semantic priors without ever seeing the held-out fixation being eval-uated. Per-image optimization incurs computational cost, but our PyTorch im-plementation with GPU acceleration makes this tractable for standard datasets. Finally, our results depend on DeepGaze MSDB quality; as saliency models im-prove, density estimates will improve further. This is a feature, not a bug: the gold standard should track methodological progress. 
+
+Conclusion. The ceiling for fixation prediction is substantially higher than previ-ously estimated, restoring meaningful headroom for model improvement across images, video, and applied domains. Empirical fixation densities are evolving estimates that improve with better methodology. 16 Acknowledgements 
+
+SA was supported by the German Research Foundation (DFG): SFB 1233, Ro-bust Vision: Inference Principles and Neural Mechanisms, TP C2, project num-ber: 276693517. SA thanks the International Max Planck Research School for Intelligent Systems (IMPRS-IS) for support. 
+
+References 
+
+1. Abramson, I.S.: On Bandwidth Variation in Kernel Estimates-A Square Root Law. The Annals of Statistics 10 (4), 1217–1223 (Dec 1982). https://doi.org/10.1214/ aos/1176345986 
+
+2. Baddeley, R.J., Tatler, B.W.: High frequency edges (but not contrast) predict where we fixate: A Bayesian system identification analysis. Vision Research 46 (18), 2824–2833 (Sep 2006). https://doi.org/10.1016/j.visres.2006.02.024 
+
+3. Barthelmé, S., Trukenbrod, H., Engbert, R., Wichmann, F.: Modeling fixation locations using spatial point processes. Journal of Vision 13 (12), 1–1 (Oct 2013). 
+
+https://doi.org/10.1167/13.12.1 
+
+4. Boccignone, G., Ferraro, M.: Modelling gaze shift as a constrained random walk. Physica A: Statistical Mechanics and its Applications 331 (1), 207–218 (Jan 2004). 
+
+https://doi.org/10.1016/j.physa.2003.09.011 
+
+5. Borji, A., Itti, L.: CAT2000: A Large Scale Fixation Dataset for Boosting Saliency Research. CVPR 2015 workshop on "Future of Datasets" (2015) 6. Breiman, L., Meisel, W., Purcell, E.: Variable Kernel Estimates of Multivariate Densities. Technometrics 19 (2), 135–144 (May 1977). https://doi.org/10.1080/ 00401706.1977.10489521 
+
+7. Bruce, N.D.B., Tsotsos, J.K.: Saliency, attention, and visual search: An information theoretic approach. Journal of Vision 9(3), 5–5 (Mar 2009). https://doi.org/ 10.1167/9.3.5 
+
+8. Bylinskii, Z., Judd, T., Oliva, A., Torralba, A., Durand, F.: What do different evaluation metrics tell us about saliency models? IEEE Transactions on Pattern Analysis and Machine Intelligence pp. 1–1 (2018). https://doi.org/10.1109/ TPAMI.2018.2815601 
+
+9. Bylinskii, Z., Recasens, A., Borji, A., Oliva, A., Torralba, A., Durand, F.: Where Should Saliency Models Look Next? In: Computer Vision – ECCV 2016. pp. 809– 824. Lecture Notes in Computer Science, Springer, Cham (Oct 2016). https:// doi.org/10.1007/978-3-319-46454-1_49 
+
+10. Caldara, R., Miellet, S.: iMap: A novel method for statistical fixation mapping of eye movement data. Behavior Research Methods 43 (3), 864–878 (Sep 2011). 
+
+https://doi.org/10.3758/s13428-011-0092-x 
+
+11. Chen, Y., Yang, Z., Chakraborty, S., Mondal, S., Ahn, S., Samaras, D., Hoai, M., Zelinsky, G.: Characterizing Target-Absent Human Attention. In: Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition. pp. 5031–5040 (2022) 12. Clarke, A.D.F., Tatler, B.W.: Deriving an appropriate baseline for describing fix-ation behaviour. Vision Research 102 , 41–51 (Sep 2014). https://doi.org/10. 1016/j.visres.2014.06.016 
+
+13. Cousineau, D.: Confidence intervals in within-subject designs: A simpler solution to Loftus and Masson’s method. Tutorials in Quantitative Methods for Psychology 
+
+1(1), 42–45 (Sep 2005). https://doi.org/10.20982/tqmp.01.1.p042 
+
+17 14. D’Agostino, F., Schwetlick, L., Bethge, M., Kuemmerer, M.: What Moves the Eyes: Doubling Mechanistic Model Performance Using Deep Networks to Discover and Test Cognitive Hypotheses. In: The Thirty-ninth Annual Conference on Neural Information Processing Systems (Oct 2025) 15. Dorr, M., Martinetz, T., Gegenfurtner, K.R., Barth, E.: Variability of eye move-ments when viewing dynamic natural scenes. Journal of Vision 10 (10), 28–28 (Aug 2010). https://doi.org/10.1167/10.10.28 
+
+16. El-Jiz, P., Kümmerer, M., Tangemann, M., Bethge, M., Bartels, A., Bannert, M.: Isolating the Role of Temporal Information in Video Saliency: A Controlled Exper-imental Analysis. In: 2026 IEEE Winter Conference on Applications of Computer Vision (WACV) (2026) 17. Engbert, R., Trukenbrod, H.A., Barthelmé, S., Wichmann, F.A.: Spatial statistics and attentional dynamics in scene viewing. Journal of Vision 15 (1), 14–14 (Jan 2015). https://doi.org/10.1167/15.1.14 
+
+18. Engelke, U., Liu, H., Wang, J., Le Callet, P., Heynderickx, I., Zepernick, H.J., Maeder, A.: Comparative Study of Fixation Density Maps. IEEE Transactions on Image Processing 22 (3), 1121–1133 (Mar 2013). https://doi.org/10.1109/TIP. 2012.2227767 
+
+19. Ghosh, A., Dziadzio, S., Prabhu, A., Udandarao, V., Albanie, S., Bethge, M.: ONEBench to Test Them All: Sample-Level Benchmarking Over Open-Ended Ca-pabilities. In: Che, W., Nabende, J., Shutova, E., Pilehvar, M.T. (eds.) Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Vol-ume 1: Long Papers). pp. 32445–32481. Association for Computational Linguistics, Vienna, Austria (Jul 2025). https://doi.org/10.18653/v1/2025.acl-long.1560 
+
+20. Gide, M.S., Karam, L.J.: A Locally Weighted Fixation Density-Based Metric for Assessing the Quality of Visual Saliency Predictions. IEEE Transactions on Image Processing 25 (8), 3852–3861 (Aug 2016). https://doi.org/10.1109/TIP.2016. 2577498 
+
+21. de Haas, B., Iakovidis, A.L., Schwarzkopf, D.S., Gegenfurtner, K.R.: Individual differences in visual salience vary along semantic dimensions. Proceedings of the National Academy of Sciences p. 201820553 (May 2019). https://doi.org/10. 1073/pnas.1820553116 
+
+22. Henderson, J.M.: Human gaze control during real-world scene perception. Trends in Cognitive Sciences 7(11), 498–504 (Nov 2003). https://doi.org/10.1016/j. tics.2003.09.006 
+
+23. Hoppe, D., Rothkopf, C.A.: Multi-step planning of eye movements in visual search. Scientific Reports 9(1), 1–12 (Jan 2019). https://doi.org/10.1038/s41598-018-37536-0 
+
+24. Itti, L., Koch, C.: Comparison of feature combination strategies for saliency-based visual attention systems. In: Human Vision and Electronic Imaging IV. vol. 3644, pp. 473–483. International Society for Optics and Photonics (May 1999). https: //doi.org/10.1117/12.348467 
+
+25. Itti, L., Koch, C., Niebur, E.: A model of saliency-based visual attention for rapid scene analysis. IEEE Transactions on pattern analysis and machine intelligence 
+
+20 (11), 1254–1259 (1998) 26. Jiang, L., Xu, M., Liu, T., Qiao, M., Wang, Z.: DeepVS: A Deep Learning Based Video Saliency Prediction Approach. In: Proceedings of the European Conference on Computer Vision (ECCV). pp. 602–617 (2018) 27. Judd, T., Durand, F., Torralba, A.: A Benchmark of Computational Models of Saliency to Predict Human Fixations. MIT Tech Report (Jan 2012) 
+
+18 28. Judd, T., Ehinger, K., Durand, F., Torralba, A.: Learning to predict where humans look. In: Computer Vision, 2009 IEEE 12th International Conference On. pp. 2106– 2113. IEEE (2009) 29. Kadner, F., Thomas, T., Hoppe, D., Rothkopf, C.A.: Improving Saliency Models’ Predictions of the Next Fixation With Humans’ Intrinsic Cost of Gaze Shifts. In: Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision. pp. 2104–2114 (2023) 30. Klein, R.M.: Inhibition of return. Trends in Cognitive Sciences 4(4), 138–147 (Apr 2000). https://doi.org/10.1016/S1364-6613(00)01452-2 
+
+31. Koehler, K., Guo, F., Zhang, S., Eckstein, M.P.: What do saliency models predict? Journal of Vision 14 (3), 14–14 (Mar 2014). https://doi.org/10.1167/14.3.14 
+
+32. Kriegeskorte, N., Mur, M., Bandettini, P.A.: Representational similarity analysis -connecting the branches of systems neuroscience. Frontiers in Systems Neuroscience 
+
+2 (Nov 2008). https://doi.org/10.3389/neuro.06.004.2008 
+
+33. Kümmerer, M.: Matthias-k/pysaliency (Feb 2026) 34. Kümmerer, M., Bethge, M.: Predicting Visual Fixations. Annual Review of Vision Science 9(1), 269–291 (Sep 2023). https://doi.org/10.1146/annurev-vision-120822-072528 
+
+35. Kümmerer, M., Bylinskii, Z., Judd, T., Borji, A., Itti, L., Durant, F., Oliva, A., Tor-ralba, A., Bethge, M.: MIT/Tuebingen Saliency Benchmark. saliency.tuebingen.ai 36. Kümmerer, M., Khanuja, H., Bethge, M.: Modeling Saliency Dataset Bias (May 2025). https://doi.org/10.48550/arXiv.2505.10169 
+
+37. Kümmerer, M., Wallis, T.S.A., Bethge, M.: Information-theoretic model compar-ison unifies saliency metrics. Proceedings of the National Academy of Sciences 
+
+112 (52), 16054–16059 (Dec 2015). https://doi.org/10.1073/pnas.1510393112 
+
+38. Kümmerer, M., Wallis, T.S.A., Bethge, M.: Saliency Benchmarking Made Easy: Separating Models, Maps and Metrics. In: Ferrari, V., Hebert, M., Sminchisescu, C., Weiss, Y. (eds.) Computer Vision – ECCV 2018. pp. 798–814. Lecture Notes in Computer Science, Springer International Publishing (2018) 39. Kümmerer, M., Wallis, T.S.A., Gatys, L.A., Bethge, M.: Understanding Low- and High-Level Contributions to Fixation Prediction. In: The IEEE International Con-ference on Computer Vision (ICCV). pp. 4789–4798 (2017) 40. Linardos, A., Kümmerer, M., Press, O., Bethge, M.: DeepGaze IIE: Calibrated Pre-diction in and Out-of-Domain for State-of-the-Art Saliency Modeling. In: Proceed-ings of the IEEE/CVF International Conference on Computer Vision. pp. 12919– 12928 (2021) 41. Loftsgaarden, D.O., Quesenberry, C.P.: A Nonparametric Estimate of a Multivari-ate Density Function. The Annals of Mathematical Statistics 36 (3), 1049–1051 (Jun 1965). https://doi.org/10.1214/aoms/1177700079 
+
+42. Meur, O.L., Baccino, T.: Methods for comparing scanpaths and saliency maps: Strengths and weaknesses. Behavior Research Methods 45 (1), 251–266 (Mar 2013). 
+
+https://doi.org/10.3758/s13428-012-0226-9 
+
+43. Morey, R.D.: Confidence Intervals from Normalized Data: A correction to Cousineau (2005). Tutorials in Quantitative Methods for Psychology 4(2), 61–64 (Sep 2008). https://doi.org/10.20982/tqmp.04.2.p061 
+
+44. Riche, N., Duvinage, M., Mancas, M., Gosselin, B., Dutoit, T.: Saliency and Hu-man Fixations: State-of-the-Art and Study of Comparison Metrics. In: 2013 IEEE International Conference on Computer Vision (ICCV). pp. 1153–1160. IEEE (Dec 2013). https://doi.org/10.1109/ICCV.2013.147 
+
+19 45. Rothkegel, L.O.M., Trukenbrod, H.A., Schütt, H.H., Wichmann, F.A., Engbert, R.: Temporal evolution of the central fixation bias in scene viewing. Journal of Vision 17 (13), 3–3 (Nov 2017). https://doi.org/10.1167/17.13.3 
+
+46. Schwetlick, L., Kümmerer, M., Bethge, M., Engbert, R.: Potsdam data set of eye movement on natural scenes (DAEMONS). Frontiers in Psychology 15 (May 2024). 
+
+https://doi.org/10.3389/fpsyg.2024.1389609 
+
+47. Schwetlick, L., Rothkegel, L.O.M., Trukenbrod, H.A., Engbert, R.: Modeling the effects of perisaccadic attention on gaze statistics during scene viewing. Communi-cations Biology 3(1), 1–11 (Dec 2020). https://doi.org/10.1038/s42003-020-01429-8 
+
+48. Smith, T.J., Henderson, J.M.: Looking back at Waldo: Oculomotor inhibition of return does not prevent return fixations. Journal of Vision 11 (1), 3 (Jan 2011). 
+
+https://doi.org/10.1167/11.1.3 
+
+49. Tatler, B.W.: The central fixation bias in scene viewing: Selecting an optimal view-ing position independently of motor biases and image feature distributions. Journal of Vision 7(14), 4–4 (Nov 2007). https://doi.org/10.1167/7.14.4 
+
+50. Tatler, B.W., Brockmole, J.R., Carpenter, R.H.S.: LATEST: A model of saccadic decisions in space and time. Psychological Review 124 (3), 267–300 (2017). https: //doi.org/10.1037/rev0000054 
+
+51. Tatler, B.W., Vincent, B.T.: Systematic tendencies in scene viewing. Journal of Eye Movement Research 2(2) (Dec 2008). https://doi.org/10.16910/jemr.2.2.5 
+
+52. Tseng, P.H., Carmi, R., Cameron, I.G.M., Munoz, D.P., Itti, L.: Quantifying center bias of observers in free viewing of dynamic natural scenes. Journal of Vision 9(7), 4 (Jul 2009). https://doi.org/10.1167/9.7.4 
+
+53. Vincent, B.T., Baddeley, R., Correani, A., Troscianko, T., Leonards, U.: Do we look at lights? Using mixture modelling to distinguish between low- and high-level factors in natural image viewing. Visual Cognition 17 (6-7), 856–879 (Aug 2009). 
+
+https://doi.org/10.1080/13506280902916691 
+
+54. Volokitin, A., Gygli, M., Boix, X.: Predicting When Saliency Maps Are Accurate and Eye Fixations Consistent. In: Proceedings of the IEEE Conference on Com-puter Vision and Pattern Recognition. pp. 544–552 (2016) 55. Wilming, N., Betz, T., Kietzmann, T.C., König, P.: Measures and Limits of Models of Fixation Selection. PLOS ONE 6(9), e24038 (Sep 2011). https://doi.org/10. 1371/journal.pone.0024038 
+
+56. Wooding, D.S.: Eye movements of large populations: II. Deriving regions of in-terest, coverage, and similarity using fixation maps. Behavior Research Methods, Instruments, & Computers 34 (4), 518–528 (Nov 2002). https://doi.org/10. 3758/BF03195481 
+
+57. Wu, Y., Konermann, H., Mededovic, E., Walter, P., Stegmaier, J.: Evaluating Cross-Subject and Cross-Device Consistency in Visual Fixation Prediction. In: 2025 47th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC). pp. 1–7 (Jul 2025). https://doi.org/10.1109/ EMBC58623.2025.11252754 
+
+58. Yang, Z., Mondal, S., Ahn, S., Zelinsky, G., Hoai, M., Samaras, D.: Predicting Human Attention using Computational Attention (Apr 2023). https://doi.org/ 10.48550/arXiv.2303.09383 
+
+20 Appendix for “Raising the Ceiling: Better Empirical Fixation Densities for Saliency Benchmarking” A Dataset Preprocessing 
+
+In [36], the authors reported that the CAT2000 dataset contains an artifact in the fixation data, where sometimes whole scanpaths were very concentrated in an unexpected location, which they attributed to a recording error. They therefore excluded the affected images from their analyses. We follow the same procedure and exclude the same images from our analyses on CAT2000. 
+
+B LOSO Density Estimation Details 
+
+The cross-validated model described in the main text is subject-dependent : for each observer, a separate density is constructed from all other observers’ fixa-tions. For downstream uses requiring a single density map per image, we con-struct a locally crossvalidated spatial density by combining the LOSO models via locally weighted averaging. For each subject s, we define a spatial weight map ωs(x) that is 1 at the locations of subject s’s fixations and 0 at all other fixation locations, with values interpolated smoothly in between. The locally crossvalidated density is then 
+
+ˆpLOSO (x) ∝ X
+
+> s
+
+¯ωs(x) ps(x) , (4) where ps(x) is the LOSO density trained on all subjects except s, and ¯ωs(x) = 
+
+ωs(x)/ P 
+
+> s′
+
+ωs′ (x) are the normalized weights. The result is renormalized to in-tegrate to one. At each fixation location, the density is dominated by the LOSO model that excluded that fixation’s observer; away from fixation locations, the density blends across folds. For the weight map interpolation, we explored several alternatives: linear interpolation, nearest-neighbor assignment, and radial basis function (RBF) in-terpolation with varying exponents. Nearest-neighbor assignment produces the correct behavior locally at fixation locations but introduces discontinuities at Voronoi cell boundaries. Linear interpolation is smooth but can produce un-desirable artifacts near boundaries between groups of fixations. Squared linear RBF interpolation, more precisely ωs(x) ∝ max(0 , 1 − ∥ x − xs∥/r )2 with r set to a suitable radius—provides a smooth approximation to nearest-neighbor as-signment while avoiding discontinuities, and we adopt it throughout. 
+
+C Density Visualization Details 
+
+For the saturating heatmap, we express density as a ratio to the uniform den-sity pU = 1 /(W · H) and apply a saturating nonlinearity 
+
+f (d) = L (1 − exp( −d/L )) , (5) 21 where d = p(x)/p U is the density ratio and L is a fixed saturation level. We use L = 20 throughout, which was experimentally choosen to provide a good dynamic range for typical fixation densities: near-uniform distributions (density ratios close to 1) appear pale, while more peaked distributions (density ratios of tens or more) saturate, enabling immediate visual comparison of overall peaked-ness across images without per-image rescaling. For the log-spaced contour lines, we place contours at density levels γk · pU
+
+for integer k, with a thicker line at k = 0 (the uniform density level). We use 
+
+γ = 4 in this paper, so that each contour crossing represents a factor-of-four change in density. It provides a good tradeoff between detail for high-entropy distributions (where contours are widely spaced) and low-entropy ones (where contours are closely spaced), while remaining easy to interpret. 
+
+D Optimization Details 
+
+For each LOSO fold, the KDE is constructed from the remaining observers and the log-likelihoods of all mixture components are evaluated at the held-out fix-ation locations. Since the regularizer models (center bias, uniform, saliency) are precomputed, their pointwise log-likelihoods are simply looked up. The per-image objective is therefore cheap to evaluate: the KDE reduces to operations on the pairwise distance matrix between source and held-out fixations, avoiding grid-based convolutions entirely. All parameters are optimized in log-space to ensure positivity and improve the optimization landscape. For the adaptive KDE, we additionally constrain the minimum effective bandwidth (across all per-fixation bandwidths in all LOSO folds) to stay above a threshold. Is is mainly necessary because in case of using a DeepGaze MSDB mixture component, if two subjects fixate the same or very nearby pixels, sometimes the optimization otherwise collapses the the kernel size onto individual fixation locations. This non-box constraint precludes standard L-BFGS-B; we therefore use SciPy’s trust-region constrained optimizer (trust-constr). The entire computation graph—from pilot bandwidth through Abram-son bandwidths to the mixture log-likelihood—is implemented in PyTorch and fully differentiable, providing exact gradients to the optimizer. This makes per-image optimization efficient and GPU-compatible. Since per-image optimization can fall into local minima, we run each opti-mization 50 times from different random initial positions and retain the result with the highest cross-validated log-likelihood. Per-image optimization allows the model to adapt the balance between image-specific fixation evidence and cross-image priors to the characteristics of each stimulus—for instance, increasing the uniform weight for images with random fixation patterns, or shrinking the KDE bandwidth for images with tightly clus-tered fixations. 22 LL: 4.56 bits/fix LL: 4.54 bits/fix LL: 3.58 bits/fix AUC: 3.48% AUC: 3.07% AUC: 3.01%            
+
+> Before
+> -4.25 bits/fix -4.21 bits/fix -2.17 bits/fix 72.97% 78.44% 76.98%
+> After
+> 0.31 bits/fix 0.33 bits/fix 1.41 bits/fix 76.45% 81.50% 79.99% 1° Fixed Optimized Bandwidth
+
+Fig. 11: casestudy maximal improvement per model extension, Step 1: Starting with a classic Gaussian KDE with a bandwidth of one degree of visual angle, we change optimizing the bandwidth for leave-one-subject-out prediction and show the images where performance improves most in terms of LL and AUC. 
+
+E Extended Per-Image Analysis For Model Components 
+
+We provide extended per-image analyses for the case studies presented in the main paper. We now start wit the still most commonly used case of a Gaussian KDE with a fixed bandwidth of one degree of visual angle, and first change to a bandwidth optimized for leave-one-subject-out prediction (Figure 11). Next, we add the uniform and centerbias mixture components (Figure 12). We then change to parameters optimized per image (Figure 13), followed by switching to the Abramson adaptive bandwidth KDE (Figure 14), and finally adding the DeepGaze MSDB mixture component (Figure 15). 
+
+F Case studies by model parameter 
+
+Here, we go through the different model parameters (pilot bandwidth, alpha, weight of the KDE component, weight of the uniform component, weight of the centerbias component, weight of the DeepGaze MSDB component) and show for each parameter the images where this parameter has the lowest or highest value. For the pilot bandwidth , we see that it is largest for images with many fix-ations: in that case the adaptivity of the KDE is not necessary, and the KDE converges to a classic fixed-bandwidth KDE with small bandwidth (due to the small alpha). It is small for images with multiple fixation clusters, but not that many fixations For the alpha , which controlls the inverse proportionality between the pilot density and the effective bandwidth we see that it is smallest for images with very peaked fixation clusters, and largest for images with more dispersed fixation patterns. For the weight of the KDE component , we see that it is smallest (0.0) for im-ages with no clear salient objects, where usually the centerbias and the deepgaze 23 LL: 2.30 bits/fix LL: 1.93 bits/fix LL: 1.65 bits/fix AUC: 2.66% AUC: 2.09% AUC: 2.08%            
+
+> Before
+> 0.59 bits/fix 1.09 bits/fix -0.65 bits/fix 81.86% 78.83% 78.47%
+> After
+> 2.89 bits/fix 3.02 bits/fix 0.99 bits/fix 84.53% 80.92% 80.55% Optimized Bandwidth + Uniform + Centerbias
+
+Fig. 12: casestudy maximal improvement per model extension, Step 2: We now add uniform and centerbias mixture components and show the images where performance improves most in terms of LL and AUC. 
+
+components takeover. On the other hand, it is largest (1.0) in cases with very strong and clear fixation clusters. For the weight of the uniform component , we see that it is largest (up to 0.15) for images with some very dispersed fixtions. For the weight of the centerbias component , we see that it is largest (up to 0.93) for images with not very clear structure in the fixation patterns, where observers indeed seem to fixate mostly central (landscape scenes and a visual search display). Finally, for the weight of the DeepGaze MSDB component , we see that it is lowest (0.0) for two visual search displays, i.e., artificial stimuli, and a complex image where the main object is mainly occluded — all cases that are most likely not well predicted by DeepGaze MSDB. On the other hand, it is largest (1.0) for images with clear but complex fixation structures. In these cases, even the adaptive KDE might not be powerful enough to capture the fixation structure, since at many small but salient image areas, not enough fixations are available to result in a small bandwidth. 
+
+G Benchmark Progress Visualization 
+
+In Figure 22, we visualize the progress of the MIT/Tuebingen Saliency Bench-mark over time in relation to our new estimates of interobserver consistency. Applying the method of [37] and [34], we convert saliency map models into probabilistic models by optimizing a postprocessing consisting of blur, a point-wise monotone nonlinearity and a multiplicative centerbias for information gain on the MIT1003 dataset and apply it on MIT300. For models where no model code is available, we estimate optimal IG from AUC. See [34] for more details. 24 LL: 0.50 bits/fix LL: 0.45 bits/fix LL: 0.42 bits/fix AUC: 3.09% AUC: 2.64% AUC: 2.55%            
+
+> Before
+> 4.03 bits/fix 0.26 bits/fix 2.14 bits/fix 73.13% 78.81% 79.76%
+> After
+> 4.53 bits/fix 0.71 bits/fix 2.56 bits/fix 76.22% 81.45% 82.31% + Uniform + Centerbias Per-image parameters
+
+Fig. 13: casestudy maximal improvement per model extension, Step 3: changing to parameters optimized per image. We show the images where performance improves most in terms of LL and AUC. 
+
+H Extended Cross-Validation Design Analysis 
+
+Figure 23 extends the analysis of Figure 8b by showing both crossvalidated and pooled (“upper”) estimates across all three DeepGaze configurations. The over-fitting of pooled estimates is visible as the gap between solid and dashed lines. Two additional patterns emerge that are not visible in the main figure. First, the overfitting is most severe without a saliency model component, because the KDE receives all mixture weight. Second, the ordering between DeepGaze con-figurations reverses between crossvalidated and pooled evaluation: under proper cross-validation, adding DeepGaze improves estimates (solid lines increase from left to right), while under pooled evaluation, removing DeepGaze increases scores (dashed lines decrease from left to right). This reversal confirms that pooled esti-mates reflect self-prediction artifacts rather than genuine predictive performance. 
+
+I Error Bars 
+
+All reported error bars are bootstraped 95% confidence intervals for the mean log-likelihood per image using the normalization method of [13] for paired com-parisons with the correction of [43]. 25 LL: 0.44 bits/fix LL: 0.33 bits/fix LL: 0.26 bits/fix AUC: 3.61% AUC: 3.47% AUC: 3.06% 
+
+> Before
+
+2.15 bits/fix 2.10 bits/fix 2.45 bits/fix 83.48% 86.40% 85.17% 
+
+> After
+
+2.59 bits/fix 2.43 bits/fix 2.71 bits/fix 87.09% 89.87% 88.23% Per-image parameters Adaptive KDE Fig. 14: casestudy maximal improvement per model extension, Step 4: Switching to Abramson adaptive bandwidth KDE. We show the images where performance improves most in terms of LL and AUC. LL: 0.49 bits/fix LL: 0.43 bits/fix LL: 0.41 bits/fix AUC: 4.55% AUC: 4.25% AUC: 4.18%            
+
+> Before
+> 3.19 bits/fix 1.21 bits/fix 2.60 bits/fix 81.68% 79.49% 81.05%
+> After
+> 3.68 bits/fix 1.65 bits/fix 3.01 bits/fix 86.23% 83.74% 85.23% Adaptive KDE + DeepGaze
+
+Fig. 15: casestudy maximal improvement per model extension, Step 5: Adding the DeepGaze MSDB mixture component. We show the images where performance im-proves most in terms of LL and AUC. 
+
+26 param=9.18 param=9.18 param=9.19 param=888.89 param=868.30 param=863.74 
+
+> Baseline model
+
+bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 2.13 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.57 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.99 bits bandwidth=23.66 weights=0.91, 0.01, 0.08 
+
+LL: 1.63 bits bandwidth=23.66 weights=0.91, 0.01, 0.08 
+
+LL: 0.56 bits bandwidth=23.66 weights=0.91, 0.01, 0.08 
+
+LL: 1.01 bits 
+
+> Full model
+
+pilot_bw=9.18 alpha=0.06 weights=0.34, 0.00, 0.00, 0.66 
+
+LL: 2.43 bits pilot_bw=9.18 alpha=0.18 weights=0.52, 0.00, 0.08, 0.40 
+
+LL: 1.63 bits pilot_bw=9.19 alpha=0.11 weights=0.58, 0.00, 0.00, 0.42 
+
+LL: 2.21 bits pilot_bw=888.89 alpha=0.01 weights=0.76, 0.00, 0.02, 0.22 
+
+LL: 1.66 bits pilot_bw=868.30 alpha=0.01 weights=0.66, 0.00, 0.07, 0.27 
+
+LL: 0.63 bits pilot_bw=863.74 alpha=0.01 weights=0.77, 0.03, 0.00, 0.20 
+
+LL: 1.05 bits 
+
+Lowest Pilot bandwidth Highest Pilot bandwidth Fig. 16: Extreme model parameters: Pilot bandwidth. We show the images where the pilot bandwidth is smallest or largest. param=0.01 param=0.01 param=0.01 param=27.16 param=25.44 param=25.07 
+
+> Baseline model
+
+bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.37 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 2.24 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 2.46 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.97 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.49 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.48 bits 
+
+> Full model
+
+pilot_bw=235.92 alpha=0.01 weights=0.22, 0.00, 0.10, 0.68 
+
+LL: 1.68 bits pilot_bw=221.32 alpha=0.01 weights=0.10, 0.00, 0.00, 0.90 
+
+LL: 2.81 bits pilot_bw=299.27 alpha=0.01 weights=0.43, 0.00, 0.12, 0.46 
+
+LL: 2.65 bits pilot_bw=183.66 alpha=27.16 weights=0.00, 0.00, 0.23, 0.77 
+
+LL: 2.10 bits pilot_bw=48.11 alpha=25.44 weights=0.00, 0.00, 0.05, 0.95 
+
+LL: 1.78 bits pilot_bw=73.72 alpha=25.07 weights=0.00, 0.00, 0.17, 0.83 
+
+LL: 1.71 bits 
+
+Lowest Alpha Highest Alpha 
+
+Fig. 17: Extreme model parameters: Alpha. We show the images where the alpha parameter of the adaptive KDE is smallest or largest. param=0.00 param=0.00 param=0.00 param=0.93 param=0.92 param=0.91 
+
+> Baseline model
+
+bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.48 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.17 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.49 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 1.76 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 2.87 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 2.83 bits 
+
+> Full model
+
+pilot_bw=73.72 alpha=25.07 weights=0.00, 0.00, 0.17, 0.83 
+
+LL: 1.71 bits pilot_bw=93.37 alpha=18.69 weights=0.00, 0.00, 0.08, 0.92 
+
+LL: 1.58 bits pilot_bw=48.11 alpha=25.44 weights=0.00, 0.00, 0.05, 0.95 
+
+LL: 1.78 bits pilot_bw=36.31 alpha=0.10 weights=0.93, 0.00, 0.07, 0.00 
+
+LL: 1.84 bits pilot_bw=36.28 alpha=0.09 weights=0.92, 0.00, 0.03, 0.05 
+
+LL: 3.04 bits pilot_bw=40.55 alpha=0.06 weights=0.91, 0.00, 0.00, 0.09 
+
+LL: 3.06 bits 
+
+Lowest KDE weight Highest KDE weight 
+
+Fig. 18: Extreme model parameters: Weight of the KDE component. We show the images where the weight is smallest or largest. 
+
+27 param=0.00 param=0.00 param=0.00 param=0.15 param=0.13 param=0.12 
+
+> Baseline model
+
+bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.53 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.56 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 2.56 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 0.99 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 0.72 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 1.95 bits 
+
+> Full model
+
+pilot_bw=18.02 alpha=0.17 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 1.86 bits pilot_bw=127.77 alpha=0.05 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 1.91 bits pilot_bw=129.14 alpha=0.06 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 2.88 bits pilot_bw=12.74 alpha=0.09 weights=0.58, 0.15, 0.00, 0.28 
+
+LL: 1.17 bits pilot_bw=100.00 alpha=0.15 weights=0.00, 0.13, 0.00, 0.87 
+
+LL: 0.95 bits pilot_bw=64.35 alpha=0.05 weights=0.43, 0.12, 0.03, 0.42 
+
+LL: 2.43 bits 
+
+Lowest Uniform weight Highest Uniform weight Fig. 19: Extreme model parameters: Weight of the uniform component. We show the images where the weight is smallest or largest. param=0.00 param=0.00 param=0.00 param=0.93 param=0.75 param=0.63 
+
+> Baseline model
+
+bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 2.16 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.90 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 2.66 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.70 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.62 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.41 bits 
+
+> Full model
+
+pilot_bw=82.71 alpha=0.07 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 2.45 bits pilot_bw=79.63 alpha=0.06 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 2.40 bits pilot_bw=105.64 alpha=0.05 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 3.07 bits pilot_bw=149.97 alpha=0.09 weights=0.00, 0.00, 0.93, 0.06 
+
+LL: 1.89 bits pilot_bw=188.01 alpha=0.02 weights=0.25, 0.00, 0.75, 0.00 
+
+LL: 1.82 bits pilot_bw=75.80 alpha=0.16 weights=0.00, 0.02, 0.63, 0.36 
+
+LL: 1.57 bits 
+
+Lowest Centerbias weight Highest Centerbias weight 
+
+Fig. 20: Extreme model parameters: Weight of the centerbias component. We show the images where the weight is smallest or largest. param=0.00 param=0.00 param=0.00 param=1.00 param=1.00 param=1.00 
+
+> Baseline model
+
+bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 1.62 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 2.29 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 1.76 bits bandwidth=39.84 weights=0.82, 0.00, 0.17 
+
+LL: 1.56 bits bandwidth=26.94 weights=0.88, 0.01, 0.11 
+
+LL: 2.56 bits bandwidth=43.66 weights=0.78, 0.01, 0.21 
+
+LL: 2.49 bits 
+
+> Full model
+
+pilot_bw=188.01 alpha=0.02 weights=0.25, 0.00, 0.75, 0.00 
+
+LL: 1.82 bits pilot_bw=250.83 alpha=0.04 weights=0.75, 0.02, 0.23, 0.00 
+
+LL: 2.32 bits pilot_bw=36.31 alpha=0.10 weights=0.93, 0.00, 0.07, 0.00 
+
+LL: 1.84 bits pilot_bw=9.24 alpha=0.25 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 1.87 bits pilot_bw=129.14 alpha=0.06 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 2.88 bits pilot_bw=12.08 alpha=0.17 weights=0.00, 0.00, 0.00, 1.00 
+
+LL: 2.65 bits 
+
+Lowest DeepGaze weight Highest DeepGaze weight 
+
+Fig. 21: Extreme model parameters: Weight of the DeepGaze MSDB component. We show the images where the weight is smallest or largest. 
+
+28 2008 2012 2016 2020 2024 First Public Date 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+1.2 
+
+1.4 information gain [bit/fix]  DeepGaze MSDB 
+
+> Clueify Emotiva
+
+DeepGaze IIE 
+
+> UNISAL SalFBNet TransSalNet GazeGAN MSI-NET
+
+EML-NET  
+
+> CASNet II DeepVA SalGAN SAM-VGG SAM-ResNet LDS
+
+DeepGaze II SALICON DeepGaze I ML-Net ICF eDN 
+
+BMS 
+
+> FES QSS
+
+RARE2012 
+
+> CovSal ImageSignature ContextAware SSR Judd DVA SUN
+
+AIM GBVS 
+
+old ceiling 
+
+new ceiling 
+
+> natively probabilistic model
+> postprocessed saliency map model
+> information gain estimated from AUC
+> classic model
+> deep learning
+> transfer learning
+
+Fig. 22: Progress on the MIT300 dataset of the MIT/Tuebingen Saliency Benchmark in relation to our new estimates of interobserver consistency. See [34] for more details about model scoring. No DG LOSO DG All Subjects DG Deepgaze regularizer 
+
+2.1 
+
+2.2 
+
+2.3 
+
+2.4 
+
+2.5 
+
+2.6 
+
+2.7 IG [bit/fix] 
+
+> cv_type
+> LOSO
+> LOFO model
+> upper
+> crossval
+
+Fig. 23: Extended cross-validation design analysis. Solid lines show properly cross-validated estimates; dashed lines show pooled (“upper”) estimates. The pooled esti-mates overfit substantially in all configurations, with the largest overfitting without DeepGaze. The ordering between DeepGaze variants reverses between crossvalidated (solid) and pooled (dashed) evaluation, confirming that pooled estimates are domi-nated by self-prediction artifacts. 
+
+29

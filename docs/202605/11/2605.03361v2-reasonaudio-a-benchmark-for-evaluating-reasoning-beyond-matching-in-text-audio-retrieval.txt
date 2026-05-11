@@ -1,0 +1,153 @@
+Title: ReasonAudio: A Benchmark for Evaluating Reasoning Beyond Matching in Text-Audio Retrieval
+
+URL Source: https://arxiv.org/pdf/2605.03361v2
+
+Published Time: Thu, 07 May 2026 01:02:28 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# ReasonAudio: A Benchmark for Evaluating Reasoning Beyond Matching in Text–Audio Retrieval 
+
+## Honglei Zhang 
+
+School of Software, Nanjing University Nanjing, China 622023320003@smail.nju.edu.cn 
+
+## Yuting Chen 
+
+School of Software, Northwestern Polytechnical University Xi’an, China cyt79513@mail.nwpu.edu.cn 
+
+## Chenpeng Hu 
+
+School of Software, Northwestern Polytechnical University Xi’an, China 2380556104@mail.nwpu.edu.cn 
+
+## Siyue Zhang ∗
+
+College of Computing and Data Science, Nanyang Technological University Singapore, Singapore siyue001@e.ntu.edu.sg 
+
+## Yilei Shi ∗
+
+School of Software, Northwestern Polytechnical University Xi’an, China yilei_shi@nwpu.edu.cn 
+
+## Abstract 
+
+As multimodal content continues to expand at a rapid pace, audio re-trieval has emerged as a key enabling technology for media search, content organization, and intelligent assistants. However, most ex-isting benchmarks concentrate on semantic matching and fail to capture the fact that real-world queries often demand advanced reasoning abilities, including negation understanding, temporal or-dering, concurrent event recognition, and duration discrimination. To address this gap, we introduce ReasonAudio, the first reasoning-intensive benchmark for Text–Audio Retrieval, comprising 1,000 queries and 10,000 composite audio clips across five fundamen-tal reasoning tasks: Negation, Order, Overlap, Duration, and Mix. Despite their intuitive nature for humans and straightforward con-struction, these tasks pose significant challenges to current models. Our evaluation of ten state-of-the-art models reveals the follow-ing findings: All models struggle with reasoning-intensive audio retrieval, performing particularly poorly on Negation and Duration while showing relatively better results on Overlap and Order. More-over, Multimodal Large Language Model-based embedding models fail to inherit the reasoning capabilities of their backbones through contrastive fine-tuning, suggesting that current training paradigms are insufficient to preserve reasoning capacity in retrieval settings. 1
+
+## Keywords 
+
+Multimodal retrieval, Reasoning-intensive retrieval, Benchmark 
+
+## 1 Introduction 
+
+The rapid proliferation of multimodal content makes information retrieval increasingly challenging, highlighting the importance of multimodal retrieval in modern multimedia systems. As an impor-tant task, Text–Audio Retrieval aims to locate relevant audio clips from large-scale corpora based on textual queries, supporting ap-plications such as media search [ 8], content organization [ 17 ], and intelligent assistants [ 4]. Prior Text–Audio Retrieval benchmarks primarily focus on semantic matching between audio and text cap-tions, including AudioCaps [14], Clotho [7], and WavText5K [6]. 
+
+> 1The dataset is available on HuggingFace.
+
+Existing Text–Audio Retrieval methods can be broadly catego-rized into three paradigms. First, two-stage pipelines convert audio into text using captioning models [ 5 , 12 ] and then perform re-trieval with text embedding models [ 3 , 29 ]. While effective, their performance strongly depends on the quality of the intermediate textual representations. Second, direct Text–Audio embedding mod-els adopt the CLIP-style contrastive learning framework [ 18 ] to jointly encode audio and text into a shared embedding space, as ex-emplified by CLAP [ 8], AudioCLIP [ 11 ], and Wav2CLIP [ 23 ]. Third, recent multimodal embedding methods leverage pretrained multi-modal large language models (MLLMs) to learn unified representa-tions across modalities. LCO-Embedding [ 24 ] exploits cross-modal alignment induced by generative pretraining, e5-omni [ 2 ] improves stability through explicit similarity calibration and alignment, and OmniEmbed [ 25 ] employs a unified encoder to support full-modal retrieval across text, image, audio, and video. Despite these advances, most existing Text–Audio Retrieval benchmarks and methods remain focused on semantic matching between audio and text. Such formulations assume that relevance can be determined by surface-level similarity, overlooking the fact that real-world queries frequently require more complex reason-ing [ 19 , 28 ], such as temporal reasoning [ 27 ], negation understand-ing [ 1], and contradiction detection [ 26 ]. To address this limitation, we introduce ReasonAudio, the first Text–Audio Retrieval bench-mark explicitly designed to evaluate logical reasoning beyond se-mantic matching. As shown in Figure 1, we construct ReasonAudio by collecting 200 atomic sounds and synthesizing 10,000 composite audio clips with controlled temporal patterns. Using predefined templates, we generate 1,000 2 reasoning-intensive text queries and annotate text–audio relevance via a deterministic program. Our benchmark is designed to evaluate four core reasoning capabili-ties: (1) negation understanding , distinguishing the presence or absence of target sounds; (2) temporal ordering , reasoning over sequential sound relationships; (3) concurrent event recogni-tion , identifying temporally overlapping sounds; and (4) duration discrimination , understanding sound temporal extent. 
+
+> 2Despite its modest size, 100 queries per task are widely accepted as valid and effective in information retrieval [21, 22], and our pipeline can be readily scaled. 1
+> arXiv:2605.03361v2 [cs.AI] 6 May 2026
+
+Figure 1: Illustration of the five reasoning-intensive cross-modal retrieval tasks in ReasonAudio. Each panel shows an example query and one relevant audio clip that satisfies all logical and temporal constraints specified by the query. 
+
+Our comprehensive evaluation of 10 state-of-the-art (SOTA) models on ReasonAudio reveals that all methods struggle with reasoning-intensive retrieval tasks, with the best performance ob-tained by OmniEmbed-7B at only 20.1% average accuracy. Further analysis shows that MLLM-based models fail to transfer the rea-soning capabilities of their pretrained backbones, and that text and audio embeddings remain insufficiently aligned in the shared embedding space. Our main contributions are as follows: 
+
+• We introduce the first reasoning-intensive Text–Audio Re-trieval benchmark designed to evaluate logical reasoning beyond semantic matching. 
+
+• We conduct a comprehensive evaluation of three Text–Audio Retrieval paradigms and ten SOTA models. 
+
+• Experimental results show that existing multimodal retrieval models exhibit significant limitations on reasoning-intensive Text–Audio Retrieval tasks. 
+
+## 2 Task Formulation 
+
+We formally define the Text–Audio Retrieval task as follows. Let 
+
+𝑄 = {𝑞 1, . . . , 𝑞 𝑛 } be text queries and 𝐷 = {𝑑 1, . . . , 𝑑 𝑚 } the audio corpus. For query 𝑞 𝑖 ∈ 𝑄 , each candidate 𝑑 𝑗 ∈ 𝐷 is either relevant (𝑑 +) or non-relevant ( 𝑑 − ). The goal is to learn a similarity (scoring) function 𝑓 (𝑞 𝑖 , 𝑑 𝑗 ) such that, for a given query 𝑞 𝑖 , relevant audio candidate 𝑑 + are ranked higher than irrelevant ones 𝑑 − in 𝐷 . To evaluate audio reasoning beyond semantic matching, we introduce five tasks as shown in Figure 1: 
+
+• Negation: Retrieve audio clips that contains target events while excluding undesired events, requiring understanding the concept of negation. 
+
+• Order: Retrieve audio clips in which target events occur in a specified temporal sequence, requiring reasoning over temporal order. 
+
+• Overlap: Retrieve audio clips where target events temporally overlap, requiring reasoning about co-occurrence. 
+
+Table 1: Comparison of ReasonAudio with existing datasets for audio-related retrieval benchmarks.                                            
+
+> Benchmark Retrieval Type Retrieval Task Samples
+> AudioCaps [14] Text ↔Audio Audio caption retrieval 4.9K Clotho [7] Text ↔Audio Audio caption retrieval 5K WavText5K [6] Text ↔Audio Audio caption retrieval 4.5K SoundDescs [15] Text ↔Audio Audio caption retrieval 4.9K AudioSet [20] Audio →Text Sound classification 0.5K SVQ (MSEB) [10] Audio →Text Voice search 181k Spoken SQuAD [16] Text →Audio Spoken document retrieval 5.3K
+> ReasonAudio (Ours) Text →Audio Reasoning-intensive audio retrieval 1K
+
+• Duration: Retrieve audio clips where an event persists con-tinuously for a specified duration, requiring reasoning about temporal extent. 
+
+• Mix: Retrieve audio clips that satisfy a combination of the above constraints, requiring multiple reasoning capabilities. 
+
+## 3 ReasonAudio Benchmark 
+
+We introduce ReasonAudio, a reasoning-intensive Text–Audio Re-trieval benchmark constructed by synthesizing composite sounds as the audio corpus and generating search queries using predefined templates. The dataset is built through following three key stages. 
+
+## 3.1 Atomic Sound Collection 
+
+To construct the audio corpus, we curated 200 atomic sound sam-ples from FSD50K [9] and Freesound [13]. Each atomic sound cor-responds to a single, clearly identifiable audio event. The collection process consists of four steps: (1) selecting high-quality candidate clips with clear and reliable labels; (2) manually reviewing annota-tions and standardizing filenames based on the provided labels; (3) extracting clean, continuous segments that fully capture the target sound event; and (4) normalizing all clips to a mono-channel WAV format. Importantly, we avoid semantically similar or hierarchical sound concepts ( e.g., “music” vs. “violin”) to prevent ambiguity in query interpretation and relevance annotation. 2Table 2: Comparison of SOTA Text–Audio Retrieval approaches and models on ReasonAudio. Performance is reported using Acc@1 and nDCG@10. The best and second-best results are shown in bold and underlined, respectively. Model Negation Order Overlap Duration Mix Avg.                                                                                                                                   
+
+> Acc@1 nDCG@10 Acc@1 nDCG@10 Acc@1 nDCG@10 Acc@1 nDCG@10 Acc@1 nDCG@10
+> Two-Stage Text–Audio Retrieval
+> Qwen2-Audio + BGE-M3 0.0 0.0 0.5 1.7 0.0 0.0 0.5 0.5 0.0 0.0 0.3 Qwen2-Audio + Qwen3-Embeding 0.0 0.0 0.5 0.5 0.0 0.0 1.5 0.7 0.0 0.0 0.3 Step-Audio + BGE-M3 2.0 1.4 0.5 0.5 2.5 3.8 8.5 7.4 1.0 2.4 3.0 Step-Audio + Qwen3-Embeding 4.0 2.7 1.5 2.4 4.0 5.8 6.0 7.5 3.0 4.9 4.2
+> CLIP-style Embedding Models
+> CLAP 2.0 1.2 3.5 6.6 9.5 17.8 11.0 9.5 6.0 12.5 8.0 AudioCLIP 0.7 0.0 1.4 0.6 1.0 4.0 2.5 3.0 0.0 0.7 1.4 Wav2CLIP 0.0 0.2 0.0 0.0 0.0 0.0 1.0 1.8 0.0 0.2 0.3
+> MLLM-based Embedding Models
+> LCO-Embedding-3B 3.0 5.0 16.0 26.2 21.5 29.5 10.5 10.5 6.0 14.8 14.3 LCO-Embedding-7B 2.0 2.8 23.0 31.8 29.5 40.0 14.5 10.6 15.5 25.1 19.5 e5-omni-7B 10.0 10.0 22.0 30.2 7.0 12.3 9.0 8.4 15.0 25.7 15.0 OmniEmbed-7B 5.5 7.0 24.5 36.2 18.0 26.4 6.5 8.5 28.0 40.1 20.1
+
+## 3.2 Corpus and Query Synthesis 
+
+Based on atomic sounds, we synthesize both the audio corpus and search queries to construct reasoning-intensive retrieval tasks. We generate 10K composite audio clips by combining 2–8 randomly selected atomic sounds under two composition patterns: sequential ordering and temporal overlap. Sequential compositions arrange sounds in non-overlapping temporal sequences, producing 6K clips with precise event timestamps. Temporal overlap compositions per-mit simultaneous events, yielding 4K clips with single- and double-overlap configurations. All composite audios are synthesized with explicitly defined temporal relationships, which are recorded in filename metadata together with atomic sound labels. We further generate search queries using task-specific templates (Figure 1). Key attributes—including atomic sound labels, temporal relations, event durations, and negation constraints—are extracted from the metadata to populate template placeholders. 
+
+## 3.3 Relevance Annotation and Quality Control 
+
+We established ground-truth relevance using a deterministic pro-gram, followed by manual verification. The program labeled a query-audio pair as relevant only if the audio’s composition metadata satisfied all constraints specified by the query. To ensure reliability, we manually reviewed 50 random queries for each task. This fully automated and scalable pipeline resulted in our final benchmark: ReasonAudio, which consists of 1K reasoning-intensive queries, 10K composite audio clips, and their relevance annotations. 
+
+## 4 Benchmarking SOTA Models on ReasonAudio 4.1 Experimental Setup 
+
+We evaluate three types of Text–Audio Retrieval approaches with ten SOTA models using ReasonAudio: (1) Two-Stage Text–Audio Retrieval. We evaluated a two-stage approach that sequentially applies audio-to-text models and text retrievers. Audio inputs are first converted into text descrip-tions using Qwen2-Audio [5] or Step-Audio [12 ], followed by text retrieval with BGE-M3 [3] or Qwen3-Embedding [ 29 ] based on the generated captions. (2) CLIP-style Embedding Models. We evaluated CLIP-style multimodal embedding models trained with contrastive learning. These models encode audio and text into dense embeddings within a shared representation space. We test CLAP [8 ], AudioCLIP [ 11 ], and Wav2CLIP [ 23 ], which differ in audio encoder architectures and pretraining data scales. (3) MLLM-based Embedding Models. We evaluated unified multimodal retrieval embedding models, including e5-omni-7B [2 ], 
+
+LCO-Embedding-3B/7B [ 24 ], and OmniEmbed-7B [25 ]. These models are fine-tuned from multimodal LLMs that natively un-derstand and generate across all major modalities, including text, images, audio, video, and multimodal combinations, within a uni-fied architecture. Retrieval performance is evaluated using standard information retrieval metrics, Accuracy@k and nDCG@k. We report Accu-racy@1 (Acc@1) to assess the correctness of the top-ranked audio, and nDCG@10 to evaluate the ranking quality of the top-10 re-trieved audio clips. Both metrics are multiplied by 100 for reporting. 
+
+## 4.2 Main Results 
+
+Reasoning-intensive tasks remain challenging for all eval-uated models. As shown in Table 2, all models perform poorly on ReasonAudio, with best-performing OmniEmbed-7B achieving only 20.1% average accuracy. Two-stage and CLIP-style models are largely ineffective with Acc@1 below 10%. MLLM-based models show stronger performance—OmniEmbed-7B reaches 24.5% on Or-der and 28.0% on Mix, while LCO-Embedding-7B achieves 29.5% on Overlap—yet all struggle severely with Negation. These results 3Figure 2: Performance of OmniEmbed-7B on the proposed multiple-choice retrieval task with two options. 
+
+indicate current models fail to handle sound matching under logi-cal constraints, particularly for negation, temporal reasoning, and duration discrimination. 
+
+Two-stage approaches are ineffective due to audio caption-ing limitations. The two-stage pipeline performs worst, with average scores of only 0.3%–4.2%. Replacing Qwen2-Audio with Step-Audio significantly improves Acc@1 (e.g., 0.2% to 2.9% using BGE-M3), while upgrading the text retriever yields minimal gains, indicating audio captioning is the main bottleneck. Manual review confirms captions often fail to describe composite sound events accurately. Qwen2-Audio produces verbose captions averaging 200 words, while Step-Audio generates concise 8-word descriptions. Verbosity does not correlate with performance; accurate core con-tent capture is crucial, as verbose captions introduce irrelevant details that degrade retrieval beyond what strong text embedders can compensate for. 
+
+MLLM-based models perform better but remain far from satisfactory. MLLM-based models achieve the strongest perfor-mance, with OmniEmbed-7B reaching 20.1% average accuracy, sub-stantially outperforming other approaches. However, absolute per-formance remains low. While showing relatively stronger ability in temporal ordering and co-occurrence reasoning, they struggle with logical negation (2.0%–10.0%) and duration discrimination (6.5%– 14.5%), suggesting they fail to inherit backbone reasoning capabil-ities. We hypothesize contrastive training emphasizes similarity matching over logical constraint satisfaction. Increasing model size yields moderate gains (LCO-Embedding-7B improves 5.2% over 3B), but no single model dominates across tasks, highlighting funda-mental limitations in current multimodal embedding models for reasoning-intensive audio retrieval. 
+
+## 5 Analysis 
+
+To better understand the retrieval behavior of SOTA multimodal embedding models, we performed the following analyses. 
+
+## 5.1 How Well Do Models Reason When Audio Matching Is Factored Out? 
+
+ReasonAudio requires retrieval models to jointly perform sound matching and logical reasoning. To isolate reasoning ability, we fur-ther design a two-option multiple-choice retrieval setting in which both audio candidates correctly match the sounds mentioned in the query, while the negative candidate violates the query’s logical constraints. For instance, in a negation query such as “plastic bag 
+
+Figure 3: t-SNE plot of text and audio embeddings. Samples sharing the same color correspond to the same query. 
+
+and goose sounds, but without hailstorm,” the negative candidate includes a hailstorm sound, ensuring the task evaluates negation reasoning rather than acoustic matching. We construct 120 such questions per task. As shown in Figure 2, the best-performing model, OmniEmbed-7B, exhibits substantial deficiencies on Duration and Negation, achieving only 50.8% accuracy on Duration, marginally above random chance, and 27.5% on Negation, indicating a failure to capture negation semantics and a bias toward matching mentioned sounds. In contrast, the model performs relatively well on Overlap and Order, reaching accuracies of 78.3% and 67.5%, respectively. 
+
+## 5.2 How Well Are Text and Audio Embeddings Aligned? 
+
+To qualitatively analyze the alignment between text and audio em-beddings, we visualize five sampled queries using t-SNE in Figure 3. The results reveal substantial misalignment in the embedding space. Positive audio samples associated with the same query fail to form compact clusters, exhibiting highly dispersed distributions, while positive and negative samples are poorly separated. In several cases, negative samples lie closer to the query embedding than positive ones, leading to incorrect ranking. These observations indicate that the model fails to encode logical constraints—particularly nega-tion—into the shared embedding space, resulting in insufficient discrimination between semantically valid and invalid audio can-didates. This misalignment directly explains the below-random performance on negation tasks. 
+
+## 6 Conclusion 
+
+This paper introduces ReasonAudio, the first reasoning-intensive benchmark for Text–Audio Retrieval. We evaluate three categories of audio retrieval systems and ten SOTA models, revealing critical limitations in existing approaches. All models perform poorly on 4sound matching and audio reasoning, with the best achieving only 20.1% average accuracy. Notably, MLLM-based embedding models fail to inherit their backbones’ strong reasoning capabilities. Our analysis further exposes gaps in text–audio embedding alignment and logical constraint understanding. Future work will extend this synthetic benchmark to evaluate reasoning capabilities under more realistic conditions. 
+
+## References 
+
+[1] Kumail Alhamoud, Shaden Alshammari, Yonglong Tian, Guohao Li, Philip H.S. Torr, Yoon Kim, and Marzyeh Ghassemi. 2025. Vision-Language Models Do Not Understand Negation. In 2025 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) . 29612–29622. [2] Haonan Chen, Sicheng Gao, Radu Timofte, Tetsuya Sakai, and Zhicheng Dou. 2026. e5-omni: Explicit Cross-modal Alignment for Omni-modal Embeddings. https://arxiv.org/abs/2601.03666 [3] Jianlyu Chen, Shitao Xiao, Peitian Zhang, Kun Luo, Defu Lian, and Zheng Liu. 2024. M3-Embedding: Multi-Linguality, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation. In Findings of the As-sociation for Computational Linguistics: ACL 2024 , Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.). Association for Computational Linguistics, Bangkok, Thailand, 2318–2335. https://aclanthology.org/2024.findings-acl.137/ [4] Yifu Chen, Shengpeng Ji, Haoxiao Wang, Ziqing Wang, Siyu Chen, Jinzheng He, Jin Xu, and Zhou Zhao. 2025. WavRAG: Audio-Integrated Retrieval Augmented Generation for Spoken Dialogue Models. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar (Eds.). Association for Computational Linguistics, Vienna, Austria, 12505–12523. doi:10. 18653/v1/2025.acl-long.613 [5] Yunfei Chu, Jin Xu, Qian Yang, Haojie Wei, Xipin Wei, Zhifang Guo, Yichong Leng, Yuanjun Lv, Jinzheng He, Junyang Lin, Chang Zhou, and Jingren Zhou. 2024. Qwen2-Audio Technical Report. arXiv:2407.10759 [eess.AS] https://arxiv. org/abs/2407.10759 [6] Soham Deshmukh, Benjamin Elizalde, and Huaming Wang. 2022. Audio Retrieval with WavText5K and CLAP Training. arXiv:2209.14275 [eess.AS] https://arxiv. org/abs/2209.14275 [7] Konstantinos Drossos, Samuel Lipping, and Tuomas Virtanen. 2020. Clotho: an Audio Captioning Dataset. In IEEE 45th International Conference on Acoustics, Speech, and Signal Processing (ICASSP) (Proceedings of the IEEE International Conference on Acoustics, Speech, and Signal Processing) . IEEE, United States, 736– 740. doi:10.1109/ICASSP40776.2020.9052990 IEEE International Conference on Acoustics, Speech and Signal Processing ; Conference date: 01-01-1900 Through 01-01-2000. [8] Benjamin Elizalde, Soham Deshmukh, Mahmoud Al Ismail, and Huaming Wang. 2023. CLAP Learning Audio Concepts from Natural Language Supervision. In 
+
+ICASSP 2023 - 2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) . 1–5. [9] Eduardo Fonseca, Xavier Favory, Jordi Pons, Frederic Font, and Xavier Serra. 2022. FSD50K: An Open Dataset of Human-Labeled Sound Events. IEEE/ACM Transactions on Audio, Speech, and Language Processing 30 (2022), 829–852. [10] Google Research. 2025. Simple Voice Questions (SVQ) Dataset. https:// huggingface.co/datasets/google/svq. Accessed: Feb. 1, 2026. [11] Andrey Guzhov, Federico Raue, Jörn Hees, and Andreas Dengel. 2022. Audioclip: Extending Clip to Image, Text and Audio. In ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) . 976–980. doi:10. 1109/ICASSP43922.2022.9747631 [12] Ailin Huang, Boyong Wu, Bruce Wang, Chao Yan, Chen Hu, Chengli Feng, Fei Tian, Feiyu Shen, Jingbei Li, Mingrui Chen, Peng Liu, Ruihang Miao, Wang You, Xi Chen, Xuerui Yang, Yechang Huang, Yuxiang Zhang, Zheng Gong, Zixin Zhang, Hongyu Zhou, Jianjian Sun, Brian Li, Chengting Feng, Changyi Wan, Hanpeng Hu, Jianchang Wu, Jiangjie Zhen, Ranchen Ming, Song Yuan, Xuelin Zhang, Yu Zhou, Bingxin Li, Buyun Ma, Hongyuan Wang, Kang An, Wei Ji, Wen Li, Xuan Wen, Xiangwen Kong, Yuankai Ma, Yuanwei Liang, Yun Mou, Bahtiyar Ahmidi, Bin Wang, Bo Li, Changxin Miao, Chen Xu, Chenrun Wang, Dapeng Shi, Deshan Sun, Dingyuan Hu, Dula Sai, Enle Liu, Guanzhe Huang, Gulin Yan, Heng Wang, Haonan Jia, Haoyang Zhang, Jiahao Gong, Junjing Guo, Jiashuai Liu, Jiahong Liu, Jie Feng, Jie Wu, Jiaoren Wu, Jie Yang, Jinguo Wang, Jingyang Zhang, Junzhe Lin, Kaixiang Li, Lei Xia, Li Zhou, Liang Zhao, Longlong Gu, Mei Chen, Menglin Wu, Ming Li, Mingxiao Li, Mingliang Li, Mingyao Liang, Na Wang, Nie Hao, Qiling Wu, Qinyuan Tan, Ran Sun, Shuai Shuai, Shaoliang Pang, Shiliang Yang, Shuli Gao, Shanshan Yuan, Siqi Liu, Shihong Deng, Shilei Jiang, Sitong Liu, Tiancheng Cao, Tianyu Wang, Wenjin Deng, Wuxun Xie, Weipeng Ming, Wenqing He, Wen Sun, Xin Han, Xin Huang, Xiaomin Deng, Xiaojia Liu, Xin Wu, Xu Zhao, Yanan Wei, Yanbo Yu, Yang Cao, Yangguang Li, Yangzhen Ma, Yanming Xu, Yaoyu Wang, Yaqiang Shi, Yilei Wang, Yizhuang Zhou, Yinmin Zhong, Yang Zhang, Yaoben Wei, Yu Luo, Yuanwei Lu, Yuhe Yin, Yuchu Luo, Yuanhao Ding, Yuting Yan, Yaqi Dai, Yuxiang Yang, Zhe Xie, Zheng Ge, Zheng Sun, Zhewei Huang, Zhichao Chang, Zhisheng Guan, Zidong Yang, Zili Zhang, Binxing Jiao, Daxin Jiang, Heung-Yeung Shum, Jiansheng Chen, Jing Li, Shuchang Zhou, Xiangyu Zhang, Xinhao Zhang, and Yibo Zhu. 2025. Step-Audio: Unified Understanding and Generation in Intelligent Speech Interaction. arXiv:2502.11946 [cs.CL] https://arxiv.org/abs/2502.11946 [13] Yuxuan Jiang, Zehua Chen, Zeqian Ju, Chang Li, Weibei Dou, and Jun Zhu. 2025. FreeAudio: Training-Free Timing Planning for Controllable Long-Form Text-to-Audio Generation. Proceedings of the 33rd ACM International Conference on Multimedia (2025). https://api.semanticscholar.org/CorpusID:280253048 [14] Chris Dongjoo Kim, Byeongchang Kim, Hyunmin Lee, and Gunhee Kim. 2019. AudioCaps: Generating Captions for Audios in The Wild. In NAACL-HLT .[15] A. Sophia Koepke, Andreea-Maria Oncescu, João F. Henriques, Zeynep Akata, and Samuel Albanie. 2023. Audio Retrieval With Natural Language Queries: A Benchmark Study. IEEE Transactions on Multimedia 25 (2023), 2675–2685. http://dx.doi.org/10.1109/TMM.2022.3149712 [16] Chia-Hsuan Lee, Szu-Lin Wu, Chi-Liang Liu, and Hung yi Lee. 2018. Spoken SQuAD: A Study of Mitigating the Impact of Speech Recognition Errors on Lis-tening Comprehension. In Interspeech . https://api.semanticscholar.org/CorpusID: 4561735 [17] Haohe Liu, Zehua Chen, Yi Yuan, Xinhao Mei, Xubo Liu, Danilo Mandic, Wenwu Wang, and Mark D Plumbley. 2023. AudioLDM: Text-to-Audio Generation with Latent Diffusion Models. In Proceedings of the 40th International Conference on Machine Learning (Proceedings of Machine Learning Research, Vol. 202) , Andreas Krause, Emma Brunskill, Kyunghyun Cho, Barbara Engelhardt, Sivan Sabato, and Jonathan Scarlett (Eds.). PMLR, 21450–21474. https://proceedings.mlr.press/ v202/liu23f.html [18] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever. 2021. Learning Transferable Visual Models From Natural Language Supervision. In Proceedings of the 38th Inter-national Conference on Machine Learning (Proceedings of Machine Learning Research, Vol. 139) , Marina Meila and Tong Zhang (Eds.). PMLR, 8748–8763. https://proceedings.mlr.press/v139/radford21a.html [19] Hongjin SU, Howard Yen, Mengzhou Xia, Weijia Shi, Niklas Muennighoff, Han yu Wang, Liu Haisu, Quan Shi, Zachary S Siegel, Michael Tang, Ruoxi Sun, Jinsung Yoon, Sercan O Arik, Danqi Chen, and Tao Yu. 2025. BRIGHT: A Realistic and Challenging Benchmark for Reasoning-Intensive Retrieval. In The Thirteenth International Conference on Learning Representations . https://openreview.net/ forum?id=ykuc5q381b [20] Yulin Sun, Qisheng Xu, Yi Su, Qian Zhu, Yong Dou, Xinwang Liu, and Kele Xu. 2025. AudioSet-R: A Refined AudioSet with Multi-Stage LLM Label Reannotation. In Proceedings of the 33rd ACM International Conference on Multimedia (MM ’25) .ACM, 13089–13096. http://dx.doi.org/10.1145/3746027.3758260 [21] William Webber, Alistair Moffat, and Justin Zobel. 2008. Statistical power in retrieval experimentation. In Proceedings of the 17th ACM International Conference on Information and Knowledge Management . ACM, 571–580. doi:10.1145/1458082. 1458158 [22] Orion Weller, Benjamin Chang, Sean MacAvaney, Kyle Lo, Arman Cohan, Ben-jamin Van Durme, Dawn Lawrie, and Luca Soldaini. 2025. FollowIR: Evaluating and Teaching Information Retrieval Models to Follow Instructions. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) . Association for Computational Linguistics, Albuquerque, New Mexico, 11926–11942. https://aclanthology.org/2025.naacl-long.597/ [23] Ho-Hsiang Wu, Prem Seetharaman, Kundan Kumar, and Juan Pablo Bello. 2022. Wav2CLIP: Learning Robust Audio Representations from Clip. In ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) . 4563–4567. doi:10.1109/ICASSP43922.2022.9747669 [24] Chenghao Xiao, Hou Pong Chan, Hao Zhang, Weiwen Xu, Mahani Aljunied, and Yu Rong. 2025. Scaling Language-Centric Omnimodal Representation Learning. arXiv:2510.11693 [cs.CL] https://arxiv.org/abs/2510.11693 [25] Mengyao Xu, Wenfei Zhou, Yauhen Babakhin, Gabriel Moreira, Ronay Ak, Radek Osmulski, Bo Liu, Even Oldridge, and Benedikt Schifferer. 2025. Omni-Embed-Nemotron: A Unified Multimodal Retrieval Model for Text, Image, Audio, and Video. arXiv:2510.03458 [cs.CL] https://arxiv.org/abs/2510.03458 [26] Siyue Zhang, Yuan Gao, Xiao Zhou, Yilun Zhao, Tingyu Song, Arman Cohan, Anh Tuan Luu, and Chen Zhao. 2026. MRMR: A Realistic and Expert-Level Multidisciplinary Benchmark for Reasoning-Intensive Multimodal Retrieval. In 
+
+The Fourteenth International Conference on Learning Representations . https: //openreview.net/forum?id=XZNXSM4rHG [27] Siyue Zhang, Yuxiang Xue, Yiming Zhang, Xiaobao Wu, Anh Tuan Luu, and Chen Zhao. 2025. MRAG: A Modular Retrieval Framework for Time-Sensitive Question Answering. In Findings of the Association for Computational Linguistics: EMNLP 2025 . 3080–3118. https://aclanthology.org/2025.findings-emnlp.167/ 
+
+5[28] Siyue Zhang, Yilun Zhao, Liyuan Geng, Arman Cohan, Anh Tuan Luu, and Chen Zhao. 2025. Diffusion vs. Autoregressive Language Models: A Text Em-bedding Perspective. In Proceedings of the 2025 Conference on Empirical Meth-ods in Natural Language Processing . Association for Computational Linguistics. https://aclanthology.org/2025.emnlp-main.213/ [29] Yanzhao Zhang, Mingxin Li, Dingkun Long, Xin Zhang, Huan Lin, Baosong Yang, Pengjun Xie, An Yang, Dayiheng Liu, Junyang Lin, Fei Huang, and Jingren Zhou. 2025. Qwen3 Embedding: Advancing Text Embedding and Reranking Through Foundation Models. arXiv:2506.05176 [cs.CL] https://arxiv.org/abs/2506.05176 
+
+6

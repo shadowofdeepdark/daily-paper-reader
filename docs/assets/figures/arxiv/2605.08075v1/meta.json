@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.08075v1/fig-001.webp",
+      "caption": "Figure 2: Imagined-to-listened MEG mapping results. (A) Mean Pearson r between predicted and actual listened responses for each mapping architecture, shown under two evaluation conditions: Training and Unseen Subjects (LOSO). Each dot represents one held-out subject, connected lines show paired real-null values. All models significantly outperform their corresponding null baselines (paired t-test, p < 0.001, p < 0.01). Note that y-axis scales differ across models. (B) Confusion matrix for listened MEG responses using correlation-based classification. The diagonal (within-class correlation) is significantly greater than the off-diagonal (between-class correlation) for both the 4-class test (p < 0.001) and the coarser melody-versus-poem 2-class test (p < 0.001). (C) Confusion matrix for imagined MEG responses. While diagonal entries are not significantly higher than offdiagonal (p = 0.12), melody vs. poem classification remains significant (p < 0.05). (D) Confusion matrix for predicted listened responses obtained from imagined MEG via the mapping model, using an ensemble voting scheme across architectures, showing recovery of class structure. Both the 4-class (p < 0.01) and melody-versus-poem (p < 0.05) distinctions are significant (E) Data scaling analysis showing performance as a function of training set size k . All models improve with increasing data, indicating that the mapping benefits from additional subject data. Shaded regions indicate standard deviation across held-out subjects.",
+      "page": 6,
+      "index": 1,
+      "width": 825,
+      "height": 386
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08075v1/fig-002.webp",
+      "caption": "Figure 1: Experiment paradigm and decoding pipeline. (A) Trained musicians were presented with rhythmic stimuli (two melodies and two poems) under two conditions: listening trials, in which audio was played aloud while MEG was recorded, and imagery trials, in which the same stimuli were imagined in silence. Both conditions yield condition-specific MEG responses to the same content. (B) The decoding pipeline proceeds in three stages. Stage 1: an imagined-to-listened mapping model is trained to transform imagined MEG responses into predicted listened MEG responses. Stage 2: a contrastive decoder is trained independently on real listened MEG responses to align neural signals with word embeddings. Stage 3: the full pipeline: imagined MEG from held-out subjects is passed through the frozen mapping model to produce predicted listened responses, which are then fed to the frozen decoder to retrieve output word embeddings. No imagined speech labels are used at any stage of training.",
+      "page": 2,
+      "index": 2,
+      "width": 826,
+      "height": 374
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08075v1/fig-003.webp",
+      "caption": "Figure 3: Word-level decoding of listened MEG responses using contrastive learning. (A) Overview of the decoding pipeline. Continuous listened MEG responses are segmented into word-aligned windows using stimulus onsets extracted with WhisperX. Each MEG segment is encoded into a fixed-dimensional representation using a neural encoder with spatial and temporal convolutional layers. In parallel, corresponding word-level stimuli (audio or text) are processed using pre-trained encoders (Wav2Vec2, Whisper, BERT, or a concatenated BERT + Wav2Vec2 model) with frozen weights. Both modalities are projected into a shared embedding space and trained using a contrastive loss to align MEG and stimulus representations. (B) Rank-based decoding performance (CDF of rank ≤ k) across all words, showing the probability that the correct word embedding is ranked within the top k candidates. All conditions exceed chance, with BERT and the combined BERT + Wav2Vec2 encoder performing best. (C) Rank performance restricted to the top-20 best-decoded words (i.e., words with lowest ranks), showing improved performance across all models, with BERT+Wav2Vec2 achieving the strongest results. (D) Per-word median rank for the selected top-20 words across encoder types. Lower values indicate better decoding performance. The multimodal BERT + Wav2Vec2 representation consistently achieves lower ranks across words.",
+      "page": 7,
+      "index": 3,
+      "width": 822,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08075v1/fig-004.webp",
+      "caption": "Table 2: Paired t-test results comparing real versus null prediction correlations for each mapping architecture across three evaluation conditions: Seen (Train): models tested on training sessions of seen subjects, Seen (Test): models tested on held-out sessions of seen subjects, and LOSO: models tested on entirely unseen subjects. Non-significant results (p > 0.05) indicate failure to generalize beyond the null model.",
+      "page": 14,
+      "index": 4,
+      "width": 865,
+      "height": 186
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08075v1/fig-005.webp",
+      "caption": "Figure 4: Full pipeline decoding performance and word consistency analysis. (A) Rank CDF for word decoding in our full pipeline (solid line, mean ± standard deviation across held-out subjects and mapping architectures), compared to the listened decoding ceiling (markers) and chance level (dashed), showing significant above chance decoding performance. Results are shown for BERT + Wav2Vec2 encoder model only. Other encoder models behaved similarly (Appendix D.1). (B) Histogram of Jaccard similarity between top-20 best decodable word sets across all subjects and mapping architectures within the full pipeline (blue), compared to a random baseline (gray). The withinpipeline consistency is substantially above chance (Wilcoxon rank-sum test, p < 0.001), indicating that the same words are reliably decoded regardless of which subject and mapping architecture is used. (C) Histogram of Jaccard similarity between each subject and mapping architecture’s top-20 set and the top-20 words identified by the listened decoder during training (green), compared to the same random baseline. The overlap is significantly above chance (p < 0.01), showing that the words the full pipeline decodes well are not arbitrary but align with those the decoder finds best decodable in the listened condition. Vertical lines indicate distribution means. All evaluations are performed on held-out subjects unseen during training.",
+      "page": 8,
+      "index": 5,
+      "width": 822,
+      "height": 309
+    }
+  ]
+}
