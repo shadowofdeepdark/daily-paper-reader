@@ -1,0 +1,110 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-001.webp",
+      "caption": "Figure 2: Construction of the fixed length interpretable attention feature vector. For each prompt k, attention from generated tokens to input token positions is first aggregated across attention heads via max-pooling (H = 40 → 1), then aggregated across three axes: generation phases (P = 3), layer clusters (C = 4), and functional token groups (G = 6). Each dimension of the resulting 72-dimensional feature vector corresponds to a triplet (pi, cj , f), where i ∈ {0, 1, 2} indexes the generation phase, j ∈ {0, 1, 2, 3} indexes the layer cluster, and f ∈ {FIGURATIVE, HARMFUL_PAYLOAD, SETUP, TECHNICAL, FUNCTION_WORD, PUNCTUATION}.",
+      "page": 6,
+      "index": 1,
+      "width": 622,
+      "height": 366
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-002.webp",
+      "caption": "Figure 7: Additional ablation examples derived from the original prompt in Figure 1a. Each subfigure pairs a prompt (top) with its corresponding model response (bottom); red borders indicate successful jailbreaks. Prompt tokens are annotated for functional groups using our annotation pipeline. Removing technical vocabulary affects recognition of the harmful payload in the text without changing the safety label, while decreasing or increasing the amount of purely figurative language does not influence response safety.",
+      "page": 15,
+      "index": 2,
+      "width": 506,
+      "height": 1137
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-003.webp",
+      "caption": "Figure 3: Three-dimensional PCA projection of the constructed feature vectors, colored by safety outcome (left) and by literary format (right). The three principal components capture 79.41% of the total variance. No linear separation emerges by safety outcome. By literary format, the two classes show asymmetric distributions: poetry forms a tight, compact cluster, while prose spreads broadly across a much larger region, with partial overlap in the area of poetry concentration.",
+      "page": 7,
+      "index": 3,
+      "width": 826,
+      "height": 331
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-004.webp",
+      "caption": "Figure 6: Prompts were embedded with gemini-embeddings-002 and topics extracted with a BERTopic-inspired pipeline, employing spectral clustering and using gemini-3-1-pro for automatic labeling.",
+      "page": 14,
+      "index": 4,
+      "width": 664,
+      "height": 687
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-005.webp",
+      "caption": "Figure 11: System prompt for the TECHNICAL judge.",
+      "page": 18,
+      "index": 5,
+      "width": 829,
+      "height": 431
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-006.webp",
+      "caption": "Figure 10: System prompt for the HARMFUL PAYLOAD judge.",
+      "page": 18,
+      "index": 6,
+      "width": 829,
+      "height": 471
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-007.webp",
+      "caption": "Figure 5: Meta-prompt template used by DeepSeek-R1 to transform prose prompts from the MLCommons AILuminate Benchmark into poetic reformulations, applied during construction of the main dataset.",
+      "page": 13,
+      "index": 7,
+      "width": 829,
+      "height": 487
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-008.webp",
+      "caption": "Figure 4: Logistic regression coefficients for all 72 features in the format prediction probe (poetry vs. prose). The horizontal axis labels each feature, where pi denotes the generation phase, and cj corresponds to the layer cluster. Positive values contribute to predicting poetry, negative values contribute to predicting prose, and larger magnitudes indicate stronger predictive importance. Error bars indicate standard deviation across the 5 K-fold CV folds, computed per feature.",
+      "page": 8,
+      "index": 8,
+      "width": 829,
+      "height": 275
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-009.webp",
+      "caption": "Figure 1: Ablation study for a sample from the cyber-offense hazard category. Each subfigure pairs a prompt (top) with the corresponding model response (bottom); red-bordered responses indicate successful jailbreaks (unsafe outputs) and blue-bordered responses indicate safety compliance (refusals). Prompt tokens are annotated for functional groups using our annotation pipeline, which combines three LLM judges with three deterministic steps. The comparison demonstrates that accumulated style irregularities in minimal configurations can still produce jailbreaks, while removing poetic devices entirely results in safety compliance.",
+      "page": 4,
+      "index": 9,
+      "width": 818,
+      "height": 599
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-010.webp",
+      "caption": "Figure 9: System prompt for the FIGURATIVE judge.",
+      "page": 17,
+      "index": 10,
+      "width": 829,
+      "height": 492
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-011.webp",
+      "caption": "Figure 12: Safety prediction probe on the prose subset (safe vs. unsafe) after class balancing. Error bars indicate standard deviation across the 5 K-fold CV folds, computed per feature. The horizontal axis labels each feature, where pi denotes the generation phase, and cj corresponds to the layer cluster. The vertical axis reports the coefficient value: positive values contribute to predicting safe, negative values contribute to predicting unsafe, and larger magnitudes indicate stronger predictive importance.",
+      "page": 20,
+      "index": 11,
+      "width": 748,
+      "height": 248
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-012.webp",
+      "caption": "Figure 13: Safety prediction probe on the poetry subset (safe vs. unsafe). Error bars indicate standard deviation across the 5 K-fold CV folds, computed per feature. The horizontal axis labels each feature, where pi denotes the generation phase, and cj corresponds to the layer cluster. The vertical axis reports the coefficient value: positive values contribute to predicting safe, negative values contribute to predicting unsafe, and larger magnitudes indicate stronger predictive importance.",
+      "page": 20,
+      "index": 12,
+      "width": 748,
+      "height": 246
+    },
+    {
+      "url": "assets/figures/arxiv/2605.12128v1/fig-013.webp",
+      "caption": "Figure 8: Average between-layer Pearson correlation matrix computed from accumulated attention profiles on the calibration dataset. Rows and columns are reordered according to Ward hierarchical clustering with optimal leaf ordering. Black lines mark the boundaries of the four selected clusters: c0 = {0}, c1 = {1-4}, c2 = {5-6}, and c3 = {7-39}.",
+      "page": 16,
+      "index": 13,
+      "width": 664,
+      "height": 556
+    }
+  ]
+}
