@@ -1,0 +1,814 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-14T21:05:11.826205+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 21,
+    "deep_cap": 6,
+    "deep_selected": 9,
+    "quick_candidates": 54,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2605.09042v1",
+      "source": "arxiv",
+      "title": "Evaluating Pragmatic Reasoning in Large Language Models: Evidence from Scalar Diversity",
+      "abstract": "Evaluating pragmatic reasoning in large language models (LLMs) remains challenging because model behavior can vary depending on evaluation methods. Previous studies suggest that prompt-based judgments may diverge from models' internal probability distributions, raising questions about whether observed performance reflects underlying competence or task-induced behavior. This study examines this issue using scalar diversity as a graded diagnostic for pragmatic inference. Following Hu & Levy (2023), this study compares direct probability measurement and metalinguistic prompting across multiple models and experimental settings. The results show that neither evaluation method consistently outperforms the other and that pragmatic behavior varies substantially across model families, prompting strategies, and task structures. Moreover, scalar diversity gradients emerge only in specific model-condition combinations, suggesting that pragmatic reasoning in LLMs reflects an interaction between internal probabilistic representations and task-induced prompting behavior rather than a stable competence captured by a single evaluation paradigm. These findings highlight the central role of evaluation design in interpreting pragmatic abilities in LLMs.",
+      "authors": [
+        "Ye-eun Cho"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-09T16:28:50+00:00",
+      "link": "https://arxiv.org/pdf/2605.09042v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "evaluating pragmatic reasoning and scalar inference in language models",
+      "llm_evidence_cn": "评估语言模型中的语用推理和数量推断",
+      "llm_evidence": "评估语言模型中的语用推理和数量推断",
+      "canonical_evidence": "评估语言模型中的语用推理和数量推断",
+      "llm_tldr_en": "Uses scalar diversity to evaluate how large language models perform pragmatic reasoning.",
+      "llm_tldr_cn": "利用数量多样性评估大语言模型如何进行语用推理。",
+      "llm_tldr": "利用数量多样性评估大语言模型如何进行语用推理。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "understanding of ironic expressions and pragmatic inference",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.04857v1",
+      "source": "arxiv",
+      "title": "Assessing Cognitive Effort in L2 Idiomatic Processing: An Eye-Tracking Dataset",
+      "abstract": "This paper presents the development and validation of an eye-tracking dataset designed to investigate how second-language (L2) learners process idiomatic expressions. While native speakers often rely on direct retrieval of figurative meanings, L2 speakers frequently adopt a literal-first approach, which incurs measurable cognitive costs. This resource captures these costs through ocular metrics recorded from Portuguese L1 speakers of English across all CEFR proficiency levels (A1-C2). Although the study uses entry-level 60 Hz hardware (Tobii Pro Spark), we demonstrate that this sampling rate provides sufficient data density to detect macro-cognitive events such as fixations and regressions in reading. Preliminary analysis validates the dataset by revealing a strong inverse correlation between language proficiency and regressive eye movements. Integrated into the MIA (Modeling Idiomaticity in Human and Artificial Language Processing) initiative, this dataset serves as a cognitively grounded benchmark for evaluating both human processing models and the alignment of large language models with human-like figurative understanding.",
+      "authors": [
+        "Eduardo Santos",
+        "Juliana Carvalho",
+        "César Rennó-Costa"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-05-06T12:54:13+00:00",
+      "link": "https://arxiv.org/pdf/2605.04857v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Eye-tracking dataset for L2 idiomatic processing and cognitive effort",
+      "llm_evidence_cn": "用于二语习语加工和认知负荷研究的眼动数据集",
+      "llm_evidence": "用于二语习语加工和认知负荷研究的眼动数据集",
+      "canonical_evidence": "用于二语习语加工和认知负荷研究的眼动数据集",
+      "llm_tldr_en": "Provides an eye-tracking dataset to study cognitive costs in second-language idiomatic expression processing.",
+      "llm_tldr_cn": "提供了一个眼动数据集，用于研究二语学习者在加工习语时的认知成本。",
+      "llm_tldr": "提供了一个眼动数据集，用于研究二语学习者在加工习语时的认知成本。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.05927v2",
+      "source": "arxiv",
+      "title": "Minimizing Modality Gap from the Input Side: Your Speech LLM Can Be a Prosody-Aware Text LLM",
+      "abstract": "Speech large language models (SLMs) are typically built from text large language model (TLM) checkpoints, yet they still suffer from a substantial modality gap. Prior work has mainly attempted to reduce this gap from the output side by making speech generation more text-like, but the gap remains. We argue that the key remaining bottleneck lies on the input side. We propose TextPro-SLM, an SLM that makes spoken input more closely resemble that of a prosody-aware text LLM. TextPro-SLM combines WhisperPro, a unified speech encoder that produces synchronized text tokens and prosody embeddings, with an LLM backbone trained to preserve the semantic capabilities of the original TLM while learning paralinguistic understanding. Experiments show that TextPro-SLM achieves the lowest modality gap among leading SLMs at both 3B and 7B scales, while also delivering strong overall performance on paralinguistic understanding tasks. These gains are achieved with only roughly 1,000 hours of LLM training audio, suggesting that reducing the modality gap from the input side is both effective and data-efficient.",
+      "authors": [
+        "Wenqian Cui",
+        "Xiao-Hui Li",
+        "Daxin Tan",
+        "Qiyong Zheng",
+        "Irwin King"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.SD",
+        "eess.AS"
+      ],
+      "published": "2026-05-07T09:32:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.05927v2",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "prosody-aware text LLM and paralinguistic understanding",
+      "llm_evidence_cn": "韵律感知文本大模型与副语言理解",
+      "llm_evidence": "韵律感知文本大模型与副语言理解",
+      "canonical_evidence": "韵律感知文本大模型与副语言理解",
+      "llm_tldr_en": "Develops a speech LLM that integrates prosody embeddings for better paralinguistic understanding.",
+      "llm_tldr_cn": "开发了一种集成韵律嵌入的语音大模型，以实现更好的副语言理解。",
+      "llm_tldr": "开发了一种集成韵律嵌入的语音大模型，以实现更好的副语言理解。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.09413v1",
+      "source": "arxiv",
+      "title": "Evaluating the Expressive Appropriateness of Speech in Rich Contexts",
+      "abstract": "Evaluating expressive speech remains challenging, as existing methods mainly assess emotional intensity and overlook whether a speech sample is expressively appropriate for its contextual setting. This limitation hinders reliable evaluation of speech systems used in narrative-driven and interactive applications, such as audiobooks and conversational agents. We introduce CEAEval, a Context-rich framework for Evaluating Expressive Appropriateness in speech, which assesses whether a speech sample expressively aligns with the underlying communicative intent implied by its discourse-level narrative context. To support this task, we construct CEAEval-D, the first context-rich speech dataset with real human performances in Mandarin conversational speech, providing narrative descriptions together with fifteen dimensions of human annotations covering expressive attributes and expressive appropriateness. We further develop CEAEval-M, a model that integrates knowledge distillation, planner-based multi-model collaboration, adaptive audio attention bias, and reinforcement learning to perform context-rich expressive appropriateness evaluation. Experiments on a human-annotated test set demonstrate that CEAEval-M substantially outperforms existing speech evaluation and analysis systems.",
+      "authors": [
+        "Tianrui Wang",
+        "Ziyang Ma",
+        "Yizhou Peng",
+        "Haoyu Wang",
+        "Zhikang Niu",
+        "Zikang Huang",
+        "Yihao Wu",
+        "Yi-Wen Chao",
+        "Yu Jiang",
+        "Yuheng Lu",
+        "Guanrou Yang",
+        "Xuanchen Li",
+        "Hexin Liu",
+        "Chunyu Qiang",
+        "Cheng Gong",
+        "Yifan Yang",
+        "Tianchi Liu",
+        "Junyu Wang",
+        "Nana Hou",
+        "Meng Ge",
+        "Fuming You",
+        "Wei Yang",
+        "Zhongqian Sun",
+        "Haifeng Hu",
+        "Xiaobao Wang",
+        "Eng Siong Chng",
+        "Xie Chen",
+        "Longbiao Wang",
+        "Jianwu Dang"
+      ],
+      "primary_category": "eess.AS",
+      "categories": [
+        "eess.AS"
+      ],
+      "published": "2026-05-10T08:28:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.09413v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "evaluates expressive appropriateness of speech relative to communicative intent and discourse context",
+      "llm_evidence_cn": "评估语音相对于交际意图和话语语境的表达恰当性",
+      "llm_evidence": "评估语音相对于交际意图和话语语境的表达恰当性",
+      "canonical_evidence": "评估语音相对于交际意图和话语语境的表达恰当性",
+      "llm_tldr_en": "Introduces a framework to evaluate if speech prosody aligns with communicative intent in Mandarin discourse.",
+      "llm_tldr_cn": "引入了一个评估框架，用于判断普通话话语中语音韵律是否符合交际意图。",
+      "llm_tldr": "引入了一个评估框架，用于判断普通话话语中语音韵律是否符合交际意图。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-05-06-723165-v1",
+      "source": "biorxiv",
+      "title": "Two Interacting Neural Processes Support Speech Planning during Naturalistic Conversation",
+      "abstract": "Conversation requires speakers to plan their responses while still listening to their partner, yet the neural dynamics supporting this overlap remain unclear. In particular, competing accounts differ on whether behaviourally relevant preparation emerges early during comprehension or only close to speech onset. Here, we recorded EEG from pairs of participants engaged in natural, face-to-face conversation and tested whether neural activity during listening predicts both when speakers begin their response (latency) and how long they speak (duration). Using event-related potentials, oscillatory analyses, and multivariate decoding, we show that pre-speech neural activity carries robust information about upcoming behaviour more than one second before articulation. The strongest and earliest effects tracked response duration, with sustained ERP components and alpha/beta power modulations predicting how long participants would speak, even after controlling for behavioural variables. In contrast, neural predictors of response latency were more temporally restricted and partly aligned with partner turn boundaries. Temporal generalisation analyses further revealed stable neural patterns linking early and late stages of preparation. Together, these findings indicate that conversational planning unfolds during listening and that early neural activity reflects the maintained specification of response extent, followed by later processes related to commitment and initiation. This supports a temporally structured account of turn taking in which preparation involves both early maintenance and late motor engagement.",
+      "authors": [
+        "Yamasaki, H.",
+        "Blache, P.",
+        "Schön, D."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-05-07T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.05.06.723165v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "EEG recorded during natural conversation to test neural activity during listening and speech planning",
+      "llm_evidence_cn": "记录自然对话中的脑电图，以测试听力与言语计划期间的神经活动",
+      "llm_evidence": "记录自然对话中的脑电图，以测试听力与言语计划期间的神经活动",
+      "canonical_evidence": "记录自然对话中的脑电图，以测试听力与言语计划期间的神经活动",
+      "llm_tldr_en": "Uses EEG to reveal neural dynamics of speech planning and comprehension during naturalistic conversation.",
+      "llm_tldr_cn": "利用脑电图揭示自然对话中言语计划与理解的神经动力学。",
+      "llm_tldr": "利用脑电图揭示自然对话中言语计划与理解的神经动力学。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-05-08-723790-v1",
+      "source": "biorxiv",
+      "title": "Representational similarity of hemodynamic brain responses to written and spoken words increases when learning to read",
+      "abstract": "Learning to read requires linking auditory and visual information, yet how the developing brain maps information across sensory modalities remains poorly understood. To shed light on this topic we employed functional MRI to investigate hemodynamic brain responses during spoken and written word or pseudoword recognition in 61 primary school children with different levels of reading experience. Audiovisual representational similarity of activation patterns in the inferior frontal gyrus, inferior parietal lobule, superior temporal gyrus, and temporo-occipital cortex, increased linearly with school grade and this effect was largest in the left posterior superior temporal gyrus. Our results suggest that learning to read is related to a progressively increasing similarity of auditory and visual word representations within canonical language areas.",
+      "authors": [
+        "Maruo, K.",
+        "Kessler, R.",
+        "Huettig, F.",
+        "Skeide, M. A."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-05-09T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.05.08.723790v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "compare brain responses to written and spoken words using fMRI",
+      "llm_evidence_cn": "使用fMRI比较书面语和口语的脑部反应",
+      "llm_evidence": "使用fMRI比较书面语和口语的脑部反应",
+      "canonical_evidence": "使用fMRI比较书面语和口语的脑部反应",
+      "llm_tldr_en": "Investigates how the brain maps information across auditory and visual modalities during reading development.",
+      "llm_tldr_cn": "研究大脑在阅读发育过程中如何在听觉和视觉模态间映射信息。",
+      "llm_tldr": "研究大脑在阅读发育过程中如何在听觉和视觉模态间映射信息。",
+      "llm_tags": [
+        "query:q9"
+      ],
+      "matched_query_tag": "query:q9",
+      "matched_query_text": "compare reading and listening comprehension using behavioral and physiological methods",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-05-13-722865-v1",
+      "source": "biorxiv",
+      "title": "Neural Tracking of Linguistic Predictors in Spontaneous Conversational Speech",
+      "abstract": "This study investigates whether neural tracking of linguistic information extends from read speech to spontaneous conversation. Using the temporal response function (TRF) framework, we validate our approach on a read-speech EEG dataset and then apply it to EEG recordings from natural conversations. We observe reliable neural tracking of key linguistic predictors, including word onset, part-of-speech surprisal, and lexical surprisal, in spontaneous speech, with effects around 200, 400, and 600 ms. These results provide new evidence that linguistic neural tracking operates in natural conversational settings and confirm the feasibility of EEG studies in ecologically valid contexts.",
+      "authors": [
+        "Fleig, M.",
+        "Wang, S.",
+        "Dudek, A. E.",
+        "Freyermuth, J.-M.",
+        "Becerra, L.",
+        "Blache, P."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-05-14T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.05.13.722865v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "neural tracking of linguistic predictors in spontaneous conversation using EEG",
+      "llm_evidence_cn": "利用EEG对自发对话中语言预测因子的神经追踪",
+      "llm_evidence": "利用EEG对自发对话中语言预测因子的神经追踪",
+      "canonical_evidence": "利用EEG对自发对话中语言预测因子的神经追踪",
+      "llm_tldr_en": "Validates EEG neural tracking of linguistic predictors like surprisal in natural conversational settings.",
+      "llm_tldr_cn": "验证了在自然对话场景下，利用EEG对语言预测因子（如惊奇度）进行神经追踪的可行性。",
+      "llm_tldr": "验证了在自然对话场景下，利用EEG对语言预测因子（如惊奇度）进行神经追踪的可行性。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-05-13-724774-v1",
+      "source": "biorxiv",
+      "title": "Distinct yet neighboring neural populations encode past, future, and surrounding speech context in the human temporal lobe",
+      "abstract": "Context is critical for both human and artificial speech comprehension systems. While the role of preceding context in speech processing has been well documented, the neural mechanisms supporting the integration of subsequent input -- phonemes and words that occur in the future -- remain poorly understood. Here, we leverage advances in artificial speech systems to model the contribution of different sources of context on the neural encoding of speech in the human brain. For neural encoding, context-informed but not context-uninformed speech model embeddings explain unique variance in human neural activity beyond acoustics, including in early speech processing regions. In particular, model embeddings informed by past, future, and surrounding context explain activity in distinct intracranial electrodes. These electrodes are left-lateralised, and spatially intermixed in the temporal lobe. We find that beyond-word context is crucial for the representational quality of speech model embeddings, and in particular for the encoding of abstract linguistic information. Our finding that spatially neighboring yet distinct neural populations in the temporal lobe encode representations shaped by different contextual sources (past, future, and surrounding input) provides key insight into the neural circuitry that integrates multiple forms of contextual information. Furthermore, our results may inform the downstream use of self-supervised speech representations in language technology tasks, and in models of speech comprehension in the human brain.",
+      "authors": [
+        "de Heer Kloots, M.",
+        "Kazemian, A.",
+        "Turner, W.",
+        "Parvizi, J.",
+        "Gwilliams, L."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-05-14T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.05.13.724774v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "neural mechanisms supporting integration of subsequent input and speech context",
+      "llm_evidence_cn": "支持后续输入与语音语境整合的神经机制",
+      "llm_evidence": "支持后续输入与语音语境整合的神经机制",
+      "canonical_evidence": "支持后续输入与语音语境整合的神经机制",
+      "llm_tldr_en": "Uses artificial speech models to study how the human brain encodes past and future speech context.",
+      "llm_tldr_cn": "利用人工语音模型研究人脑如何编码过去和未来的语音语境。",
+      "llm_tldr": "利用人工语音模型研究人脑如何编码过去和未来的语音语境。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "explore cognitive and neural mechanisms of non literal language comprehension",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-05-13-724877-v1",
+      "source": "biorxiv",
+      "title": "Are executive function and neuroanatomy in ADHD modulated by bilingualism?",
+      "abstract": "It has been proposed that bilinguals have better executive function (EF) arising from the constant selection of one language while inhibiting the other, and gray matter has been found to differ in bilinguals in regions linked to EF (frontal-parietal and subcortical structures). Attention Deficit Hyperactivity Disorder (ADHD) is associated with poorer EF and neuroanatomical differences underlying EF. Given the EF \"advantage\" in bilinguals, we investigated whether a bilingual experience affects EF performance and brain structure differentially in those with ADHD. Using the Adolescent Brain and Cognitive Development Study, we compared early Spanish-English bilinguals and English-speaking monolinguals with and without ADHD. ANOVAs for the Flanker, Working Memory, and Card Sort Tasks revealed no main effects of Language Experience (Bilingual versus Monolingual), a main effect of Diagnostic Group for Card Sort (ADHD worse than Controls), and no interaction effects on performance for any task. ANOVAs for gray matter volume (GMV) revealed a main effect of Language Experience in many regions, a main effect of Diagnostic Group in some regions, but no interactions. GMV in left thalamus was affected by both ADHD and bilingualism, but the effect of ADHD was not significantly diminished or enhanced by the dual-language experience. For cortical thickness, there was a main effect of Language Experience in several regions, no main effect of Diagnostic Group, and no interactions. Taken together, bilingualism has some impact on EF performance, a strong impact on neuroanatomy, but there was no disproportionate impact by bilingualism on the differences caused by ADHD for any measure.",
+      "authors": [
+        "Oak, A.",
+        "Gutierrez-Schieferl, I. S.",
+        "Eden, G. F."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-05-14T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.05.13.724877v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "bilingualism effects on executive function and neuroanatomy",
+      "llm_evidence_cn": "双语经验对执行功能和神经解剖的影响",
+      "llm_evidence": "双语经验对执行功能和神经解剖的影响",
+      "canonical_evidence": "双语经验对执行功能和神经解剖的影响",
+      "llm_tldr_en": "Examines whether bilingualism modulates executive function and brain structure in individuals with ADHD.",
+      "llm_tldr_cn": "研究双语经验是否调节ADHD患者的执行功能和大脑结构。",
+      "llm_tldr": "研究双语经验是否调节ADHD患者的执行功能和大脑结构。",
+      "llm_tags": [
+        "query:q10"
+      ],
+      "matched_query_tag": "query:q10",
+      "matched_query_text": "examine predictive processes and inner speech in bilingual language understanding",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.09483v1",
+      "source": "arxiv",
+      "title": "A Cognitively Grounded Bayesian Framework for Misinformation Susceptibility",
+      "abstract": "In this (work in progress) paper, we present Bounded Pragmatic Listener (or BPL), a cognitively grounded Bayesian framework for modelling susceptibility to information disorder. BPL extends Rational Speech Act theory with three cognitively motivated bounds derived from the bounded rationality literature with a) a recursion depth bound (that emphasises working memory limits);b) a prior compression parameter (which is oriented at capturing information bottleneck); and c) an availability sample size (that operationalises importance sampling with saliency-weighted proposals). This allows us to test predictions about misinformation susceptibility, annotator disagreement, and the differential vulnerability to mis-, dis-, and mal-information as defined in the Information Disorder framework. We validate BPL on the LIAR and MultiFC benchmarks showcasing competitive veracity classification and experimental support for the depth-mismatch paradox.",
+      "authors": [
+        "Pranava Madhyastha"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-05-10T11:37:40+00:00",
+      "link": "https://arxiv.org/pdf/2605.09483v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.5,
+      "llm_evidence_en": "extends Rational Speech Act theory with cognitively grounded Bayesian framework for pragmatic listening",
+      "llm_evidence_cn": "扩展理性言语行为理论，建立认知基础的语用听者贝叶斯框架",
+      "llm_evidence": "扩展理性言语行为理论，建立认知基础的语用听者贝叶斯框架",
+      "canonical_evidence": "扩展理性言语行为理论，建立认知基础的语用听者贝叶斯框架",
+      "llm_tldr_en": "Proposes a cognitively grounded Bayesian framework to model pragmatic inference and misinformation susceptibility.",
+      "llm_tldr_cn": "提出一个基于认知的贝叶斯框架，用于模拟语用推理和对虚假信息的敏感性。",
+      "llm_tldr": "提出一个基于认知的贝叶斯框架，用于模拟语用推理和对虚假信息的敏感性。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "investigation of pragmatic language phenomena through controlled experiments",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.09043v1",
+      "source": "arxiv",
+      "title": "Phase Transitions in Affective Meaning Divergence: The Hidden Drift Before the Break",
+      "abstract": "One partner says \"Fine\" meaning <i>resolution</i>; the other hears <i>surrender</i>. The word is shared; the affective uptake is not. We formalize this as <b>affective meaning divergence (AMD)</b>, the total-variation distance between interlocutors' anchor-conditioned affect distributions. Building on speech-act theory, common-ground accumulation, and entropy-regularized game theory, we derive a logit best-response map whose dynamics undergo a saddle-node bifurcation: when $βα> 4$, a monotone increase in AMD-driven load produces an abrupt, hysteretic collapse of repair coordination. On Conversations Gone Awry (CGA-Wiki; $N=652$), derailing conversations exhibit critical-slowing-down (CSD) signatures across multiple levels: lexical divergence variance ($p<0.001$, $d=0.36$), AMD variance ($p=0.001$, $d=0.26$), and dialog-act repair variance ($p=0.016$, $d=0.20$), all significant after correction and stronger than toxicity and sentiment baselines. AMD provides a distinct temporal signature, with retrospectively measured variance peaking at the bifurcation point while toxicity variance peaks earlier, and is the only indicator grounded in the theoretical framework. Boundary-condition analysis on CGA-CMV ($N=1{,}169$) yields mixed but directionally consistent evidence.",
+      "authors": [
+        "Napassorn Litchiowong"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-05-09T16:30:47+00:00",
+      "link": "https://arxiv.org/pdf/2605.09043v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "formalizes affective meaning divergence using speech-act theory and game theory",
+      "llm_evidence_cn": "利用言语行为理论和博弈论将情感意义分歧形式化",
+      "llm_evidence": "利用言语行为理论和博弈论将情感意义分歧形式化",
+      "canonical_evidence": "利用言语行为理论和博弈论将情感意义分歧形式化",
+      "llm_tldr_en": "Models how interlocutors diverge in affective interpretation of shared words using speech-act theory.",
+      "llm_tldr_cn": "利用言语行为理论模拟对话者对共享词汇在情感理解上的分歧。",
+      "llm_tldr": "利用言语行为理论模拟对话者对共享词汇在情感理解上的分歧。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "understanding of ironic expressions and pragmatic inference",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.07817v1",
+      "source": "arxiv",
+      "title": "GazeVLM: Active Vision via Internal Attention Control for Multimodal Reasoning",
+      "abstract": "Human visual reasoning is governed by active vision, a process where metacognitive control drives top-down goal-directed attention, dynamically routing foveal focus toward task-relevant details while maintaining peripheral awareness of the global scene. In contrast, modern Vision-Language Models (VLMs) process visual information passively, relying on the static accumulation of massive token contexts that dilute spatial reasoning and induce linguistic hallucinations. Here we propose the following paradigm shift: GazeVLM, a multimodal architecture that internalizes this metacognitive oversight over its deployment of attention resources directly into the reasoning loop. By empowering the VLM to autonomously generate gaze tokens ($\\texttt{<LOOK>}$), GazeVLM establishes a top-down control mechanism over its own causal attention mask. The model dynamically dictates its focal intent, triggering a continuous suppression bias that dampens irrelevant visual features, implementing spatial selective attention and simulating foveal fixation. Once local reasoning concludes, the bias lifts, seamlessly restoring the global view. This architecture enables the model to fluidly transition between global spatial awareness and localized focal reasoning without relying on external agentic contraptions like cropping tools, or inflating the context window with additional visual tokens derived from localized visual patches. Trained with a bespoke Group Relative Policy Optimization (GRPO) procedure that rewards valid grounding, our 4B-parameter GazeVLM delivers strong high-resolution multimodal reasoning performance, surpassing state-of-the-art VLMs in its parameter class by nearly 4% and agentic multimodal pipelines built around thinking with images by more than 5% on HRBench-4k and HRBench-8k.",
+      "authors": [
+        "Brown Ebouky",
+        "Gabriele Carrino",
+        "Niccolo Avogaro",
+        "Christoph Studer",
+        "Andrea Bartezzaghi",
+        "Mattia Rigotti"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-05-08T14:49:10+00:00",
+      "link": "https://arxiv.org/pdf/2605.07817v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "internalizes gaze-like attention control for multimodal reasoning in vision-language models",
+      "llm_evidence_cn": "在视觉语言模型中内化类眼动注意力控制以进行多模态推理",
+      "llm_evidence": "在视觉语言模型中内化类眼动注意力控制以进行多模态推理",
+      "canonical_evidence": "在视觉语言模型中内化类眼动注意力控制以进行多模态推理",
+      "llm_tldr_en": "Introduces GazeVLM, which uses autonomous gaze tokens to improve multimodal reasoning and attention.",
+      "llm_tldr_cn": "引入GazeVLM，通过自主生成的注视标记来改进多模态推理和注意力分配。",
+      "llm_tldr": "引入GazeVLM，通过自主生成的注视标记来改进多模态推理和注意力分配。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.04877v1",
+      "source": "arxiv",
+      "title": "To Fuse or to Drop? Dual-Path Learning for Resolving Modality Conflicts in Multimodal Emotion Recognition",
+      "abstract": "Multimodal emotion recognition (MER) benefits from combining text, audio, and vision, yet standard fusion often fails when modalities conflict. Crucially, conflicts differ in resolvability: benign conflicts stem from missing, weak, or ambiguous cues and can be mitigated by cross-modal calibration, while severe conflicts arise from intrinsically contradictory (e.g., sarcasm) or misleading signals, for which forced fusion may amplify errors. Recognizing this, we propose Dual-Path Conflict Resolution (DCR), a unified framework that learns when to fuse and when to drop modalities. Path I (Affective Fusion Distiller, AFD) performs reverse distillation from audio/visual teachers to a textual student using temporally weighted class evidence, thereby enhancing representation-level calibration and improving fusion when alignment is beneficial. Path II (Affective Discernment Agent, ADA) formulates MER as a contextual bandit that selects among fusion and unimodal predictions based on a dual-view state and a calibration-aware reward, enabling decision-level arbitration under irreconcilable conflicts without requiring per-modality reliability labels. By taking into account the full multimodal context and coupling soft calibration with hard arbitration, DCR reconciles conflicts that can be aligned while bypassing misleading modalities when fusion is harmful. Across five benchmarks covering both dialogue-level and clip-level MER, DCR consistently outperforms competitive baselines or achieves highly competitive results. Further ablations, conflict-specific subset evaluation, and modality-selection analysis verify that AFD and ADA are complementary and jointly improve robust conflict-aware emotion recognition.",
+      "authors": [
+        "Yangchen Yu",
+        "Qian Chen",
+        "Jia Li",
+        "Zhenzhen Hu",
+        "Jinpeng Hu",
+        "Lizi Liao",
+        "Erik Cambria",
+        "Richang Hong"
+      ],
+      "primary_category": "cs.MM",
+      "categories": [
+        "cs.MM",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-05-06T13:11:33+00:00",
+      "link": "https://arxiv.org/pdf/2605.04877v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "resolving modality conflicts in cases of intrinsically contradictory signals like sarcasm",
+      "llm_evidence_cn": "解决如讽刺等本质矛盾信号中的模态冲突",
+      "llm_evidence": "解决如讽刺等本质矛盾信号中的模态冲突",
+      "canonical_evidence": "解决如讽刺等本质矛盾信号中的模态冲突",
+      "llm_tldr_en": "Proposes a framework to handle multimodal conflicts, specifically mentioning sarcasm as a contradictory signal.",
+      "llm_tldr_cn": "提出了一种处理多模态冲突的框架，特别提到了讽刺作为一种矛盾信号。",
+      "llm_tldr": "提出了一种处理多模态冲突的框架，特别提到了讽刺作为一种矛盾信号。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "processing and comprehension of sarcastic language as non-literal meaning",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.04639v1",
+      "source": "arxiv",
+      "title": "Cognitive Alignment Drives Attention: Modeling and Supporting Socially Shared Regulation in Pair Programming",
+      "abstract": "Grounded in socially shared regulation of learning (SSRL), this paper investigates how joint mental effort (JME) and joint visual attention (JVA) serve as process-level indicators of shared regulation in pair programming and how AI-driven adaptive feedback can strengthen these processes.   We present three eye-tracking studies involving 182 dyads engaged in collaborative debugging tasks. Study 1 examines natural collaboration and shows that high-performing dyads exhibit significantly higher JME and JVA, a greater prevalence of productive high-JME-high-JVA episodes, and a stable causal relationship in which JME predicts JVA. Study 2 evaluates reactive adaptive feedback based on real-time deviations in JME and/or JVA. Results show that combined feedback targeting both dimensions yields the strongest improvements in performance, regulatory coherence, and cognitive-to-attentional causality, outperforming single-channel feedback. Study 3 introduces proactive, forecast-based feedback using machine-learning predictions of future collaboration states. Proactive support further enhances performance and sustains shared regulation by anticipating breakdowns before they manifest.   Across studies, causal modeling reveals that cognitive alignment systematically drives attentional coordination in successful collaboration, while mismatches between effort and attention characterize unproductive regulation. Methodologically, this work integrates dual eye-tracking, pupillometry, episode-based analysis, and causal inference to capture SSRL as a dynamic, emergent process. Conceptually, the findings position AI not as an automated controller, but as an intelligence-augmenting co-regulator that supports learners' capacity to coordinate effort, attention, and understanding together.",
+      "authors": [
+        "Anahita Golrang",
+        "Kshitij Sharma"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-05-06T08:32:03+00:00",
+      "link": "https://arxiv.org/pdf/2605.04639v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "eye-tracking studies to examine joint visual attention and cognitive processes",
+      "llm_evidence_cn": "使用眼动追踪研究共同视觉注意力和认知过程",
+      "llm_evidence": "使用眼动追踪研究共同视觉注意力和认知过程",
+      "canonical_evidence": "使用眼动追踪研究共同视觉注意力和认知过程",
+      "llm_tldr_en": "Uses eye-tracking to study how joint attention and mental effort drive collaboration in pair programming.",
+      "llm_tldr_cn": "利用眼动追踪技术研究结对编程中共同注意力和心理努力如何驱动协作。",
+      "llm_tldr": "利用眼动追踪技术研究结对编程中共同注意力和心理努力如何驱动协作。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.06157v1",
+      "source": "arxiv",
+      "title": "HNC: Leveraging Hard Negative Captions towards Models with Fine-Grained Visual-Linguistic Comprehension Capabilities",
+      "abstract": "Image-Text-Matching (ITM) is one of the defacto methods of learning generalized representations from a large corpus in Vision and Language (VL). However, due to the weak association between the web-collected image-text pairs, models fail to show a fine-grained understanding of the combined semantics of these modalities. To address this issue we propose Hard Negative Captions (HNC): an automatically created dataset containing foiled hard negative captions for ITM training towards achieving fine-grained cross-modal comprehension in VL. Additionally, we provide a challenging manually-created test set for benchmarking models on a fine-grained cross-modal mismatch task with varying levels of compositional complexity. Our results show the effectiveness of training on HNC by improving the models' zero-shot capabilities in detecting mismatches on diagnostic tasks and performing robustly under noisy visual input scenarios. Also, we demonstrate that HNC models yield a comparable or better initialization for fine-tuning",
+      "authors": [
+        "Esra Dönmez",
+        "Pascal Tilli",
+        "Hsiu-Yu Yang",
+        "Thang Vu",
+        "Carina Silberer"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-05-06T14:01:47+00:00",
+      "link": "https://arxiv.org/pdf/2605.06157v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "fine-grained visual-linguistic comprehension and cross-modal mismatch task",
+      "llm_evidence_cn": "细粒度视觉语言理解与跨模态不匹配任务",
+      "llm_evidence": "细粒度视觉语言理解与跨模态不匹配任务",
+      "canonical_evidence": "细粒度视觉语言理解与跨模态不匹配任务",
+      "llm_tldr_en": "Introduces a dataset for fine-grained visual-linguistic comprehension and mismatch detection.",
+      "llm_tldr_cn": "引入一个用于细粒度视觉语言理解和不匹配检测的数据集。",
+      "llm_tldr": "引入一个用于细粒度视觉语言理解和不匹配检测的数据集。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "effects of visual, auditory, and typographic cues on language understanding",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.05790v1",
+      "source": "arxiv",
+      "title": "GazeMind: A Gaze-Guided LLM Agent for Personalized Cognitive Load Assessment",
+      "abstract": "Smart glasses with AI assistants are increasingly used in daily life. However, current systems lack awareness of the user's internal cognitive state, leaving them unable to proactively anticipate users' needs without access to cognitive load. Existing methods for assessing cognitive load either rely on impractical sensors for lightweight eyewear or utilize eye gaze-based models that suffer from poor interpretability, and require task-specific fine-tuning, often failing to generalize across individuals. We propose GazeMind, a gaze-guided LLM agent framework for cognitive load assessment on smart glasses. It encodes eye-tracking data into structured representations for LLM-based reasoning and provides interpretable cognitive load predictions. Importantly, GazeMind generalizes across scenarios without LLM fine-tuning through a novel task-guidance reasoning approach and achieves personalized adaptation by incorporating user-specific characteristics and historical references. To support evaluation, we introduce CogLoad-Bench, the largest gaze-based cognitive load dataset with 152 participants, 40+ hours of multimodal data, and 10K+ real-time annotations across controlled and real-world tasks. Experiments show that GazeMind achieves state-of-the-art performance, outperforming baselines by over 20% across all metrics.",
+      "authors": [
+        "Bin Wang",
+        "Yue Liu",
+        "Benjamin Newman",
+        "Ajoy S. Fernandes",
+        "Zhiyuan Wang",
+        "Robert Cavin",
+        "Michele A. Cox",
+        "Vijay Rajanna",
+        "Takumi Bolte",
+        "Melissa Hunfalvay",
+        "Ulas Bagci",
+        "Michael J. Proulx"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-05-07T07:26:21+00:00",
+      "link": "https://arxiv.org/pdf/2605.05790v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "gaze-guided LLM agent for cognitive load assessment",
+      "llm_evidence_cn": "用于认知负荷评估的眼动引导大模型智能体",
+      "llm_evidence": "用于认知负荷评估的眼动引导大模型智能体",
+      "canonical_evidence": "用于认知负荷评估的眼动引导大模型智能体",
+      "llm_tldr_en": "Uses eye-tracking data and LLMs to provide interpretable assessments of a user's cognitive load.",
+      "llm_tldr_cn": "利用眼动追踪数据和大语言模型对用户的认知负荷进行可解释性评估。",
+      "llm_tldr": "利用眼动追踪数据和大语言模型对用户的认知负荷进行可解释性评估。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.05197v1",
+      "source": "arxiv",
+      "title": "Implicit Representations of Grammaticality in Language Models",
+      "abstract": "Grammaticality and likelihood are distinct notions in human language. Pretrained language models (LMs), which are probabilistic models of language fitted to maximize corpus likelihood, generate grammatically well-formed text and discriminate well between grammatical and ungrammatical sentences in tightly controlled minimal pairs. However, their string probabilities do not sharply discriminate between grammatical and ungrammatical sentences overall. But do LMs implicitly acquire a grammaticality distinction distinct from string probability? We explore this question through studying internal representations of LMs, by training a linear probe on a dataset of grammatical and (synthetic) ungrammatical sentences obtained by applying perturbations to a naturalistic text corpus. We find that this simple grammaticality probe generalizes to human-curated grammaticality judgment benchmarks and outperforms LM probability-based grammaticality judgments. When applied to semantic plausibility benchmarks, in which both members of a minimal pair are grammatical and differ in only plausibility, the probe however performs worse than string probability. The English-trained probe also exhibits nontrivial cross-lingual generalization, outperforming string probabilities on grammaticality benchmarks in numerous other languages. Additionally, probe scores correlate only weakly with string probabilities. These results collectively suggest that LMs acquire to some extent an implicit grammaticality distinction within their hidden layers.",
+      "authors": [
+        "Yingshan Susan Wang",
+        "Linlu Qiu",
+        "Zhaofeng Wu",
+        "Roger P. Levy",
+        "Yoon Kim"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-06T17:57:31+00:00",
+      "link": "https://arxiv.org/pdf/2605.05197v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "implicit representations of grammaticality in language models",
+      "llm_evidence_cn": "语言模型中语法性的隐式表示",
+      "llm_evidence": "语言模型中语法性的隐式表示",
+      "canonical_evidence": "语言模型中语法性的隐式表示",
+      "llm_tldr_en": "Investigates whether language models acquire a distinction for grammaticality beyond string probability.",
+      "llm_tldr_cn": "研究语言模型是否获得了超出字符串概率的语法性区分。",
+      "llm_tldr": "研究语言模型是否获得了超出字符串概率的语法性区分。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "study of cognitive and linguistic processes underlying language comprehension and production",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.06625v1",
+      "source": "arxiv",
+      "title": "Parser agreement and disagreement in L2 Korean UD: Implications for human-in-the-loop annotation",
+      "abstract": "We propose a simplified human-in-the-loop workflow for second language (L2) Korean morphosyntactic annotation by leveraging agreement between two domain-adapted parsers. We first evaluate whether parser agreement can serve as a proxy for annotation correctness by comparing it with independent human judgments. The results show strong correspondence between parser and human judgments, supporting the feasibility of semi-automatic L2-Korean UD annotation. Further analysis demonstrates that parser disagreements cluster in linguistically predictable domains such as grammatical-relation distinctions and clause-boundary ambiguity. While many disagreement cases are tractable for iterative model refinement, others reflect deeper representational challenges inherent in parsing and tagging L2-Korean corpora.",
+      "authors": [
+        "Hakyung Sung",
+        "Gyu-Ho Shin"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-07T17:39:04+00:00",
+      "link": "https://arxiv.org/pdf/2605.06625v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "morphosyntactic annotation and linguistic ambiguity in L2 Korean",
+      "llm_evidence_cn": "二语韩语中的形态句法标注与语言歧义",
+      "llm_evidence": "二语韩语中的形态句法标注与语言歧义",
+      "canonical_evidence": "二语韩语中的形态句法标注与语言歧义",
+      "llm_tldr_en": "Evaluates parser agreement for L2 Korean annotation, touching on linguistic and clause-boundary ambiguity.",
+      "llm_tldr_cn": "评估了二语韩语标注中的解析器一致性，涉及语言和子句边界歧义。",
+      "llm_tldr": "评估了二语韩语标注中的解析器一致性，涉及语言和子句边界歧义。",
+      "llm_tags": [
+        "query:q10"
+      ],
+      "matched_query_tag": "query:q10",
+      "matched_query_text": "examine predictive processes and inner speech in bilingual language understanding",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.05927v1",
+      "source": "arxiv",
+      "title": "Minimizing Modality Gap from the Input Side: Your Speech LLM Can Be a Prosody-Aware Text LLM",
+      "abstract": "Speech large language models (SLMs) are typically built from text large language model (TLM) checkpoints, yet they still suffer from a substantial modality gap. Prior work has mainly attempted to reduce this gap from the output side by making speech generation more text-like, but the gap remains. We argue that the key remaining bottleneck lies on the input side. We propose TextPro-SLM, an SLM that makes spoken input more closely resemble that of a prosody-aware text LLM. TextPro-SLM combines WhisperPro, a unified speech encoder that produces synchronized text tokens and prosody embeddings, with an LLM backbone trained to preserve the semantic capabilities of the original TLM while learning paralinguistic understanding. Experiments show that TextPro-SLM achieves the lowest modality gap among leading SLMs at both 3B and 7B scales, while also delivering strong overall performance on paralinguistic understanding tasks. These gains are achieved with only roughly 1,000 hours of LLM training audio, suggesting that reducing the modality gap from the input side is both effective and data-efficient.",
+      "authors": [
+        "Wenqian Cui",
+        "Xiao-Hui Li",
+        "Daxin Tan",
+        "Qiyong Zheng",
+        "Irwin King"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.SD",
+        "eess.AS"
+      ],
+      "published": "2026-05-07T09:32:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.05927v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "prosody-aware text LLM and paralinguistic understanding",
+      "llm_evidence_cn": "韵律感知文本大模型与副语言理解",
+      "llm_evidence": "韵律感知文本大模型与副语言理解",
+      "canonical_evidence": "韵律感知文本大模型与副语言理解",
+      "llm_tldr_en": "Introduces a speech LLM that integrates prosody embeddings for better paralinguistic understanding.",
+      "llm_tldr_cn": "引入一种集成韵律嵌入的语音大模型，以提升副语言理解能力。",
+      "llm_tldr": "引入一种集成韵律嵌入的语音大模型，以提升副语言理解能力。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.08837v1",
+      "source": "arxiv",
+      "title": "The Grounding Gap: How LLMs Anchor the Meaning of Abstract Concepts Differently from Humans",
+      "abstract": "Abstract concepts - justice, theory, availability - have no single perceivable referent; in the human brain, their meaning emerges from a web of experiences, affect, and social context. Do large language models (LLMs) ground abstract concepts in a similar way? We study this by replicating property-generation experiments from cognitive science on 21 frontier and open-weight LLMs. Across models and experiments, we find a consistent pattern: when compared to humans, models rely too heavily on word associations, and underproduce properties tied to emotion and internal states. This yields a large and consistent grounding gap: no model exceeds a Pearson correlation r=0.37 with human responses, compared to a human-to-human ceiling above r=0.9. To better interpret this gap, we also replicate a rating experiment on grounding categories and find that here LLMs align more closely with human judgment, and alignment improves as models get larger. We then use sparse autoencoders (SAEs) to inspect whether this information is also reflected in the models' internal features, and we do identify features connected to grounding dimensions such as \"sensorimotor\" and \"social\". These findings suggest that current LLMs can recover grounding dimensions when explicitly queried, but do not recruit them in a human-like way when words are generated freely.",
+      "authors": [
+        "Odysseas S. Chlapanis",
+        "Orfeas Menis Mastromichalakis",
+        "Christos H. Papadimitriou"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-05-09T09:41:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.08837v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "replicates cognitive science experiments on abstract concept grounding and internal states",
+      "llm_evidence_cn": "复制认知科学关于抽象概念表征和内部状态的实验",
+      "llm_evidence": "复制认知科学关于抽象概念表征和内部状态的实验",
+      "canonical_evidence": "复制认知科学关于抽象概念表征和内部状态的实验",
+      "llm_tldr_en": "Compares how humans and LLMs ground abstract concepts, highlighting gaps in emotional and internal states.",
+      "llm_tldr_cn": "比较人类与大模型对抽象概念的理解，强调情感和内部状态方面的差距。",
+      "llm_tldr": "比较人类与大模型对抽象概念的理解，强调情感和内部状态方面的差距。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "study of cognitive and linguistic processes underlying language comprehension and production",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

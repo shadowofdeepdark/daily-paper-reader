@@ -1,0 +1,370 @@
+Title: A Cognitively Grounded Bayesian Framework for Misinformation Susceptibility
+
+URL Source: https://arxiv.org/pdf/2605.09483v1
+
+Published Time: Tue, 12 May 2026 01:56:01 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# A Cognitively Grounded Bayesian Framework for Misinformation Susceptibility 
+
+# Pranava Madhyastha 1,2
+
+> 1
+
+Dept. of Computer Science, City, University of London 
+
+> 2
+
+The Alan Turing Institute pranava.madhyastha@city.ac.uk 
+
+Abstract 
+
+In this (work in progress) paper, we present Bounded Pragmatic Listener (or BPL), a cognitively grounded Bayesian framework for modelling susceptibility to information disorder. BPL extends Rational Speech Act theory with three cognitively motivated bounds derived from the bounded rationality literature with a) a recursion depth bound (that emphasises working memory limits);b) a prior compression parameter (which is oriented at capturing information bottleneck); and c) an availability sample size (that operationalises importance sampling with saliency-weighted proposals). This allows us to test predictions about misinformation susceptibility, annotator disagreement, and the differential vulnerability to mis-, dis-, and mal-information as defined in the Information Disorder framework. We validate BPL on the LIAR and MultiFC benchmarks showcasing competitive veracity classification and experimental support for the depth-mismatch paradox. 
+
+Keywords: Information Disorder, Pragmatics, Bounded Rationality 
+
+# 1. Introduction 
+
+Every day, millions of people encounter claims on-line that turn out to be false. Some of these, for e.g., a fabricated statistic about unemployment, are shared in good faith by people who simply got it wrong. Others, like a fabricated quote attributed to a politician, are crafted with deliberate intent to deceive. And others still, such as the insinuation that “everyone in government knows the data was manipulated but won’t say so publicly”, do not even require a false claim where the manipulation indeed lies in the framing rather than the facts (Wardle and Derakhshan, 2017). Despite their obvious differences, most current NLP research treats all three as the same type of problem where given a claim, the model is sup-posed to predict whether it is true or false (Thorne and Vlachos, 2018). In this paper, we contend that while this is useful it is rather incomplete and reduc-tive. It answers the question what is false, but not the questions that matter most for understanding and preventing harm: who is likely to believe it, why ,and under what conditions? Existing misinformation detectors are engineered to maximise classification accuracy, but they usu-ally contain no model of the reader , who is the person who will encounter, process, and potentially believe the claim. As a result, we posit that these models cannot predict which readers are most at risk, or explain why the same claim convinces some people and not others. Moreover, when researchers annotate misinfor-mation datasets they frequently disagree with each other. Claims that sit at the boundary between “mostly true” and “half true,” or between “mislead-ing” and “false,” attract systematic disagreement that reflects genuine uncertainty. Current practice discards this disagreement by taking a majority vote. Plank (2022) argues that this is indeed a mistake and that the disagreement is telling us something important about the claim, and we are throwing it away. We introduce the Bounded Pragmatic Listener 
+
+(henceforth referred to as BPL ), a formal model that focuses on the reader or the information con-sumer. Our core idea is that people do not process language like ideal Bayesian reasoners (Kahne-man, 2011a). Humans have limited working mem-ory. They rely on mental shortcuts and prior beliefs. They are more influenced by information that is emotionally vivid, frequently repeated, or recently encountered, even when that information is false (Tversky and Kahneman, 1973). Our BPL frame-work translates each of these well-established cog-nitive limitations into a mathematical constraint on a probabilistic belief-updating model. We express these constraints as three param-eters. Recursion depth k captures how many lay-ers of speaker intent a reader can track, does the reader just accept what is said ( k=0), or do they ask why someone would say it ( k= 1), or do they rea-son about what the speaker wants them to believe about social consensus ( k=2)? Prior compression 
+
+β captures how faithfully a reader preserves nu-anced credibility beliefs under cognitive load, ver-sus collapsing them to a rough heuristic such as “dodgy source.” Finally, Availability sample size N
+
+captures how many similar examples a reader men-tally compares against when assessing a claim, the hypothesis here is that a tired or distracted reader draws only a few, biased toward vivid or frequently-
+
+> arXiv:2605.09483v1 [cs.CL] 10 May 2026
+
+seen examples. Together, these parameters generate a family of agents ranging from the highly susceptible (low k,low β, small N ) to the epistemically careful (high k,high β, large N ). Our observations through our em-pirical analysis of the framework suggests that BPL 
+
+indeed is a strong veracity classifier mostly driven by prior compression. We also present an exten-sion that uses LLMs to derive semantically rich char-acterisation of the claims under our framing, which significantly improves the performance. Finally, we also observe that partial pragmatic awareness is seemingly worse than having no awareness, which in simple words suggest that the audience most susceptible to attributed dis-information is not the uncritical reader but the partially-trained one. Our primary contributions in this work are the following: a) a probabilistic belief-updating frame-work with three cognitively-motivated constraints, reducing to standard RSA when all constraints are relaxed (Goodman and Frank, 2016); b) a formal mapping from the Information Disorder taxonomy to 
+
+BPL recursion depth, including the depth-mismatch paradox as a novel, testable prediction; c) a popu-lation level extension that predicts annotation dis-agreement as posterior variance across heteroge-neous cognitive profiles. d) an LLM grounded im-plementation with interpretable component-level reasoning; and finally, e) Empirical validation on 
+
+Liar and MultiFC , including ablation analysis and LLM grounded validation. 
+
+# 2. Background and Related Work 
+
+2.1. Computational Approaches to Misinformation 
+
+Automated fact-checking and misinformation de-tection have been extensively surveyed (Guo et al., 2022; Thorne and Vlachos, 2018). The dominant paradigm treats veracity prediction as a classifi-cation task over claims, evidence, and metadata features. Early work used surface features, such as writing style, sentiment, or syntactic complexity, to distinguish true from false claims (Rashkin et al., 2017). Subsequent approaches incorporated ex-ternal evidence retrieval (pop; Thorne et al., 2018), knowledge graph verification (Pan et al., 2018), and transformer-based encoding (Khattar et al., 2019). The Liar benchmark (Wang, 2017) con-tributes speaker metadata, with information such as party, historical accuracy, context, as strongly pre-dictive features, motivating our use of speaker his-tory counts as empirical priors in the BPL pipeline. Baly et al. (2018, 2020) demonstrated that me-dia outlet-level factuality and political bias can be predicted from Wikipedia descriptions and article content. Their findings that source signals predict claim-level veracity inform our prior compression mechanism, where source credibility γ modulates the compression weight β. Plank (2022) argues that the standard practice of resolving annotator disagreement by majority vote discards genuine epistemic signal. Leonardelli et al. (2021) demon-strated that disagreement patterns in NLP datasets correlate with subjectivity, ambiguity, and cultural context. 
+
+2.2. Bounded Rationality and Cognitive Models 
+
+Simon (1955, 1956) introduced satisficing as a de-scriptively accurate alternative to expected utility maximisation under cognitive constraints. Gigeren-zer and Goldstein (1996) developed the fast-and-frugal heuristics programme, demonstrating that simple decision rules can match or outperform op-timal strategies in ecologically valid environments. A key contribution of their framework for our pur-poses is the concept of ecological rationality where heuristics are considered to be adaptations to the statistical structure of the information environment. In a polluted information ecology, say one delib-erately engineered to produce false positives in credibility assessment, ecologically rational heuris-tics usually systematically fail, a phenomenon we formalise through the prior compression bound. Kahneman (2011b) popularised the dual-process distinction between fast, associative System 1 and slow, deliberative System 2 reasoning. In the mis-information context, Pennycook and Rand (2019) highlight that susceptibility is better explained by 
+
+failure to engage System 2 than by motivated parti-san reasoning. Their accuracy nudge intervention (Pennycook et al., 2021), where they show that prompting users to consider accuracy before shar-ing reduced misinformation spread, provides direct behavioural evidence that System 2 engagement is the operative variable. Our model incorporates this as the N bound, here, agents with small availabil-ity samples effectively operate in System 1 mode, relying on retrieval-based heuristics rather than sys-tematic likelihood evaluation. Finally, the resource-rational framework of Lieder and Griffiths (2020) provides the formal bridge between dual-process theory and Bayesian infer-ence. Where, we can model agents as approximate Bayesian reasoners operating under a computa-tional budget, resource-rational analysis predicts 
+
+when agents use heuristics (when the marginal in-formation gain from further computation is small rel-ative to cost) and which heuristics they use (those that approximate the Bayesian optimum most effi-ciently). The three BPL bounds are instances of resource-rational approximations where bounded recursion approximates full iterated reasoning; prior compression approximates full Bayesian updating; and importance sampling approximates exact like-lihood computation. 
+
+2.3. Rational Speech Acts and Pragmatic Inference 
+
+The Rational Speech Acts framework (Frank and Goodman, 2012; Goodman and Frank, 2016) has achieved broad empirical success in mod-elling scalar implicature (Goodman and Stuhlmüller, 2013), reference resolution (Frank and Goodman, 2012), and colour term learning (Zaslavsky et al., 2019). Its Bayesian recursive structure makes it uniquely suited as a foundation for modelling the speaker-intent reasoning required to resist dis-information. Zaslavsky et al. (2019) applied information bottle-neck theory to RSA , deriving compressed represen-tations of meaning as solutions to a rate-distortion problem. Their framework provides the theoreti-cal underpinning for our prior compression bound (Bound 2) where the β parameter in BPL corre-sponds directly to the trade-off parameter in the in-formation bottleneck objective. Bergen et al. (2016) introduced a noisy-channel extension of RSA in which listeners model speaker error, providing a precedent for modelling the tolerance for inaccu-racy that characterises susceptible agents. While RSA has been applied extensively to prag-matic phenomena in controlled experimental set-tings, its application to naturalistic discourse is still in its nascent phases. Goodman and Stuhlmüller (2013) noted that the framework’s assumption of co-operative speakers is its most theoretically limiting idealisation. Our BPL extension directly addresses this by introducing a depth-indexed speaker type 
+
+parameter (honest or deceptive or general) in the LLM-grounded implementation, enabling the frame-work to model adversarial communication. 
+
+# 3. The Bounded Pragmatic Listener 
+
+Bounded Pragmatic Listener is a formal model of belief updating in agents subject to three cognitively-motivated resource constraints. BPL 
+
+is an instance of the Rational Speech Acts frame-work (Frank and Goodman, 2012; Goodman and Frank, 2016) in which the idealised pragmatic lis-tener is replaced by an agent whose inference is bounded in recursion depth, prior fidelity, and likeli-hood approximation. We present this below: 
+
+BPL( w | u; k, β, N ) ∝ ˆSkk−1(u | w) · ˜Pβ (w) (1) where: 
+
+• k ∈ { 0, 1, 2} is the recursion depth bound 
+
+• β > 0 is the prior compression parameter 
+
+• N ∈ Z+ is the availability sample size 
+
+• w ∈ { 0, 1} are world states (claim false / true) 
+
+• u is the utterance (news claim) Note that our model reduces to standard RSA as 
+
+k → ∞ , β → ∞ , N → ∞ .We will now describe the essential elements of 
+
+BPL .
+
+3.1. Recursion Depth 
+
+The recursion depth bound limits theory-of-mind reasoning. The bounded listener operates at ef-fective depth k∗ = min (k, d + 1) , where d is the epistemic depth of the claim—the number of em-bedded belief attributions in the utterance. 
+
+Definition 1 (Epistemic Depth) . The epistemic depth d(u) of utterance u is the maximum nest-ing depth of belief attribution operators (e.g., “says”, “claims”, “believes”) in its surface syntactic struc-ture. 
+
+Depth-0 claims are direct factual assertions ( e.g., 
+
+“Unemployment is at 2%”). Depth-1 claims involve one attribution layer ( e.g., “Senator X claims unem-ployment is at 2%”). Depth-2 claims involve meta-epistemic framing ( e.g., “Everyone knows officials believe unemployment data is fabricated”). This is grounded in research from the field of cog-nitive science and psycholinguistics. Fundamen-tally, we focus on research on working memory constraints. Cowan (2001) established a capac-ity limit of approximately 4 ± 1 chunks and further Camerer et al. (2004) demonstrated empirically that agents in strategic games rarely recurse beyond depth 2 in theory-of-mind reasoning. The bound predicts a depth mismatch effect where agents with 
+
+k < d (u) cannot fully parse the pragmatic structure of a claim and default to shallower interpretation, making them differentially susceptible to dis- and mal-information. The formal depth-bounded listener is: 
+
+Lkn(w | u) = Lmin( n,k )(w | u) (2) 
+
+3.2. Prior Compression 
+
+Instead of maintaining a full prior P (w) over world states, the bounded agent maintains a compressed representation ˜Pβ (w) obtained via an information bottleneck (based on Tishby et al., 1999). The agent compresses world states through a bottleneck variable Z (prototype belief categories, 
+
+e.g., credibility schemas): 
+
+˜P (w) = X
+
+> z
+
+P (w | z) · P (z) (3) where the compression is controlled by: 
+
+min    
+
+> P(z|w)
+
+I(W ; Z) − β · I(Z; ˆW ) (4) Here I(W ; Z) is the mutual information between true world states and the compressed representa-tion (the cost of fine-grained beliefs), and I(Z; ˆW )
+
+is the predictive information retained. In practice we implement compression as a β-weighted interpolation between the full prior and the uniform distribution, modulated by source credibility 
+
+γ ∈ [0 , 1] :
+
+˜Pβ (w) ∝ γ ·
+
+ ββ + 1 P (w) + 1
+
+β + 1 · 1
+
+|W| 
+
+
+
++ (1 − γ) · 1
+
+|W| 
+
+(5) We will now present a cognitive interpreation of prior compression. At β → 0: the agent discards their prior entirely, reasoning from uniform which is essentially the maximum compression, correspond-ing to heuristic processing. At β → ∞ : the agent preserves the full prior which is basically minimum compression, corresponding to systematic process-ing (Chaiken, 1980). Low source credibility ( γ ≈ 0)shifts the agent toward uniform regardless of β, pre-dicting that agents distrust low-credibility sources by collapsing to agnosticism. We measure the information loss due to com-pression using: 
+
+Lβ = DKL 
+
+
+
+P (w) ∥ ˜Pβ (w)
+
+
+
+(6) In our LLM-powered implementation, the bottle-neck variable Z is realised as an explicit verbal schema generated by the language model for each source-topic pair. This transforms the abstract bot-tleneck into an inspectable, semantically meaning-ful prototype: for example, “Anonymous blog posts about the economy often contain personal opinions and lack rigorous fact-checking.” The schema’s es-timated P (true | z) and confidence jointly determine the compression weight, replacing the hand-crafted credibility tables of the feature based baseline. 
+
+3.3. Availability Sampling 
+
+Here the idea is, instead of computing the exact speaker likelihood Sk−1(u | w), the bounded agent would estimate it via importance sampling from a 
+
+salience-weighted proposal distribution Q(u):
+
+ˆSk−1(u | w) = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Sk−1(ui | w)
+
+Q(ui) , ui ∼ Q (7) where the proposal distribution inflates the proba-bility of salient utterances: 
+
+Q(u) ∝ Sk−1(u | w) · φ(u) (8) and the availability weight φ(u) combines psycho-logical salience factors: 
+
+φ(u) = 1 + ν(u) + log(1 + r(u)) + ρ(u) (9) where ν(u) ∈ [0 , 1] is emotional valence, r(u) ∈ Z+
+
+is repetition count, and ρ(u) ∈ [0 , 1] is recency. With finite N , high-φ utterances are systemat-ically overweighted in the likelihood estimate be-cause they dominate the proposal distribution. This predicts the illusory truth effect (Hasher et al., 1977; Pennycook et al., 2018) which suggests that re-peated exposure increases φ(u), which inflates 
+
+ˆSk−1(u | w = false ), which shifts the posterior to-ward believing the claim. This suggests that it is a predictable consequence of finite sampling from a salience-weighted proposal a resource-rational account of an empirically well-documented effect. In the LLM implementation, φ(u) is estimated by prompting the model to rate the claim on four dimensions: a) emotional intensity; b) novelty; c) memorability, and d) social sharability. The recall corpus {ui} is replaced by N claims generated by the LLM simulating the memory retrieval of an average news reader, each labelled with a recalled veracity judgment. 
+
+3.4. Information Disorder Mapping 
+
+A central theoretical contribution of this work is the explicit mapping from the Wardle and Derakhshan (2017) taxonomy to BPL recursion depth. Table 1 summarises this mapping.                        
+
+> Disorder Type Required kPrimary Bound Mechanism
+> Mis-information k= 0 β(prior) Plausible framing exploits compressed priors Dis-information k≥1k(depth) False attribution exploits shallow ToM reasoning Mal-information k≥2k(depth) Meta-epistemic framing
+> φ(avail.) exploits deep recursion
+
+Table 1: Mapping of the Information Disorder tax-onomy (Wardle and Derakhshan, 2017) to BPL pa-rameters. ToM = Theory of Mind. 
+
+The depth-mismatch paradox. A counterintu-itive prediction of this mapping is that deeper rea-soners are more susceptible to mal-information . An agent at k = 2 who models second-order epistemic states ( e.g., the implicit claim that “everyone knows” a fact constitutes evidence of a social consensus) will be more influenced by meta-epistemic fram-ing than a k = 0 agent who processes only literal content. This predicts that epistemic sophistication does not necessarily protect against misinformation which an observation also consistent with empir-ical work on belief in conspiracy theories among educated populations (van Der Linden et al., 2020, interalia). 3.5. Population Inference 
+
+We extend BPL to a population of agents 
+
+{(ki, β i, N i)}Mi=1 drawn from a cognitively-motivated distribution. Each agent produces a posterior belief 
+
+bi = BPL i(w = 1 | u).
+
+Definition 2 (BPL Disagreement) . The predicted disagreement for utterance u over agent population 
+
+A is: 
+
+∆A(u) = Var i∈A 
+
+bi
+
+ (10) This formalises the intuition that claims for which agents with different cognitive profiles produce sys-tematically different posteriors will produce high annotator disagreement. In the Liar dataset, am-biguous labels (“half-true”) concentrate at the mid-dle of the ordinal scale; in MultiFC , the “mixture” label reflects genuine ambiguity. We use both as empirical proxies for ∆A(u) in our evaluation (Sec-tion 4). 
+
+3.6. Susceptibility Score 
+
+To quantify an agent’s susceptibility to believing a false claim, we define a composite score that weights posterior belief by the information lost in prior compression: 
+
+σ(u) = BPL (w = 1 | u) · (1 + Lβ ) (11) The compression loss amplifier (1 + Lβ ) captures the intuition that agents who discarded the most relevant prior information (high KL loss) and still believe the claim are the most epistemically vulner-able. 
+
+# 4. Experimental Setup 
+
+4.1. Datasets 
+
+We use two datasets to empirically validate BPL .
+
+Liar (Wang, 2017). 12,836 labelled statements from PolitiFact with six fine-grained veracity labels (pants-fire, false, barely-true, half-true, mostly-true, true) and five speaker history count columns. We use the binary mapping (false/barely-true/pants-fire → 0, half-true/mostly-true/true → 1) for classi-fication, and the six-way label’s distance from the ordinal midpoint as a proxy for annotation ambigu-ity in the disagreement analysis. Speaker history counts provide empirical priors for the BPL prior compression component. 
+
+MultiFC (Augenstein et al., 2019). 36,534 claims from 26 fact-checking domains. Labels vary by domain and are mapped to a coarse three-way taxonomy (false / true / mixture). Domain URL is used for source credibility estimation. The “mixture” label serves as the disagreement proxy. 
+
+4.2. Agent Population 
+
+We define a population of nine canonical agent types spanning the full (k, β, N ) parameter space, from a maximally-bounded agent (k = 0, β =0.2, N = 5) to a near-rational baseline (k = 2 , β =50 , N = 500) . For each claim, all nine agents pro-duce independent posteriors; the population-level statistics (mean, variance) are used as features in downstream evaluation. We also use Gemini 2.5 Pro as the LLM in our work. 
+
+4.3. BPL Feature Extraction 
+
+The following features are extracted from each dataset record and used as inputs to the BPL infer-ence pipeline: 
+
+• Speaker prior accuracy (LIAR): empirical accu-racy rate from history counts. 
+
+• Source credibility (MultiFC): domain-level cred-ibility estimated from known outlet reputations. 
+
+• Emotional valence ν(u): lexicon-based heuristic (23 high-salience terms). 
+
+• Epistemic depth d(u): count of attribution mark-ers in claim text. 
+
+• Repetition count r(u): sum of false/barely-true/pants-fire history counts (LIAR); inverse claim length proxy (MultiFC). 
+
+4.4. Evaluation Design 
+
+We evaluate BPL along two axes. The first is ve-racity classification : can the posterior belief and susceptibility score produced by the BPL inference chain predict ground-truth claim veracity, and how does that performance compare to surface feature baselines? The second is component contribution ,that is, when the inference chain is ablated or its components replaced with LLM-grounded alterna-tives, how does each change affect performance? This design puts the model’s predictive validity at the centre, with ablation and LLM comparison as the mechanisms for isolating what drives it. Five feature sets are evaluated in 5-fold cross-validated logistic regression: BPL Susceptibility ( σ,one feature), BPL Belief ( b, one feature), BPL Full (nine population-level statistics), Surface Baseline (four lexical and metadata features), and BPL + Surface (thirteen features combined). Six ablation configurations isolate each bound: (i) Full BPL (k= 1, β = 1, N =25) ; (ii) No depth bound (k=2) ; (iii) No compression (β=100) ;(iv) No availability (N = 1000) ; (v) RSA Lit-eral (k= 0, β = 100 , N =1000) ; (vi) Max bounded 
+
+(k=0 , β =0 .1, N =3) .Feature set Liar MultiFC                        
+
+> AUC F1 AUC F1 BPL Susceptibility 0.811 ±.009 0.760 ±.012 0.680 ±.018 0.163 ±.028
+> BPL Belief 0.792 ±.010 0.747 ±.012 0.680 ±.018 0.163 ±.028
+> BPL Full 0.930 ±.006 0.885 ±.005 0.840 ±.011 0.417 ±.019
+> Surface Baseline 1.000 †±.000 1.000 †±.000 0.879 ±.010 0.439 ±.039
+> BPL + Surface 1.000 †±.000 1.000 †±.000 0.879 ±.009 0.517 ±.018
+
+Table 2: 5-fold CV veracity classification on Liar 
+
+and MultiFC (n= 5,000 each). †Liar surface base-line achieves perfect scores due to speaker history data leakage (see text); bold marks the highest in-terpretable result per column. The LLM validation runs the Hybrid BPL 
+
+and a matched feature based baseline on ashared n=50 Liar sample at identical parameters 
+
+(k=1, β = 1.0, N =3) , measuring both model-level classification and component-level calibration. 
+
+# 5. Results 
+
+5.1. Veracity Classification 
+
+Table 2 reports 5-fold CV classification perfor-mance across both datasets. 
+
+Liar results. The surface baseline achieves AUC = 1.000, an artefact of speaker history counts encoding prior falsity rate, which is effectively the test label derived from the same fact-checking cor-pus (Wang, 2017). We note that BPL Full (AUC = 0.930, F1 = 0.885) is the highest interpretable result, here, speaker history is used in the pipeline only as a compressed prior and we note that it is not used as a direct classification feature. A single BPL 
+
+scalar which is the susceptibility score σ achieves AUC = 0.811 with no metadata at all beyond the claim text and speaker identity, establishing the Bayesian inference chain as a strong leakage-free baseline. 
+
+MultiFC results. With no leakage, BPL Full achieves AUC = 0.840 against a surface baseline of 0.879, a gap of 3.9 AUC points. Combining BPL and surface features leaves AUC unchanged (0.879) while improving F1 from 0.439 to 0.517, the 
+
+BPL features improve the precision-recall tradeoff even when they do not improve discrimination. This is practically relevant in high-recall fact-checking applications where the cost of missing a false claim exceeds the cost of a false positive. 
+
+5.2. Ablation studies 
+
+Table 3 reports the six ablation configurations on 
+
+Liar . The ablation seems to suggest that prior                                    
+
+> Configuration kβNr∆r
+> BPL Full 1125 0.526 —No depth bound 2125 0.526 0.000 No availability 111000 0.528 +0.002 RSA Literal 0100 1000 0.527 +0.001 No compression 1100 25 0.462 −0.064
+> Max bounded 00.1 30.543 +0.017 ‡
+
+Table 3: Ablation on Liar (n=5,000 ): Pearson r
+
+(belief vs. label) and change from BPL Full. ‡Max bounded artefact discussed in Section 5.2.                    
+
+> Agent Depth-0 Depth-1 dpk= 0 0.410 0.450 +0.310 < . 001
+> k= 1 0.408 0.510 +0.671 < . 001
+> k= 2 0.440 0.340 −0.583 < . 001
+
+Table 4: Depth-stratified prediction error on Liar .Cohen’s d and p (Mann-Whitney U ) compare depth-0 vs. depth-1 claims within each agent. Negative d
+
+= lower error on depth-1 claims. compression is the single load-bearing component of the feature based pipeline. Removing it is the only manipulation that substantially reduces perfor-mance ( ∆r = −0.064 ), more than twice the mag-nitude of any other change. Relaxing the depth bound and removing availability sampling each pro-duce |∆r| ≤ 0.002 across the full dataset. This reflects dataset composition where 92% of Liar 
+
+claims are depth-0 assertions with no attribution structure. We want to also highlight that when the analysis is conditioned on depth-1 claims, the depth bound produces the largest single effect. The maximally bounded agent (k= 0, β = 0.1, N =3) nominally achieves the highest r = 0 .543 . We note here that this is a metric artefact where extreme prior compression pushes beliefs toward 0 or 1, which inflates Pear-son r with binary labels relative to the calibrated probabilistic posteriors of the full model. The full 
+
+BPL posterior is a better-calibrated distribution even at lower r.
+
+5.3. Depth-Stratified Analysis 
+
+When claims are stratified by epistemic depth, the depth bound produces its largest effect and reveals the depth-mismatch paradox empirically. Table 4 reports mean prediction error |bi − y| for agents at 
+
+k ∈ { 0, 1, 2} across depth-0 ( n= 4,573 ) and depth-1 (n= 427 ) claim groups on Liar . All three effects are large ( |d| > 0.3) and highly significant ( p < . 001 ). The k = 2 agent is the only one to achieve lower error on depth-1 than depth-0 claims ( d=−0.583 ,error 0.340 vs. 0.440): full second-order reasoning capacity is both necessary and sufficient to cor-rectly handle attributed claims in this sample. Metric Hybrid BPL Feature based              
+
+> ROC-AUC 0.868 0.695 Pearson r(belief, label) 0.660 ∗∗∗ 0.351 ∗
+> Mean belief true claims 0.522 0.563 Mean belief false claims 0.284 0.454 Inter-model agreement ( r)0.184
+
+Table 5: Hybrid LLM BPL vs. matched fea-ture based BPL , Liar (n=50 ; k=1, β=1.0, N =3). 
+
+> ∗
+
+p<. 05 ; ∗∗∗ p<. 001 .The k=1 agent tells the more important story. Its error on depth-1 claims (0.510) is substantially higher than the k=0 agent’s (0.450), making it the worst-performing agent on exactly the claim type it is designed to handle. The mechanism is the depth-mismatch paradox in which the k= 1 agent recog-nises that a speaker made a claim, it parses the attribution structure, but cannot evaluate whether the endorsement was deceptive. A senator assert-ing that scientists reject climate change is taken as weak positive evidence (speakers tend to assert what is true); the k= 2 agent additionally asks why this speaker would make this claim and correctly infers deception. Meanwhile the k= 0 agent, who strips attribution entirely, evaluates the bare factual content, which is more linguistically implausible than the attributed framing and so attracts lower belief. The paradox has a direct implication for inter-vention design with partial pragmatic training, that is teaching audiences to notice attribution without teaching them to evaluate speaker intent may in-crease susceptibility to dis-information relative to no training at all. 
+
+5.4. Operationalising using LLM 
+
+Model-Level Performance Table 5 reports the Hybrid BPL against a matched feature based baseline on Liar (n= 50 , identical parameters 
+
+k= 1, β = 1.0, N =3). The Hybrid BPL achieves AUC = 0.868 against the matched feature based base-line’s 0.695 which is a gain of +17 .3 AUC points on an identical sample at identical parameters. Pear-son r nearly doubles (0.660 vs. 0.351). True claim beliefs shift modestly (0.522 vs. 0.563), while false claim beliefs drop by 0.170 absolute (0.284 vs. 0.454). The hybrid model is specifically and substantially more sceptical of false claims. This difference is, in a way, the expected signature of two LLM-grounded components act-ing jointly, which suggests that the NLI-style literal listener penalises linguistically implausible false claims, and the schema prior suppresses ˜P (w=1) 
+
+for low-credibility sources. Both effects act most strongly on false claims, which disproportionately originate from low-credibility sources with flaggable            
+
+> Component test rpφLLM vs. lexicon valence 0.385 .006 ∗∗
+> False recall rate vs. false-ness
+> 0.562 <. 001 ∗∗∗
+> Schema P(true )vs. label −0.048 .743
+
+Table 6: Component-level diagnostics on Liar 
+
+(n=50 ). ∗∗ p<. 01 ; ∗∗∗ p<. 001 .linguistic irregularities. The inter-model agreement of r = 0 .184 is the most structurally informative number in the table. At identical parameters on identical claims, the feature based and hybrid pipelines produce nearly indepen-dent predictions. The feature model’s primary sig-nal is lexical emotional valence and speaker meta-data; the hybrid model’s primary signal is semantic framing coherence and simulated associative mem-ory. Their near-independence means the LLM is is perhaps accessing a different epistemic channel, one that the surface pipeline cannot approximate. 
+
+Component Calibration Table 6 reports the three component-level diagnostics. The strongest result in the paper is the false recall calibration. The proportion of LLM-simulated recall items la-belled false correlates r=0.562 (p<. 001 ) with actual claim falseness without any supervision . When the model simulates what a news reader would recall upon encountering a claim, it generates proportion-ally more false-labelled items for claims that are actually false in the ground truth. This instantiates the availability mechanism (Sec-tion 3.3) at the level of individual claim traces. False claims occupy denser neighbourhoods of other false claims in the LLM’s implicit knowledge, this suggests that a false economic statistic retrieves other false economic statistics. The recall corpus samples this neighbourhood, and its calibration to ground truth ( r=0.562 ) demonstrates that the sam-pling is epistemically accurate without supervision. This result also explains why the hybrid sup-presses false claim beliefs so effectively. High false recall rates inflate the false-world likelihood esti-mate in the availability adjustment (Section 3.3), shifting the posterior toward w=0. The mechanism works as the theory predicts in which the BPL’s false claim scepticism comes directly from epistemically calibrated simulated memory. 
+
+On availability weight ( φ) The LLM-estimated 
+
+φ correlates moderately with lexicon valence (r=0.385 , p=.006 ). The imperfect alignment ( r ≪
+
+1.0) is the expected pattern: both capture emotional valence, but the LLM additionally encodes novelty, memorability, and social sharability the three di-mensions Vosoughi et al. (2018) identified as the primary drivers of false news spread, none of which a word-count lexicon can represent. The decou-pling of φLLM from speaker metadata is also what resolves the anti-correlation that prevented the fea-ture based pipeline from detecting the availability effect where the LLM salience is estimated from claim text alone, independent of speaker history. 
+
+On schema calibration. The schema P (true )
+
+estimates are near-identical for true (0.418) and false (0.429) claims ( r=−0.048 , p=.743 ). This is a 
+
+Liar -specific floor effect, PolitiFact’s selection of politically contested claims from mixed-accuracy speakers forces all source-topic schemas toward 
+
+P (true )≈0.5 regardless of label. The compres-sion mechanism operates on this dataset through schema confidence (low-confidence schemas pro-duce wider, less informative posteriors) rather than point estimates. A dataset with genuine source credibility range MultiFC spanning snopes.com to 
+
+infowars.com would constitute the appropriate test. 
+
+# 6. Discussion 
+
+Our results suggest that our computational pipeline yields highly competitive classification capabilities compared to systems relying on external evidence retrieval or model fine tuning. We want to also high-light that utilising an interpretable Bayesian infer-ence framework helps in seeing the exact compo-nents that modulate the system. We also see that in simplifying the prior beliefs of the model, reflect-ing how human cognition relies on broad credibil-ity schemas rather than precise historical tracking, proves to be the most critical component for predic-tive success. This seems to validate that assessing the credibility of the source remains the strongest indicator of whether a claim is factual. Incorporating LLM grounding also seems to give a substantial improvement in accuracy. The LLMs tend to identify and suppress false claims through simulated memory retrieval, requiring strictly un-labelled data. Our feature based feature based approach (albeit with some strong assumptions) struggle here because they derive claim availability alongside source credibility from identical historical records, causing these signals to mask each other. Perhaps through evaluating the text independently of the speaker, the language model successfully disentangles these variables (this indeed requires a more sophisticate design to validate the claim). Also, because the feature based and LLMs rely on fundamentally distinct epistemological signals, combining them offers a highly promising avenue for even greater predictive power. Our empirical analysis reveals a counterintuitive but robust paradox regarding cognitive depth. An agent possessing partial pragmatic awareness, recognising when a claim is attributed to some-one else but failing to evaluate the deceptive intent behind that attribution, is actually more vulnerable to manipulation than an agent who ignores attri-bution entirely. Disinformation frequently relies on the illusion of authoritative endorsement to appear plausible. This suggests that evaluating the raw propositional content without being swayed by false authority is often safer than noticing the attribution without questioning the underlying motive. This finding challenges prevailing assumptions in media literacy, suggesting that individuals with intermedi-ate critical reading skills are specifically targeted and exploited by sophisticated disinformation (such as Baly et al., 2018). This paper is intended as a work in progress, there are a few moving parts, but we are keen on hearing from the community on operationalising our 
+
+BPL framework. Extracting the precise conversa-tional depth of claims currently relies on simplistic heuristics; implementing more sophisticated depen-dency parsing would yield deeper analytical capa-bilities. Additionally, the computational expense of language model queries restricted the breadth of our hybrid evaluation. A selective activation strat-egy, deploying the language model solely for highly complex claims, could optimise resources whilst preserving analytical power. Finally, the current architecture assumes a strictly binary view of truth; adapting the framework to accommodate graded nuances of veracity would provide a more realis-tic representation of reality, albeit at the cost of increased mathematical complexity. 
+
+# 7. Conclusion 
+
+We introduced BPL framework, a formal model of misinformation susceptibility that extends RSA with three cognitively-motivated resource constraints: recursion depth, prior compression, and availability sample size. Our experiments show that BPL is a good veracity classifier driven primarily by prior compression. Additions of LLM substantially im-proves classification by accessing a semantically distinct epistemic channel. Our results also show the concerns on depth-mismatch paradox where partial pragmatic awareness tends to be generally worse. 
+
+# 8. Acknowledgements 
+
+This work was supported in part by the Alan Tur-ing Institute Fundamental Research programme (Project No. PP00029): Robust inference with prob-abilistic answer set programs scaffolds for large language models .9. Bibliographical References 
+
+Isabelle Augenstein, Christina Lioma, Dongsheng Wang, Lucas Chaves Lima, Casper Hansen, Christian Hansen, and Jakob Grue Simonsen. 2019. MultiFC: A real-world multi-domain dataset for evidence-based fact checking of claims. In 
+
+Proceedings of the 2019 Conference on Em-pirical Methods in Natural Language Process-ing , pages 4685–4697. Association for Compu-tational Linguistics. Ramy Baly, Giovanni Da San Martino, James Glass, and Preslav Nakov. 2020. We can detect your bias: Predicting the political ideology of news articles. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Pro-cessing , pages 4982–4991. Association for Com-putational Linguistics. Ramy Baly, Georgi Karadzhov, Dimitar Alexandrov, James Glass, and Preslav Nakov. 2018. Predict-ing factuality of reporting and bias of news media sources. In Proceedings of the 2018 Confer-ence on Empirical Methods in Natural Language Processing , pages 3528–3539. Association for Computational Linguistics. Leon Bergen, Roger Levy, and Noah D. Goodman. 2016. Pragmatic reasoning through semantic inference. Semantics and Pragmatics , 9:20. Colin F. Camerer, George Loewenstein, and Matthew Rabin. 2004. Advances in Behavioral Economics . Princeton University Press, Prince-ton, NJ. Shelly Chaiken. 1980. Heuristic versus systematic information processing and the use of source versus message cues in persuasion. Journal of Personality and Social Psychology , 39(5):752– 766. Nelson Cowan. 2001. The magical number 4 in short-term memory: A reconsideration of mental storage capacity. Behavioral and Brain Sciences ,24(1):87–114. Michael C. Frank and Noah D. Goodman. 2012. Predicting pragmatic reasoning in language games. Science , 336(6084):998. Gerd Gigerenzer and Daniel G. Goldstein. 1996. Reasoning the fast and frugal way: Models of bounded rationality. Psychological Review ,103(4):650–669. Noah D. Goodman and Michael C. Frank. 2016. Pragmatic language interpretation as probabilis-tic inference. Trends in Cognitive Sciences ,20(11):818–829. Noah D Goodman and Andreas Stuhlmüller. 2013. Knowledge and implicature: Modeling language understanding as social cognition. volume 5, pages 173–184. Wiley Online Library. Zhiwei Guo, Michael Schlichtkrull, and Andreas Vlachos. 2022. A survey on automated fact-checking. Transactions of the Association for Computational Linguistics , 10:178–206. Lynn Hasher, David Goldstein, and Thomas Top-pino. 1977. Frequency and the conference of referential validity. Journal of Verbal Learning and Verbal Behavior , 16(1):107–112. Daniel Kahneman. 2011a. Thinking, fast and slow .Farrar, Straus and Giroux. Daniel Kahneman. 2011b. Thinking, Fast and Slow .Farrar, Straus and Giroux, New York. Dhruv Khattar, Jaipal Singh Goud, Manish Gupta, and Vasudeva Varma. 2019. MVAE: Multimodal variational autoencoder for fake news detection. In The World Wide Web Conference , pages 2915–2921. ACM. Elisa Leonardelli, Mario Giulianelli, Piercarlo Colombo, Sara Tonelli, and Raffaella Bernardi. 2021. Agreeing to disagree: Annotating offen-sive language datasets with annotators’ disagree-ment. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Pro-cessing , pages 10528–10539. Association for Computational Linguistics. Falk Lieder and Thomas L. Griffiths. 2020. Resource-rational analysis: Understanding hu-man cognition as the optimal use of limited com-putational resources. Behavioral and Brain Sci-ences , 43:e1. Jeff Z Pan, Siyana Pavlova, Chenxi Li, Ningxi Li, Yangmei Li, and Jinshuo Liu. 2018. Content based fake news detection using knowledge graphs. In International semantic web confer-ence , pages 669–683. Springer. Gordon Pennycook, Tyrone D. Cannon, and David G. Rand. 2018. Prior exposure increases perceived accuracy of fake news. Journal of Ex-perimental Psychology: General , 147(12):1865– 1880. Gordon Pennycook, Ziv Epstein, Mohsen Mosleh, Antonio A. Arechar, Dean Eckles, and David G. Rand. 2021. Shifting attention to accuracy can reduce misinformation online. Nature , 592:590– 595. Gordon Pennycook and David G. Rand. 2019. Lazy, not biased: Susceptibility to partisan fake news is better explained by lack of reasoning than by motivated reasoning. Cognition , 188:39–50. Barbara Plank. 2022. The “problem” of human label variation: On ground truth in data, modeling and evaluation. In Proceedings of the 2022 Confer-ence on Empirical Methods in Natural Language Processing , pages 10671–10682. Association for Computational Linguistics. Hannah Rashkin, Eunsol Choi, Jin Yea Jang, Svit-lana Volkova, and Yejin Choi. 2017. Truth of vary-ing shades: Analyzing language in fake news and political fact-checking. In Proceedings of the 2017 Conference on Empirical Methods in Nat-ural Language Processing , pages 2931–2937. Association for Computational Linguistics. Herbert A. Simon. 1955. A behavioral model of rational choice. The Quarterly Journal of Eco-nomics , 69(1):99–118. Herbert A. Simon. 1956. Rational choice and the structure of the environment. Psychological Re-view , 63(2):129–138. James Thorne and Andreas Vlachos. 2018. Auto-mated fact checking: Task formulations, meth-ods and future directions. In Proceedings of the 27th International Conference on Computational Linguistics , pages 3346–3359. Association for Computational Linguistics. James Thorne, Andreas Vlachos, Christos Christodoulopoulos, and Arpit Mittal. 2018. FEVER: a large-scale dataset for fact extraction and VERification. In Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics ,pages 809–819. Association for Computational Linguistics. Naftali Tishby, Fernando C. Pereira, and William Bialek. 1999. The information bottleneck method. In Proc. of the 37-th Annual Allerton Confer-ence on Communication, Control and Computing ,pages 368–377. Amos Tversky and Daniel Kahneman. 1973. Avail-ability: A heuristic for judging frequency and prob-ability. Cognitive psychology , 5(2). Sander van Der Linden, Jon Roozenbeek, and Josh Compton. 2020. Inoculating against fake news about covid-19. Frontiers in psychology ,11:566790. Soroush Vosoughi, Deb Roy, and Sinan Aral. 2018. The spread of true and false news online. Sci-ence , 359(6380):1146–1151. William Yang Wang. 2017. “Liar, Liar Pants on Fire”: A New Benchmark Dataset for Fake News Detec-tion. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers) , pages 422–426. As-sociation for Computational Linguistics. Claire Wardle and Hossein Derakhshan. 2017. In-formation disorder: Toward an interdisciplinary framework for research and policy making. Tech-nical Report DGI(2017)09, Council of Europe. Noga Zaslavsky, Charles Kemp, Naftali Tishby, and Terry Regier. 2019. Color naming reflects both perceptual structure and communicative need. 
+
+Topics in cognitive science , 11(1):207–219.
