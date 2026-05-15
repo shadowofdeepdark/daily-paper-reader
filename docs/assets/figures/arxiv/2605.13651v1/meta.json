@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-001.webp",
+      "caption": "Table 1. Average Precision (AP) on XD-Violence, grouped by baseline type.",
+      "page": 6,
+      "index": 1,
+      "width": 498,
+      "height": 387
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-002.webp",
+      "caption": "Figure 1. ALM attention failure and context limitations in longform audio. Top: Mel-spectrogram of sample R0056 (USoW) with three salient scenes: birdsong (blue), increased fountain noise (yellow), and bagpipe onset (red). Middle: Direct inference on the full 60s clip (partitioned into 15s segments) omits the terminal bagpipe event, illustrating context-length bottleneck. Bottom: Varying context lengths and ordering. Trailing windows (15s– 45s) recover different scene subsets; moving the final 15s to the front (reordered 60s) recovers the bagpipe, confirming temporalattention decay in the Audio-LLM.",
+      "page": 2,
+      "index": 2,
+      "width": 492,
+      "height": 558
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-003.webp",
+      "caption": "Figure 4. OWM detection of novel events. Mel-spectrograms with car engine (a) and bagpipe (b) onsets. OWM outputs (cyan = energy change, red = adaptive threshold, p-field states shown). Vertical dashed lines mark detected drifts.",
+      "page": 7,
+      "index": 3,
+      "width": 492,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-004.webp",
+      "caption": "Figure 5. OWM is robust to transient pauses. Mel-spectrogram of OWM output. Vertical dashed lines mark detected drifts: cyan indicates energy change, and red indicates the adaptive threshold.",
+      "page": 7,
+      "index": 4,
+      "width": 492,
+      "height": 474
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-005.webp",
+      "caption": "Figure 3. Confusion matrix on the XD-Violence test set audio track. Significant overlaps between Abuse, Shooting, and Fighting reflect acoustic ambiguities and event co-occurrence. The misclassification of Fighting as Explosions highlights the reliance on visual cues for high-energy transient events.",
+      "page": 7,
+      "index": 5,
+      "width": 482,
+      "height": 410
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-006.webp",
+      "caption": "Figure 2. Overview of the NAACA (NeuroAuditory Attentive Cognitive Architecture). Audio is segmented into sliding windows and mapped by a pretrained encoder to auditory object probability trajectories, which drive frequency-specific oscillatory inputs on OWM grids. OWM is a 2D neural network with primary (p) and velocity (v) neurons, parameterized by wave propagation speed c and damping k, where c follows a stripe-shaped binary pattern (dark/light blue). A gate-opening decision is made from OWM energy fluctuations relative to an adaptive threshold, and salient audio segments are routed to a higher-level cognition module for semantic interpretation.",
+      "page": 3,
+      "index": 6,
+      "width": 1015,
+      "height": 441
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-007.webp",
+      "caption": "Table A.1. Requirements comparison of drift detection approaches for audio-semantic streams. Online: Processes streaming data without batch accumulation. No long historical data: Does not require long-term buffering (>50 samples) of past embeddings or statistics. High-dim: Effective on >500 dimensional semantic embeddings without distance concentration issues. Topology-preserving: Maintains structured spatial relationships in semantic representation space, not just raw semantic features. The symbol ∼ indicates partial support or conditional availability depending on configuration parameters.",
+      "page": 13,
+      "index": 7,
+      "width": 795,
+      "height": 211
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-008.webp",
+      "caption": "Figure 7. Temporal frequency analysis around drift detection events. Frequency distributions in active p neurons during 10 s before (left) and after (right) drift onset. Only neurons above the 75th percentile activity threshold are shown.",
+      "page": 8,
+      "index": 8,
+      "width": 491,
+      "height": 530
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13651v1/fig-009.webp",
+      "caption": "Figure 8. Time sent ratios for XD-Violence and USoW datasets. Violin plots with box plots and scatter points show the fraction of audio forwarded to the ALM after OWM drift detection. Both datasets exhibit similar distributions (medians: 0.597 and 0.650), demonstrating that NAACA consistently processes only 60% of audio duration, substantially reducing computational cost while preserving detection accuracy.",
+      "page": 9,
+      "index": 9,
+      "width": 404,
+      "height": 332
+    }
+  ]
+}
