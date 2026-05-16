@@ -1,0 +1,925 @@
+Title: Phase Transitions in Affective Meaning Divergence: The Hidden Drift Before the Break
+
+URL Source: https://arxiv.org/pdf/2605.09043v2
+
+Published Time: Wed, 13 May 2026 00:40:54 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+# Phase Transitions in Affective Meaning Divergence: The Hidden Drift Before the Break 
+
+Napassorn Litchiowong 
+
+School of Computing, National University of Singapore 
+
+pleng@u.nus.edu 
+
+Abstract 
+
+One partner says “Fine” meaning resolution ;the other hears surrender . The word is shared; the affective uptake is not. We formalize this as affective meaning divergence (AMD), the total-variation distance between interlocutors’ anchor-conditioned affect distributions. Build-ing on speech-act theory, common-ground accumulation, and entropy-regularized game theory, we derive a logit best-response map whose dynamics undergo a saddle-node bi-furcation : when βα > 4, a monotone increase in AMD-driven load produces an abrupt, hysteretic collapse of repair coordi-nation. On C ONVERSATIONS GONE AWRY 
+
+(CGA-Wiki; N =652 ), derailing conversations exhibit critical-slowing-down (CSD) signa-tures across multiple levels: lexical divergence variance ( p< 0.001 , d=0 .36 ), AMD variance (p=0 .001 , d=0 .26 ), and dialog-act repair vari-ance ( p=0 .016 , d=0 .20 ), all significant after correction and stronger than toxicity and senti-ment baselines. AMD provides a distinct tem-poral signature, with retrospectively measured variance peaking at the bifurcation point while toxicity variance peaks earlier, and is the only indicator grounded in the theoretical frame-work. Boundary-condition analysis on CGA-CMV ( N =1 ,169 ) yields mixed but direction-ally consistent evidence. 
+
+1 Introduction 
+
+Consider a couple at dinner. One partner says 
+
+“Fine.” and the other hears surrender ; the speaker meant resolution . The word is shared; the affec-tive uptake is not. In the terminology of speech-act theory (Austin, 1962; Searle, 1969), the lo-cutionary act is identical, but the illocutionary force received diverges from the force intended. If this gap is detected, repair can close it (Sche-gloff et al., 1977). If it goes undetected, it accu-mulates in the partners’ divergent common-ground records (Clark, 1996). Eventually, a conversation that would once have repaired itself stops repair-ing, and the relationship tips. We call this phenomenon affective meaning di-vergence (AMD). The present paper asks: How can gradual, continuous drift in affective meaning produce abrupt relational rupture? Our answer is a formal phase-transition model grounded in three pillars: 1. Linguistic: AMD is defined over anchors ,high-frequency lexical items whose pragmatic force depends on affective uptake rather than truth conditions (Du Bois, 2007; Martin and White, 2005). We decompose apparent mean-ing drift into a context divergence component and a genuine conditional affect divergence 
+
+component, following the decomposition logic of appraisal theory (Martin and White, 2005). 2. Agentic: Each interlocutor treats anchors as conditioning observations in a partially ob-servable coordination game. Under entropy-regularized best response (McKelvey and Pal-frey, 1995; Ziebart, 2010; Haarnoja et al., 2018), the repair probability follows a logit map. 3. Dynamical: The resulting one-dimensional map qt+1 = σ(β(αq t −κ)) undergoes a saddle-node bifurcation. Below a critical load, the dyad rests in a high-repair attractor; above it, repair collapses to a low-repair attractor. The transition is hysteretic: recovery requires re-ducing load below a strictly lower threshold than the one that triggered collapse. 
+
+Contributions. (C1) We formalize AMD as a context-conditioned divergence measure with an explicit decomposition bound separating gen-uine affective drift from context confounds (§3). (C2) We ground AMD in an assurance game and prove that belief divergence bounds value dis-agreement (§4). (C3) We prove a saddle-node bi-furcation theorem with closed-form thresholds and 
+
+> arXiv:2605.09043v2 [cs.CL] 12 May 2026
+
+extend to a two-agent system with an interpretable loop-gain condition (§5). (C4) We estimate Pi(s |
+
+x, c ) via a contextual emotion classifier rather than lexicon averages, bringing the practical estima-tor closer to the formal construct (§6). (C5) We provide preliminary empirical evidence on syn-thetic data, CGA-Wiki (primary), and CGA-CMV (boundary-condition analysis) that theory-derived CSD indicators are detectable across multiple lev-els of linguistic representation (lexical, affective, dialog-act), with AMD providing a temporally dis-tinct signature among the tested indicators (§7). (C6) We study three repair proxies as complemen-tary operationalizations and report their degree of agreement; boundary-condition analysis on CGA-CMV yields mixed but directionally consistent ev-idence under shorter threads and noisier labels (§7). Figure 1 provides a visual overview of the full framework and pipeline. 
+
+Scope of claims. We do not claim that the cur-rent estimator perfectly observes latent affective meaning, nor that AMD alone is sufficient for reliable individual-level prediction. The empir-ical claim is narrower: a feasible AMD proxy exhibits critical-slowing-down behavior on CGA-Wiki, with mixed but directionally consistent evi-dence on CGA-CMV, consistent with the proposed dynamical account. The theoretical framework identifies a class of bifurcation models that could explain abrupt relational collapse; the experiments do not uniquely identify the saddle-node formula-tion over alternatives. 
+
+2 Theoretical Roadmap and Motivation 
+
+Roadmap. The framework rests on five theoret-ical components, each with a distinct and non-redundant role. Speech-act theory motivates why the same lexical form can carry different received illocutionary force. Common-ground and repair theory explain how unnoticed affective divergence accumulates silently and how repair is the control variable that can sustain or collapse coordination. 
+
+Appraisal theory supplies the affective state space over which speaker meanings are formally com-pared. Entropy-regularized game theory converts diverging affective beliefs into repair-choice dy-namics via a logit best-response map. Critical-transition theory then supplies the empirical pre-diction: rising variance and autocorrelation before the collapse point. Background on alignment and accommodation models is included only to situate the drift assumption, not as an additional formal commitment. Figure 1 provides a visual overview of how these components compose into the full pipeline. 
+
+Affective meaning as an interactional object. 
+
+In relational talk, many high-frequency items function as stance markers, commitment devices, or repair moves whose success depends on affec-tive uptake (Du Bois, 2007; Stivers, 2008). Ap-praisal theory (Martin and White, 2005) system-atizes this: the ATTITUDE system (Affect, Judg-ment, Appreciation) classifies evaluative meaning, while the ENGAGEMENT system models how speakers open or close dialogic space. When one speaker contracts dialogic space (“Obviously, we need to. . . ”) while the other expands it (“Well, one possibility. . . ”), their evaluative stances be-come incommensurable, a state we formalize as high AMD. 
+
+Common ground, silent failure, and repair. 
+
+Clark’s (1996) joint-action framework treats com-munication as cumulative grounding: each act builds on prior shared understanding. If ground-ing fails silently, the partners develop divergent common-ground records, and each subsequent ut-terance is interpreted against increasingly differ-ent backgrounds. Schegloff (1992) character-izes repair after next turn as “the last structurally provided defense of intersubjectivity.” Crucially, Stivers (2008) distinguishes structural alignment from affective affiliation: one can align without affiliating, providing the mechanism by which sur-face cooperation masks deepening affective diver-gence. We model repair as the control variable that can be sustained or can collapse. 
+
+From alignment to divergence. Although au-tomatic priming across linguistic levels predicts convergence (Pickering and Garrod, 2004), speak-ers systematically diverge in open conversa-tion (Healey et al., 2014) and perceived over-accommodation can trigger reactive divergence (Giles et al., 1991). These findings motivate a model where the default trajectory is drift, and re-pair is the active force that maintains alignment. 
+
+Why entropy-regularized game theory? 
+
+Entropy-regularized decision rules yield soft-max policies identical to the quantal response equilibrium (QRE) of behavioral game theory (McKelvey and Palfrey, 1995). Liu et al. (2024) proved that multi-agent maximum-entropy RL Speaker 1  
+
+> pooled estimate
+> Speaker 2
+> pooled estimate
+> Resolution Surrender
+
+Fine.  Fine. 
+
+Speaker 1  Speaker 2 
+
+Affective Meaning Divergence            
+
+> Same shared anchor 𝑥 in context 𝑐
+> can be interpreted differently
+> Affective -state distribution Affective -state distribution
+> 𝑀 1(⋅|𝑥 ,𝑐 )𝑀 2(⋅|𝑥 ,𝑐 )
+> Resolution Surrender
+> example interpretations (not literal labels)
+> 𝑇𝑉 distance = AMD
+
+A Construct -Aligned Estimation   
+
+> Utterances 𝑢 𝑡
+> with context 𝑐 𝑡
+
+B           
+
+> GoEmotions RoBERTa :
+> 𝑃 𝜃 (𝑠 |𝑢 )
+> Anchor extraction /
+> Pooling (𝑥 ,𝑐 )
+> ෡𝑀 1(𝑠 |𝑥 ,𝑐 )෡𝑀 2(𝑠 |𝑥 ,𝑐 )
+> Resolution Surrender Resolution Surrender
+> inter -speaker anchor -conditioned
+> AMD ∆𝑡 (TV distance)
+> offline pooled estimate
+
+Critical Slowing Down C 
+
+> AMD variance as an early -warning signal
+> schematic
+> CSD
+> window
+> Breakdown
+> 1.0
+> 0.5
+> 0
+> 1T
+> Turn ( 𝑡 )
+> Rolling Var ( ∆𝑡 )
+
+Phase Transition D          
+
+> 𝛽𝛼 >4
+> Bistable
+> (hysteresis)
+> region
+> High -repair
+> (stable)
+> 1.0
+> 0𝜅 −
+> Repair load 𝜅 =𝑐 0+𝜆𝐷
+> Repair Probability  𝑞
+> 𝜅 +
+> Low -repair
+> (stable)
+> Recovery
+> (at 𝜅 −)
+> Collapse
+> (at 𝜅 +)
+> Unstable
+> (middle branch)
+> schematic
+
+Figure 1: Overview of the AMD framework: divergent anchor-conditioned affect distributions define AMD via TV distance (A-B) ; rising rolling-window variance before breakdown constitutes the CSD early-warning signal (C) ;the saddle-node bifurcation predicts abrupt, hysteretic collapse of repair coordination (D) .
+
+converges to QRE in the cooperative setting, so our model can be interpreted simultaneously as bounded-rational game play, entropy-regularized policy learning, and a statistical-mechanics system at finite temperature. 
+
+Why a bifurcation model? Critical-transition theory (Scheffer et al., 2009; Scheffer, 2009) has revealed generic early-warning signatures (ris-ing autocorrelation, rising variance) in systems approaching tipping points, from ecosystems to mood dynamics (van de Leemput et al., 2014). Kauhanen (2022) derived bifurcation thresholds for contact-induced language change. We apply the same machinery to the micro-scale of a single dyadic relationship, predicting that conversational breakdown should exhibit critical slowing down in the turns preceding rupture. 
+
+3 Formal Setup: Anchors, Context, Meaning 
+
+3.1 Latent states, anchors, context 
+
+Let st ∈ S be a latent affective state (e.g., a point in VAD space or a discrete emotion category). Let 
+
+ut be the utterance at turn t and ϕ an anchor extrac-tor with ϕ(ut) ⊆ X . Anchors are high-frequency lexical items whose pragmatic force is primarily affective. Let ct ∈ C be an explicit context vari-able encoding preceding dialog acts, topic, and sit-uational factors. 
+
+3.2 Contextual affective meaning Definition 1 (Contextual affective meaning) . For agent i ∈ { 1, 2}, the affective meaning of anchor 
+
+x in context c is 
+
+Mi(· | x, c ) := Pi(s | x, c ).
+
+This definition treats meaning as a posterior dis-tribution over affective states conditioned on the anchor and its context. It resonates with appraisal theory’s ATTITUDE system: Mi encodes how agent i distributes probability over evaluative cat-egories upon encountering anchor x in context c.
+
+Definition 2 (Marginalized affective meaning) .
+
+The context-marginal meaning of x for agent i is 
+
+M i(· | x) = X
+
+c∈C 
+
+Pi(c | x) Mi(· | x, c ). (1) 
+
+3.3 AMD: marginal, conditional, context Definition 3 (AMD variants) . Given divergence d
+
+on distributions over S:• Marginal AMD: Dmarg (x) := 
+
+d M 1(· | x), M 2(· | x) .
+
+• Conditional AMD (under ref-erence Q): Dcond (x) := 
+
+Ec∼Q(·| x)[d(M1(· | x, c ), M 2(· | x, c ))] .
+
+• Context divergence: Dctx (x) := 
+
+d(P1(· | x), P 2(· | x)) .
+
+3.4 Decomposing marginal AMD Proposition 1 (Context-conditional decomposi-tion) . Using d = TV , for any anchor x:
+
+Dmarg (x) ≤ Dctx (x)+ Ec∼P1(·| x)
+
+TV  M1(· | x, c ), M 2(· | x, c ) .
+
+(2) The proof (Appendix A) adds and subtracts a cross term and applies the triangle inequality. This de-composition is central: marginal AMD conflates genuine affective drift with context-usage differ-ences. Two speakers who use “fine” in different conversational contexts (one in closings, one in complaints) will show high marginal AMD even if they attach identical affect to “fine” within each context. Only Dcond isolates genuine affective di-vergence. 
+
+4 Meaning as Reward-Relevant Belief 
+
+4.1 Anchor-conditioned values 
+
+Given anchor x in context c, agent i’s value for action a ∈ { R(epair ), W (ithdraw )} is 
+
+Qi(a | x, c ) = Es∼Mi(·| x,c )
+
+ri(s, a, a −i)+Ω i(a),
+
+where ri is a reward depending on the latent state and both agents’ actions, and Ωi captures action-specific costs. 
+
+Proposition 2 (Belief divergence bounds value disagreement) . Fix (x, c ). Define the repair ad-vantage gi(s) := ri(s, R, a −i) − ri(s, W, a −i). If 
+
+|gi(s)| ≤ G for all s, then for any M, M ′ over S,
+
+EM [gi] − EM ′ [gi] ≤ 2G TV( M, M ′).
+
+This bound (proof in Appendix B) connects AMD directly to action: a TV distance of δ in affective meaning translates to at most 2Gδ disagreement in repair advantage, where G is the maximum payoff swing. 
+
+4.2 A minimal assurance game for repair 
+
+We model each turn as a symmetric stage game: 
+
+u(R, R ) = B − c0, u(R, W ) = −c0,u(W, R ) = 0 , u(W, W ) = 0 , (3) with B > 0 (benefit of mutual repair) and c0 ≥ 0
+
+(cost of attempting repair). If the partner repairs with probability q, the repair advantage is linear: 
+
+∆U (q) = Bq − c0. Identifying α := B and mod-eling AMD as an additive load: 
+
+κ = c0 + λD, (4) where D is the aggregate conditional AMD and 
+
+λ ≥ 0 controls its weight. As AMD grows, repair becomes costlier: affective mismatch means repair attempts are more likely to be misinterpreted, a dy-namic well-documented in accommodation theory when convergence is perceived as condescension (Giles et al., 1991). 
+
+4.3 Logit best response 
+
+Under entropy regularization at precision β > 0:
+
+qt+1 = f (qt) := σ β(αq t −κ), σ(z) = 11+ e−z .
+
+(5) This is the quantal response (McKelvey and Palfrey, 1995) and is algebraically identical to the softmax policy of maximum-entropy RL (Haarnoja et al., 2018). 
+
+5 Theory: Smooth Drift versus Tipping 
+
+Lemma 1 (Slope bound) . For f defined in Eq. (5) ,
+
+f ′(q) = βα f (q)(1 − f (q)) , so max q∈[0 ,1] f ′(q) ≤
+
+βα/ 4. When κ/α ∈ (0 , 1) , the maximum is achieved at q = κ/α where f (q) = 1 /2; oth-erwise the supremum over [0 , 1] is strictly below 
+
+βα/ 4.
+
+Theorem 1 (Unique regime) . If βα ≤ 4, then for every κ ∈ R the map (5) has a unique fixed point 
+
+q∗ ∈ (0 , 1) that varies continuously with κ. More-over, q∗ is globally attracting: for any q0 ∈ [0 , 1] ,
+
+f n(q0) → q∗.
+
+Theorem 2 (Bistability, tipping, hysteresis) . If 
+
+βα > 4, there exist κ− < κ + such that: (i) For κ ∈ (κ−, κ +), the map has exactly three fixed points qL < q M < q H , with qL, q H sta-ble and qM unstable. (ii) At κ = κ+, the fixed points qH and qM
+
+collide and annihilate (saddle-node bifurca-tion); the system jumps to qL.(iii) At κ = κ−, the fixed points qL and qM col-lide; the system jumps to qH .(iv) The interval (κ−, κ +) constitutes a hysteresis region : once the dyad has collapsed to qL,recovery requires κ < κ −, strictly below the collapse threshold κ+.The saddle-node tangency points q± (where 
+
+f ′(q) = 1 and f (q) = q hold simultaneously) are: 
+
+q± = 12
+
+
+
+1 ± p1 − 4/(βα )
+
+
+
+, (6) 
+
+κ± = αq ± − 1 
+
+> β
+
+logit( q±). (7) 
+
+Note: q± are not fixed points in general; they be-come fixed points only at the bifurcation bound-aries κ = κ±.
+
+Full proofs with all intermediate steps appear in Appendix C. The “Till Death” metaphor maps pre-cisely: the couple drifts through the bistable re-gion until AMD crosses κ+, at which point re-pair collapses abruptly. Recovery requires not merely returning to the pre-collapse AMD level but substantially reducing it below κ−, a predic-tion consistent with the clinical observation that relational repair requires active intervention well beyond simply undoing damage. 
+
+Corollary 1 (Critical slowing down) . As a sta-ble fixed point approaches a saddle-node bound-ary, f ′(q∗) → 1− and the relaxation time τ ∼
+
+1/(1 − f ′(q∗)) → ∞ , implying rising autocorre-lation and variance under noise perturbation. 
+
+5.1 Asymmetric two-agent extension 
+
+In real dyads, agents differ: 
+
+q1 
+
+> t+1
+
+= σ β1(α1q2 
+
+> t
+
+− κ1),q2 
+
+> t+1
+
+= σ β2(α2q1 
+
+> t
+
+− κ2). (8) 
+
+Proposition 3 (Loop-gain instability condition) .
+
+At any fixed point (q1∗, q 2∗) of (8) , local instability requires β1α1 β2α2 q1∗(1 −q1∗) q2∗(1 −q2∗) > 1.Since q(1 −q) ≤ 1/4, a necessary condition for any loss of stability is (β1α1)( β2α2) > 16 . This is necessary but not sufficient; the actual q∗(1 −q∗)
+
+values determine whether instability occurs. 
+
+This extends the scalar threshold βα > 4 to the product of individual gains. In particular, one agent’s gain can fall below the scalar threshold of 
+
+4 (i.e., the agent would be individually stable in a symmetric dyad), provided the other agent’s gain compensates so that the product exceeds 16 . For example, β1α1 = 3 and β2α2 = 6 yield a prod-uct of 18 > 16 , admitting instability even though agent 1 alone would not bifurcate. 
+
+6 Construct-Aligned Estimation 
+
+A key concern is the gap between the formal ob-ject Mi(s | x, c ) = Pi(s | x, c ) and practical esti-mates. We address this directly with a contextual emotion classifier rather than lexicon averages. 
+
+6.1 Estimating Pi(s | x, c )
+
+1. Base classifier: RoBERTa-base fine-tuned on GoEmotions (Demszky et al., 2020) (58k Reddit comments, 27 emotion categories + neutral), producing per-utterance distributions 
+
+Pθ(s | u).2. Anchor extraction: The extractor ϕ tokenizes via regex ( \b[a-z]{2,}\b ), removes NLTK stopwords, and retains tokens appearing ≥ 3
+
+times across both speakers. On CGA-Wiki, this yields 1,573 unique anchor types (per-conversation median: 4), with 500 of 652 con-versations containing at least one valid anchor-context cell. The key theoretical property of an anchor is not that it is inherently affective but that it serves as a shared reference point whose affective uptake can diverge: domain terms like article on Wikipedia talk pages be-come invested with divergent affective associa-tions during editorial disputes. The AMD com-putation identifies whether such divergence ex-ists, applying an affective filter downstream of a broad lexical net. A more targeted extractor (e.g., appraisal lexicons) is left to future work (§6, Limitations). 3. Speaker conditioning: For anchor x used by speaker i in context c, collect Ui(x, c ) = {u :
+
+ϕ(u) ∋ x, speaker( u) = i, ctx( u) = c} and estimate: 
+
+ˆMi(s | x, c ) = 1
+
+|Ui(x, c )|
+
+X
+
+> u∈Ui(x,c )
+
+Pθ(s | u).
+
+(9) This estimate pools all utterances by speaker 
+
+i containing anchor x in context c within the same conversation, including future turns. The per-turn AMD signal used in the CSD analy-sis thus reflects conversation-level speaker dis-tributions, not a temporally causal estimator; the lead-time results (§7.4) reflect how early CSD signatures in AMD dynamics become de-tectable, not that AMD is computed from past data alone. 4. Context: c = (dialog-act of preceding turn) ×
+
+(topic cluster from k-means on TF-IDF, k=5 ). 5. Reference distribution: Q(c | x) ∝|U1(x, c )| + |U2(x, c )| (pooled). 
+
+Operational match to the formal construct. 
+
+The formal object is Mi(s | x, c ) = Pi(s | x, c ),the true posterior of speaker i over affective states conditioned on anchor and context. The empiri-cal estimator in Eq. (9) approximates this using: lexical anchors selected by frequency rather than evaluative salience; utterance-level emotion distri-butions rather than anchor-conditioned posteriors; speaker-level pooling across an entire conversa-tion rather than per-turn conditioning; and coarse context cells ( k=5 topic clusters × dialog-act cat-egory). The experiments therefore test whether a feasible proxy for AMD behaves as the theory predicts, not whether the latent construct is per-fectly observed. Construct-aligned improvements are identified as future work throughout. 
+
+Classifier-domain caveat. The GoEmotions model is trained on Reddit social media posts, not multi-turn dialogue, and its 28-category taxon-omy may not adequately capture repair-relevant affective states such as defensiveness, resigna-tion, sarcasm, or face threat. This mismatch can bias AMD estimates in either direction: it may 
+
+overestimate AMD when topical or platform-specific cues induce spurious emotion differences between speakers, and underestimate AMD when dialogue-specific affective distinctions are col-lapsed into broad neutral or approval categories. We therefore interpret AMD as a construct-aligned proxy rather than a direct observation of interlocutors’ latent affective meanings; detailed estimation-pipeline limitations are discussed in the Limitations section. 
+
+6.2 Repair proxy validation 
+
+Rather than relying on a single proxy, we define three complementary operationalizations and ex-amine their degree of agreement: 1. Dialog-act proxy ( ˆqDA ): Probability of con-ciliatory acts from a RoBERTa classifier fine-tuned on Switchboard Dialog Act Corpus (ac-curacy: 73.1%). We acknowledge domain shift and report source-domain performance and ag-gregation details in Appendix G. 2. Explicit repair markers ( ˆqRM ): Binary indi-cator for repair-initiating patterns following the taxonomy of Schegloff et al. (1977): clarifi-cation questions, corrections, acknowledgment tokens, smoothed with exponential moving av-erage. 3. Constructive engagement (ˆqCE ): 1 −
+
+P (toxic | ut) from a toxicity classifier, captur-ing the complement of hostility. 
+
+6.3 Avoiding representation leakage 
+
+A risk is that context representations encode speaker identity. We use three mitigations: (i) speaker-invariant embeddings focused on content and dialog acts; (ii) adversarial training penalizing speaker-identity prediction; (iii) restricted match-ing on coarse features (topic cluster, turn position). A speaker-identity classifier on context represen-tations achieves ≤ 55% accuracy (near chance).                         
+
+> (α, β )βα κ−κ+
+> (2 ,2) 4(unique)
+> (2 ,3) 60.862 1.138 (2 ,4) 80.734 1.266 (2 ,5) 10 0.638 1.362
+> Table 1: Bifurcation thresholds from the closed-form expressions, confirmed by iteration. When βα = 4 , the fixed point is unique; for βα > 4, a bistable interval
+> (κ−, κ +)opens and widens with increasing βα .
+
+6.4 Finite-sample guarantees Lemma 2 (L1 concentration; Weissman et al. 2003) . For a distribution over k states and n
+
+i.i.d. samples, Pr( ∥ ˆPn − P ∥1 > ϵ) ≤  2k −
+
+2 exp  −nϵ 2/2.
+
+Setting ϵ = 0 .1 and k = 28 (GoEmotions cat-egories), n ≥ 4,481 samples suffice for a 95% 
+
+guarantee. 
+
+7 Experiments 
+
+We present seven experiments: three synthetic (§7.1), two on CGA-Wiki (§7.2), one boundary-condition analysis on CGA-CMV (§7.3), and a lead-time analysis (§7.4). 
+
+7.1 Synthetic experiments Exp. 1: Bifurcation validation. We compute 
+
+κ± from Eqs. (6)-(7), sweep κ ∈ [0 , 2] in steps of 0.001 , and iterate Eq. (5) for T = 5 ,000 steps from both q0 = 0 and q0 = 1 .Table 1 confirms Theorem 2: at βα = 4 , it-eration converges to a unique fixed point for all 
+
+κ; at βα > 4, two stable attractors coexist in the bistable interval, and hysteresis is observed. 
+
+Exp. 2: Confound stress test. We demonstrate that marginal AMD can be large while condi-tional AMD is zero. Setup: S = {0, 1}, C =
+
+{A, B }. Both speakers share conditional mean-ing: P (s=1 | x, A ) = 0 .9, P (s=1 | x, B ) = 0 .1.Only usage differs: P1(A | x) = 0 .9, P2(A | x) = 0.1. Result: Dmarg = 0 .64 while Dcond = 0 .
+
+Exp. 3: Estimator with balancing. One an-chor, S = {0, 1}, C = {A, B }, n = 1,000 
+
+samples per speaker. Two conditions: (C1) pure usage confound ( Dmarg =0 .36 , Dcond ≈0); (C2) true conditional AMD with symmetric marginals (Dmarg ≈0, Dcond =0 .60 ). The confound works both ways: marginal AMD can be inflated by con-text shift or can miss genuine conditional diver-gence entirely. 7.2 CGA-Wiki: Early-warning signals and baselines Corpus. The Conversations Gone Awry (CGA) dataset (Zhang et al., 2018) contains Wikipedia talk-page conversations labeled as either civil throughout or eventually derailing into personal attack . We use the ConvoKit release, filtering to 
+
+≥ 10 turns, yielding 652 conversations (389 de-railing, 263 civil). 
+
+Exp. 4: CSD indicators with baselines. For each utterance ut, we compute: three repair prox-ies (§6.2); inter-speaker conditional AMD ∆t us-ing Eq. (9); and baselines: toxicity (toxic-bert), VADER sentiment (Hutto and Gilbert, 2014), and inter-speaker lexical divergence (1 −Jaccard on consecutive turns). Rolling-window ( W =5 ) lag-1 autocorrelation and variance are computed. Ris-ing trends are tested with Kendall’s τ in the 5 turns preceding breakdown; significance by per-mutation ( 10 ,000 shuffles). AMD results are com-puted on the 500 conversations (76.7%) contain-ing at least one valid anchor-context cell; the re-maining 152 conversations lack sufficient shared vocabulary meeting the frequency threshold. We report results for W = 5 , following prior CSD literature (Scheffer et al., 2009). A sensitivity analysis over W ∈ { 3, 4, 5, 6, 7} (Appendix H.5) shows that ˆqDA Variance is significant at W = 3 –
+
+6, while AMD Variance reaches significance at 
+
+W = 5–6; the two indicators are complemen-tary, with ˆqDA more robust at shorter windows and AMD strongest at the reported W = 5 .Table 2 reports the key result. CSD signatures are detectable across multiple levels of linguis-tic representation, consistent with Corollary 1’s prediction that all dynamical variables should ex-hibit rising variance near the bifurcation. Lexical divergence variance shows the largest effect size (d = 0 .36 ), AMD Variance the second-strongest (p = 0 .001 , d = 0 .26 ), and ˆqDA Variance the third ( p = 0.016 , d = 0.20 ). AMD provides a distinct contribution: lexical divergence mea-sures whether interlocutors use different vocabu-lary, while AMD measures whether they attach different affective meanings to shared vocabulary, the central phenomenon motivating this work. The lead-time analysis (§7.4) further reveals distinct temporal profiles. Note that τ is negative for both groups because variance peaks before the tipping and collapses as the system settles into the new attractor; the diagnostic signal is the differential                                          
+
+> Indicator τderail τcivil pd
+> CSD indicators (Variance trend)
+> ˆqDA VAR −0.129 −0.010 0.016 0.20 ˆqRM VAR −0.133 −0.128 0.921 0.01 ˆqCE VAR 0.055 0.019 0.434 0.06
+> AMD Var −0.200 −0.054 0.001 0.26
+> Baselines (Variance trend)
+> Toxicity VAR 0.055 0.019 0.444 0.06
+> VADER VAR 0.086 0.007 0.093 0.14
+> Lex. Div. VAR −0.327 −0.125 <0.001 0.36
+> Lex. Div. AC 1+0 .081 −0.061 <0.001 0.29
+
+Table 2: CSD indicators on CGA-Wiki ( N =652 ;AMD on the 500 conversations with valid anchors). Kendall τ of rolling variance in the 5 turns pre-ceding breakdown (derailing) or conversation end (civil); d: Cohen’s d between the two τ distribu-tions. Under Benjamini-Hochberg correction, AMD Var ( qBH =0 .004 ), Lex. Div. VAR ( qBH =0 .004 ), Lex. Div. AC 1 (qBH =0 .004 ), and ˆqDA VAR ( qBH =0 .043 )remain significant at α=0 .05 .                        
+
+> Row Feature set AUC ∆AUC 1Toxicity (trend+mean+max) 0.539 -2+ Sentiment 0.561 +0.022 3+ Lexical divergence 0.552 −0.009
+> 4+ Sent AC 1τ0.618 +0.066
+> 5+ˆqDA CSD 0.628 +0.010
+> 6+ AMD CSD 0.619 −0.009
+
+Table 3: Incremental ablation on CGA-Wiki (5-fold CV, GBM). CSD features (rows 4-6) jump AUC from 
+
+∼0.55 to ∼0.63 . ˆqDA CSD contributes a novel +0 .010 
+
+increment. 
+
+between conditions. Neither toxicity nor senti-ment baselines reach significance. Effect sizes of 
+
+d = 0 .20 –0.36 are comparable to those in other CSD studies on short, noisy observational time se-ries (van de Leemput et al., 2014). 
+
+Exp. 5: Incremental ablation. Gradient-boosted machine (GBM) predicting derailment from first-60% features (5-fold CV): The ablation (Table 3) shows that surface fea-tures (rows 1-3) plateau around AUC = 0.55 .CSD features yield a jump: sentiment autocorrela-tion adds +0 .066 (row 4), ˆqDA CSD adds +0 .010 
+
+(row 5). Adding AMD CSD (row 6) does not im-prove further ( ∆AUC = −0.009 ), consistent with Corollary 1’s prediction that all dynamical vari-ables exhibit correlated CSD signatures near the bifurcation, so a second CSD feature provides lim-ited additional discriminative power. The inde-pendent significance of AMD Variance in Exp. 4 (p = 0 .001 ) confirms AMD captures a detectable Indicator τderail τcivil p d                           
+
+> ˆqDA VAR −0.034 +0 .030 0.079 0.10 ˆqCE VAR 0.072 −0.024 0.009 0.16
+> VADER AC 1−0.022 +0 .025 0.108 0.09
+> AMD Var −0.020 +0 .019 0.267 0.07
+> Table 4: CSD indicators on CGA-CMV ( N=1 ,169 ).
+> d: Cohen’s d(absolute value). All indicators are at-tenuated relative to CGA-Wiki, consistent with the the-ory’s prediction that CSD detection requires sufficient conversational length and a clean breakdown label.
+> ˆqCE VAR is the only indicator reaching significance (p=0 .009 ,d=0 .16 ); ˆqDA VAR is directionally consis-tent ( p=0 .079 ,d=0 .10 ).
+
+univariate signal; the ablation shows this signal overlaps with ˆqDA CSD for classification. This re-sult limits the predictive interpretation of AMD: although AMD Variance is independently signif-icant as a univariate CSD indicator (Exp. 4) and provides a temporally distinct profile from toxic-ity (Exp. 7, peaking at k=0 vs. k=2 –3), it does not provide additional classification gain once ˆqDA 
+
+CSD is already included. AMD’s contribution should therefore be evaluated by its theoretical grounding and temporal distinctiveness, not by in-cremental AUC over an already-correlated CSD feature. 
+
+7.3 CGA-CMV: Boundary conditions Corpus. The CGA-CMV corpus (Chang and Danescu-Niculescu-Mizil, 2019) applies the Conversations Gone Awry framework to Red-dit ChangeMyView, labeling conversations by whether a comment was removed by moderators. Of 4,389 total conversations, 1,169 have ≥ 10 
+
+turns, usable for CSD analysis; the remaining 73% are too short. 
+
+Exp. 6: Testing predicted attenuation un-der boundary conditions. CGA-CMV tests the theory’s prediction that CSD requires suffi-cient approach time: compared to CGA-Wiki, it has shorter threads (median 7 turns, 73% below 10-turn threshold) and a noisier label (has_removed_comment ; Cohen’s d = 0 .34 vs. 
+
+1.88 ). We apply the same CSD pipeline as Exp. 4. Table 4 shows that all CSD indicators are at-tenuated relative to CGA-Wiki, as predicted. ˆqCE 
+
+Variance is the only significant indicator ( p =0.009 , d = 0 .16 ); since ˆqCE = 1 − P (toxic ),this shows that the dynamics of hostility carry a CSD signal even when static toxicity does not,                                  
+
+> kAMD Var pˆqDA VAR pTox. VAR p
+> 0( = Exp. 4) 0.001 0.016 0.444 10.028 0.309 0.027
+> 20.336 0.997 0.005
+> 30.789 0.070 0.001
+> Table 5: Lead-time analysis on CGA-Wiki. k:turns the 5-turn window is shifted back from the at-tack; bold: p<0.05 .The AMD result at k=1
+> (p=0 .028 ,qBH ≈0.056 ) does not survive Benjamini-Hochberg correction; the temporal contrast is therefore exploratory.
+
+consistent with the CSD framework’s emphasis on changing dynamics rather than levels. ˆqDA Vari-ance is directionally consistent ( p = 0 .079 ); AMD Variance does not reach significance ( p = 0 .267 ). The attenuation reflects shorter threads (median 7 turns), noisier labels (Cohen’s d = 0.34 vs. 
+
+1.88 ), and domain shift. A length-stratified analy-sis (Appendix H.4) shows directionally consistent dose-response trends. We acknowledge that these results are also consistent with the simpler inter-pretation that the CGA-Wiki CSD signal does not generalize robustly; a third corpus with interme-diate properties would help discriminate. CGA-CMV should therefore be read as a boundary-condition analysis rather than a successful replica-tion: it identifies where the proposed signal weak-ens and motivates broader cross-domain validation rather than establishing robust generalization. 
+
+7.4 Early-warning lead-time analysis 
+
+The previous experiments measure CSD in the 5-turn window immediately preceding breakdown. A stronger test of the theory asks whether the sig-nal is detectable before the final window. 
+
+Exp. 7: Temporal lead. We repeat the Exp. 4 analysis on CGA-Wiki but shift the 5-turn mea-surement window backward by k turns (excluding the final k turns before attack). Table 5 reports re-sults for k = 0 , . . . , 3.Three findings emerge. AMD Variance is sig-nificant at k = 0 (p = 0 .001 ) and nominally at 
+
+k = 1 (p = 0 .028 ), though the latter does not survive BH correction ( qBH ≈ 0.056 ). qDA Vari-ance is significant only at k = 0 , consistent with the repair proxy being most sensitive at the bifur-cation. Toxicity variance shows the opposite pro-file: non-significant at k = 0 but highly signif-icant at k = 2 -3 (p = 0 .005 , 0.001 ), with de-railing conversations exhibiting suppressed toxic-ity variance, a “calm before the storm.” This tem-poral contrast is consistent with CSD indicators detecting the approach to the bifurcation (peaking at k = 0 ) while toxicity captures pre-attack sur-face tension ( k = 2 -3), underscoring the value of theory-derived measures. 
+
+8 Related Work 
+
+Repair and alignment in couples. Our model compresses repair (Schegloff et al., 1977; Sche-gloff, 1992) into a scalar control variable, pre-serving the key insight that the preference hierar-chy implies a collapse threshold. Language style matching predicts relationship stability (Ireland et al., 2011) and relative acoustic features pre-dict therapy outcomes (Nasir et al., 2017); our framework provides a formal mechanism explain-ing why style matching fails: when AMD crosses the bifurcation threshold, surface coordination be-comes insufficient to sustain repair. 
+
+Affect Control Theory and emotion in dialogue. 
+
+ACT (Heise, 2007) posits that actors minimize 
+
+deflection ; BayesACT (Hoey et al., 2016) refor-mulates this as a POMDP. Deflection is a natu-ral order parameter for our phase transition. Dia-logueRNN (Majumder et al., 2019) and COSMIC (Ghosal et al., 2020) model per-utterance emotion but do not track the inter-speaker gap as a dynami-cal variable; we model it as continuous divergence accumulating toward a threshold. 
+
+Phase transitions in language and meaning. 
+
+Kauhanen (2022) derived bifurcation thresholds for language contact; Aoyama & Wilcox (2025) identified phase transitions in LM scaling; Nowak et al. (2001) proved coherence thresholds for universal grammar. Our work brings phase-transition analysis to the scale of a single con-versation. Lewis signaling games (Lewis, 1969; Skyrms, 2010) and emergent-communication work (Lazaridou et al., 2017) study meaning cre-ation through coordination; our focus is mean-ing destruction , how shared conventions degrade when affective uptake diverges. 
+
+9 Conclusion and Future Directions 
+
+We proposed affective meaning divergence (AMD) as a context-conditioned measure of the gap between interlocutors’ affective interpreta-tions of shared vocabulary. Our model, grounded in speech-act theory and entropy-regularized game theory, shows that this gap can produce abrupt, hysteretic collapse of repair coordination via a saddle-node bifurcation. Empirically, CSD signatures are detectable across multiple levels on CGA-Wiki (lexical, affective, dialog-act), consistent with the theory; AMD contributes a theoretically grounded and temporally distinct signal whose variance peaks at the bifurcation point while toxicity shows a contrasting pat-tern. Boundary-condition analysis on CGA-CMV suggests attenuation under shorter, noisier con-versations, so broader generalization remains an open question requiring validation on additional corpora. The hysteresis width κ+ − κ− predicts how much more effort recovery requires than prevention, a testable prediction for longitudinal studies. Looking ahead, longitudinal corpora (e.g., ther-apy transcripts) would allow direct testing of hysteresis and estimation of (α, β ). Controlled paradigms manipulating affective framing could establish causal links. Multi-dimensional exten-sions tracking repair across topic, emotion, and face dimensions would address the scalar reduc-tion. A targeted anchor extractor using appraisal lexicons would better operationalize the theoret-ical construct. Taken together, these directions point toward a richer, causally grounded account of how meaning fails between people. We hope this framework bridges the linguistic analysis of meaning in interaction and the mathematics of dy-namical systems, offering a new perspective on an old question: not when relationships end, but why they end so suddenly .
+
+Limitations 
+
+Theory-to-empirics gap. The formal model yields quantitative predictions (bifurcation thresh-olds κ±, hysteresis width) that depend on param-eters (α, β ) not directly estimable from observa-tional data. Following standard methodology for critical-transition detection in complex systems (Scheffer et al., 2009), we validate qualitative pre-dictions (CSD signatures) rather than quantitative thresholds. This means the empirical evidence supports the class of bifurcation models rather than uniquely identifying our saddle-node formu-lation; alternative models (e.g., pitchfork bifurca-tion, subcritical Hopf) could produce qualitatively similar CSD signatures, and our experiments do not discriminate among them. Construct validity of repair proxies. The three repair proxies ( ˆqDA , ˆqRM , ˆqCE ) show weak inter-proxy correlations ( |r| ≤ 0.10 ). We interpret this as reflecting the multidimensional nature of “re-pair”: dialog-act level coordination ( ˆqDA ), struc-tural repair initiation ( ˆqRM ), and absence of hostil-ity ( ˆqCE ) operationalize different theorized facets of the construct, much as different depression questionnaires can show moderate inter-scale cor-relations while each validly measuring an aspect of the syndrome. However, the low correlations also mean no single proxy can be confirmed as a faithful operationalization of the theoretical con-struct q, and there is currently no external cri-terion establishing that any proxy tracks the la-tent repair variable posited by the model. The key evidence for their relevance is the independent significance of ˆqDA Variance in the CSD analy-sis (Table 2) and the consistency of its temporal profile with the bifurcation prediction (Table 5). The dialog-act classifier was trained on Switch-board (telephone speech) and applied to Wikipedia talk pages; the 73.1% Switchboard accuracy does not directly characterize performance on CGA. The constructive-engagement proxy ( 1−P (toxic ))conflates absence of hostility with active repair, which are conceptually distinct. A human anno-tation study validating each proxy against expert-coded repair acts on a CGA sample would substan-tially strengthen construct validity but was beyond the scope of this work. 
+
+Anchor extraction and construct alignment. 
+
+The anchor extractor uses a frequency-based se-lection criterion (shared non-stopword tokens with frequency ≥ 3) rather than a theoretically moti-vated filter for evaluative or stance-bearing vocab-ulary. As a result, the anchor inventory includes domain-specific terms (e.g., article , sources , sec-tion ) that are not prototypical affective items, though such terms can carry divergent affective associations in the context of editorial disputes. The AMD computation relies on the conditional emotion distributions to identify whether diver-gence is present for a given anchor, effectively us-ing a broad lexical net with an affective filter ap-plied downstream. This design choice prioritizes recall over precision in anchor selection; a more targeted extractor using evaluative POS tags, ap-praisal lexicons, or stance classifiers would better operationalize the theoretical construct and could improve signal specificity. Additionally, 152 of 652 CGA-Wiki conversations (23.3%) lack any valid anchor-context cell and are excluded from AMD analyses, reducing the effective sample size for those results. 
+
+AMD estimation scope. The speaker-conditioned distributions ˆMi(s | x, c ) are es-timated by pooling all of speaker i’s uses of anchor x in context c within the same conversa-tion, including both past and future turns relative to any given measurement point. This means the AMD signal is not computed from a temporally causal (past-only) estimator. The lead-time results (§7.4) therefore reflect when the CSD signature in AMD dynamics becomes detectable, not that AMD itself is observable in real time from past data alone. A temporally causal estimator would strengthen the early-warning interpretation but would further exacerbate data sparsity within individual conversations. 
+
+Corpus diversity and ecological validity. 
+
+CGA-Wiki is the primary corpus where CSD indicators reach significance; CGA-CMV yields directionally consistent but attenuated effects, consistent with the theory’s requirement for suffi-cient conversational length and clean breakdown labels. Both corpora are drawn from public online platforms with pseudonymous participants, no prior relationship history, no expectation of future interaction, and no prosodic or nonverbal cues, all of which differ substantially from the dyadic inter-personal relationships motivating the theoretical framework. Validation on naturalistic longitudinal data (e.g., couples therapy transcripts, workplace team interactions) would provide a stronger test but raises significant ethical and access challenges. 
+
+Estimation pipeline. The GoEmotions-trained RoBERTa classifier introduces several concerns: its 28-category taxonomy was developed for so-cial media and may not align with the affec-tive states most relevant to conversational repair (e.g., frustration, resignation, and defensiveness are not well-separated); the classifier produces per-utterance rather than per-anchor distributions, so the aggregation in Eq. (9) assumes the an-chor dominates the affective signal of its con-taining utterance; and miscalibrated softmax out-puts could systematically distort TV distance esti-mates. Context is operationalized as a coarse grid (dialog-act × topic cluster, k=5 ); finer granularity would better approximate the theoretical construct but exacerbates data sparsity. The finite-sample bound (Lemma 2) requires ∼4,500 samples per cell, which most cells in practice do not reach. 
+
+Causal and predictive scope. Our experiments establish that derailing conversations exhibit dif-ferential CSD signatures but do not establish that AMD causes collapse; the observed patterns could reflect a common upstream cause (e.g., topic diffi-culty or participant personality) driving both AMD growth and breakdown. The lead-time analy-sis provides suggestive temporal ordering (AMD detectable at k = 0), but temporal precedence alone does not establish causation; intervention studies or natural experiments are needed (Feder et al., 2022). The primary statistical test evalu-ates population-level separation (between derail-ing and civil conversation groups), not individual-level prediction; while the theory models within-conversation trajectories, the validation relies on between-group statistics across hundreds of con-versations. The ablation AUC of 0.628 confirms that current features are insufficient for reliable per-conversation forecasting. Rolling-window pa-rameters ( W =5 , lag-1) were chosen to match prior CSD literature and were not pre-registered. 
+
+Cultural and linguistic scope. All data, clas-sifiers, and evaluations are English-only. Af-fect perception, repair strategies, and conversa-tional norms vary substantially across languages and cultures (Stivers et al., 2009), and the GoE-motions taxonomy reflects predominantly North American English usage. Applying this frame-work cross-linguistically would require culturally adapted emotion classifiers and validation that the assurance-game model of repair generalizes be-yond the Western, text-based setting examined here. 
+
+Ethics Statement 
+
+This work uses only publicly available corpora (CGA-Wiki and CGA-CMV via ConvoKit). We make no diagnostic claims; any application to pri-vate messages requires informed consent and de-identification, and affect models should be audited for demographic bias across dialects and relation-ship types. We emphasize that AMD scores are model-based estimates, not ground-truth measures of relational health, and should not be used to make consequential decisions about individuals or relationships without further validation. The bifur-cation framework is intended as a theoretical lens for understanding conversational dynamics, not as a deployed intervention tool. 
+
+References                            
+
+> Tatsuya Aoyama and Ethan G. Wilcox. 2025. Lan-guage models grow less humanlike beyond phase transition. In Proc. ACL .J. L. Austin. 1962. How to Do Things with Words . Ox-ford University Press. Jonathan P. Chang and Cristian Danescu-Niculescu-Mizil. 2019. Trouble on the horizon: Forecasting the derailment of online conversations as they de-velop. In Proc. EMNLP-IJCNLP , pages 4743–4754. Herbert H. Clark. 1996. Using Language . Cambridge University Press. Dorottya Demszky, Dana Movshovitz-Attias, Tom Ko, Alan Cowen, Gaurav Nemade, and Sujith Ravi. 2020. GoEmotions: A dataset of fine-grained emo-tions. In Proc. ACL , pages 4040–4054. John W. Du Bois. 2007. The stance triangle. In Robert Englebretson, editor, Stancetaking in Dis-course: Subjectivity, Evaluation, Interaction , pages 139–182. John Benjamins. Amir Feder, Katherine A. Keith, Emaad Manzoor, Reid Pryzant, Dhanya Sridhar, Zach Wood-Doughty, Ja-cob Eisenstein, Justin Grimmer, Roi Reichart, Mar-garet E. Roberts, Brandon M. Stewart, Victor Veitch, and Diyi Yang. 2022. Causal inference in natural language processing: Estimation, prediction, inter-pretation and beyond. Transactions of the Associa-tion for Computational Linguistics , 10:1138–1158. Deepanway Ghosal, Navonil Majumder, Alexander Gelbukh, Rada Mihalcea, and Soujanya Poria. 2020. COSMIC: COmmonSense knowledge for eMotion identification in conversations. In Findings of EMNLP , pages 2851–2863. Howard Giles, Nikolas Coupland, and Justine Coup-land. 1991. Accommodation theory: Communica-tion, context, and consequence. Contexts of Accom-modation , pages 1–68. Tuomas Haarnoja, Aurick Zhou, Pieter Abbeel, and Sergey Levine. 2018. Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor. In Proc. ICML .Patrick G. T. Healey, Matthew Purver, and Christine Howes. 2014. Divergence in dialogue. PLoS ONE ,9(6):e98598. David R. Heise. 2007. Expressive Order: Confirming Sentiments in Social Actions . Springer.
+
+Jesse Hoey, Tobias Schröder, and Areej Alhothali. 2016. Affect control processes: Intelligent affective interaction using a partially observable Markov de-cision process. Artificial Intelligence , 230:134–172. C. J. Hutto and Eric Gilbert. 2014. VADER: A parsi-monious rule-based model for sentiment analysis of social media text. In Proc. ICWSM , pages 216–225. Molly E. Ireland, Richard B. Slatcher, Paul W. East-wick, Lauren E. Scissors, Eli J. Finkel, and James W. Pennebaker. 2011. Language style matching pre-dicts relationship initiation and stability. Psycholog-ical Science , 22(1):39–44. Henri Kauhanen. 2022. A bifurcation threshold for contact-induced language change. Glossa: a jour-nal of general linguistics , 7(1). Angeliki Lazaridou, Alexander Peysakhovich, and Marco Baroni. 2017. Multi-agent cooperation and the emergence of (natural) language. In Proc. ICLR .David Lewis. 1969. Convention: A Philosophical Study . Harvard University Press. Jiarong Liu, Yifan Zhong, Siyi Hu, Haobo Fu, Qiang Fu, Xiaojun Chang, and Yaodong Yang. 2024. Max-imum entropy heterogeneous-agent reinforcement learning. In Proc. ICLR .Navonil Majumder, Soujanya Poria, Devamanyu Haz-arika, Rada Mihalcea, Alexander Gelbukh, and Erik Cambria. 2019. DialogueRNN: An attentive RNN for emotion detection in conversations. In Proc. AAAI , volume 33, pages 6818–6825. J. R. Martin and P. R. R. White. 2005. The Lan-guage of Evaluation: Appraisal in English . Palgrave Macmillan. Richard D. McKelvey and Thomas R. Palfrey. 1995. Quantal response equilibria for normal form games. 
+
+Games and Economic Behavior , 10(1):6–38. Md Nasir, Brian R. Baucom, Panayiotis Georgiou, and Shrikanth S. Narayanan. 2017. Predicting couple therapy outcomes based on speech acoustic features. 
+
+PLoS ONE , 12(10):e0185123. Martin A. Nowak, Natalia L. Komarova, and Partha Niyogi. 2001. Evolution of universal grammar. Sci-ence , 291(5501):114–118. Martin J. Pickering and Simon Garrod. 2004. Toward a mechanistic psychology of dialogue. Behavioral and Brain Sciences , 27(2):169–190. Marten Scheffer. 2009. Critical Transitions in Nature and Society . Princeton University Press. Marten Scheffer, Jordi Bascompte, William A. Brock, Victor Brovkin, Stephen R. Carpenter, Vasilis Dakos, Hermann Held, Egbert H. van Nes, Max Rietkerk, and George Sugihara. 2009. Early-warning signals for critical transitions. Nature ,461(7260):53–59. Emanuel A. Schegloff. 1992. Repair after next turn: The last structurally provided defense of intersub-jectivity in conversation. American Journal of Soci-ology , 97(5):1295–1345. Emanuel A. Schegloff, Gail Jefferson, and Harvey Sacks. 1977. The preference for self-correction in the organization of repair in conversation. Lan-guage , 53(2):361–382. John R. Searle. 1969. Speech Acts: An Essay in the Philosophy of Language . Cambridge University Press. Brian Skyrms. 2010. Signals: Evolution, Learning, and Information . Oxford University Press. Tanya Stivers. 2008. Stance, alignment, and affiliation during storytelling: When nodding is a token of affil-iation. Research on Language & Social Interaction ,41(1):31–57. Tanya Stivers, N. J. Enfield, Penelope Brown, Christina Englert, Makoto Hayashi, Trine Heinemann, Gertie Hoymann, Federico Rossano, Jan Peter de Ruiter, Kyung-Eun Yoon, and Stephen C. Levinson. 2009. Universals and cultural variation in turn-taking in conversation. Proceedings of the National Academy of Sciences , 106(26):10587–10592. Ingrid A. van de Leemput, Marieke Wichers, Angélique O. J. Cramer, Denny Borsboom, Fran-cis Tuerlinckx, Peter Kuppens, Egbert H. van Nes, Wolfgang Viechtbauer, Erik J. Giltay, Steven H. Aggen, Catherine Derom, Nele Jacobs, Kenneth S. Kendler, Han L. J. van der Maas, Michael C. Neale, Frenk Peeters, Evert Thiery, Peter Zachar, and Marten Scheffer. 2014. Critical slowing down as early warning for the onset and termination of de-pression. Proceedings of the National Academy of Sciences , 111(1):87–92. Tsachy Weissman, Erik Ordentlich, Gadiel Seroussi, Sergio Verdú, and Marcelo J. Weinberger. 2003. In-equalities for the l1 deviation of the empirical distri-bution. Hewlett-Packard Labs Technical Report .Justine Zhang, Jonathan P. Chang, Cristian Danescu-Niculescu-Mizil, Lucas Dixon, Yiqing Hua, Dario Taraborelli, and Nithum Thain. 2018. Conversations gone awry: Detecting early signs of conversational failure. In Proc. ACL , pages 1350–1361. Brian D. Ziebart. 2010. Modeling Purposeful Adaptive Behavior with the Principle of Maximum Causal En-tropy . Ph.D. thesis, Carnegie Mellon University. Code Availability 
+
+Code and data processing scripts are available at https://github.com/iamdiluxedbutcooler/p hase_transition_amd .
+
+A Proof of Proposition 1 
+
+We prove the decomposition of marginalized AMD into meaning-level and context-level divergence. 
+
+Setup. Suppress conditioning on anchor x for notational clarity. Write M i = P 
+
+> c
+
+Pi(c) Mi,c for the marginalized affective meaning of agent i.
+
+Step 1: Add and subtract a cross term. We introduce P 
+
+> c
+
+P1(c) M2,c to split the difference: 
+
+M 1 − M 2 = X
+
+> c
+
+P1(c)( M1,c − M2,c )
+
+| {z }
+
+> (A): meaning gap, same context weights
+
++ X
+
+> c
+
+(P1(c) − P2(c)) M2,c 
+
+| {z }
+
+> (B): context gap, same meanings
+
+.
+
+Step 2: Apply triangle inequality. Taking 12 ∥ · ∥ 1 on both sides: 
+
+TV( M 1, M 2) ≤ 12 (A) 1 + 12 (B) 1.
+
+Step 3: Bound each term. 
+
+Bounding (A): By Jensen’s inequality (convexity of ∥ · ∥ 1): 
+
+> 12
+
+X
+
+> c
+
+P1(c)( M1,c − M2,c ) 1 ≤ X
+
+> c
+
+P1(c) TV( M1,c , M 2,c ).
+
+Bounding (B): Since each M2,c is a probability distribution with ∥M2,c ∥1 = 1 :
+
+> 12
+
+X
+
+> c
+
+(P1(c) − P2(c)) M2,c 1 ≤ TV( P1, P 2).
+
+Combining Steps 2 and 3 gives the result. 
+
+B Proof of Proposition 2 
+
+We show that the expected-value difference between two affective meaning distributions is bounded by their total variation distance, scaled by the reward range. 
+
+Setup. Let ν = M − M ′ be the signed measure between the two distributions, and let g be any reward function bounded by G = sup |g|.
+
+Step 1: Express the gap. 
+
+EM [g] − EM ′ [g] = 
+
+Z
+
+g dν. 
+
+Step 2: Apply the variational characterization of TV. By definition, TV( P, Q ) =sup |h|≤ 1 12 | R h d (P − Q)|. Since |g/G | ≤ 1, we can substitute h = g/G :
+
+Z
+
+g dν = G
+
+Z
+
+(g/G ) dν ≤ G · 2 TV( M, M ′).C Proofs of Main Theorems 
+
+C.1 Proof of Lemma 1 
+
+We bound the slope of the logit best-response map. 
+
+Setup. f (q) = σ(z) where z = β(αq − κ).
+
+Compute the derivative. By the chain rule: 
+
+f ′(q) = σ′(z) · βα 
+
+= βα σ (z)(1 − σ(z)) = βα f (q)(1 − f (q)) .
+
+Bound. Since x(1 − x) ≤ 1/4 for all x ∈ [0 , 1] (by AM-GM: x(1 − x) ≤ (( x + 1 − x)/2) 2 = 1 /4): 
+
+f ′(q) ≤ βα 
+
+4 .
+
+The maximum is achieved when f (q) = 1 /2, i.e., z = 0 , giving q∗ = κ/α , provided κ/α ∈ (0 , 1) ;otherwise the supremum over [0 , 1] is not attained at an interior point but the bound still holds. 
+
+C.2 Proof of Theorem 1 
+
+We show that when βα ≤ 4, the best-response map has a unique, globally attracting fixed point. 
+
+Existence. Let g(q) = f (q) − q. Since f : [0 , 1] → (0 , 1) , we have g(0) = f (0) > 0 and g(1) = 
+
+f (1) − 1 < 0. By the intermediate value theorem, at least one fixed point exists. 
+
+Case βα < 4 (strict contraction). By Lemma 1, sup q |f ′(q)| ≤ βα/ 4 < 1, so f is a strict contraction on the complete metric space [0 , 1] . By the Banach fixed-point theorem, the fixed point is unique and globally attracting: 
+
+|f n(q0) − q∗| ≤ 
+
+ βα 
+
+4
+
+n
+
+|q0 − q∗| → 0.
+
+Case βα = 4 (boundary). Here f ′(q) ≤ 1 with equality only at the unique point q0 where f (q0) = 1 /2.Thus g′(q) = f ′(q) − 1 ≤ 0, with g′(q) = 0 at exactly one point. We argue g has exactly one root. If g were zero on an interval [a, b ], then f ′(q) = 1 throughout 
+
+(a, b ), requiring f (q) = 1 /2 on that interval. But f is strictly monotone increasing (since f ′(q) = 4f (q)(1 − f (q)) > 0 for f (q)̸ = 0 , 1, which holds for all q since f maps into (0 , 1) ), so this is a contradiction. Since g is continuous and weakly decreasing with g(0) > 0 and g(1) < 0, there is exactly one root q∗.
+
+Global attraction (monotone iteration). Suppose qt < q ∗. Then g(qt) > 0, so qt+1 = f (qt) > q t.Since f is increasing, qt+1 = f (qt) < f (q∗) = q∗. The sequence (qt) is therefore monotone increasing and bounded above by q∗; its limit is a fixed point, hence q∗. The case qt > q ∗ is symmetric. To prove continuity in κ, write the fixed-point equation as 
+
+κ = H(q) := αq − 1
+
+β logit( q), q ∈ (0 , 1) .
+
+Then 
+
+H′(q) = α − 1
+
+βq (1 − q) ≤ 0
+
+whenever βα ≤ 4, with equality only at q = 1 /2 in the boundary case βα = 4 . Hence H is strictly decreasing on (0 , 1) , so it has a continuous inverse. Since the unique fixed point is exactly q∗(κ) = 
+
+H−1(κ), it follows that q∗ depends continuously on κ.C.3 Proof of Theorem 2 
+
+We prove that when βα > 4, a saddle-node bifurcation creates a bistable regime with hysteresis. 
+
+Step 1: Find the tangency points. At a saddle-node bifurcation, fixed-point and unit-slope conditions hold simultaneously: f (q) = q and f ′(q) = 1 . Using Lemma 1 with q = f (q):
+
+1 = βα q (1 − q) ⇐⇒ q2 − q + 1
+
+βα = 0 .
+
+This yields two solutions: 
+
+q± = 12
+
+
+
+1 ±
+
+r
+
+1 − 4
+
+βα 
+
+
+
+,
+
+which are real when βα > 4. Note: q± are tangency points where f ′(q) = 1 coincides with q = f (q).
+
+Step 2: Compute the critical loads κ±. From q = f (q) = σ(β(αq − κ)) , inverting the sigmoid: 
+
+logit( q) = β(αq − κ) =⇒ κ(q) = αq − 1
+
+β logit( q).
+
+Substituting q± gives κ± = κ(q±).
+
+Step 3: Verify κ− < κ + (hysteresis width). Differentiating: 
+
+κ′(q) = α − 1
+
+βq (1 − q) .
+
+This is negative when q(1 − q) < 1/(βα ) (i.e., outside [q−, q +]) and positive when q(1 − q) > 1/(βα )
+
+(i.e., inside (q−, q +)). 
+
+Boundary behavior: As q → 0+, logit( q) → −∞ , so κ(q) → +∞. As q → 1−, logit( q) → +∞, so 
+
+κ(q) → −∞ .
+
+Critical point classification: κ′(q±) = 0 and κ′′ (q) = (1 − 2q)/[βq 2(1 − q)2]. Since q− < 1/2, we have κ′′ (q−) > 0 (local minimum). Since q+ > 1/2, we have κ′′ (q+) < 0 (local maximum). Therefore 
+
+κ− = κ(q−) is a local minimum and κ+ = κ(q+) is a local maximum, confirming κ− < κ +.
+
+Step 4: Three fixed points in the bistable regime. For κ ∈ (κ−, κ +), the horizontal line κ = const 
+
+intersects the curve κ(q) in three points by the intermediate value theorem on each monotone segment: • One on the decreasing segment (0 , q −) — this is the low-repair equilibrium qL.• One on the increasing segment (q−, q +) — this is the unstable fixed point qM .• One on the decreasing segment (q+, 1) — this is the high-repair equilibrium qH .Since κ(q) has no plateaus ( f is analytic with isolated critical points), exactly three intersections exist. 
+
+Step 5: Stability classification. For the outer fixed points ( qL < q − and qH > q +): 
+
+qL(1 − qL) < q −(1 − q−) = 1
+
+βα ,
+
+so |f ′(qL)| = βα q L(1 − qL) < 1 (stable) .
+
+Similarly, |f ′(qH )| < 1 (stable). For the middle fixed point ( qM ∈ (q−, q +)): 
+
+qM (1 − qM ) > 1
+
+βα , so |f ′(qM )| > 1 (unstable) .
+
+Note on “jump” language. Statements (ii) and (iii) of the theorem (“the system jumps to qL/qH ”) assume quasistatic variation of κ, i.e., that κ changes slowly enough for the dynamics to track the stable branch between parameter updates. This is a standard modeling assumption in bifurcation analysis, not a consequence of the fixed-point calculation alone. C.4 Proof of Corollary 1 
+
+We derive the critical-slowing-down signatures (rising variance and autocorrelation) near the bifurcation point. 
+
+Linearization. Write qt = q∗ + εt for small perturbation εt. Taylor expanding f around q∗:
+
+εt+1 = f ′(q∗) εt + O(ε2 
+
+> t
+
+).
+
+Relaxation time. For small perturbations, |εt| ≈ | f ′(q∗)|t|ε0|. Define the relaxation time τ by f ′(q∗)τ =
+
+e−1:
+
+τ = −1ln f ′(q∗) .
+
+As f ′(q∗) → 1− (approaching the bifurcation): ln f ′(q∗) ≈ − (1 − f ′(q∗)) , so τ ∼ 1/(1 − f ′(q∗)) → ∞ .
+
+Variance and autocorrelation. Under additive noise ηt ∼ N (0 , σ 2), the stationary variance of εt is: 
+
+Var( ε) = σ2
+
+1 − f ′(q∗)2 ≈ σ2
+
+2(1 − f ′(q∗)) → ∞ ,
+
+and the lag-1 autocorrelation → 1. Both are the hallmark CSD signatures. 
+
+C.5 Proof of Proposition 3 
+
+We extend the analysis to asymmetric 2D repair dynamics. 
+
+Setup. The two-player system (8) is q1 
+
+> t+1
+
+= h(q2 
+
+> t
+
+), q2 
+
+> t+1
+
+= g(q1 
+
+> t
+
+) where h(q) = σ(β1(α1q − κ1)) and 
+
+g(q) = σ(β2(α2q − κ2)) .
+
+Jacobian. The Jacobian of the one-step map at equilibrium (q1∗, q 2∗):
+
+J = 0 h′(q2∗)
+
+g′(q1∗) 0
+
+!
+
+where h′(q2∗) = β1α1 q1∗(1 − q1∗) (since q1∗ = h(q2∗)) and g′(q1∗) = β2α2 q2∗(1 − q2∗).
+
+Characteristic polynomial. λ2 = h′(q2∗) · g′(q1∗). Instability requires |λ| > 1, i.e., h′g′ > 1.
+
+Necessary condition. Maximizing: q(1 − q) ≤ 1/4, so h′g′ ≤ (β1α1)( β2α2)/16 . For h′g′ > 1 to be achievable: (β1α1)( β2α2) > 16 . This is necessary but not sufficient; the actual equilibrium values determine whether the product exceeds 1. 
+
+D Channel Robustness 
+
+Proposition 4 (Channel robustness) . Let ˜Mi = T M i for a stochastic channel T . If ∥T − I∥1→1 ≤ η,then for any M, M ′:
+
+TV( T M, T M ′) ≤ TV( M, M ′),
+
+TV( M, M ′) ≤ TV( T M, T M ′) + η. 
+
+Proof. Part (i): The first inequality follows directly from the data-processing inequality for total varia-tion distance: applying a stochastic channel cannot increase divergence. 
+
+Part (ii): By the triangle inequality: 
+
+TV( M, M ′) ≤ TV( M, T M ) + TV( T M, T M ′)+ TV( T M ′, M ′).
+
+For the first error term: 
+
+TV( M, T M ) = 12 ∥(I − T )M ∥1
+
+≤ 12 ∥I − T ∥1→1 ∥M ∥1
+
+| {z } 
+
+> =1
+
+≤ η/ 2.
+
+Similarly, TV( T M ′, M ′) ≤ η/ 2. Combining: TV( M, M ′) ≤ TV( T M, T M ′) + η.E Sensitivity: Alternative AMD Couplings 
+
+Additive load κ = c0 + λD is a modeling choice. We verify that qualitative tipping persists under alternatives. 
+
+AMD erodes coupling. If α(D) = α0 − ρD with fixed β, the bistability threshold βα (D) = 4 gives 
+
+D∗ = ( α0 − 4/β )/ρ , provided α0 > 4/β .
+
+AMD increases noise. If β(D) = β0/(1 + ξD ) with fixed α, the threshold β(D)α = 4 gives D∗ =(β0α/ 4 − 1) /ξ , provided β0α > 4.In both cases, qualitative tipping persists whenever an effective gain crosses 4.
+
+F KL Extension of Decomposition 
+
+For KL divergence, an analogous upper bound holds: 
+
+KL( M 1∥M 2) ≤ KL( P1∥P2) + Ec∼P1
+
+KL( M1,c ∥M2,c ).
+
+This provides a KL analogue of Proposition 1. The bound is not tight in general: when M1,c varies across contexts, the marginal mixture M 1 can have lower KL divergence from M 2 than the average of the conditional KL terms, due to the concavity of marginal mixing. G Repair Proxy Validation Details 
+
+Dialog-act classifier. RoBERTa-base fine-tuned on Switchboard Dialog Act Corpus (46 acts), 3 epochs, lr 2×10 −5. Test accuracy: 73.1%. Repair-adjacent acts aggregated: aa (agree/accept), bk 
+
+(backchannel), br (signal-non-understanding), ba 
+
+(appreciation). 
+
+Inter-proxy correlations. r(ˆ qDA , ˆqRM ) =
+
+−0.100 (p < 0.001 ); r(ˆ qDA , ˆqCE ) = 0.031 
+
+(p = 0 .010 ). Repair marker coverage: 84.4% of conversations contain at least one repair marker. The weak but significant inter-proxy correlations indicate that the three proxies measure related but distinct aspects of conversational repair. 
+
+H Experiment Details 
+
+H.1 CGA-Wiki preprocessing 
+
+ConvoKit v2.5 release (Wikipedia version). Con-versations with fewer than 10 turns are ex-cluded, yielding 652 conversations (389 derail-ing, 263 civil). The repair proxy classifier is RoBERTa-base fine-tuned on the Switchboard Di-alog Act Corpus (46 tags) for 3 epochs with learning rate 2 × 10 −5 (test accuracy 73.1%). We aggregate dialog-act probabilities for concilia-tory acts (agree/accept, backchannel, signal non-understanding, appreciation) into a single repair score ˆqt.
+
+H.2 CGA-CMV preprocessing 
+
+The CGA-CMV corpus (Chang and Danescu-Niculescu-Mizil, 2019) applies the Conversations Gone Awry labeling framework to Reddit Change-MyView threads. Of 4,389 total conversations, 1,169 have ≥ 10 turns and are usable for CSD analysis; the remaining 73% are too short. The breakdown label ( has_removed_comment )is noisier than CGA-Wiki’s annotated personal at-tack: Cohen’s d = 0 .34 (CGA-CMV) vs. 1.88 
+
+(CGA-Wiki). The corpus-wide median thread length is 7 turns. 
+
+H.3 Asymmetric 2D simulation 
+
+With α1 = α2 = 2 , β1 = β2 = 3 (product = 36 >
+
+16 ) and κ1 = κ2 = κ, trajectories under symme-try reduce to the 1D case. For κ1 = 1 .0, κ2 = 0 .8
+
+(moderate asymmetry), we observe multi-attractor behavior with the basin boundary shifted toward the lower-load speaker. Full 2D bifurcation classi-fication is left to future work. 
+
+H.4 Dose-response analysis on CGA-CMV 
+
+We test whether the CSD effect size increases with conversation length on CGA-CMV by stratifying conversations into length bins, as predicted by the theory’s requirement that CSD detection needs sufficient approach time to the bifurcation. No individual stratum reaches significance, consistent with the noisy breakdown label (Co-hen’s d = 0 .34 ); the directional trend nonetheless supports the theory’s prediction that longer con-versations allow more time for CSD signatures to manifest before breakdown. 
+
+H.5 Window-size sensitivity 
+
+We re-run the Exp. 4 CSD analysis on CGA-Wiki with rolling-window sizes W ∈ {3, 4, 5, 6, 7},keeping all other parameters identical (Kendall τ
+
+on variance trends, permutation test with 10 ,000 
+
+shuffles). Conversations are excluded if they ei-ther (i) have fewer than W + 5 turns or (ii) yield fewer than 3 non-NaN variance values in the pre-breakdown window for Kendall τ computation. The latter filter accounts for conversations where the attack occurs early enough that the adjusted variance window has too few valid points. The results confirm that CSD signals are robust across W = 3 –6: at least one theory-derived in-dicator is significant in every case. AMD Vari-ance achieves the strongest separation at the re-ported W = 5 (and W = 6 ), while ˆqDA Vari-ance is more robust at shorter windows ( W = 3 –
+
+4), likely because the dialog-act proxy is a per-utterance measure that requires less smoothing to differentiate trends. The complementary pattern supports the interpretation that both indicators re-flect genuine CSD dynamics, with AMD requiring a slightly longer observation window to accumu-late a detectable signal in the emotion-distribution space. Stratum N ∆τ (qDA ) p ∆τ (AMD) p                      
+
+> 5-6 1612 not analyzed ( <10 turns)
+> 7649 +0 .092 0.109 −0.021 0.702
+> 8-9 959 +0 .011 0.782 +0 .010 0.800
+> 10-12 765 −0.045 0.267 −0.006 0.883
+> 13+ 404 −0.032 0.529 +0 .010 0.846
+
+Table 6: Length-stratified dose-response analysis on CGA-CMV. ∆τ = τderail − τcivil for variance trends. No individual stratum reaches significance for either indicator, consistent with the noisy has_removed_comment 
+
+label (Cohen’s d = 0 .34 ). The qDA VAR ∆τ transitions from positive (short conversations) to negative (long), directionally consistent with the theoretical prediction that CSD signals strengthen with conversation length. Strata with < 10 turns are excluded from the CSD computation; strata at 7 and 8-9 turns are marginal but yield at least 3 variance points with W =5 .                                    
+
+> WAMD Var pAMD Var dqDA VAR pqDA VAR dN
+> 30.484 −0.057 0.039 −0.166 650 40.054 −0.157 0.005 −0.219 650 50.001 −0.257 0.016 −0.199 652 60.003 −0.342 0.039 −0.244 300 70.734 −0.096 0.554 −0.167 65
+
+Table 7: Window-size sensitivity analysis on CGA-Wiki. Bold: smallest p among CSD indicators for that W .At W = 3 –4, ˆqDA Variance dominates; at W = 5 –6, AMD Variance is strongest. At W = 7 , the sample size (N = 65 ) is too small for either indicator to reach significance. The two CSD indicators are complementary across window sizes. The small variation in N across W = 3 –5 (650, 650, 652) reflects 2 conversations where the attack occurs early enough that the pre-breakdown variance window has < 3 valid points at smaller W .

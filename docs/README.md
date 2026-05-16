@@ -6,73 +6,76 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-15
-- 运行时间：2026-05-15 21:23:32 UTC
+- 最新运行日期：2026-05-16
+- 运行时间：2026-05-16 20:23:29 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：6
+- 本次总论文数：18
+- 精读区：7
 - 速读区：11
 
 ### 今日简报（AI）
-今天聚焦 AI 理解与人类互动，共精读 6 篇、速读 11 篇论文。  
-值得关注的是语言模型在语用推理和注视行为解析上的新进展，显示 AI 理解人类注意力与语境的潜力。  
-建议读者继续关注多模态交互与可解释性研究，观察 AI 如何更好地理解人的行为线索。
-- 详情：[/202605/15/README](/202605/15/README)
+今日聚焦语言与脑科学前沿，精读与速读共完成 18 篇研究。  
+值得关注的是对自然对话中语言预测的神经追踪及双脑 EEG 数据集，为理解人类实时交流机制提供新范式。  
+建议普通读者从“语言如何在大脑中被实时预测与回应”入手，关注交流与智能模型结合的新趋势。
+- 详情：[/202605/16/README](/202605/16/README)
 
 ### 精读区论文标签
-1. [Evaluating Pragmatic Reasoning in Large Language Models: Evidence from Scalar Diversity](/202605/15/2605.09042v1-evaluating-pragmatic-reasoning-in-large-language-models-evidence-from-scalar-diversity)  
+1. [Neural Tracking of Linguistic Predictors in Spontaneous Conversational Speech](/202605/16/biorxiv-10-64898-2026-05-13-722865-v1-neural-tracking-of-linguistic-predictors-in-spontaneous-conversational-speech)  
+   标签：评分：9.5/10、query:profile-1
+   evidence：使用EEG研究自发对话中语言预测因子（如惊奇度）的神经追踪
+2. [A dual EEG hyperscanning dataset of natural French face-to-face conversation](/202605/16/biorxiv-10-64898-2026-05-13-724780-v1-a-dual-eeg-hyperscanning-dataset-of-natural-french-face-to-face-conversation)  
+   标签：评分：9.5/10、query:q8
+   evidence：自然对话和说话者-听者耦合的脑电超扫描
+3. [Evaluating Pragmatic Reasoning in Large Language Models: Evidence from Scalar Diversity](/202605/16/2605.09042v1-evaluating-pragmatic-reasoning-in-large-language-models-evidence-from-scalar-diversity)  
    标签：评分：9.0/10、query:q3
-   evidence：使用数量多样性评估语用推理和语用推断
-2. [Towards Gaze-Informed AI Disclosure Interfaces: Eye-Tracking Attentional and Cognitive Load While Reading AI-Assisted News](/202605/15/2605.14999v1-towards-gaze-informed-ai-disclosure-interfaces-eye-tracking-attentional-and-cognitive-load-while-reading-ai-assisted-news)  
+   evidence：数量多样性作为大语言模型语用推理的分级诊断
+4. [Towards Gaze-Informed AI Disclosure Interfaces: Eye-Tracking Attentional and Cognitive Load While Reading AI-Assisted News](/202605/16/2605.14999v1-towards-gaze-informed-ai-disclosure-interfaces-eye-tracking-attentional-and-cognitive-load-while-reading-ai-assisted-news)  
    标签：评分：9.0/10、query:q5
    evidence：阅读时的眼动追踪注意力与认知负荷
-3. [Two Interacting Neural Processes Support Speech Planning during Naturalistic Conversation](/202605/15/biorxiv-10-64898-2026-05-06-723165-v1-two-interacting-neural-processes-support-speech-planning-during-naturalistic-conversation)  
+5. [Neuroanatomical differences between early bilingual and monolingual children](/202605/16/biorxiv-10-64898-2026-05-08-722956-v1-neuroanatomical-differences-between-early-bilingual-and-monolingual-children)  
+   标签：评分：9.0/10、query:q10
+   evidence：比较早期双语儿童与单语儿童的神经解剖差异
+6. [Associations between brain structure and both language proficiency and language balance in early bilinguals](/202605/16/biorxiv-10-64898-2026-05-14-725184-v1-associations-between-brain-structure-and-both-language-proficiency-and-language-balance-in-early-bilinguals)  
+   标签：评分：9.0/10、query:q10
+   evidence：早期双语者大脑结构与语言熟练度的关联
+7. [Word meaning, not surface statistics, is essential for predictive language processing](/202605/16/biorxiv-10-64898-2026-05-15-724229-v1-word-meaning-not-surface-statistics-is-essential-for-predictive-language-processing)  
    标签：评分：9.0/10、query:q1
-   evidence：利用脑电图研究支持言语计划与理解的神经过程
-4. [The time course of co-speech gesture production: An MEG study](/202605/15/biorxiv-10-64898-2026-05-04-722691-v1-the-time-course-of-co-speech-gesture-production-an-meg-study)  
-   标签：评分：8.5/10、query:q1
-   evidence：使用MEG研究伴随言语手势产生的时程及其对言语的影响
-5. [The Frequency Confound in Language-Model Surprisal and Metaphor Novelty](/202605/15/2605.06506v1-the-frequency-confound-in-language-model-surprisal-and-metaphor-novelty)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：隐喻新颖性判断与语言模型惊异度
-6. [The Grounding Gap: How LLMs Anchor the Meaning of Abstract Concepts Differently from Humans](/202605/15/2605.08837v1-the-grounding-gap-how-llms-anchor-the-meaning-of-abstract-concepts-differently-from-humans)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：复制认知科学关于抽象概念表征和内部状态的实验
+   evidence：使用心理语言学模型研究增量语言理解和预测加工
 
 ### 速读区论文标签
-1. [GazeMind: A Gaze-Guided LLM Agent for Personalized Cognitive Load Assessment](/202605/15/2605.05790v1-gazemind-a-gaze-guided-llm-agent-for-personalized-cognitive-load-assessment)  
-   标签：评分：8.0/10、query:q5
-   evidence：编码眼动追踪数据用于认知负荷评估与推理
-2. [Minimizing Modality Gap from the Input Side: Your Speech LLM Can Be a Prosody-Aware Text LLM](/202605/15/2605.05927v1-minimizing-modality-gap-from-the-input-side-your-speech-llm-can-be-a-prosody-aware-text-llm)  
-   标签：评分：8.0/10、query:q8
-   evidence：侧重于语音处理中的韵律感知建模和副语言理解
-3. [Minimizing Modality Gap from the Input Side: Your Speech LLM Can Be a Prosody-Aware Text LLM](/202605/15/2605.05927v2-minimizing-modality-gap-from-the-input-side-your-speech-llm-can-be-a-prosody-aware-text-llm)  
-   标签：评分：8.0/10、query:q8
-   evidence：结合韵律嵌入和副语言理解进行语音-文本对齐
-4. [Zero-Shot Imagined Speech Decoding via Imagined-to-Listened MEG Mapping](/202605/15/2605.08075v1-zero-shot-imagined-speech-decoding-via-imagined-to-listened-meg-mapping)  
-   标签：评分：8.0/10、query:q7
-   evidence：通过MEG映射和神经活动解码想象语言
-5. [Predictive and feedback signals differently shape the formation of group-level and individualized language representations](/202605/15/2605.09409v1-predictive-and-feedback-signals-differently-shape-the-formation-of-group-level-and-individualized-language-representations)  
+1. [The Grounding Gap: How LLMs Anchor the Meaning of Abstract Concepts Differently from Humans](/202605/16/2605.08837v1-the-grounding-gap-how-llms-anchor-the-meaning-of-abstract-concepts-differently-from-humans)  
+   标签：评分：8.5/10、query:profile-1
+   evidence：利用认知科学实验对比人类大脑与大模型中抽象概念的具身性
+2. [Evaluating the Expressive Appropriateness of Speech in Rich Contexts](/202605/16/2605.09413v1-evaluating-the-expressive-appropriateness-of-speech-in-rich-contexts)  
+   标签：评分：8.5/10、query:q8
+   evidence：普通话语音中的表达得体性与交流意图
+3. [A Cognitively Grounded Bayesian Framework for Misinformation Susceptibility](/202605/16/2605.09483v1-a-cognitively-grounded-bayesian-framework-for-misinformation-susceptibility)  
+   标签：评分：8.5/10、query:q6
+   evidence：语用听者与信息加工的贝叶斯框架
+4. [During natural vision, semantic novelty modulates fixation-related processing in primate cortex](/202605/16/biorxiv-10-64898-2026-03-18-712708-v2-during-natural-vision-semantic-novelty-modulates-fixation-related-processing-in-primate-cortex)  
+   标签：评分：8.5/10、query:q5
+   evidence：语义新颖性调节人类脑电图中的注视相关电位
+5. [Phase Transitions in Affective Meaning Divergence: The Hidden Drift Before the Break](/202605/16/2605.09043v2-phase-transitions-in-affective-meaning-divergence-the-hidden-drift-before-the-break)  
+   标签：评分：7.5/10、query:q6
+   evidence：在对话中形式化情感含义差异和言语行为理论
+6. [Instructions shape Production of Language, not Processing](/202605/16/2605.11206v1-instructions-shape-production-of-language-not-processing)  
    标签：评分：7.5/10、query:q1
-   evidence：使用fMRI研究语言学习中预测和反馈信号的神经表征
-6. [NAACA: Training-Free NeuroAuditory Attentive Cognitive Architecture with Oscillatory Working Memory for Salience-Driven Attention Gating](/202605/15/2605.13651v1-naaca-training-free-neuroauditory-attentive-cognitive-architecture-with-oscillatory-working-memory-for-salience-driven-attention-gating)  
-   标签：评分：7.5/10、query:q8
-   evidence：神经启发的听觉显著性与多模态线索用于注意力门控
-7. [PRIMED: Adaptive Modality Suppression for Referring Audio-Visual Segmentation via Biased Competition](/202605/15/2605.07154v1-primed-adaptive-modality-suppression-for-referring-audio-visual-segmentation-via-biased-competition)  
-   标签：评分：7.0/10、query:q8
-   evidence：受认知神经科学中的偏向竞争理论启发
-8. [Phase Transitions in Affective Meaning Divergence: The Hidden Drift Before the Break](/202605/15/2605.09043v1-phase-transitions-in-affective-meaning-divergence-the-hidden-drift-before-the-break)  
-   标签：评分：7.0/10、query:q3
-   evidence：对话中的情感含义分歧与语用修复协调
-9. [GazeVLM: Active Vision via Internal Attention Control for Multimodal Reasoning](/202605/15/2605.07817v1-gazevlm-active-vision-via-internal-attention-control-for-multimodal-reasoning)  
+   evidence：从认知启发角度区分语言加工与产出
+7. [Progressive Centro-Parietal ERP Responses During Contextual Integration Across Symbolic Domains](/202605/16/biorxiv-10-64898-2026-04-25-720770-v2-progressive-centro-parietal-erp-responses-during-contextual-integration-across-symbolic-domains)  
+   标签：评分：7.5/10、query:q1
+   evidence：词汇领域语境整合过程中的ERP响应
+8. [Statistical Learning in a Stressful Environment: Autonomic Nervous System Reactivity Shapes Learning Probabilistic Patterns from Speech Streams](/202605/16/biorxiv-10-64898-2026-05-12-724548-v1-statistical-learning-in-a-stressful-environment-autonomic-nervous-system-reactivity-shapes-learning-probabilistic-patterns-from-speech-streams)  
+   标签：评分：7.5/10、query:q1
+   evidence：从语音流中进行概率模式的统计学习
+9. [Do Language Models Encode Knowledge of Linguistic Constraint Violations?](/202605/16/2605.12055v2-do-language-models-encode-knowledge-of-linguistic-constraint-violations)  
+   标签：评分：6.5/10、query:q1
+   evidence：研究处理语言约束违反的内部机制
+10. [Aging and false memories: Comparing effects of item-relatedness and list position](/202605/16/biorxiv-10-1101-2025-07-28-666819-v3-aging-and-false-memories-comparing-effects-of-item-relatedness-and-list-position)  
+   标签：评分：6.5/10、query:q1
+   evidence：语义与音韵加工的认知机制
+11. [Aligning transformer circuit mechanisms to neural representations in relational reasoning](/202605/16/biorxiv-10-1101-2025-10-29-685457-v3-aligning-transformer-circuit-mechanisms-to-neural-representations-in-relational-reasoning)  
    标签：评分：6.5/10、query:profile-1
-   evidence：多模态推理中的内部注意力控制与注视标记
-10. [Context-Specific Decoupling and Competing Phenotypes: Transdiagnostic Eye-Tracking Biomarkers of ASD and ADHD During Naturalistic Viewing in a Large Pediatric Cohort](/202605/15/biorxiv-10-64898-2026-05-11-724367-v1-context-specific-decoupling-and-competing-phenotypes-transdiagnostic-eye-tracking-biomarkers-of-asd-and-adhd-during-naturalistic-viewing-in-a-large-pediatric-cohort)  
-   标签：评分：6.5/10、query:q5
-   evidence：在大规模自然观察中使用多模态眼动追踪同步和瞳孔反应
-11. [Negative Before Positive: Asymmetric Valence Processing in Large Language Models](/202605/15/2605.05653v1-negative-before-positive-asymmetric-valence-processing-in-large-language-models)  
-   标签：评分：6.0/10、query:profile-1
-   evidence：情感效价的机械可解释性与非对称加工
+   evidence：将Transformer电路机制与推理中的神经表征对齐
 
 
 <div class="dpr-home-promo-card">
