@@ -1,0 +1,702 @@
+Title: Information Dynamics of Language Communication
+
+URL Source: https://arxiv.org/pdf/2606.30096v1
+
+Published Time: Tue, 30 Jun 2026 02:03:54 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+# Information Dynamics of Language Communication 
+
+Leonardo S. Goodall 
+
+Calleva Research Centre, University of Oxford, UK 
+
+Andrea Luppi ∗
+
+St John’s College, University of Cambridge, UK Montr´ eal Neurological Institute, McGill University, Canada Centre for Eudaimonia and Human Flourishing, University of Oxford, UK 
+
+Pedro Mediano ∗
+
+Department of Computing, Imperial College London, UK 
+
+# Abstract 
+
+Quantifying how meaning propagates through communicative exchanges remains underdeveloped in computational linguistics. Here we introduce an information-theoretic framework that quantifies the directed flow of semantic content between interlocutors and decomposes multi-source contributions into redundant, unique, and synergistic components. Our approach leverages large language models as probabilistic estimators of natural language to compute two measures: seman-tic transfer entropy (STE), which captures directed predictive influence between speakers, and semantic partial information decomposition (SPID), which resolves how multiple sources jointly shape a target’s language. Across four experiments we show that the framework detects reduced information flow in cognitively rigid dialogue, captures the dominant role of persuaders in shaping discourse, distin-guishes high- from low-quality psychotherapy by the directionality of therapist-client information exchange, and reveals synergistic premise contributions in ar-gumentative essays. This framework opens new avenues for studying information dynamics in digital discourse, pedagogical interactions, clinical dialogues, and any domain in which the structure of linguistic exchange is of research relevance. 
+
+# Introduction 
+
+Humans use language to communicate. Sharing information that is first held in the privacy of one’s mind requires communication, be it via gestural, graphical, linguistic, or other channels. For com-munication to succeed, information must not only be transmitted but also received, understood, and internalised by the recipient(s), such that the interlocutors come to share a representation of that information [1]. Yet, capturing and quantifying how meaning propagates through these communica-tive channels has proved difficult. Computational linguistics has advanced from surface-level lexical measures [2] through distribu-tional semantics [3] to contextual neural representations [4, 5], progressively deepening what can be modelled. Nonetheless, no existing approach provides a principled, unified framework for quan-tifying how much semantic information flows between interlocutors, in which direction, and how multiple sources jointly contribute to what is said next. Current approaches rely on ad hoc mea-sures, surface lexical features, or correlational summaries that address directionality or multi-source structure separately, but not both in a principled and unified way. 
+
+> ∗Shared senior author Preprint.
+> arXiv:2606.30096v1 [cs.CL] 29 Jun 2026
+
+Information theory has already been recognised as a promising and powerful probability-based framework for measuring and modelling social communication and coordination [1], offering model-free and data-driven alternatives to assumptive and model-dependent approaches. Shannon himself drew upon natural language as his founding example, modelling English as a stochastic process and demonstrating that the predictability of each successive letter or word can be precisely quantified in bits. Since its inception, the framework has been extended in two directions partic-ularly relevant to the study of communication: transfer entropy [6], which quantifies the directed flow of information from one process to another, and partial information decomposition [7], which decomposes the information that multiple sources provide about a target into redundant, unique, and synergistic contributions. These measures, however, require well-defined probability distributions over the variables of interest. One natural approach would be to model communicative exchanges as trajectories through the high-dimensional embedding spaces of neural language models [8], but such representations do not readily yield the discrete probability distributions that information-theoretic quantities demand. Large language models (LLMs) address this directly: trained as next-token pre-dictors over vast text corpora, they provide rich, context-sensitive probability estimates over natural language, lending themselves naturally as the probabilistic backbone for information-theoretic com-putation [9, 10]. Here, we combine these research lines to introduce two novel measures. Semantic transfer entropy (STE) quantifies directed predictive dependence between communicators by comparing a language model’s predictions of a target’s utterances with and without access to a source’s prior content. Semantic partial information decomposition (SPID) extends this to the multi-source case, decom-posing how multiple speakers jointly contribute to a target’s language into redundant, unique, and synergistic components. We validate both measures across four experiments spanning synthetic conversations with manipulated cognitive styles, a naturalistic persuasion corpus, client–therapist dialogues, and argumentative essays, demonstrating that the framework detects theoretically mean-ingful variation in each domain. Such a framework is nonetheless portable across any system in which agents exchange meaningful sequential text, with applications spanning clinical dialogue, political and media communication, education, group deliberation, and human-AI interaction. This work makes the following contributions: • We introduce semantic transfer entropy (STE), an information-theoretic measure of di-rected semantic influence between communicators implemented via attention masking in LLMs. • We introduce semantic partial information decomposition (SPID), which decomposes the contributions of multiple sources to a target’s language into redundant, unique, and syner-gistic components, and validate it against annotated argumentative structure. • We demonstrate that both measures are sensitive to theoretically meaningful distinctions across domains, including cognitive rigidity, persuasion strategy, therapeutic alliance qual-ity, and premise-claim informational structure. • We show that key findings replicate across three language models spanning two architec-tures and two scales, supporting the robustness of the framework independent of the choice of estimation model. 
+
+# Results 
+
+Measuring Semantic Information Flow 
+
+We introduce two complementary measures for quantifying language dynamics. Semantic transfer entropy (STE) captures directed predictive dependence between communicators, building on the information-theoretic measure, transfer entropy [6]: if person Y ’s past semantic content improves predictions of person X’s future content beyond what X’s own history affords, Y exerts directional predictive influence over X. LLMs provide a natural estimation vehicle, since they are trained as next-token predictors and afford direct access to conditional text probabilities (Figure 1). For any two interacting persons X, Y with prior utterances X−, Y −, and all remaining conversational 2—STE  ?  
+
+> No Ma skMa sk
+> Seman tic T ran sfe rEn tr opy
+> Comm unica tive
+> exchange s
+
+# =Un q (X )2Rdn Un q (X )1Syn    
+
+> Mutu al Info rma tion
+> I(X,X;Y)12
+> Seman tic Pa rt ial Info rma tion Decom position
+
+Figure 1: Quantifying Semantic Information Flow. Taking chat logs as an example of commu-nicative exchanges, semantic transfer entropy (STE; left) quantifies the semantic influence a source (dark blue) has on a target (purple’s next post). Methodologically, this is implemented by masking attention from the target to the source only. The difference in the target’s log-likelihood with and without the mask yields the transfer entropy (in bits). Note. Attention from non-targets to the source and from the source to non-target messages are left unchanged, isolating the direct information flow from source to target while preserving the rest of the conversational context. Semantic partial information decomposition (SPID; right) extends this to the multi-source case, decomposing how multiple speakers jointly contribute to a target’s language into redundant, unique, and synergistic components. context Z− (i.e. prior utterances from all other participants): 
+
+ST E Y →X = I(Y ; X|X−, Z −) (1) 
+
+= E
+
+h
+
+log p(X|X−, Y −, Z −) − log p(X|X−, Z −)
+
+i
+
+.
+
+Here Y is the source whose content is withheld and X is the target whose predictability is assessed. (See Supplementary Information for full derivation and implementation details.) STE captures pairwise directional dependence, but a person’s next utterance may draw on infor-mation uniquely attributable to one partner, shared across multiple partners (redundant), or only accessible when sources are considered jointly (synergistic; [7, 11]). Semantic partial information decomposition (SPID) resolves these contributions, addressing the question of what source provides what information about the target [12, 13] (Figure 1): 
+
+I(Y ; X1, X 2) = Rdn (X1, X 2 → Y ) + 
+
+Unq (X1 → Y ) + Unq (X2 → Y ) + 
+
+Syn (X1, X 2 → Y )
+
+We adopt the minimum mutual information (MMI) redundancy functional, which identifies redun-dancy as the lesser of the two marginal source–target mutual informations [14]; once selected, all remaining atoms follow. Unlike STE (which operates over multi-turn dialogue where intermediate messages respond to the source, necessitating attention masking), SPID applies to configurations where sources are independent texts (e.g., premises supporting a claim), permitting marginalisation by physically omitting a source from the input sequence and yielding true marginal distributions without cascading representational changes (see Supplementary Information for full methodologi-cal detail). For more than two sources, the number of PID atoms grows as 4, 18, and 166 for n = 2 , 3, 4
+
+[7], making a full decomposition unwieldy. The redundancy-synergy index (RSI; also called the whole-minus-sum measure) provides a scalar summary of the redundancy-synergy balance for any 
+
+n [15, 16, 17]: 
+
+RSI (X1, . . . , X n; Y ) = I(Y ; X1, . . . , X n) −
+
+> n
+
+X
+
+> i=1
+
+I(Y ; Xi) (2) Positive RSI indicates synergy dominance (the whole exceeds the sum of parts); negative values indicate redundancy dominance (see Supplementary Information). 3Experiment 1: Cognitively rigid conversations are marked by reduced semantic information flow 
+
+Cognitive rigidity—the difficulty in shifting from established patterns of thinking when faced with new information—is associated with reduced perspective-taking and diminished responsiveness to conversational partners [18]. As a controlled proof-of-concept, we used synthetic conversations in which cognitive style was experimentally manipulated, enabling a clean test of whether STE is sensitive to theoretically predicted differences in information dynamics. Specifically, we predicted that cognitively flexible speakers would generate stronger directed information transfer than rigid ones. This experiment is intended to demonstrate the sensitivity of STE to manipulated communica-tive style under controlled conditions, not to validate STE as a measure of cognitive flexibility as a psychological construct. Source cognitive style was the dominant predictor of STE (Supplementary Table 3). A factorial mixed-effects model revealed a highly significant main effect of source type ( F (1 , 5995) = 41 .07 ,
+
+p < . 001 ): flexible sources generated substantially higher STE ( M = 0 .52 , SD = 0 .38 ) than rigid sources ( M = 0 .46 , SD = 0 .36 ). Target type, by contrast, showed no independent effect when source type was controlled ( F (1 , 5995) = 0 .01 , p = .920 ). The source × target interaction was significant ( F (1 , 5995) = 5 .59 , p = .018 ), indicating that the source effect was amplified in flexible-to-flexible pairings. The overall effect of direction type was highly significant ( F (3 , 5995) = 17 .11 , p < . 001 ; Ta-ble 1). Flexible-source directions (f →f and f →r) showed consistently higher STE than rigid-source directions (r →f and r →r), with f →f showing the highest STE and differing significantly from r →f(p < . 001 ) and r →r ( p < . 001 ) after Tukey correction. Critically, f →r also significantly exceeded r→f ( p < . 001 , d = 0 .18 ), confirming that the source’s cognitive style drove the effect regardless of the target’s style. Within mixed-dyad conversations, where source and target cognitive style are crossed with speaker position, paired analysis confirmed that flexible sources generated significantly higher STE than rigid sources: flexible-to-rigid STE ( M = 0 .51 ) exceeded rigid-to-flexible STE ( M = 0 .45 ) within the same conversations ( t(1999) = −4.05 , p < . 001 , d = 0 .18 ). This effect was robust to con-trolling for speaker position (A vs B; p = .073 for position, with the source effect unchanged at 
+
+F (1 , 3995) = 30 .71 , p < . 001 ). Table 1: Semantic transfer entropy by direction type (source → target). Direction M SD n Contrast vs f →ff→f 0.538 0.386 1000 —f→r 0.513 0.377 2000 p = .301 
+
+r→f 0.450 0.351 2000 p < . 001 
+
+r→r 0.472 0.372 1000 p < . 001 
+
+This experiment confirms that STE is sensitive to a manipulated communicative variable: cogni-tively flexible sources generate substantially higher directed information transfer than rigid ones, regardless of target style. We treat this strictly as a controlled sensitivity demonstration, establishing the measure’s discriminative capacity before applying it to naturalistic data in the experiments that follow. 
+
+Experiment 2: Persuaders dominate directed semantic information flow 
+
+Persuasion involves asymmetric information flow: persuaders actively shape discourse while per-suadees respond. To test whether STE captures this directional asymmetry and how specific rhetor-ical strategies modulate information transfer, we analysed the P ERSUASION FOR GOOD corpus [19], comprising 300 dyadic conversations (10,785 exchanges) in which persuaders solicited charitable donations from persuadees, with each turn annotated for ten persuasion strategies. This experiment demonstrates STE’s sensitivity to role structure and strategic communication in naturalistic dialogue. STE revealed striking directional asymmetry (Fig. 2). Information transfer from persuader to per-suadee (mean = 1.70 bits/token, SD = 1.46) exceeded the reverse direction (mean = 0.05 bits/token, SD = 0.09), with 98% of conversations showing this pattern. Most notably, the time course, from ex-position to mid-conversation, demonstrates a clear descent in STE from persuader to persuadee. This 4024680 0.5 1Conversation progress Bits per token        
+
+> Direction
+> Persuader →Persuadee Persuadee →Persuader STE (solid) vs. surprisal (dotted); shaded band = STE IQR Directional STE and surprisal over conversation turns
+> personal related inquiry task related inquiry self modeling emotion appeal source related inquiry logical appeal donation information foot in the door credibility appeal personal story -0.8 -0.4 0.0 0.4 Hedges' g (effect size) Negative values indicate reduced semantic transfer Strategy influence on STE (persuader -> persuadee)
+
+Figure 2: STE in persuasion dialogues. Left: Directional STE and surprisal trajectories across nor-malised conversation progress (solid = STE, dotted = surprisal; shaded band = IQR). Right: Strategy effects on STE (Hedges’ g); negative values indicate reduced semantic transfer when strategies are employed. asymmetry remained stable across conversation stages, and was not reducible to simple predictabil-ity: the surprisal baseline showed no relationship with donation outcomes and did not attenuate the role effect in mixed-effects models. Strategy analysis revealed significant negative associations between several persuasion strategies and STE (Fig. 2, right). Personal stories showed the strongest effect ( g = −0.51 , p < . 001 ), followed by credibility appeals ( g = −0.45 , p < . 001 ), foot-in-the-door ( g = −0.40 , p < . 001 ), and donation information ( g = −0.39 , p < . 001 ). Effect sizes were modest ( g ≈ − 0.3 to −0.5), and the remaining strategies did not reach statistical significance. These negative effects are consistent with the interpretation that such strategies introduce self-contained content, about the persuader’s experiences, credentials, or the cause, that contributes little incremental signal for predicting the persuadee’s next turn beyond what is already captured by the persuadee’s own conversational history. In other words, this does not imply persuasive inef-fectiveness, only reduced predictive coupling about the persuadee’s statements. The scope of this interpretation is exploratory, and future work should test it across additional persuasion corpora. 
+
+Experiment 3: Higher-quality therapy is characterised by client-driven, not therapist-driven, semantic information flow 
+
+Motivational interviewing (MI) is a collaborative, client-centred therapeutic style whose defining characteristic is the elicitation of the client’s own motivation for change rather than its prescrip-tion by the therapist [20, 21]. A large empirical literature has established that therapist verbal be-haviour directly shapes therapeutic process: MI-inconsistent behaviours (confrontation, unsolicited advice-giving, and directive steering) are systematically followed by client resistance and sustain talk, whereas MI-consistent behaviours (open questions, reflections, and affirmations) elicit client change talk [22, 23]. Client change talk, in turn, predicts better behavioural outcomes across ad-dictive behaviours [24, 25], establishing a causal chain from therapist verbal style through client speech to outcome (e.g., [26]). We therefore hypothesised that therapist-to-client STE would be lower in high-quality sessions, where the therapist follows the client’s lead rather than directing it, than in low-quality sessions characterised by therapist-dominated steering. To test this, we anal-ysed the AnnoMI corpus [27], comprising 133 naturally occurring MI sessions (110 high-quality, 23 low-quality) annotated by experienced MI practitioners. The results confirmed the hypothesis. Therapist-to-client STE was substantially higher in low-quality sessions ( M = 1 .62 , SD = 1 .66 ) than in high-quality sessions ( M = 0 .76 , SD = 0 .90 ;Welch’s t(24 .8) = 2 .40 , p = .024 , d = −0.80 ). The directional asymmetry (STE therapist →client 
+
+− STE client →therapist ) was similarly elevated in low-quality sessions ( M = 1 .43 vs. M = 0 .46 ;
+
+t(27 .0) = 2 .55 , p = .017 , d = −0.72 ). A weak but significant negative correlation further linked therapist-to-client STE with the proportion of client change talk across sessions ( r = −.18 ,5p = .044 ), suggesting that sessions in which therapists generated more directed information flow were also sessions in which clients produced less autonomous change talk. These findings reveal that STE captures a theoretically meaningful dimension of therapeutic dis-course. In low-quality MI, the therapist dominates the informational structure of the exchange (con-fronting, advising, and directing), rendering the client’s subsequent utterances highly predictable from the therapist’s prior content. High-quality MI therapists, by contrast, may produce lower STE precisely because they follow the client’s lead potentially as their reflections and open questions are shaped by what the client has said, making the conversational influence bidirectional and infor-mationally symmetric. Finally, with respect to the change talk correlation, where therapist infor-mational dominance and client autonomous motivation generation are in tension, STE indexes this tension without access to any coded behavioural categories. 
+
+Experiment 4: Argumentative premises contribute synergistic information about claims 
+
+Natural language often emerges from multiple sources. For example, arguments build claims from several premises, and speakers respond to multiple prior utterances. When two sources jointly pre-dict a target, their contributions may be redundant (overlapping), unique (exclusive to one source), or synergistic (the whole exceeds the sum of the parts). We applied SPID to the Argument An-notated Essays corpus (AAE-v2; [28]), comprising 402 persuasive student essays with annotated claims, premises, and support relations, focusing on the 325 triplets in which claims were supported by exactly two premises. Table 2: Example SPID decompositions from the AAE corpus. Each example shows a claim and its two supporting premises, with the resulting information atoms (bits per token). Red. = Redundancy; Unq. = Unique; Syn. = Synergy.                  
+
+> Claim Premises Unq. Red. Syn.
+> “keeping our pace higher is important” P1: avoiding sluggishness increases success probability
+> −0.78 0.00 2.61
+> P2: high pace prevents laziness 0.30
+> “it can do good to protect the endangered animals”
+> P1: advanced methods to care for animals 2.08 0.00 0.00
+> P2: agriculture contributes to economy −0.20
+> “dancing is important in every culture” P1: dancing shows cultural civilization 0.00 3.76 0.88
+> P2: people use dancing to entertain them-selves
+> 0.10
+
+Table 2 presents representative examples illustrating the range of SPID decompositions observed. The first example shows the highest synergy: two premises addressing distinct aspects of pace (suc-cess probability and laziness prevention) that jointly predict a claim about the importance of main-taining high pace. The second example demonstrates maximal unique information: one premise directly discusses animal protection methods while the other (about agriculture and economy) con-tributes nothing relevant. The third example shows the highest redundancy, where both premises convey culturally-relevant aspects of dancing that overlap in predicting the claim. Synergy was positive on average (M = 0.32, SD = 0.42 bits/token; Figure 3A), significantly above zero ( t(324) = 13 .90 , p < . 001 , d = 0 .77 ), indicating that premises jointly provided more pre-dictive information about claims than the sum of their individual contributions. Redundancy was moderate (M = 0.63, SD = 0.62), reflecting shared predictive content between premises. Unique information was modest and symmetric: Premise 1 contributed M = 0.20 (SD = 0.43) and Premise 2 contributed M = 0.19 (SD = 0.48). Real premise-claim pairings showed significantly higher re-dundancy than shuffled pairings (real: M = 0.63; null: M = 0.12; t(1948) = 14 .62 , p < . 001 ,
+
+d = 1 .42 ; Figure 3B), confirming that premises supporting the same claim share topically relevant information, whereas random premise pairs lack this coherence. Correlations with semantic simi-larity (cosine similarity of sentence embeddings; [29, 30]) further corroborated the decomposition: redundancy was positively correlated with premise similarity ( r = .23 , p < . 001 ), synergy showed a marginal negative correlation ( r = −.10 , p = .06 ; [31]), and unique information was strongly correlated with premise-claim similarity (Premise 1: r = .40 ; Premise 2: r = .41 ; both p < . 001 ). These patterns confirm that SPID captures meaningful semantic relationships rather than superfi-6cial text statistics (see Supplementary Information for the full null model analysis and CCS/MMI comparison). To examine how informational structure changes as more premises support a claim, we extended the analysis using RSI (Equation 2). We extracted all claims supported by exactly 3 or 4 premises from the AAE corpus (307 and 159 samples, respectively) and computed RSI alongside the existing n = 2 
+
+samples ( N = 791 total). RSI was negative at every premise count and grew more negative with n:
+
+M = −0.34 for n = 2 , M = −0.87 for n = 3 , and M = −1.41 for n = 4 (Kruskal–Wallis H(2) = 43 .54 , p < . 001 ; all pairwise comparisons significant after Holm correction), indicating that the redundancy-synergy balance shifted toward redundancy dominance as more premises supported a claim. The proportion of synergy-dominated samples (RSI > 0) declined from 32% ( n = 2 ) to 27% (n = 3 ) to 24% ( n = 4 ; Cochran–Armitage trend: χ2 = 4 .18 , p = .04 ). Per-premise information yield (joint mutual information divided by the number of premises) also decreased across groups (M = 0 .73 , 0.57 , 0.48 for n = 2 , 3, 4; linear slope = −0.13 , p < . 001 ), indicating diminishing returns: each additional premise contributes progressively less novel predictive information about the claim. Total mutual information grew sublinearly with premise count (Figure 3C–E). Semantic Partial Information Decomposition              
+
+> −2 024
+> Redundancy Unique (Prem. 1) Unique (Prem. 2) Synergy
+> Bits per token
+> A
+> 0.0 0.4 0.8 1.2
+> −1 012345
+> Synergy (bits per token)
+> Density
+> Null
+> Real
+> B
+> Semantic Redundancy−Synergy Index
+> Synergy Redundancy
+> −5 0
+> 234
+> Number of premises
+> RSI (bits per token)
+> C
+> 0.0 2.5 5.0
+> 234
+> Number of premises
+> Total MI (bits per token)
+> D
+> 0123
+> 234
+> Number of premises
+> Per−premise MI (bits per token)
+> E
+
+Figure 3: Two-premise arguments exhibit positive synergy, while aggregating more premises produces growing redundancy. (A) Distribution of SPID atoms across 325 two-premise claim triplets. Synergy is positive on average, indicating super-additive predictive information. (B) Syn-ergy distributions for real and shuffled premise-claim pairings ( p < . 001 ). (C) RSI becomes in-creasingly negative as premise count grows from 2 to 4 ( p < . 001 ), indicating that the redundancy-synergy balance shifts toward redundancy dominance with more premises. (D) Total mutual infor-mation (joint MI) increases with premise count but grows sublinearly. (E) Per-premise information yield (joint MI / n) decreases with more premises, indicating diminishing returns ( p < . 001 ). SPID decomposed the information structure of argumentative essays and showed that two-premise arguments exhibit positive synergy, with premises jointly providing more predictive information about the claim than the sum of their individual contributions. Extending to 3- and 4-premise arguments with RSI, the redundancy-synergy balance shifted progressively toward redundancy as more premises were added, alongside diminishing per-premise information yield. Aggregating more premises about a fixed claim thus produces increasingly overlapping rather than complementary ev-idence. 7All key effects across Experiments 1–4 replicated in direction and significance across three models spanning two architectures and two scales (LLaMA 3.2-3B, Phi-3-mini-4k, Mistral-7B-v0.3; Sup-plementary Tables S2–S5). 
+
+# Discussion 
+
+The present work introduced two information-theoretic tools for studying language communication dynamics at the semantic level: STE for quantifying directed information flow between interlocu-tors, and SPID for decomposing multi-source contributions into redundant, unique, and synergistic components. Four experiments, each with a distinct evidential role, support the framework. Ex-periment 1 serves as a controlled proof-of-concept: by manipulating cognitive style in synthetically generated conversations, it demonstrates that STE is sensitive to a theoretically meaningful variable under conditions of experimental control, establishing the method’s discriminative capacity before applying it to more complex settings. Experiment 2 provides empirical evidence in naturalistic hu-man dialogue, capturing asymmetric directional influence in a real persuasion corpus. Experiment 3 demonstrates that STE indexes a clinically meaningful dimension of therapeutic quality in mo-tivational interviewing, without access to any coded behavioural categories. Experiment 4 offers corpus-based validation of SPID against annotated argumentative structure. Together, they demon-strate that these measures operate directly on the full semantic content of utterances rather than on superficial extracted features or predefined lexical categories. 
+
+Related work 
+
+The field of computational linguistics has made significant strides in modelling the dynamics of human communication at the lexical, syntactic, and semantic levels of representation. Early com-putational approaches focused on surface-level linguistic features such as simple word frequencies shared between conversants [32], or the degree to which speakers mirror function-word choices (pronouns, articles, prepositions, conjunctions, and auxiliary verbs) [33], to simply correlate with conversation-level metrics such as perceived naturalness of conversation, task success, and even power asymmetries (e.g., [33, 34]). Dictionary-based tools such as Linguistic Inquiry and Word Count [35] extended this paradigm by mapping words onto psychologically meaningful categories, while distributional methods such as Latent Semantic Analysis [36] and topic models [37] moved beyond raw counts to capture latent co-occurrence structure. However, these approaches remain constrained to predefined lexical categories or static distributional statistics and thus sensitive to context and word order, for example, limiting their ability to capture context-dependent meaning. The emergence of neural word embeddings [38], contextual representations [5], and large-scale au-toregressive language models has since opened the possibility of modelling language to a depth that earlier feature-engineering approaches could not reach. Trained on large text corpora in a self-supervised manner, LLMs learn the statistical regularities of natural language and embed them into high-dimensional semantic spaces [9, 10], such that the word ‘charge’, for example, has distinct representations depending on whether it appears in the context of electricity, economic transactions, or criminal law. Indeed, these models jointly encode morphological, syntactic, semantic, and pragmatic dimensions into a unified representational space. In this way, language can be represented mathematically, allowing communicative exchanges to be modelled as high-dimensional trajectories that reveal fine-grained variations in meaning, context, and conceptual relationships, features previously inaccessible to quantitative analysis. Indeed, some have remarked on the similarity in human language processing and LLM computational principles [39, 40, 41, 42]. Researchers have begun to exploit these representations to study language dynamics beyond static text classification. Soni and colleagues [43] used contextual embeddings to detect semantic shifts in scientific discourse (e.g., the word ‘attention’ migrating from its generic sense to its deep-learning definition) and showed that such short-term linguistic influence predicts long-term citation impact. At the level of public discourse, Ding and colleagues [8] derived a measure of semantic polarity from contextual embeddings and applied Granger causality to establish that divergence in how broadcast news outlets frame the same keywords forecasts subsequent polarisation on social media. Others have operationalised interpersonal linguistic coordination as geometric distance in embedding space, 8showing that the proximity of successive turns predicts therapist empathy and therapeutic outcomes [44]. Most strikingly, Zada and colleagues [42] used GPT-2 embeddings to trace meaning transfer in natural conversation at the neural level, demonstrating that the same contextual representations that emerge in the speaker’s brain before articulation re-emerge, word by word, in the listener’s brain—providing direct neural evidence that language models capture the representational space through which meaning is transmitted between minds. Together, these studies demonstrate the power of LLM-derived representations for characterising language dynamics at the semantic level, yet each relies on ad hoc measures of influence (embedding distances, Granger causality, or correla-tion), none of which afford a principled, unified account of semantic information directionality and multi-source contributions. Here, STE and SPID address this limitation. An early attempt to apply information-theoretic measures to linguistic influence can be attributed to Ver Steeg and Galstyan [45], who introduced “content transfer” (an adaptation of transfer entropy) to measure influence between Twitter users based on the co-movement of topic distributions derived from Latent Dirichlet Allocation. However, applying TE directly in this way is far from trivial and methodologically contentious as semantic trajectories in embedding spaces are high-dimensional (and thus sparse), temporally interdependent, and noisy, raising challenges of stability, efficiency, and scalability. More recently, Kiddle and colleagues [46] extended TE to study the propagation of discursive toxicity on social media, using TE to construct “toxicity networks” that reveal how individual users influence one another’s toxic output over time. While methodologically sophisti-cated, this approach again operates on extracted features (toxicity scores based on text annotation) rather than the full semantic content of utterances. STE instead works directly on the semantic con-tent itself, leveraging both the context-rich modelling of LLMs and their internal probability-based computations. Applications of PID have ranged from cellular automata and artificial neural networks to gene regu-latory interactions, socioeconomic data, and neuroscience [47, 48, 49, 50, 51, 52, 53]. The temporal extension of PID, integrated information decomposition, has further enabled the decomposition of information storage, transfer, and integration in complex dynamical systems, revealing previously unreported modes of collective information flow across over 1,000 biological, physical, social, and synthetic systems [54]. Indeed, this measure has been applied to LLMs, uncovering a “synergistic core” in middle transformer layers that mirrors the informational architecture of the human brain [55]. Here, we have presented how information decomposition extends to the semantic case via SPID. 
+
+Envisioned applications 
+
+The generality of this framework is one of its principal contributions. Where existing approaches to language dynamics rely on ad hoc measures, surface lexical features, or correlational summaries, the properties of the information-theoretic framework presented here make the framework portable across any setting where meaningful sequential text is exchanged. In clinical settings, STE could track the bidirectional flow of semantic influence between therapist and patient across sessions, potentially serving as an objective marker of therapeutic alliance or dis-engagement, complementing recent efforts to infer alliance computationally from session transcripts [56, 57]. In political and media communication, the directed and asymmetric nature of STE makes it well-suited for tracing how semantic framings propagate from institutional sources (e.g., news out-lets, political leaders) to public discourse, extending recent correlational work on semantic polarisa-tion [8] with a principled directional measure (e.g., [46]). In education, SPID could decompose how multiple instructional sources (textbooks, lectures, peer discussion) contribute redundant, unique, or synergistic information to student understanding. More broadly, any communicative system in which multiple agents produce sequential text is amenable to analysis with these tools (e.g., group deliberation [58], online forums, human-AI collaboration), offering a unified information-theoretic lens where previously only ad hoc measures were available. The information-theoretic framework also invites connections beyond interpersonal communication [1]. A growing body of work in mechanistic interpretability traces how semantic representations propagate through the internal layers of transformer models [59], using techniques such as activa-tion patching and causal tracing to identify which components contribute to specific outputs [60, 61]. 9Indeed, partial information decomposition has already been applied to probe the informational archi-tecture of neural networks [50] and, in neuroscience, to characterise how brain regions integrate and broadcast information [11]. Future work could explore whether the same decompositions (redun-dancy, unique, synergy) can characterise how multiple attention heads or layers jointly contribute to a model’s predictions, bridging the study of human communication dynamics and AI interpretability. 
+
+Structural and semantic information 
+
+A foundational clarification concerns the relationship between our measures and the concept of semantic information. Dretske [62] distinguished structural information—Shannon’s quantitative framework of uncertainty reduction—from semantic information: what a signal specifies about a particular state of affairs. Our framework operates, strictly speaking, on the structural side of this divide: STE and SPID quantify how much uncertainty one speaker’s utterances resolve about an-other’s, measured in bits via conditional log-likelihoods. The “semantic” in semantic transfer en-tropy refers not to a formal theory of meaning but to the fact that the underlying probability estimates are furnished by a language model trained on the statistical regularities of meaningful language, and thus implicitly conditioned on morphological, syntactic, and pragmatic structure in a way that Shan-non’s original character-level analyses were not. Although STE and SPID are formally structural quantities, the LLM’s probability landscape ensures that the predictive coupling we measure oper-ates over contextualised semantic representations rather than raw symbol frequencies. 
+
+Limitations and Future Work 
+
+Several limitations warrant discussion. First, all information-theoretic estimates are conditioned on the particular language model used, and absolute values are not comparable across models with different tokenisation or calibration ([63, 64]; temperature scaling can substantially alter surprisal estimates [65], and miscalibration does not resolve with scale [66]). However, given that all key effects across Experiments 1–4 replicated across the three models, it may be fair to conclude that the findings reflect properties of the data rather than the estimation instrument. We thus recommend holding the model constant across conditions within a study. Second, STE uses attention masking rather than physical omission because omitting a conversational participant would alter positional encodings and hidden states of all downstream messages, conflat-ing direct source contribution with cascading representational change. Masking instead preserves the full sequence and severs only the relevant attention edges, making it the structurally appropriate choice for multi-turn dialogue. The complementary concern that masked-but-present tokens might introduce indirect leakage does not apply in the same way to SPID, which uses physical omis-sion precisely because its sources are independent texts. We empirically compared both methods on Experiment 4 and show in the Supplementary Information that masking and omission are not interchangeable. Third, because we compute pointwise (per-token) information quantities, individual observations can be negative even when the expected value is positive, as seen in the synergy estimates for Ex-periment 4. Aggregation over sufficient data mitigates this, but researchers applying these tools to small samples should interpret pointwise values with caution. Fourth, the computational cost of running LLM forward passes for each conditioning set scales with the number of sources and messages, which may limit applicability to very large corpora or real-time analysis without further engineering optimisation. Finally, while STE measures directed predictive dependence, any causal interpretation rests on the same assumptions as Granger causality [67]: (i) stationarity —the joint process must be stationary across the conversation, an assumption that natural dialogues, which evolve in topic and register, may violate; (ii) no hidden confounders —unobserved variables such as shared context, topic, or speaker background must not simultaneously drive both parties’ language; and (iii) correct model specification —the LLM’s predictive distribution must adequately capture the relevant statistical de-pendencies. To the extent that these conditions hold, higher STE supports an inference of directional influence; where they are uncertain, STE is better interpreted as a measure of directed predictive coupling. We retain causal language in the discussion of applications where these assumptions are plausible, while using the term “directional” or “predictive” in more agnostic contexts throughout the paper. 10 A further constraint applies to Experiment 1, specifically; that is, the conversations themselves were generated by an LLM rather than produced by human speakers with independently verified cogni-tive profiles, so the result establishes the discriminative capacity of STE rather than its psychological validity. Indeed, LLM-generated text may exhibit surface regularities (e.g., lexical diversity or con-textual adaptability) that correlate with the generation condition label independently of whether they reflect genuine cognitive flexibility. Validating these patterns in naturalistic human conversations with independent assessment of cognitive flexibility remains for future work. 
+
+Final Remarks 
+
+We presented two novel information-theoretic measures: semantic transfer entropy and semantic partial information decomposition. These measures leverage LLMs to quantify how meaning flows between communicators and how multiple sources jointly shape a target’s language. Across cog-nitive rigidity, persuasion, and argumentation, these tools detected directed influence asymmetries, strategy-dependent information dynamics, and the redundant, unique, and synergistic structure of multi-source communication, phenomena that surface-level and correlational approaches cannot ac-cess. By uniting Shannon’s mathematical theory of communication and re-attending to his first linguistic exposition—this time with the semantic representational capacity of modern language models—this work offers a general-purpose, principled framework for studying any system in which agents exchange meaningful sequential text: be it from clinical and political communication to edu-cation and human-AI interaction. 
+
+# Methods 
+
+Experiment 1 
+
+We generated a synthetic corpus of 3,000 dyadic conversations using GPT-5-nano (snapshot 
+
+gpt-5-nano-2025-08-07 ; [68]). Each conversation comprised 20 turns between two agents (A and B) who began with opposing positions on a given topic. Conversations were generated across four experimental conditions: rigid-rigid , flexible-flexible , rigid-flexible (A rigid, B flexible), and 
+
+flexible-rigid (A flexible, B rigid). The two mixed conditions orthogonalise cognitive style and speaker position (A/B), enabling clean separation of source and target effects on STE. Within each condition, conversations spanned five topics (art, politics, food, science, morality), with 100 con-versations per topic for homogeneous conditions and 200 per topic for mixed conditions. The gen-eration prompt defined cognitive rigidity as “the difficulty in shifting from established patterns of thinking, feeling, or behaving when faced with new information or changing circumstances,” and cognitive flexibility as “the ability to adapt thinking and behavior in response to new information or environmental demands.” Agents were instructed to produce 2–3 sentences per turn. In both mixed conditions, the starting speaker alternated across iterations to control for turn-order effects. We computed STE bidirectionally (A →B and B →A) for each conversation using LLaMA 3.2-3B [69] with 4-bit quantisation. 2 A lag window of 5 turns was used, and we excluded turns 1–5 from analysis to ensure stable estimates (yielding 15 analysable turns per conversation). For each conversation, we obtained turn-level STE values and then averaged across turns 6–20 to obtain conversation-level metrics. We classified each directional STE measure by the cognitive style of source and target: rigid-to-rigid (r →r), rigid-to-flexible (r →f), flexible-to-rigid (f →r), and flexible-to-flexible (f →f). This yielded 6,000 conversation-direction observations (1,000 each for r →r and f →f from homogeneous dyads; 2,000 each for r →f and f →r from mixed dyads, with each direction drawn equally from both speaker positions). Statistical analysis employed linear mixed-effects models with conversation and topic as crossed random effects. We tested (i) the main effects of source and target cognitive style on STE via a source × target factorial model, (ii) the overall effect of direction type, and (iii) within-dyad 
+
+> 2A potential concern is circularity when using a language-model-based method to analyse language-model-generated data. In our case, however, the generative model (GPT-5-nano) and the model underlying our information-decomposition pipeline (Llama 3.2-3B) belong to different model families with different architectures and training data, so the analysis cannot, by and large, recapitulate idiosyncratic artefacts of the generator.
+
+11 paired comparisons in the mixed conditions where source and target effects are orthogonal. Post-hoc pairwise comparisons used Tukey-corrected p-values. Effect sizes are reported as Cohen’s d.
+
+Experiment 2 
+
+We analysed the P ERSUASION FOR GOOD corpus [19], comprising 300 dyadic conversations (10,785 exchanges) where persuaders solicited charitable donations from persuadees. In the corpus, each turn was annotated with ten persuasion strategies (see Table 6). Donation outcomes were recorded but proved unsuitable for correlation analysis due to heavy zero-inflation (61% unchanged dona-tions). We computed STE bidirectionally for each conversation using LLaMA 3.2-3B with 4-bit quantisa-tion and a lag window of 16 turns (selected via surrogate-corrected optimisation; see Supplementary Information). For each target utterance, STE was computed as the difference in predictive log-likelihood with versus without access to the source user’s recent posts, normalised to bits per token. Statistical analysis employed linear mixed-effects models with conversation-level random inter-cepts, controlling for turn length (quadratic effect of inverse token count) and surprisal (to bench-mark against simple predictability). Strategy effects were quantified using Hedges’ g. To assess behavioural relevance, we fitted logistic regression predicting donation ( >$0) from STE, strategy counts, and psychological covariates identified in [19]. 
+
+Experiment 3 
+
+We analysed the AnnoMI corpus [27], a collection of 133 naturally occurring MI sessions (110 high-quality, 23 low-quality) annotated by experienced MI practitioners. STE was computed bidi-rectionally for each session using a lag window of 5 turns. We compared therapist-to-client STE and overall directional asymmetry between quality groups using Welch’s t-tests, and correlated therapist-to-client STE with the proportion of client change talk across sessions using Pearson’s r.
+
+Experiment 4 
+
+We analysed the Argument Annotated Essays corpus (AAE-v2; [28]), comprising 402 persuasive student essays sourced from essayforum.com with annotated argument components (major claims, claims, premises) and argumentative relations (support or attack). We focused on claims supported by exactly two premises, yielding 325 triplets from 228 essays. This structure mirrors the theo-retical setup of SPID: two source texts (premises) jointly and individually contributing predictive information about a target text (claim). For each triplet, we designated the two supporting premises as sources X1 and X2 and the claim as target Y . We computed SPID atoms (redundancy, unique 1, unique 2, synergy) using the MMI redundancy functional, with all information quantities derived from LLaMA 3.2-3B log-likelihood differences under physical omission of the excluded source (see Semantic Information Decomposi-tion above). Text lengths averaged 88 characters for claims (SD = 37), 114 for Premise 1 (SD = 52), and 106 for Premise 2 (SD = 47). As a unit test, we first validated that the SPID implementation correctly recovers known information-theoretic ground truths. We trained small 2-layer transformers on canonical two-input logic gates (AND, OR, XOR, COPY, UNIQ) and confirmed that SPID recovers the expected decompositions: XOR yields maximal synergy ( > 0.8 bits) and near-zero redundancy; COPY yields maximal redun-dancy and near-zero synergy; and UNIQ concentrates information in one source. All gates achieved 
+
+> 95% accuracy before PID computation. While this test uses binary synthetic data rather than nat-ural language, it confirms that the implementation correctly identifies the theoretical ground truths that natural language distributions can only approximate. To validate that SPID estimates reflect genuine argumentative structure rather than generic text statis-tics, we constructed a permutation null model: for each real sample, we paired the claim with two premises drawn from other essays, breaking the argumentative relationship while preserving marginal distributions. Five permutations per sample yielded 1,625 null triplets. We also correlated SPID atoms with semantic similarity between premises (cosine similarity of sentence embeddings from all-MiniLM-L6-v2) as an external validity check. 12 Finally, to extend the analysis beyond two sources, we additionally extracted claims supported by exactly 3 or 4 premises (307 and 159 samples, respectively) and computed RSI (Equation 2) across all three premise counts ( N = 791 ). 
+
+# Code Availability 
+
+The framework introduced in this paper is available as PSID YN : PYTHON SEMANTIC 
+
+INFORMATION DYN AMICS , an open-source Python package at https://github.com/ LeoGoodall/PSIDyn .13 Supplementary Information 
+
+Semantic Transfer Entropy 
+
+Large language models (LLMs) offer a natural way to estimate STE, since they are trained explicitly as next-token predictors over vast corpora and thus provide direct access to conditional probabilities of text. By treating LLMs as probabilistic sequence models, we can compute STE in terms of conditional log-likelihoods under different conditioning sets, thereby quantifying how much a source user’s posts improve prediction of a target user’s subsequent text without requiring an intermediate semantic representation or restrictive parametric assumptions. STE quantifies the directed predictive influence of source Y on target X by comparing predictions under a counterfactual conditioning that withholds information from Y : the subscript Y → X denotes the direction of influence, where Y is the source whose content is withheld and X is the target whose predictability is assessed, consistent with the conditioning on X’s own history X−.We quantify directed linguistic influence, or semantic transfer entropy (STE), from a source Y to a target user X in a time-ordered thread by estimating the STE at horizon ∆ = 1 , i.e. how much Y ’s prior posts improve predictions of X’s very next post. Let Xt denote the tokens of X’s next post at time t, Xt−k:t−1 the tokens in X’s k most recent prior posts (simplified to Xt−), Yt− the tokens in 
+
+Y ’s ℓ prior posts within a lag window, and Zt− all other users’ tokens. The population quantity of interest is the partial STE 
+
+ST E Y →X (τ ) = E
+
+h
+
+log p Xt | Xt−, Y (τ ) 
+
+> t−
+
+, Z t−
+
+ − log p Xt | Xt−, Z t−
+
+i
+
+.
+
+where Y (τ ) 
+
+> t−
+
+restricts Y ’s past to a lookback window of duration τ . Intuitively, TY →X measures how much information the recent content of Y provides about X’s next post, beyond X’s own history and all other observed context Z.We operationalise these conditionals with a pretrained autoregressive transformer pθ and realise the conditioning difference by modifying the attention graph available to Xt’s tokens. Let the concate-nated thread up to (but not including) Xt be tokenised into a sequence c1: n with a standard causal attention mask M ∈ { 0, 1}n×n, where Mij = 1 iff token i may attend to token j ≤ i. Let IX be the index set of tokens belonging to Xt, and let J (τ ) 
+
+> Y
+
+be indices of tokens authored by Y within the lag window [t − τ, t ). We form a “without-Y ” mask ˜M (τ ) that blocks all edges from X’s future tokens to Y ’s lagged tokens while leaving all other edges unchanged: 
+
+˜M (τ ) 
+
+> ij
+
+=
+
+(
+
+0, i ∈ I X , j ∈ J (τ ) 
+
+> Y
+
+,Mij , otherwise .
+
+This preserves the exact token sequence, positions, and formatting; only the accessible information set changes, aligning the estimator with the definition of conditional probabilities. Given a fixed input sequence c1: n and an attention mask A ∈ { M, ˜M (τ )}, the model-induced log-likelihood of X’s next post factors tokenwise as 
+
+log pθ (Xt | c1: n; A) = X
+
+> i∈I X
+
+log pθ (xi | c1: i−1; A) .
+
+For each occurrence of Xt, we compute the point estimate of STE as the log-likelihood difference under the “with-Y ” and “without-Y ” masks, 
+
+S bT E (t)  
+
+> Y→X
+
+(τ ) = X
+
+> i∈I X
+
+h
+
+log pθ (xi | c1: i−1; M ) − log pθ
+
+
+
+xi | c1: i−1; ˜M (τ ) i 
+
+,
+
+normalised per token to report bits per token via division by |I X | ln 2 . This equals the model-implied conditional information gain attributable uniquely to Y ’s recent content, holding X’s own history and all other users Z constant. We estimate a dyadic, lag-specific STE by averaging across all target posts by X that follow at least one post by Y within the lag window τ . Let SX (τ ) denote the set of such target posts (indexed by 
+
+s), and let bT (s)  
+
+> Y→X
+
+(τ ) be the pointwise STE estimate for post s. The empirical dyadic STE is then 
+
+S bT E Y →X (τ ) = 1
+
+|S X (τ )|
+
+X  
+
+> s∈S X(τ)
+
+bT (s)  
+
+> Y→X
+
+(τ ).
+
+14 Un q (X )2Rdn 
+
+# Seman tic Info rma tion Decom position          
+
+> Un q(X)1
+> Syn
+> Mutu al Info rma tion
+> I(X,X;Y)12
+> 1
+> 2
+> Info rma tion
+> sour ce sSusp ec ts (1targe t)Wi tne ss es
+
+Figure 4: Semantic Partial Information Decomposition Illustration. 
+
+Semantic Partial Information Decomposition 
+
+As an illustration, consider a detective keen to reveal the identity of a thief from a line-up of suspects. Two witnesses (sources) come to provide information about the thief (target). The first witness indicates that the thief is a man and wears glasses, whilst the second also indicates that the thief is a man but wearing a striped shirt. Each source provided unique information (glasses; striped shirt), both provided redundant information (the thief is a man), but neither alone could conclusively identify the thief; only when both sources are considered synergistically does the identity emerge (Figure 4). This example naturally scales to multiple sources of information beyond two. To explicitly separate redundant, unique, and synergistic contributions, we apply a semantic partial information decomposition (SPID; [70, 14]) to the same model-induced mutual information terms as defined in STE. As in the STE estimator, we implement conditionalisation by selectively restricting the information available to the target sequence via attention masks. In the three-source setting considered here, this yields four masks that differ only in whether tokens of the target sequence Y
+
+may attend to lag-window tokens from X1 and/or X2: (i) a baseline mask ˜M (τ ) 
+
+> ∅
+
+that blocks access to both sources, (ii) a mask ˜M (τ ) 
+
+> X1
+
+that exposes X1 while blocking X2, (iii) a mask ˜M (τ ) 
+
+> X2
+
+that exposes 
+
+X2 while blocking X1, and (iv) the full mask ˜M (τ ) 
+
+> X1X2
+
+, which exposes both sources. In all cases, the underlying token sequence, positions, and non-source context are held fixed. Because the two source texts X1 and X2 are concatenated into a single context before the target, the autoregressive causal mask would ordinarily allow the later source to attend to the earlier one, introducing an asymmetry that has no counterpart in the SPID formalism (which treats sources sym-metrically). We therefore impose an additional source-independence constraint: in every mask, including ˜M (τ ) 
+
+> X1X2
+
+, inter-source attention is blocked so that neither source’s hidden representations are influenced by the other. This ensures that Iθ (Y ; X1) and Iθ (Y ; X2) are symmetric under permu-tation of sources, that Iθ (Y ; X1, X 2) reflects the joint contribution of two independently encoded sources, and that the resulting SPID atoms respect the symmetry axiom of [7]. All information quantities below are defined as log-likelihood gains relative to the same baseline mask ˜M (τ ) 
+
+> ∅
+
+, which fixes the background information set against which redundancy, uniqueness, and synergy are assessed. For each occurrence of a target sequence Y , we therefore obtain the pointwise information gains 
+
+bI(t) 
+
+> θ
+
+(Y ; X1) = log pθ (Y | c1: n; ˜M (τ ) 
+
+> X1
+
+) − log pθ (Y | c1: n; ˜M (τ ) 
+
+> ∅
+
+),
+
+bI(t) 
+
+> θ
+
+(Y ; X2) = log pθ (Y | c1: n; ˜M (τ ) 
+
+> X2
+
+) − log pθ (Y | c1: n; ˜M (τ ) 
+
+> ∅
+
+),
+
+bI(t) 
+
+> θ
+
+(Y ; X1, X 2) = log pθ (Y | c1: n; ˜M (τ ) 
+
+> X1X2
+
+) − log pθ (Y | c1: n; ˜M (τ ) 
+
+> ∅
+
+).
+
+Averaging over all eligible target instances yields empirical estimates bIθ (·).15 Redundancy functions and PID atoms 
+
+A PID is fully specified once a redundancy functional Red( X1, X 2 → Y ) is chosen. Given any such redundancy definition, the remaining PID atoms follow algebraically: 
+
+Unq( X1 → Y ) = bIθ (Y ; X1) − Red( X1, X 2 → Y ),
+
+Unq( X2 → Y ) = bIθ (Y ; X2) − Red( X1, X 2 → Y ),
+
+Syn( X1, X 2 → Y ) = bIθ (Y ; X1, X 2) − Unq( X1 → Y ) − Unq( X2 → Y ) − Red( X1, X 2 → Y ).
+
+Different choices of redundancy functional therefore induce different PIDs over the same underlying information quantities. 
+
+Minimum Mutual Information (MMI). A simple and widely used redundancy functional is the Minimum Mutual Information (MMI) definition [14], which identifies redundancy with the smaller of the two marginal information contributions: 
+
+Red MMI (X1, X 2 → Y ) = min 
+
+bIθ (Y ; X1), bIθ (Y ; X2)
+
+
+
+.
+
+This choice is intuitive—redundancy cannot exceed what the weaker source provides—and yields a parsimonious decomposition, though it depends only on marginal information magnitudes and does not account for instance-level variation or sign structure in predictive effects. 
+
+Common Change in Surprisal (CCS). An alternative redundancy functional is given by the com-mon change in surprisal (CCS; [71]), which defines redundancy in terms of local, instance-wise overlap in predictive effect. In our setting, the local overlap term for the (t)-th target is given by the model-induced co-information 
+
+c(t) 
+
+> θ
+
+(X1; X2; Y ) := bI(t) 
+
+> θ
+
+(Y ; X1) + bI(t) 
+
+> θ
+
+(Y ; X2) − bI(t) 
+
+> θ
+
+(Y ; X1, X 2).
+
+CCS redundancy is obtained by averaging this overlap only over instances for which the individual and joint surprisal changes agree in sign, thereby excluding ambiguous cases where sources act in opposing directions. Formally, 
+
+Red CCS (X1, X 2 → Y ) := Et
+
+h
+
+c(t) 
+
+> θ
+
+(X1; X2; Y ) sign  bI(t) 
+
+> θ
+
+(Y ; X1) = sign  bI(t) 
+
+> θ
+
+(Y ; X2) = sign  bI(t) 
+
+> θ
+
+(Y ; X1, X 2)i
+
+.
+
+CCS thus provides a complementary redundancy functional that is sensitive to instance-level agree-ment in predictive effect, rather than relying solely on marginal information magnitudes. 
+
+Omission-based marginalisation. The formulation above describes marginalisation via attention masking, where sources remain in the token sequence but are hidden from the target’s attention. An alternative, used in Experiment 3, is physical omission : to compute p(Y | X1) without X2,we remove X2’s tokens entirely from the sequence, rebuild the input as [X1 ∥ Y ], and evaluate with standard causal attention. Because the two sources in the SPID setting are independent texts with no intermediate responses, omission introduces no cascading changes to the remaining context, yielding the same conditional distributions as the masking formulation. The omission approach is computationally simpler (standard causal attention, no custom mask construction) and avoids any possibility of indirect information leakage. In all experiments reported here, the SPID results use the omission method. 
+
+Redundancy-Synergy Index 
+
+For n > 2 sources, the number of partial information atoms grows with the Dedekind numbers (4, 18, 166 for n = 2 , 3, 4), making a full PID computationally and conceptually unwieldy. The redundancy-synergy index (RSI; also called the whole-minus-sum measure; [15, 16]) provides a scalar summary that captures the overall redundancy-synergy balance for any number of sources. RSI is defined as the difference between the joint mutual information and the sum of individual mutual informations, 
+
+RSI (X1, . . . , X n; Y ) = I(Y ; X1, . . . , X n) −
+
+> n
+
+X
+
+> i=1
+
+I(Y ; Xi),
+
+16 where positive values indicate synergy dominance (the joint contribution exceeds the sum of single-tons) and negative values indicate redundancy dominance. Each mutual information term is estimated as a log-likelihood difference following the same ap-proach as SPID. For the joint term, we construct a sequence containing all n sources concatenated with the target; for each singleton term I(Y ; Xi), we construct a sequence containing only source 
+
+Xi followed by the target (physically omitting all other sources). All log-likelihood differences are normalised by the target token count and converted to bits. Computing RSI for n sources requires 
+
+n + 1 forward passes (the joint plus each singleton, against a common baseline). 
+
+Experiment 1 Conversation generation prompt. Conversations were generated via the OpenAI Batch API (/v1/responses endpoint) using GPT-5-nano with structured JSON output [68]. Each request contained the following prompt template (with condition and topic substituted):    
+
+> Generate a 20-turn dialogue about {topic }between two agents who begin opposing each other’s positions. Each turn should have 2–3 sentences. Condition: {condition description }
+> Cognitive rigidity is the difficulty in shifting from established patterns of thinking, feel-ing, or behaving when faced with new information or changing circumstances. Cognitive flexibility is the ability to adapt thinking and behavior in response to new information or environmental demands. Return only valid JSON matching the schema.
+
+Condition descriptions were: “Both speakers behave with cognitive rigidity. Speaker A starts.” (rigid-rigid); “Both speakers behave with cognitive flexibility. Speaker A starts.” (flexible-flexible); “Speaker A is cognitively rigid and Speaker B is cognitively flexible. Speaker {A/B } starts.” (rigid-flexible, alternating starting speaker); and “Speaker A is cognitively flexible and Speaker B is cog-nitively rigid. Speaker {A/B } starts.” (flexible-rigid, alternating starting speaker). The two mixed conditions ensure that each cognitive-style direction (e.g., rigid →flexible) is observed from both speaker positions (A →B and B →A), orthogonalising cognitive style and speaker position. The out-put was constrained to a JSON schema specifying conversation id , condition , topic , and an array of turns each containing turn , speaker , and text fields. Only API responses with HTTP status code 200 were retained. 
+
+Observation counts. The full dataset contained 44,997 turn-level STE observations across 3,000 conversations. After excluding turns 1–5 (lag window) and averaging to conversation-direction level, the analysis comprised 6,000 observations (1,000 each for r →r and f →f; 2,000 each for r →f and f→r). 
+
+Source type descriptive statistics. Table 3 reports mean STE by source cognitive style. Table 3: Semantic transfer entropy by source cognitive style. Source Type M SD n F p
+
+Rigid 0.457 0.358 3000 41.07 < . 001 
+
+Flexible 0.522 0.380 3000 
+
+Effect sizes for all direction contrasts. Table 4 reports Cohen’s d for all pairwise direction-type comparisons. 
+
+Cross-Model Validation 
+
+To assess whether the Experiment 1 STE findings depend on the choice of LLaMA 3.2-3B, we re-ran the full STE computation on all 3,000 conversations using Phi-3-mini-4k-instruct [72] and Mistral-7B-v0.3 [73]. For each model, we report the two key quantities from the main analysis: mean STE for the f →r and r →f directions in mixed-dyad conversations, and the paired within-conversation contrast. 17 Table 4: Cohen’s d for all pairwise direction-type contrasts (Experiment 1). Contrast Cohen’s d
+
+f→f vs f →r −0.07 
+
+f→f vs r →f −0.24 
+
+f→f vs r →r −0.17 
+
+f→r vs r →f −0.18 
+
+f→r vs r →r −0.11 
+
+r→f vs r →r 0.06 
+
+Table 5: Cross-model replication of the directional STE asymmetry (Experiment 1). Mixed-dyad conversations only ( n = 2 ,000 per direction per model). All values in bits per token. 
+
+Model f→r r→f Paired t d
+
+LLaMA 3.2-3B 0.513 0.450 −4.05 ∗∗∗ −0.175 
+
+Phi-3-mini-4k 0.394 0.351 −3.56 ∗∗∗ −0.147 
+
+Mistral-7B-v0.3 0.443 0.395 −3.50 ∗∗∗ −0.149 
+
+> ∗∗∗
+
+p < . 001 
+
+The directional asymmetry replicates across all three models and both architectures: f →r consis-tently exceeds r →f, with effect sizes in a narrow range ( d = −0.147 to −0.175 ). The target type main effect observed with LLaMA (p = .032) did not replicate with Phi-3-mini (p = .836) or Mistral-7B (p = .544), indicating it reflects model-specific calibration rather than a robust signal. The source type effect is the replicable finding: flexible speakers generate higher directed predictive coupling regardless of model. 
+
+Experiment 2 Strategy Definition 
+
+Logical appeal Persuading through logical reasoning, evidence, and statistics to show the donation’s tangible impact. Emotional appeal Persuading by eliciting emotions such as empathy, guilt, anger, or personal involvement, often through stories. Credibility appeal Establishing trust by citing credentials, organisational rankings, or ex-ternal objective facts. Foot-in-the-door Making a small initial request to increase compliance with a later, larger request. Self-modelling Acting as a role model by expressing one’s own intention to donate or matching the persuadee’s donation. Personal story Using personal narratives or lived experiences about donation or ben-eficiaries to motivate donation. Donation information Providing specific procedural details about how the donation works, improving clarity and self-efficacy. Source-related inquiry Asking whether the persuadee knows about the organisation involved in the task. Task-related inquiry Asking for the persuadee’s opinions or interests about the organisation or donation task, without being personal. Personal-related inquiry Asking about the persuadee’s personal experiences or background rel-evant to charity or children’s welfare. Table 6: Persuasion strategies and definitions. 
+
+Lag selection procedure. We selected the optimal lag window via a surrogate-corrected scan over candidate lags 1–25. For each lag ℓ and each conversation, we computed STE alongside 3 shuffled surrogates (random seed = 42), where surrogate conversations randomly permuted the temporal order of posts. For each lag, we recorded the median corrected TE (observed minus surrogate 18 median) across conversations. We applied LOESS smoothing (span = 0.4) to the corrected TE trajectory and identified the elbow as the smallest lag reaching 95% of the peak smoothed value. Beyond this point, incremental gains fell below 0.05 bits with declining signal-to-noise ratio (SNR 
+
+< 0.4). This procedure selected a lag of 16 turns. 
+
+Conversation filtering. From the PersuasionForGood corpus, conversations were retained if they contained at least 2 posts, exactly 2 unique users (persuader = user 0, persuadee = user 1), and non-empty post content. All 300 conversations met these criteria. 
+
+Analysis sample. After filtering for finite STE, finite surprisal, and valid role assignment, the post-level dataset comprised 10,459 observations from 300 conversations. 
+
+Donation outcomes. Of 300 conversations involving 257 unique persuadees, 220 (73.3%) resulted in a donation ( >$0). Median donation amount was $0.25; mean donation was $39.74. 
+
+Singular fit. The conversation-level random intercept in the main LME model converged to zero variance ( σ2 = 0 .000 ), indicating that between-conversation variability was fully absorbed by the fixed effects. Results are therefore equivalent to a fixed-effects model with robust standard errors. 
+
+Linear mixed-effects model specification. The full model formula was:   
+
+> te bits per token ∼Condition + inv tokens + inv tokens sq + surprisal bits per token + appeal any + inquiry any + strategy logical appeal + strategy emotion appeal + strategy credibility appeal + strategy foot in the door + strategy self modeling + strategy personal story + strategy donation information + strategy source related inquiry + strategy task related inquiry + strategy personal related inquiry + (1 | conversation id)
+
+where Condition codes the target role (persuader vs persuadee), inv tokens and inv tokens sq 
+
+are the inverse token count and its square (controlling for turn length), surprisal bits per token 
+
+is the per-token surprisal under full context, and individual strategy indicators are binary flags for whether a given strategy was used in the conversation. The model was fitted with maximum likeli-hood estimation via lme4 .
+
+LME fixed effects. Table 7 reports the full fixed-effects estimates. Table 7: Fixed effects from the linear mixed-effects model (Experiment 2). N = 10 ,459 observa-tions from 300 conversations. AIC = 43,085; BIC = 43,222.                                                       
+
+> Predictor Estimate SE t
+> Intercept 1.669 0.239 6.99 Condition (persuadee) −2.238 0.038 −59 .09
+> Inverse tokens 2.941 0.302 9.74 Inverse tokens 2−3.853 0.308 −12 .53
+> Surprisal (bits/token) 0.106 0.012 8.63 Appeal (any) 0.232 0.235 0.99 Inquiry (any) 0.076 0.071 1.07 Logical appeal −0.106 0.040 −2.66
+> Emotional appeal −0.018 0.039 −0.47
+> Credibility appeal −0.035 0.066 −0.53
+> Foot-in-the-door −0.023 0.040 −0.58
+> Self-modelling −0.061 0.041 −1.48
+> Personal story −0.143 0.047 −3.04
+> Donation information −0.072 0.043 −1.69
+> Source-related inquiry −0.078 0.050 −1.57
+> Task-related inquiry −0.001 0.045 −0.03
+> Personal-related inquiry 0.039 0.043 0.90
+
+19 Donation logistic regression. The logistic model predicting donation ( >$0) was:   
+
+> donated flag ∼te standardized + donation information count + age z + agreeable z + care z + benevolence z + rational z
+
+where te standardized is the Z-scored persuader →persuadee STE, and psychological covariates from [19] were median-imputed and Z-scored. Table 8 reports the full coefficients. A random-intercept variant (GLMER with (1 | persuadee id) ) yielded similar estimates (AIC = 347; donation-information: β = 0 .275 , p = .018 ). Table 8: Logistic regression predicting donation ( >$0) from STE, strategy use, and psychological covariates (Experiment 2). N = 300 . AIC = 345; BIC = 375.                                     
+
+> Predictor βSE zp
+> Intercept 0.684 0.195 3.52 < . 001
+> STE (standardised) −0.028 0.137 −0.21 .837 Donation-information count 0.250 0.101 2.49 .013 Age 0.157 0.147 1.07 .284 Agreeableness 0.240 0.163 1.48 .140 Care −0.077 0.145 −0.53 .593 Benevolence 0.263 0.144 1.83 .067 Rationality 0.059 0.155 0.38 .703
+
+Strategy effects (full table). Table 9 reports Hedges’ g for all 10 persuasion strategies, comparing conversation-level persuader →persuadee STE when a strategy was used versus not used. Welch’s 
+
+t-tests and Mann–Whitney U tests yielded consistent significance patterns. Table 9: Strategy effects on persuader →persuadee STE (Hedges’ g with 95% CI). Negative values indicate lower STE when the strategy is present.                                                       
+
+> Strategy Class g95% CI p
+> Personal story Appeal −0.51 [−0.80 ,−0.22 ]< . 001
+> Credibility appeal Appeal −0.45 [−0.81 ,−0.10 ].032 Foot-in-the-door Appeal −0.40 [−0.64 ,−0.15 ]< . 001
+> Donation information Appeal −0.39 [−0.64 ,−0.14 ].003 Logical appeal Appeal −0.30 [−0.53 ,−0.08 ].010 Source-related inquiry Inquiry −0.26 [−0.49 ,−0.04 ].023 Emotional appeal Appeal −0.14 [−0.37 ,0.09 ].224 Self-modelling Appeal −0.10 [−0.34 ,0.14 ].421 Personal-related inquiry Inquiry 0.11 [−0.13 ,0.35 ].353 Task-related inquiry Inquiry 0.09 [−0.15 ,0.33 ].446
+
+Surprisal descriptive statistics. Median surprisal (bits per token under full context) was similar across roles: persuader M = 3 .94 (SD = 0.65), persuadee M = 3 .99 (SD = 0.80). 
+
+Cross-Model Validation 
+
+To assess whether the Experiment 2 directional asymmetry depends on the choice of LLM, we re-ran the STE computation on all 300 PersuasionForGood conversations using Phi-3-mini-4k-instruct [72] and Mistral-7B-v0.3 [73]. Supplementary Table S4 reports mean STE in each direction and the paired within-conversation contrast. The persuader →persuadee asymmetry replicates across all three models with large effect sizes ( d =1.14 –2.83 ), consistently exceeding the reverse direction by more than an order of magnitude. The null correlation between STE magnitude and persuasion success also replicated ( r = 0 .05 –0.11 ,all p > . 06 ), confirming that the structural asymmetry and its independence from outcome are not model-specific artefacts. 20 Table 10: Cross-model replication of the directional STE asymmetry (Experiment 2). All 300 con-versations per model. All values in bits per token. 
+
+Model Persuader →Persuadee Persuadee →Persuader Paired t d
+
+LLaMA 3.2-3B 1.70 0.05 19 .70 ∗∗∗ 1.14 
+
+Phi-3-mini-4k 1.70 0.11 39 .36 ∗∗∗ 2.27 
+
+Mistral-7B-v0.3 2.61 0.12 48 .98 ∗∗∗ 2.83 
+
+> ∗∗∗
+
+p < . 001 
+
+Experiment 3 Cross-Model Validation 
+
+To assess whether the Experiment 3 findings depend on the choice of LLM, we re-ran the STE com-putation on all 133 AnnoMI sessions using Phi-3-mini-4k-instruct [72] and Mistral-7B-v0.3 [73]. Supplementary Table S5 reports therapist-to-client STE by MI quality group and the corresponding effect sizes. Table 11: Cross-model replication of the therapeutic quality contrast (Experiment 3). All 133 An-noMI sessions per model. All values in bits per token. 
+
+Model High quality Low quality Welch t d Change talk r
+
+LLaMA 3.2-3B 0.76 1.62 2.40 ∗ −0.80 −.175 ∗
+
+Mistral-7B-v0.3 0.87 1.75 2.43 ∗ −0.71 −.190 ∗
+
+Phi-3-mini-4k 0.60 1.19 2.02 −0.66 −.190 ∗∗p < . 05 . High quality n = 110 , Low quality n = 23 .The direction of the effect is consistent across all three models: therapist-to-client STE is higher in low-quality than high-quality sessions in every case. The Phi-3-mini-4k result for the primary test is marginal ( p = .055 ), likely reflecting the smaller absolute STE values produced by that model, but the directional asymmetry contrast reaches significance ( p = .035 , d = −0.59 ) and the change talk correlation replicates clearly ( r = −.190 , p = .029 ). The convergence across architectures and scales supports the conclusion that the quality contrast reflects a property of the sessions rather than an artefact of the estimation model. 
+
+Experiment 4 Null model results (all atoms). Table 12 reports the full comparison of real versus null (shuffled) SPID atoms. Unique information was positive for real pairings but negative in the null, indicating that shuffled premises were individually counter-predictive of the claim. Real pairings also showed lower synergy than null pairings (real: M = 0.32; null: M = 0.51; t(1948) = −6.82 , p < . 001 ,
+
+d = 0 .33 ). This pattern follows from how the PID partitions I(Y ; X1, X 2) under the MMI redun-dancy functional, which bounds redundancy by the smaller marginal source-target mutual informa-tion. In shuffled pairings, both marginals are near zero, so redundancy and both unique terms col-lapse and any residual joint predictive structure (generic regularities arising whenever two texts are concatenated) is absorbed into synergy by construction. In real pairings, premises carry substantial individual mutual information with the claim, most of which routes into redundancy (shared topical content) and unique contributions (premise-specific evidence), leaving synergy to capture only the super-additive contribution that emerges when premises combine semantically. The lower synergy in real pairings therefore does not imply weaker semantic synergy: the partition distributes genuine semantic coupling across all four atoms, while in shuffled controls the smaller, non-semantic joint signal is concentrated in synergy alone. Real synergy remained significantly positive, and the logic-gate unit test (Methods) confirms that SPID isolates genuine synergistic structure where it exists. 
+
+CCS vs MMI comparison. CCS synergy ( M = 0 .15 ) was significantly lower than MMI synergy (M = 0 .32 ), paired t(324) = 11 .45 , p < . 001 . MMI and CCS redundancy estimates were highly correlated ( r = .90 , p < . 001 ). 21 Table 12: Real vs null SPID atoms (bits per token). Negative unique values in the null indicate that random premises are counter-predictive of the claim.                              
+
+> Atom Real MNull Mtpd
+> Redundancy 0.63 0.12 14.62 < . 001 1.42 Unique X10.20 −0.22 15.25 < . 001 0.77 Unique X20.19 −0.23 13.83 < . 001 0.75 Synergy 0.32 0.51 −6.82 < . 001 0.33
+
+Premise similarity. Semantic similarity between premise pairs (cosine similarity of all-MiniLM-L6-v2 embeddings) averaged M = 0 .42 (SD = 0.16) across the 325 triplets. 
+
+Synergy and claim length. Synergy was negatively correlated with claim length ( r = −.21 ,
+
+p < . 001 ), suggesting that longer claims are easier to predict from individual premises alone. 
+
+Pointwise variability. Although synergy was positive on average, individual samples showed sub-stantial variability, with some exhibiting negative pointwise synergy. This arises because we com-pute pointwise mutual information (per-token surprisal differences), which can be negative for indi-vidual observations even when the expected value is positive. 
+
+Masking versus Omission 
+
+Attention masking and physical omission are appropriate to structurally different settings and should not be treated as interchangeable. In multi-turn STE, omitting a speaker’s tokens changes the po-sitional encodings and hidden states of all downstream messages that attended to that speaker, so masking—which preserves the full sequence and severs only the relevant attention edges—is the correct choice. In the SPID setting, sources are independent and do not respond to one another, so omission is clean. Applying masking here is problematic because the full sequence [X1, X 2, Y ]
+
+is substantially longer than the marginal sequences [X1, Y ] or [Y ]; masked-but-present source to-kens shift Y ’s positional encodings even when direct attention is blocked, inflating all log-likelihood estimates by an approximately constant offset. We quantified this on all 325 AAE triplets by running both methods and comparing the result-ing SPID atoms (Table 13). Individual mutual information terms were each inflated by 5.5–5.9 bits per token under masking. The inflation is approximately equal across I(Y ; X1), I(Y ; X2),and I(Y ; X1, X 2), so it largely cancels in the synergy; but the residual distortion ( |∆Syn | = 0 .45 
+
+bits/token, SD = 0 .44 ) reverses the sign in 59% of samples (sign agreement: 41%) and shifts mean synergy from +0 .32 to −0.09 . Had masking been used in Experiment 4, the central qualitative finding of positive synergy would have been reversed. Table 13: Mean information atom values (bits per token) under omission and masking on N = 325 
+
+AAE triplets. Quantity Omission Masking |∆|
+
+I(Y ; X1) 0.836 6.680 5.843 
+
+I(Y ; X2) 0.819 6.506 5.688 
+
+I(Y ; X1, X 2) 1.343 6.741 5.398 Redundancy (MMI) 0.633 6.357 5.724 Synergy (MMI) +0.321 −0.088 0.454 This analysis does not carry over directly to STE, where both the “with” and “without” conditions operate on sequences of identical length and structure; the sequence-length artefact identified here cannot arise. The residual concern for STE is indirect leakage through intermediary speakers, which is structurally distinct from the positional artefact and likely smaller in magnitude. 
+
+Cross-Model Validation 
+
+To assess whether the SPID findings from Experiment 4 depend on the specific LLM used, we replicated the full analysis (all 325 premise-claim triplets, plus null permutations) using Phi-3-mini-22 4k-instruct [72] and Mistral-7B-v0.3 [73] alongside the original LLaMA 3.2-3B baseline. All mod-els used the omission-based marginalisation method. Supplementary Table S3 reports the key PID atoms for real and null (shuffled) premise pairings. Table 14: Cross-model comparison of SPID atoms on the AAE corpus ( n = 325 triplets). Null values are from premise-claim pairs with premises drawn from different essays. All values in bits per token. 
+
+Model Params Real syn Real red % pos syn Null red Red ratio 
+
+LLaMA 3.2-3B 3B 0.321 0.633 81.5% 0.121 5.2 ×
+
+Phi-3-mini-4k 3.8B 1.208 0.174 99.1% 0.005 38 ×
+
+Mistral-7B-v0.3 7B 0.808 0.301 95.4% 0.015 20 ×
+
+Across all three models and both architectures, mean synergy is positive and real redundancy sub-stantially exceeds null redundancy. The real/null redundancy ratio ranges from 5 × to 38 ×, with the contrast growing at larger model scale—though this trend should not be over-interpreted as it may reflect differences in base entropy rates rather than sensitivity to topical relatedness. Absolute mag-nitudes are not comparable across models because MI values are denominated in each model’s own token probability space. The qualitative structure of the decomposition is consistent: premises from the same essay share more information with the claim than cross-essay premise pairs, regardless of the model used to estimate probabilities. 23 References 
+
+[1] Edoardo Chidichimo, Andrea I. Luppi, Pedro A. M. Mediano, Victoria Leong, Guillaume Du-mas, Andr´ es Canales-Johnson, and Richard A. I. Bethlehem. Towards an informational account of interpersonal coordination. Nature Reviews Neuroscience , 27(2):121–137, February 2026. [2] Kenneth Ward Church and Patrick Hanks. Word association norms, mutual information, and lexicography. In Proceedings of the 27th annual meeting on Association for Computational Linguistics -, pages 76–83, Vancouver, British Columbia, Canada, 1989. Association for Com-putational Linguistics. [3] Scott Deerwester, Susan T. Dumais, George W. Furnas, Thomas K. Landauer, and Richard Harshman. Indexing by latent semantic analysis. Journal of the American Society for Infor-mation Science , 41(6):391–407, September 1990. [4] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention Is All You Need, August 2023. arXiv:1706.03762 [cs]. [5] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. In Proceedings of the 2019 Conference of the North , pages 4171–4186, Minneapolis, Minnesota, 2019. Association for Computational Linguistics. [6] Thomas Schreiber. Measuring information transfer. Physical Review Letters , 85(2):461–464, July 2000. [7] Paul L. Williams and Randall D. Beer. Nonnegative decomposition of multivariate information. 2010. Version Number: 1. [8] Xiaohan Ding, Michael Horning, and Eugenia H. Rho. Same Words, Different Meanings: Semantic Polarization in Broadcast Media Language Forecasts Polarity in Online Public Dis-course. Proceedings of the International AAAI Conference on Web and Social Media , 17:161– 172, June 2023. [9] Tal Linzen and Marco Baroni. Syntactic Structure from Deep Learning. Annual Review of Linguistics , 7(1):195–212, January 2021. [10] Ellie Pavlick. Semantic Structure in Deep Learning. Annual Review of Linguistics , 8(1):447– 471, January 2022. [11] Andrea I. Luppi, Fernando E. Rosas, Pedro A.M. Mediano, David K. Menon, and Em-manuel A. Stamatakis. Information decomposition and the informational architecture of the brain. Trends in Cognitive Sciences , 28(4):352–368, April 2024. [12] Virgil Griffith and Christof Koch. Quantifying synergistic mutual information, March 2014. arXiv:1205.4265 [cs, math, q-bio]. [13] Virgil Griffith and Tracey Ho. Quantifying redundant information in predicting a target random variable. Entropy , 17(12):4644–4653, July 2015. [14] Adam B. Barrett. Exploration of synergistic and redundant information sharing in static and dynamical Gaussian systems. Physical Review E , 91(5):052802, May 2015. [15] Naama Brenner, Steven P. Strong, Roland Koberle, William Bialek, and Rob R. De Ruyter Van Steveninck. Synergy in a Neural Code. Neural Computation , 12(7):1531–1552, July 2000. [16] Elad Schneidman, William Bialek, and Michael J. Berry. Synergy, Redundancy, and Indepen-dence in Population Codes. The Journal of Neuroscience , 23(37):11539–11553, December 2003. [17] Aaron J. Gutknecht, Fernando E. Rosas, David A. Ehrlich, Abdullah Makkeh, Pedro A. M. Mediano, and Michael Wibral. Shannon invariants: A scalable approach to information de-composition, April 2025. arXiv:2504.15779 [cs.IT]. 24 [18] Leor Zmigrod. The Ideological brain: a radical science of susceptible minds . Penguin Viking, London, 2025. [19] Xuewei Wang, Weiyan Shi, Richard Kim, Yoojung Oh, Sijia Yang, Jingwen Zhang, and Zhou Yu. Persuasion for Good: Towards a Personalized Persuasive Dialogue System for Social Good, January 2020. arXiv:1906.06725 [cs]. [20] Stephen Rollnick and William R. Miller. What is Motivational Interviewing? Behavioural and Cognitive Psychotherapy , 23(4):325–334, October 1995. [21] William R. Miller and Stephen Rollnick. Motivational interviewing: helping people change .Applications of motivational interviewing. Guilford Press, New York, NY London, third edi-tion edition, 2013. [22] Theresa B. Moyers and Tim Martin. Therapist influence on client language during motivational interviewing sessions. Journal of Substance Abuse Treatment , 30(3):245–251, April 2006. [23] Timothy R. Apodaca, Kristina M. Jackson, Brian Borsari, Molly Magill, Richard Longabaugh, Nadine R. Mastroleo, and Nancy P. Barnett. Which Individual Therapist Behaviors Elicit Client Change Talk and Sustain Talk in Motivational Interviewing? Journal of Substance Abuse Treatment , 61:60–65, February 2016. [24] Theresa B. Moyers, Tim Martin, Jon M. Houck, Paulette J. Christopher, and J. Scott Tonigan. From in-session behaviors to drinking outcomes: A causal chain for motivational interviewing. 
+
+Journal of Consulting and Clinical Psychology , 77(6):1113–1124, December 2009. [25] Molly Magill, Timothy R. Apodaca, Brian Borsari, Jacques Gaume, Ariel Hoadley, Rebecca E. F. Gordon, J. Scott Tonigan, and Theresa Moyers. A meta-analysis of motivational inter-viewing process: Technical, relational, and conditional process models of change. Journal of Consulting and Clinical Psychology , 86(2):140–157, February 2018. [26] William R. Miller, R. Gayle Benefield, and J. Scott Tonigan. Enhancing motivation for change in problem drinking: A controlled comparison of two therapist styles. Journal of Consulting and Clinical Psychology , 61(3):455–461, 1993. [27] Zixiu Wu, Simone Balloccu, Vivek Kumar, Rim Helaoui, Ehud Reiter, Diego Reforgiato Recu-pero, and Daniele Riboni. Anno-MI: A Dataset of Expert-Annotated Counselling Dialogues. In ICASSP 2022 - 2022 IEEE International Conference on Acoustics, Speech and Signal Pro-cessing (ICASSP) , pages 6177–6181, Singapore, Singapore, May 2022. IEEE. [28] Christian Stab and Iryna Gurevych. Parsing Argumentation Structures in Persuasive Essays, July 2016. arXiv:1604.07370 [cs]. [29] Tianyu Gao, Xingcheng Yao, and Danqi Chen. SimCSE: Simple Contrastive Learning of Sen-tence Embeddings. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing , pages 6894–6910, Online and Punta Cana, Dominican Republic, 2021. Association for Computational Linguistics. [30] Nils Reimers and Iryna Gurevych. Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. In Proceedings of the 2019 Conference on Empirical Methods in Natu-ral Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) , pages 3980–3990, Hong Kong, China, 2019. Association for Computational Linguistics. [31] Enrico Caprioglio, Pedro A. M. Mediano, and Luc Berthouze. Synergistic Motifs in Gaussian Systems. Physical Review Letters , 136(12):127401, March 2026. [32] A Nenkova, A Gravano, and J Hirschberg. High frequency word entrainment in spoken dia-logue. Proceedings of ACL-08 , Proceedings of ACL-08: HLT, Short Papers:169–172, 2008. [33] Cristian Danescu-Niculescu-Mizil and Lillian Lee. Chameleons in imagined conversations: A new approach to understanding coordination of linguistic style in dialogs, June 2011. arXiv:1106.3077 [cs]. 25 [34] Jonathan P. Chang, Caleb Chiam, Liye Fu, Andrew Wang, Justine Zhang, and Cristian Danescu-Niculescu-Mizil. ConvoKit: A Toolkit for the Analysis of Conversations. In Pro-ceedings of SIGDIAL , 2020. [35] Yla R. Tausczik and James W. Pennebaker. The Psychological Meaning of Words: LIWC and Computerized Text Analysis Methods. Journal of Language and Social Psychology , 29(1):24– 54, March 2010. [36] Thomas K. Landauer and Susan T. Dumais. A solution to Plato’s problem: The latent semantic analysis theory of acquisition, induction, and representation of knowledge. Psychological Review , 104(2):211–240, April 1997. [37] D. M. Blei, A. Y. Ng, and M. I. Jordan. Latent dirichlet allocation. J. Mach. Learn. Res. , pages 993–1022, 2003. [38] Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean. Efficient Estimation of Word Representations in Vector Space, September 2013. arXiv:1301.3781 [cs]. [39] Sreejan Kumar, Theodore R. Sumers, Takateru Yamakoshi, Ariel Goldstein, Uri Hasson, Ken-neth A. Norman, Thomas L. Griffiths, Robert D. Hawkins, and Samuel A. Nastase. Shared functional specialization in transformer-based language models and the human brain. Nature Communications , 15(1):5523, June 2024. [40] Ariel Goldstein, Zaid Zada, Eliav Buchnik, Mariano Schain, Amy Price, Bobbi Aubrey, Samuel A. Nastase, Amir Feder, Dotan Emanuel, Alon Cohen, Aren Jansen, Harshvardhan Gazula, Gina Choe, Aditi Rao, Catherine Kim, Colton Casto, Lora Fanda, Werner Doyle, Daniel Friedman, Patricia Dugan, Lucia Melloni, Roi Reichart, Sasha Devore, Adeen Flinker, Liat Hasenfratz, Omer Levy, Avinatan Hassidim, Michael Brenner, Yossi Matias, Kenneth A. Norman, Orrin Devinsky, and Uri Hasson. Shared computational principles for language pro-cessing in humans and deep language models. Nature Neuroscience , 25(3):369–380, March 2022. [41] Micha Heilbron, Kristijan Armeni, Jan-Mathijs Schoffelen, Peter Hagoort, and Floris P. De Lange. A hierarchy of linguistic predictions during natural language comprehension. Pro-ceedings of the National Academy of Sciences , 119(32):e2201968119, August 2022. [42] Zaid Zada, Ariel Goldstein, Sebastian Michelmann, Erez Simony, Amy Price, Liat Hasenfratz, Emily Barham, Asieh Zadbood, Werner Doyle, Daniel Friedman, Patricia Dugan, Lucia Mel-loni, Sasha Devore, Adeen Flinker, Orrin Devinsky, Samuel A. Nastase, and Uri Hasson. A shared model-based linguistic space for transmitting our thoughts from brain to brain in natural conversations. Neuron , 112(18):3211–3222.e5, September 2024. [43] Sandeep Soni, David Bamman, and Jacob Eisenstein. Predicting Long-Term Citations from Short-Term Linguistic Influence. In Findings of the Association for Computational Linguistics: EMNLP 2022 , pages 5700–5716, Abu Dhabi, United Arab Emirates, 2022. Association for Computational Linguistics. [44] Md. Nasir, Sandeep Nallan Chakravarthula, Brian R.W. Baucom, David C. Atkins, Panayio-tis Georgiou, and Shrikanth Narayanan. Modeling Interpersonal Linguistic Coordination in Conversations Using Word Mover’s Distance. In Interspeech 2019 , pages 1423–1427. ISCA, September 2019. [45] Greg Ver Steeg and Aram Galstyan. Information-Theoretic Measures of Influence Based on Content Dynamics, February 2013. arXiv:1208.4475 [cs]. [46] Rupert Kiddle, Petter T¨ ornberg, and Damian Trilling. Network toxicity analysis: an information-theoretic approach to studying the social dynamics of online toxicity. Journal of Computational Social Science , 7(1):305–330, April 2024. [47] Conor Finn and Joseph T. Lizier. Quantifying Information Modification in Cellular Automata using Pointwise Partial Information Decomposition. In The 2018 Conference on Artificial Life ,pages 386–387, Tokyo, Japan, 2018. MIT Press. 26 [48] Fernando Rosas, Pedro A.M. Mediano, Mart´ ın Ugarte, and Henrik J. Jensen. An Information-Theoretic Approach to Self-Organisation: Emergence of Complex Interdependencies in Cou-pled Dynamical Systems. Entropy , 20(10):793, October 2018. [49] Randall D. Beer and Paul L. Williams. Information Processing and Dynamics in Minimally Cognitive Agents. Cognitive Science , 39(1):1–38, January 2015. [50] Tycho Tax, Pedro Mediano, and Murray Shanahan. The partial information decomposition of generative neural network models. Entropy , 19(9):474, September 2017. [51] Abdullah Makkeh, Marcel Graetz, Andreas C. Schneider, David A. Ehrlich, Viola Priesemann, and Michael Wibral. A general framework for interpretable neural learning based on lo-cal information-theoretic goal functions. Proceedings of the National Academy of Sciences ,122(10):e2408125122, March 2025. [52] Thomas F. Varley and Patrick Kaminski. Untangling Synergistic Effects of Intersecting Social Identities with Partial Information Decomposition. Entropy , 24(10):1387, September 2022. [53] Zixuan Cang and Qing Nie. Inferring spatial and signaling relationships between cells from single cell transcriptomic data. Nature Communications , 11(1):2084, April 2020. [54] Pedro A. M. Mediano, Fernando E. Rosas, Andrea I. Luppi, Robin L. Carhart-Harris, Daniel Bor, Anil K. Seth, and Adam B. Barrett. Toward a unified taxonomy of information dynamics via Integrated Information Decomposition. Proceedings of the National Academy of Sciences ,122(39):e2423297122, September 2025. [55] Pedro Urbina-Rodriguez, Zafeirios Fountas, Fernando E. Rosas, Jun Wang, Andrea I. Luppi, Haitham Bou-Ammar, Murray Shanahan, and Pedro A. M. Mediano. A Brain-like Synergistic Core in LLMs Drives Behaviour and Learning, January 2026. arXiv:2601.06851 [cs]. [56] Uri T. Eden, Loren M. Frank, and Long Tao. Characterizing complex, multi-scale neural phenomena using state-space models. In Zhe Chen and Sridevi V. Sarma, editors, Dynamic Neuroscience , pages 29–52. Springer International Publishing, Cham, 2018. [57] Hongbin Na, Yining Hua, Zimu Wang, Tao Shen, Beibei Yu, Lilin Wang, Wei Wang, John Torous, and Ling Chen. A Survey of Large Language Models in Psychotherapy: Current Landscape and Future Directions, June 2025. arXiv:2502.11095 [cs]. [58] Fernando Chirigati. Collective deliberation driven by AI. Nature Computational Science ,4(11):802–802, November 2024. [59] Riccardo Ali, Francesco Caso, Christopher Irwin, and Pietro Li` o. Entropy-Lens: Uncovering Decision Strategies in LLMs, February 2026. arXiv:2502.16570 [cs.LG]. [60] Leonard Bereska and Efstratios Gavves. Mechanistic Interpretability for AI Safety – A Review, 2024. Version Number: 3. [61] Stefan Heimersheim and Neel Nanda. How to use and interpret activation patching, April 2024. arXiv:2404.15255 [cs]. [62] Fred I. Dretske. Knowledge & the flow of information . A Bradford book. MIT Pr, Cambridge, Mass, 4. print edition, 1986. [63] Chuan Guo, Geoff Pleiss, Yu Sun, and Kilian Q. Weinberger. On Calibration of Modern Neural Networks, August 2017. arXiv:1706.04599 [cs]. [64] Byung-Doh Oh and William Schuler. Why Does Surprisal From Larger Transformer-Based Language Models Provide a Poorer Fit to Human Reading Times? Transactions of the Associ-ation for Computational Linguistics , 11:336–350, March 2023. [65] Tong Liu, Iza ˇ Skrjanec, and Vera Demberg. Temperature-scaling surprisal estimates improve fit to human reading times – but does it do so for the “right reasons”? In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 9598–9619, Bangkok, Thailand, 2024. Association for Computational Linguistics. 27 [66] Steven Cao, Gregory Valiant, and Percy Liang. On the Entropy Calibration of Language Mod-els, January 2026. arXiv:2511.11966 [cs]. [67] Ali Shojaie and Emily B. Fox. Granger Causality: A Review and Recent Advances. Annual Review of Statistics and Its Application , 9(1):289–319, March 2022. [68] OpenAI. GPT-5 nano, August 2025. [69] Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, Amy Yang, Angela Fan, Anirudh Goyal, Anthony Hartshorn, Aobo Yang, Archi Mitra, Archie Sravanku-mar, Artem Korenev, Arthur Hinsvark, Arun Rao, Aston Zhang, Aurelien Rodriguez, Austen Gregerson, Ava Spataru, Baptiste Roziere, Bethany Biron, Binh Tang, Bobbie Chern, Char-lotte Caucheteux, Chaya Nayak, Chloe Bi, Chris Marra, Chris McConnell, Christian Keller, Christophe Touret, Chunyang Wu, Corinne Wong, Cristian Canton Ferrer, Cyrus Nikolaidis, Damien Allonsius, Daniel Song, Danielle Pintz, Danny Livshits, Danny Wyatt, David Es-iobu, Dhruv Choudhary, Dhruv Mahajan, Diego Garcia-Olano, Diego Perino, Dieuwke Hup-kes, Egor Lakomkin, Ehab AlBadawy, Elina Lobanova, Emily Dinan, Eric Michael Smith, Filip Radenovic, Francisco Guzm´ an, Frank Zhang, Gabriel Synnaeve, Gabrielle Lee, Geor-gia Lewis Anderson, Govind Thattai, Graeme Nail, Gregoire Mialon, Guan Pang, Guillem Cucurell, Hailey Nguyen, Hannah Korevaar, Hu Xu, Hugo Touvron, Iliyan Zarov, Imanol Ar-rieta Ibarra, Isabel Kloumann, Ishan Misra, Ivan Evtimov, Jack Zhang, Jade Copet, Jaewon Lee, Jan Geffert, Jana Vranes, Jason Park, Jay Mahadeokar, Jeet Shah, Jelmer van der Linde, Jennifer Billock, Jenny Hong, Jenya Lee, Jeremy Fu, Jianfeng Chi, Jianyu Huang, Jiawen Liu, Jie Wang, Jiecao Yu, Joanna Bitton, Joe Spisak, Jongsoo Park, Joseph Rocca, Joshua Johnstun, Joshua Saxe, Junteng Jia, Kalyan Vasuden Alwala, Karthik Prasad, Kartikeya Up-asani, Kate Plawiak, Ke Li, Kenneth Heafield, Kevin Stone, Khalid El-Arini, Krithika Iyer, Kshitiz Malik, Kuenley Chiu, Kunal Bhalla, Kushal Lakhotia, Lauren Rantala-Yeary, Lau-rens van der Maaten, Lawrence Chen, Liang Tan, Liz Jenkins, Louis Martin, Lovish Madaan, Lubo Malo, Lukas Blecher, Lukas Landzaat, Luke de Oliveira, Madeline Muzzi, Mahesh Pa-supuleti, Mannat Singh, Manohar Paluri, Marcin Kardas, Maria Tsimpoukelli, Mathew Old-ham, Mathieu Rita, Maya Pavlova, Melanie Kambadur, Mike Lewis, Min Si, Mitesh Kumar Singh, Mona Hassan, Naman Goyal, Narjes Torabi, Nikolay Bashlykov, Nikolay Bogoychev, Niladri Chatterji, Ning Zhang, Olivier Duchenne, Onur C ¸ elebi, Patrick Alrassy, Pengchuan Zhang, Pengwei Li, Petar Vasic, Peter Weng, Prajjwal Bhargava, Pratik Dubal, Praveen Krish-nan, Punit Singh Koura, Puxin Xu, Qing He, Qingxiao Dong, Ragavan Srinivasan, Raj Gana-pathy, Ramon Calderer, Ricardo Silveira Cabral, Robert Stojnic, Roberta Raileanu, Rohan Maheswari, Rohit Girdhar, Rohit Patel, Romain Sauvestre, Ronnie Polidoro, Roshan Sum-baly, Ross Taylor, Ruan Silva, Rui Hou, Rui Wang, Saghar Hosseini, Sahana Chennabas-appa, Sanjay Singh, Sean Bell, Seohyun Sonia Kim, Sergey Edunov, Shaoliang Nie, Sharan Narang, Sharath Raparthy, Sheng Shen, Shengye Wan, Shruti Bhosale, Shun Zhang, Simon Vandenhende, Soumya Batra, Spencer Whitman, Sten Sootla, Stephane Collot, Suchin Guru-rangan, Sydney Borodinsky, Tamar Herman, Tara Fowler, Tarek Sheasha, Thomas Georgiou, Thomas Scialom, Tobias Speckbacher, Todor Mihaylov, Tong Xiao, Ujjwal Karn, Vedanuj Goswami, Vibhor Gupta, Vignesh Ramanathan, Viktor Kerkez, Vincent Gonguet, Virginie Do, Vish Vogeti, V´ ıtor Albiero, Vladan Petrovic, Weiwei Chu, Wenhan Xiong, Wenyin Fu, Whitney Meers, Xavier Martinet, Xiaodong Wang, Xiaofang Wang, Xiaoqing Ellen Tan, Xide Xia, Xinfeng Xie, Xuchao Jia, Xuewei Wang, Yaelle Goldschlag, Yashesh Gaur, Yasmine Babaei, Yi Wen, Yiwen Song, Yuchen Zhang, Yue Li, Yuning Mao, Zacharie Delpierre Coud-ert, Zheng Yan, Zhengxing Chen, Zoe Papakipos, Aaditya Singh, Aayushi Srivastava, Abha Jain, Adam Kelsey, Adam Shajnfeld, Adithya Gangidi, Adolfo Victoria, Ahuva Goldstand, Ajay Menon, Ajay Sharma, Alex Boesenberg, Alexei Baevski, Allie Feinstein, Amanda Kallet, Amit Sangani, Amos Teo, Anam Yunus, Andrei Lupu, Andres Alvarado, Andrew Caples, An-drew Gu, Andrew Ho, Andrew Poulton, Andrew Ryan, Ankit Ramchandani, Annie Dong, Annie Franco, Anuj Goyal, Aparajita Saraf, Arkabandhu Chowdhury, Ashley Gabriel, Ashwin Bharambe, Assaf Eisenman, Azadeh Yazdan, Beau James, Ben Maurer, Benjamin Leonhardi, Bernie Huang, Beth Loyd, Beto De Paola, Bhargavi Paranjape, Bing Liu, Bo Wu, Boyu Ni, Braden Hancock, Bram Wasti, Brandon Spence, Brani Stojkovic, Brian Gamido, Britt Mon-talvo, Carl Parker, Carly Burton, Catalina Mejia, Ce Liu, Changhan Wang, Changkyu Kim, Chao Zhou, Chester Hu, Ching-Hsiang Chu, Chris Cai, Chris Tindal, Christoph Feichtenhofer, 28 Cynthia Gao, Damon Civin, Dana Beaty, Daniel Kreymer, Daniel Li, David Adkins, David Xu, Davide Testuggine, Delia David, Devi Parikh, Diana Liskovich, Didem Foss, Dingkang Wang, Duc Le, Dustin Holland, Edward Dowling, Eissa Jamil, Elaine Montgomery, Eleonora Presani, Emily Hahn, Emily Wood, Eric-Tuan Le, Erik Brinkman, Esteban Arcaute, Evan Dunbar, Evan Smothers, Fei Sun, Felix Kreuk, Feng Tian, Filippos Kokkinos, Firat Ozgenel, Francesco Caggioni, Frank Kanayet, Frank Seide, Gabriela Medina Florez, Gabriella Schwarz, Gada Badeer, Georgia Swee, Gil Halpern, Grant Herman, Grigory Sizov, Guangyi, Zhang, Guna Lakshminarayanan, Hakan Inan, Hamid Shojanazeri, Han Zou, Hannah Wang, Han-wen Zha, Haroun Habeeb, Harrison Rudolph, Helen Suk, Henry Aspegren, Hunter Goldman, Hongyuan Zhan, Ibrahim Damlaj, Igor Molybog, Igor Tufanov, Ilias Leontiadis, Irina-Elena Veliche, Itai Gat, Jake Weissman, James Geboski, James Kohli, Janice Lam, Japhet Asher, Jean-Baptiste Gaya, Jeff Marcus, Jeff Tang, Jennifer Chan, Jenny Zhen, Jeremy Reizenstein, Jeremy Teboul, Jessica Zhong, Jian Jin, Jingyi Yang, Joe Cummings, Jon Carvill, Jon Shep-ard, Jonathan McPhie, Jonathan Torres, Josh Ginsburg, Junjie Wang, Kai Wu, Kam Hou U, Karan Saxena, Kartikay Khandelwal, Katayoun Zand, Kathy Matosich, Kaushik Veeraragha-van, Kelly Michelena, Keqian Li, Kiran Jagadeesh, Kun Huang, Kunal Chawla, Kyle Huang, Lailin Chen, Lakshya Garg, Lavender A, Leandro Silva, Lee Bell, Lei Zhang, Liangpeng Guo, Licheng Yu, Liron Moshkovich, Luca Wehrstedt, Madian Khabsa, Manav Avalani, Manish Bhatt, Martynas Mankus, Matan Hasson, Matthew Lennie, Matthias Reso, Maxim Groshev, Maxim Naumov, Maya Lathi, Meghan Keneally, Miao Liu, Michael L. Seltzer, Michal Valko, Michelle Restrepo, Mihir Patel, Mik Vyatskov, Mikayel Samvelyan, Mike Clark, Mike Macey, Mike Wang, Miquel Jubert Hermoso, Mo Metanat, Mohammad Rastegari, Munish Bansal, Nandhini Santhanam, Natascha Parks, Natasha White, Navyata Bawa, Nayan Singhal, Nick Egebo, Nicolas Usunier, Nikhil Mehta, Nikolay Pavlovich Laptev, Ning Dong, Norman Cheng, Oleg Chernoguz, Olivia Hart, Omkar Salpekar, Ozlem Kalinli, Parkin Kent, Parth Parekh, Paul Saab, Pavan Balaji, Pedro Rittner, Philip Bontrager, Pierre Roux, Piotr Dollar, Polina Zvyag-ina, Prashant Ratanchandani, Pritish Yuvraj, Qian Liang, Rachad Alao, Rachel Rodriguez, Rafi Ayub, Raghotham Murthy, Raghu Nayani, Rahul Mitra, Rangaprabhu Parthasarathy, Ray-mond Li, Rebekkah Hogan, Robin Battey, Rocky Wang, Russ Howes, Ruty Rinott, Sachin Mehta, Sachin Siby, Sai Jayesh Bondu, Samyak Datta, Sara Chugh, Sara Hunt, Sargun Dhillon, Sasha Sidorov, Satadru Pan, Saurabh Mahajan, Saurabh Verma, Seiji Yamamoto, Sharadh Ra-maswamy, Shaun Lindsay, Shaun Lindsay, Sheng Feng, Shenghao Lin, Shengxin Cindy Zha, Shishir Patil, Shiva Shankar, Shuqiang Zhang, Shuqiang Zhang, Sinong Wang, Sneha Agar-wal, Soji Sajuyigbe, Soumith Chintala, Stephanie Max, Stephen Chen, Steve Kehoe, Steve Satterfield, Sudarshan Govindaprasad, Sumit Gupta, Summer Deng, Sungmin Cho, Sunny Virk, Suraj Subramanian, Sy Choudhury, Sydney Goldman, Tal Remez, Tamar Glaser, Tamara Best, Thilo Koehler, Thomas Robinson, Tianhe Li, Tianjun Zhang, Tim Matthews, Timothy Chou, Tzook Shaked, Varun Vontimitta, Victoria Ajayi, Victoria Montanez, Vijai Mohan, Vinay Satish Kumar, Vishal Mangla, Vlad Ionescu, Vlad Poenaru, Vlad Tiberiu Mihailescu, Vladimir Ivanov, Wei Li, Wenchen Wang, Wenwen Jiang, Wes Bouaziz, Will Constable, Xi-aocheng Tang, Xiaojian Wu, Xiaolan Wang, Xilun Wu, Xinbo Gao, Yaniv Kleinman, Yanjun Chen, Ye Hu, Ye Jia, Ye Qi, Yenda Li, Yilin Zhang, Ying Zhang, Yossi Adi, Youngjin Nam, Yu, Wang, Yu Zhao, Yuchen Hao, Yundi Qian, Yunlu Li, Yuzi He, Zach Rait, Zachary DeVito, Zef Rosnbrick, Zhaoduo Wen, Zhenyu Yang, Zhiwei Zhao, and Zhiyu Ma. The Llama 3 Herd of Models, November 2024. arXiv:2407.21783 [cs]. [70] Alberto Liardi, Fernando E. Rosas, Robin L. Carhart-Harris, George Blackburne, Daniel Bor, and Pedro A. M. Mediano. Null models for comparing information decomposition across complex systems. PLOS Computational Biology , 21(11):e1013629, November 2025. [71] Robin Ince. Measuring multivariate redundant information with pointwise common change in surprisal. Entropy , 19(7):318, June 2017. [72] Marah Abdin, Jyoti Aneja, Hany Awadalla, Ahmed Awadallah, Ammar Ahmad Awan, Nguyen Bach, Amit Bahree, Arash Bakhtiari, Jianmin Bao, Harkirat Behl, Alon Benhaim, Misha Bilenko, Johan Bjorck, S´ ebastien Bubeck, Martin Cai, Qin Cai, Vishrav Chaudhary, Dong Chen, Dongdong Chen, Weizhu Chen, Yen-Chun Chen, Yi-Ling Chen, Hao Cheng, Parul Chopra, Xiyang Dai, Matthew Dixon, Ronen Eldan, Victor Fragoso, Jianfeng Gao, Mei Gao, Min Gao, Amit Garg, Allie Del Giorno, Abhishek Goswami, Suriya Gunasekar, Emman Haider, Junheng Hao, Russell J. Hewett, Wenxiang Hu, Jamie Huynh, Dan Iter, Sam Ade Ja-29 cobs, Mojan Javaheripi, Xin Jin, Nikos Karampatziakis, Piero Kauffmann, Mahoud Khademi, Dongwoo Kim, Young Jin Kim, Lev Kurilenko, James R. Lee, Yin Tat Lee, Yuanzhi Li, Yun-sheng Li, Chen Liang, Lars Liden, Xihui Lin, Zeqi Lin, Ce Liu, Liyuan Liu, Mengchen Liu, Weishung Liu, Xiaodong Liu, Chong Luo, Piyush Madan, Ali Mahmoudzadeh, David Majer-cak, Matt Mazzola, Caio C´ esar Teodoro Mendes, Arindam Mitra, Hardik Modi, Anh Nguyen, Brandon Norick, Barun Patra, Daniel Perez-Becker, Thomas Portet, Reid Pryzant, Heyang Qin, Marko Radmilac, Liliang Ren, Gustavo de Rosa, Corby Rosset, Sambudha Roy, Olatunji Ruwase, Olli Saarikivi, Amin Saied, Adil Salim, Michael Santacroce, Shital Shah, Ning Shang, Hiteshi Sharma, Yelong Shen, Swadheen Shukla, Xia Song, Masahiro Tanaka, Andrea Tupini, Praneetha Vaddamanu, Chunyu Wang, Guanhua Wang, Lijuan Wang, Shuohang Wang, Xin Wang, Yu Wang, Rachel Ward, Wen Wen, Philipp Witte, Haiping Wu, Xiaoxia Wu, Michael Wyatt, Bin Xiao, Can Xu, Jiahang Xu, Weijian Xu, Jilong Xue, Sonali Yadav, Fan Yang, Jian-wei Yang, Yifan Yang, Ziyi Yang, Donghan Yu, Lu Yuan, Chenruidong Zhang, Cyril Zhang, Jianwen Zhang, Li Lyna Zhang, Yi Zhang, Yue Zhang, Yunan Zhang, and Xiren Zhou. Phi-3 Technical Report: A Highly Capable Language Model Locally on Your Phone, August 2024. arXiv:2404.14219 [cs]. [73] Albert Q. Jiang, Alexandre Sablayrolles, Arthur Mensch, Chris Bamford, Devendra Singh Chaplot, Diego de las Casas, Florian Bressand, Gianna Lengyel, Guillaume Lample, Lucile Saulnier, L´ elio Renard Lavaud, Marie-Anne Lachaux, Pierre Stock, Teven Le Scao, Thibaut Lavril, Thomas Wang, Timoth´ ee Lacroix, and William El Sayed. Mistral 7B, October 2023. arXiv:2310.06825 [cs]. 30
