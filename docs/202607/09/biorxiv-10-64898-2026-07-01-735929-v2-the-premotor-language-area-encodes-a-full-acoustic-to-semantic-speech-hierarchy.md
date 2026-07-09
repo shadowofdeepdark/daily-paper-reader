@@ -1,0 +1,24 @@
+---
+title: The Premotor Language Area Encodes a Full Acoustic-to-semantic Speech Hierarchy
+title_zh: 前运动语言区编码完整的从声学到语义的言语层级
+authors: "Guo, S., Huth, A."
+date: 2026-07-06
+pdf: "https://www.biorxiv.org/content/10.64898/2026.07.01.735929v2.full.pdf"
+tags: ["query:q7"]
+score: 8.0
+evidence: 从声学到语义的语音层级神经机制
+tldr: 该研究重新审视前运动皮层在语音感知中的作用，通过自然语音刺激与计算编码模型分析前运动语言区中的多层级语音表征。结果发现，该区域不仅编码声学和发音相关信息，还包含音位与语义等高级表征，并沿后前方向形成由低到高的层级梯度，其组织方式与经典颞叶语音通路相似，挑战了传统“前运动区仅负责发音”的观点。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-01-735929-v2/fig-001.webp\", \"caption\": \"Figure 1. The premotor language area (PML) and other functional areas localized in the (pre)motor region. All ROIs are hand-drawn from contrast maps, not based on a prespecified\", \"page\": 4, \"index\": 1, \"width\": 1012, \"height\": 817}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-01-735929-v2/fig-002.webp\", \"caption\": \"Figure 2. Speech representations in PML follow a functional gradient that is aligned with the anterior-posterior axis. (A & B) Top: Encoding performance of WavLM layers (A) and other discrete speech features (B) shows that acoustic features (lower WavLM layers, spectral, and articulation) well model posterior PML only, while anterior PML is well modeled by semantic features (upper WavLM layers, word embedding, and contextual embedding) only. All models predicted PML bin performances significantly better than chance ( , permutation test, 𝑝 < 0 . 001 FDR corrected), except for spectral and WavLM layer 0 in the two most anterior bins in the right hemisphere. Bottom: center of mass across bins for each feature space shows a gradual increase in model performance towards anterior bins for higher-level features, indicating a\", \"page\": 7, \"index\": 2, \"width\": 1019, \"height\": 898}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-01-735929-v2/fig-003.webp\", \"caption\": \"Figure 3. PML among other functional networks in the greater cortical landscape. (A) tsFC strength (hue) and preference to anterior (blue) or posterior (red) PML, for all cortical voxels. The PML functional gradient is correlated with the known speech processing pathway in temporal AR. Bin preference is calculated as the center of mass (CoM) for the average tsFC in\", \"page\": 10, \"index\": 3, \"width\": 1021, \"height\": 986}]"
+motivation: 传统模型主要强调颞叶在语音感知中的作用，而前运动皮层是否参与更高层次语音处理及其组织方式仍不明确。
+method: 研究结合自然语音感知实验与计算编码模型，利用声学、音位、语义及深度神经网络表征分析前运动语言区中的语音信息组织。
+result: 研究发现前运动语言区包含从低层声学到高层语义的完整语音表征，并沿后部到前部呈现逐渐抽象化的层级梯度结构。
+conclusion: 研究表明，前运动语言区并非仅负责发音控制，而是与颞叶听觉皮层类似，具备从声学到语义的层级化语音处理能力。
+---
+
+## 摘要
+经典的人类言语与语言神经生物学模型强调颞叶在言语感知中的主导作用，而包括腹侧前运动皮层（PMv）在内的前运动区域则被置于构音加工层面。然而，越来越多来自神经影像学、临床及计算研究的证据表明，前运动皮层在言语加工中的作用可能超越构音本身。不过，这些与言语相关表征的具体范围及其功能组织方式仍不明确。在本研究中，我们结合自然情境下的言语感知与计算编码模型，对PMv内部言语表征的组织结构进行了刻画。我们在功能上定位了一个涵盖既往报道之前运动言语区域的皮层区域，并将其命名为前运动语言区（PML）。通过使用声学、音位、语义以及深度神经网络言语表征，我们发现PML包含跨越完整言语加工层级的表征，从低层次声学特征到高层次语义信息均有涉及。这些表征沿着平滑的后—前梯度排列，且越靠近PML前部，言语表征越趋于抽象。此外，这种组织梯度与颞叶听觉区域中的经典言语加工层级相对应。上述发现挑战了将前运动皮层主要视为声学—构音单元的传统观点，而是将PML确定为一个具有层级化组织的言语加工区域，并与颞叶听觉皮层形成平行结构。这为理解前运动皮层在言语感知中的作用提供了新的框架。
+
+## Abstract
+Classic neurobiological models of human speech and language have emphasized the dominant role of temporal lobe in speech perception, while premotor regions including the ventral premotor cortex (PMv) are situated at the level of articulatory processing. However, accumulating evidence from neuroimaging, clinical, and computational studies suggests that premotor cortex may contribute to speech processing beyond articulation. The precise extent and functional organization of these speech-related representations, however, remain unclear. In this study, we combined naturalistic speech perception with computational encoding models to characterize the organization of speech representations within PMv. We functionally localized a cortical region that encompasses previously described premotor speech areas, which we term the premotor language area (PML). Using acoustic, phonemic, semantic, and deep neural speech representations, we found that PML contains representations spanning the full speech-processing hierarchy, from low-level acoustic features to high-level semantic information. These representations are arranged along a smooth posterior-anterior gradient, with increasingly abstract speech representations emerging toward anterior PML. Moreover, this organizational gradient mirrors the canonical speech processing hierarchy in the temporal auditory regions. These findings challenge the traditional view of premotor cortex as primarily an acoustic-articulatory unit, and instead identify PML as a hierarchically organized speech-processing region that parallels the temporal auditory cortex. This provides a new framework for understanding the role of premotor cortex in speech perception.

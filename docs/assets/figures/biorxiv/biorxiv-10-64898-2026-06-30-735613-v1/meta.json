@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/biorxiv/biorxiv-10-64898-2026-06-30-735613-v1/fig-001.webp",
+      "caption": "Figure 4 Average cortical map of implied trajectory curvature across all datasets and subjects. For each subject and story, voxel-wise AR(1) coefficients were estimated from the run-averaged response time course, projected onto the cortical surface, and aligned to the fsaverage template. AR(1) maps were then averaged across subject–story datasets and converted to implied trajectory curvature using the analytic relationship between ϕ and θ. Coherence was computed voxel-wise and averaged in the same fsaverage space; only vertices with mean coherence above the 60th percentile and greater than 0.05 are shown. The group-average map preserves the spatial organization observed in the example subject: inferred curvature is highest in AC and decreases along the cortical hierarchy toward higher-order speech processing regions. This pattern indicates that the cortical gradient in trajectory curvature is reproducible across subjects and stories.",
+      "page": 6,
+      "index": 1,
+      "width": 483,
+      "height": 351
+    },
+    {
+      "url": "assets/figures/biorxiv/biorxiv-10-64898-2026-06-30-735613-v1/fig-002.webp",
+      "caption": "Figure 1 Estimating neural curvature from fMRI data: experimental design, computational hypothesis, and analysis methods. (a) Experimental design. fMRI BOLD responses were recorded while subjects listened to narrative stories (data originally reported in Ref. [30]). Our analysis is largely focused on four hierarchically organized areas in the human speech processing system. AC: Auditory cortex, sPMv: superior ventral premotor cortex, AG: angular gyrus, PFC: prefrontal cortex. (b) Computational hypothesis. The temporal straightening hypothesis posits that neural trajectories become straighter along the processing hierarchy in order to facilitate prediction of future internal states. (c) Response trajectories for a pair of units with fast-changing responses (black curve: neural signal; orange curve: noisy measurement). Noise added to the trajectory biases its curvature upward. (d) The response trajectory of a pair of units with slow-changing responses. Trajectory curvature is similarly biased upwards when noise is added. (e) Direct curvature estimates are plotted against the AR coefficient (which controls representational timescale) for a set of simulated 100-D trajectories, which varied in their signal (X-axis) and noise (color) properties. At low noise, the AR coefficient and curvature are tightly linked. Symbols show the average across 500 runs of the simulation. (f) Estimated representational timescale plotted against ground truth value for AR(1) response trajectories that varied in timescale (abscissa) and noise level (light vs dark colors). Symbols show the mean across 500 runs, error bars indicate the cental 95 % of the distribution. (g) Curvature estimation error as a function of ground truth value for two estimation methods (orange vs black), applied to a set of simulated 100-dimensional trajectories. Estimates are based on trial-averaged responses across 10 repeated presentations. Thick lines show the mean across 500 runs of the simulation, colored bands indicate the central 95 % of the distribution.",
+      "page": 2,
+      "index": 2,
+      "width": 560,
+      "height": 627
+    },
+    {
+      "url": "assets/figures/biorxiv/biorxiv-10-64898-2026-06-30-735613-v1/fig-003.webp",
+      "caption": "Figure 5 Temporal straightening in WavLM is tailored to the statistics of natural speech. (a) Schematic of the WavLM architecture. Auditory speech stimuli are first processed by a 7-layer CNN encoder, which provides input to a 25-layer transformer encoder. (b) Layer-wise trajectory curvature estimated using the direct estimation procedure from model hidden-state representations elicited by the same auditory speech stimuli used in our fMRI experiments. Closed symbols: CNN layers; open symbols: Transformer layers. Dotted lines show the same analysis performed in the untrained model. Progressive straightening emerges following training on natural speech data. (c) Hierarchical evolution of WavLM trajectory curvature for different input stimuli. We probed the network with natural speech (yellow), reversed speech (red), phase-scrambled speech (green), and white noise (black). Temporal straightening was strongest for natural speech, reduced for reversed speech, and substantially attenuated for phasescrambled speech and white noise.",
+      "page": 7,
+      "index": 3,
+      "width": 561,
+      "height": 221
+    },
+    {
+      "url": "assets/figures/biorxiv/biorxiv-10-64898-2026-06-30-735613-v1/fig-004.webp",
+      "caption": "Figure 6 Temporal straightening generalizes across temporal resolutions. (a) Comparison of direct (orange) and indirect (black) trajectory curvature estimates in WavLM responses to natural speech. Because the network is noiseless, the direct method provides a ground-truth estimate of trajectory curvature. The indirect method captures the overall decreasing trend along the network hierarchy, but underestimates the magnitude of this effect. (b) WavLM trajectory curvature computed from network responses resampled to different sampling rates. Hierarchical straightening is evident at each temporal resolution. Overall curvature was higher at slower sampling rates, whereas the decrease in curvature across the network hierarchy was larger at faster sampling rates. (c) fMRI trajectory curvature computed from brain responses resampled to different sampling rates. Hierarchical straightening is evident at each temporal resolution for the indirect estimates, but not for the direct estimates. As in WavLM, overall curvature was higher at slower sampling rates, whereas the decrease in curvature across the cortical hierarchy was larger at faster sampling rates. Lines show the average curvature estimates across all datasets. Left: direct method. Right: indirect method.",
+      "page": 8,
+      "index": 4,
+      "width": 734,
+      "height": 231
+    },
+    {
+      "url": "assets/figures/biorxiv/biorxiv-10-64898-2026-06-30-735613-v1/fig-005.webp",
+      "caption": "Figure 7 Curvature and timescale in simulated populations of spiking neurons. (a) We used the continuous modulated Poisson model [42] to simulate spiking activity for populations of neurons driven by time-varying inputs. The pattern of spiking activity is structured by each neuron’s stimulus selectivity (f(S,t)), time-varying excitability (G(t)), and Poisson noise (dice). The model’s closed form expressions for spike count distributions enabled us to express population trajectories in a representational distance space. Trajectory curvature was computed in this space. (b) Example units (two per panel) with fast vs slow signal timescale (top vs bottom). (c) Example units (two per panel) with fast vs slow noise timescale (top vs bottom). (d) Neural trajectory curvature plotted as a function of signal timescale. Each symbol illustrates the curvature of a single population trajectory (population size = 100 units; counting window = 200 ms), color indicates noise timescale (fast vs slow). Fast signal timescales yielded trajectories with high curvature, whereas slow signal timescales yielded nearly straight trajectories. The timescale of neural noise had no effect on trajectory curvature. (e) Neural trajectory curvature plotted as a function of signal timescale for populations composed of 20 (open symbols) vs 100 (closed symbols) units. Plotting conventions are identical to panel d. Trajectory curvature depended primarily on representational timescale and was unaffected by population size.",
+      "page": 9,
+      "index": 5,
+      "width": 996,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/biorxiv/biorxiv-10-64898-2026-06-30-735613-v1/fig-006.webp",
+      "caption": "Figure 3 Subject-level cortical maps of implied trajectory curvature. Curvature estimates are shown separately for each subject while listening to story 01, using the same indirect estimation procedure as in Fig. 3. For each voxel, we fit an AR(1) model to the run-averaged response time course and converted the estimated autoregressive coefficient to implied trajectory curvature using the analytic relationship between ϕ and θ. Only voxels with coherence values above the 80th percentile and greater than 0.05 are shown. Across subjects, implied curvature is highest in medial AC and decreases progressively both within AC and along the broader cortical hierarchy toward higher-order speech processing areas. These maps show that the spatial gradient observed in the example subject is consistent across individual participants.",
+      "page": 5,
+      "index": 6,
+      "width": 888,
+      "height": 506
+    }
+  ]
+}

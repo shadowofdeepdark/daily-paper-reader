@@ -1,0 +1,24 @@
+---
+title: Overt visual attention modulates decision-related signals in the frontal cortex
+title_zh: 外显视觉注意调制额叶皮层中的决策相关信号
+authors: "Shevlin, B. R. K., Gwinn, R. E., Makwana, A., Krajbich, I."
+date: 2026-07-07
+pdf: "https://www.biorxiv.org/content/10.1101/2024.10.25.620227v3.full.pdf"
+tags: ["query:q5"]
+score: 6.5
+evidence: 结合眼动追踪和fMRI研究注意力引导的证据积累
+tldr: 该研究探讨视觉注意如何影响价值决策中的证据积累过程及其神经基础。研究者结合眼动追踪与fMRI，让受试者逐步学习两种彩票型食物的价值，从而区分已采样证据与累积证据。结果发现，dlPFC和pre-SMA比vmPFC等区域更稳定地表征累积价值信号，而注视时间不仅提高选项被选择概率，还会增强pre-SMA和部分dlPFC中的累积价值活动，说明视觉注意会持续调制决策变量。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-1101-2024-10-25-620227-v3/fig-001.webp\", \"caption\": \"Figure 7. Sample-level correlations between value signal regressors. Pearson correlations 654 computed across samples for different quantifications of sampled value (∆SV) and accumulated 655 value (∆AV). Values represent correlations between absolute magnitudes of each measure. |∆SV| 656 = absolute sampled value difference; |∆AV| = absolute accumulated value difference; lagged 657 |∆AV| = absolute accumulated value difference up to the previous sample; |∆SVGaze| = gaze-658 weighted sampled value; |∆AVGaze| = gaze-weighted accumulated value; lagged |∆AVGaze| = 659 gaze-weighted accumulated value from the previous sample. 660 661 We constructed each trial’s sequence of items pseudo-randomly to minimize the 662 correlation between the sampled value signal (|∆SV|; i.e., the absolute difference in sampled input 663 values) and the accumulated value signal (|∆AV|; i.e., the absolute difference in accumulated 664\", \"page\": 32, \"index\": 1, \"width\": 679, \"height\": 589}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-1101-2024-10-25-620227-v3/fig-002.webp\", \"caption\": \"Figure 2. Example trial with the sampled value and accumulated value. The sampled value 187 (∆SV; red) and accumulated value (∆AV; black) are plotted for this example trial. For the first draw, 188 ∆SV and ∆AV are identical. However, as the trial proceeds, the two signals diverge. In the model, 189 a choice is made when the |∆AV| reaches a pre-specified decision boundary. 190 191 192 Behavioral results 193 A core assumption of SSMs is that individuals decide based on the evidence accumulated 194 over the course of the decision. We thus anticipated that subjects would choose in line with ∆AV 195\", \"page\": 9, \"index\": 2, \"width\": 945, \"height\": 323}]"
+motivation: 已有研究认为注意会引导证据积累式决策，但其神经机制以及视觉注意如何影响累积证据表征仍不清楚。
+method: 研究结合眼动追踪与fMRI，让受试者在逐步获知两种彩票型食物价值的过程中做选择，从而区分已采样证据与累积证据。
+result: 结果发现vmPFC、腹侧纹状体和IPS与证据的相关性不稳定，而dlPFC与pre-SMA更稳定地编码累积证据，且更多注视会提高被选概率并增强这些区域中的价值累积信号。
+conclusion: 视觉注意不仅影响即时采样，还会持续调制累积证据的神经表征，pre-SMA与dlPFC可能编码了受注视加权的决策变量。
+---
+
+## 摘要
+在两个选项之间表达偏好时，决策者通常被认为会在注意力引导的过程中对证据进行比较与累积。目前，对于这一过程的神经基础，以及视觉注意如何影响累积证据的表征，人们知之甚少。我们开展了一项同时结合眼动追踪与功能性磁共振成像（fMRI）的人体实验，在实验中，受试者逐步学习两个食物彩票选项的价值。借助这一设计，我们能够将决策过程延长至较长时间尺度，操控证据出现的时间起点，从而区分已采样证据与累积证据。我们观察到，腹内侧前额叶皮层（vmPFC）、腹侧纹状体以及顶内沟（IPS）的活动与已采样证据和累积证据之间的相关性并不一致；而背外侧前额叶皮层（dlPFC）和前辅助运动区（pre-SMA）的活动则与累积证据表现出更为一致的相关性。我们还发现，对某一选项投注更多凝视会提高其被选择的概率，并且凝视会稳定地增强前辅助运动区以及部分背外侧前额叶皮层中的累积价值信号，且这种增强超出了不受凝视调制的信号范围。这为视觉注意会对决策变量产生持续影响提供了新的证据，并表明前辅助运动区和背外侧前额叶皮层中的活动反映了经过凝视加权的累积证据。这些结果为理解凝视驱动决策过程的神经机制提供了新的见解。
+
+## Abstract
+When indicating a preference between two options, decision makers are thought to compare and accumulate evidence in an attention-guided process. Little is known about this process's neural substrates or how visual attention affects the representations of accumulated evidence. We conducted a simultaneous eye-tracking and fMRI experiment in which human subjects gradually learned about the value of two food-lotteries. With this design we were able to extend decisions over a prolonged time-course, manipulate the temporal onset of evidence, and therefore dissociate sampled and accumulated evidence. We observed inconsistent correlations of both sampled and accumulated evidence with activity in the ventromedial prefrontal cortex (vmPFC), the ventral striatum, and the intraparietal sulcus (IPS), and more consistent correlations of accumulated evidence with activity in the dorsolateral prefrontal cortex (dlPFC) and pre-supplementary motor area (pre-SMA). We also found that more gaze on an option increased its choice probability and that gaze consistently amplified accumulated-value signals above and beyond the non-gaze-modulated signals in the pre-SMA and partially in the dlPFC, providing novel evidence that visual attention has lasting effects on decision variables and suggesting that activity in the pre-SMA and dlPFC reflect gaze-weighted accumulated evidence. These results shed new light on the neural mechanisms underlying gaze-driven decision processes.
