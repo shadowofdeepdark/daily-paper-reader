@@ -6,73 +6,80 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-09
-- 运行时间：2026-07-09 22:02:53 UTC
+- 最新运行日期：2026-07-10
+- 运行时间：2026-07-10 20:18:23 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：6
+- 本次总论文数：19
+- 精读区：8
 - 速读区：11
 
 ### 今日简报（AI）
-今日共处理 17 篇论文，重点聚焦自然阅读中的语义整合、词汇预期与脑电 N400/P600 动态机制。  
-最值得关注的是两篇高分研究：语境语义相关性与词汇 surprisal 被证明会共同影响自然阅读中的 N400/P600 变化，进一步强化了“语言预测驱动理解”的证据。  
-下一步可优先补读语言理解与神经表征方向，同时结合语音规划、婴儿语音追踪和注视控制研究，建立更完整的认知加工视角。
-- 详情：[/202607/09/README](/202607/09/README)
+- 今日共生成 19 篇推荐（精读 8 篇，速读 11 篇）
+- 精读：《Contextual Semantic Relevance and Word Surprisal Predict N400 and P600 Dynamics During Naturalistic Reading》（9.5/10）, 《LEXIC: Lightweight Eye-tracking eXtension via Injected Complexity》（9.5/10）
+- 速读：《The human language processing system straightens natural speech》（8.5/10）, 《Judging the reasons for fixations: A direct experimental method to assess the contribution of saliency and semantic factors to gaze control》（8.5/10）, 《The Premotor Language Area Encodes a Full Acoustic-to-semantic Speech Hierarchy》（8.5/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202607/10/README](/202607/10/README)
 
 ### 精读区论文标签
-1. [Semantic Integration and Lexical Expectation Shape N400 and P600 Dynamics During Naturalistic Reading](/202607/09/2607.04107v1-semantic-integration-and-lexical-expectation-shape-n400-and-p600-dynamics-during-naturalistic-reading)  
+1. [Contextual Semantic Relevance and Word Surprisal Predict N400 and P600 Dynamics During Naturalistic Reading](/202607/10/2607.04107v2-contextual-semantic-relevance-and-word-surprisal-predict-n400-and-p600-dynamics-during-naturalistic-reading)  
    标签：评分：9.5/10、query:profile-1
-   evidence：自然阅读中语义整合与词汇预期的脑电研究
-2. [Contextual Semantic Relevance and Word Surprisal Predict N400 and P600 Dynamics During Naturalistic Reading](/202607/09/2607.04107v2-contextual-semantic-relevance-and-word-surprisal-predict-n400-and-p600-dynamics-during-naturalistic-reading)  
+   evidence：基于脑电的语义相关性与惊奇度阅读实验
+2. [LEXIC: Lightweight Eye-tracking eXtension via Injected Complexity](/202607/10/2607.08152v1-lexic-lightweight-eye-tracking-extension-via-injected-complexity)  
+   标签：评分：9.5/10、query:q5
+   evidence：用于阅读理解预测的眼动追踪数据
+3. [BCCWJ-Brain: A Multi-Modal fMRI, MEG, and EEG Dataset of Naturalistic Japanese Reading](/202607/10/biorxiv-10-64898-2026-07-05-736621-v1-bccwj-brain-a-multi-modal-fmri-meg-and-eeg-dataset-of-naturalistic-japanese-reading)  
+   标签：评分：9.5/10、query:profile-1
+   evidence：自然阅读的多模态fMRI、MEG和EEG数据集
+4. [Semantic Integration and Lexical Expectation Shape N400 and P600 Dynamics During Naturalistic Reading](/202607/10/2607.04107v1-semantic-integration-and-lexical-expectation-shape-n400-and-p600-dynamics-during-naturalistic-reading)  
    标签：评分：9.0/10、query:profile-1
-   evidence：基于脑电的阅读实验，研究N400和P600动态
-3. [The Listening Effort Profile of Eye Movements: Easy, Difficult, and Impossible Speech Comprehension](/202607/09/biorxiv-10-64898-2026-06-30-735702-v1-the-listening-effort-profile-of-eye-movements-easy-difficult-and-impossible-speech-comprehension)  
+   evidence：基于脑电的阅读实验，探讨语义整合与词汇预期
+5. [The Listening Effort Profile of Eye Movements: Easy, Difficult, and Impossible Speech Comprehension](/202607/10/biorxiv-10-64898-2026-06-30-735702-v1-the-listening-effort-profile-of-eye-movements-easy-difficult-and-impossible-speech-comprehension)  
    标签：评分：9.0/10、query:q5
-   evidence：眼动作为听力努力和言语理解的测量手段
-4. [Adversarial Pragmatics for AI Safety Evaluation: A Benchmark for Instruction Conflict, Embedded Commands, and Policy Ambiguity](/202607/09/2607.01153v1-adversarial-pragmatics-for-ai-safety-evaluation-a-benchmark-for-instruction-conflict-embedded-commands-and-policy-ambiguity)  
-   标签：评分：8.5/10、query:q6
-   evidence：用于评估歧义自然语言的对抗性语用学基准
-5. [Ocular Response Functions reveal how ocular processes relate to neural activity](/202607/09/biorxiv-10-1101-2024-11-19-624356-v4-ocular-response-functions-reveal-how-ocular-processes-relate-to-neural-activity)  
-   标签：评分：8.5/10、query:q5
-   evidence：眼动响应函数将眼动活动与神经信号及认知联系起来
-6. [Estimating the Explainable Variance of EEG Responses to Natural Speech](/202607/09/biorxiv-10-64898-2026-07-02-736170-v1-estimating-the-explainable-variance-of-eeg-responses-to-natural-speech)  
-   标签：评分：8.5/10、query:profile-1
-   evidence：脑电对自然语言及语言特征的反应
+   evidence：使用眼动和瞳孔大小来衡量语音理解中的认知努力
+6. [The Premotor Language Area Encodes a Full Acoustic-to-semantic Speech Hierarchy](/202607/10/biorxiv-10-64898-2026-07-01-735929-v1-the-premotor-language-area-encodes-a-full-acoustic-to-semantic-speech-hierarchy)  
+   标签：评分：9.0/10、query:q1
+   evidence：运动前区编码从声学到语义的完整言语层级
+7. [Estimating the Explainable Variance of EEG Responses to Natural Speech](/202607/10/biorxiv-10-64898-2026-07-02-736170-v1-estimating-the-explainable-variance-of-eeg-responses-to-natural-speech)  
+   标签：评分：9.0/10、query:q1
+   evidence：模拟大脑活动与言语的声学和语言特征的关系
+8. [Interplay of Proactive and Reactive Control in Language Production](/202607/10/biorxiv-10-64898-2026-07-09-737628-v1-interplay-of-proactive-and-reactive-control-in-language-production)  
+   标签：评分：9.0/10、query:q1
+   evidence：词汇检索与语言产生中的认知控制机制
 
 ### 速读区论文标签
-1. [Distinct neural processes link speech planning and execution](/202607/09/biorxiv-10-1101-2024-10-07-617122-v3-distinct-neural-processes-link-speech-planning-and-execution)  
+1. [The human language processing system straightens natural speech](/202607/10/biorxiv-10-64898-2026-06-30-735613-v1-the-human-language-processing-system-straightens-natural-speech)  
+   标签：评分：8.5/10、query:q1
+   evidence：人类言语处理层级中的时间预测与大脑表征
+2. [Judging the reasons for fixations: A direct experimental method to assess the contribution of saliency and semantic factors to gaze control](/202607/10/biorxiv-10-64898-2026-07-01-735892-v1-judging-the-reasons-for-fixations-a-direct-experimental-method-to-assess-the-contribution-of-saliency-and-semantic-factors-to-gaze-control)  
+   标签：评分：8.5/10、query:q5
+   evidence：评估注视控制和眼动中语义因素的实验方法
+3. [The Premotor Language Area Encodes a Full Acoustic-to-semantic Speech Hierarchy](/202607/10/biorxiv-10-64898-2026-07-01-735929-v2-the-premotor-language-area-encodes-a-full-acoustic-to-semantic-speech-hierarchy)  
+   标签：评分：8.5/10、query:q1
+   evidence：前运动皮层中的声学到语义语音层级
+4. [Distinct neural processes link speech planning and execution](/202607/10/biorxiv-10-1101-2024-10-07-617122-v3-distinct-neural-processes-link-speech-planning-and-execution)  
    标签：评分：8.0/10、query:q1
-   evidence：言语计划与执行的神经机制
-2. [Modulating Neural Tracking of Speech in Infants](/202607/09/biorxiv-10-64898-2026-07-01-735811-v1-modulating-neural-tracking-of-speech-in-infants)  
-   标签：评分：8.0/10、query:q10
-   evidence：双语婴儿对语音的皮层追踪
-3. [Judging the reasons for fixations: A direct experimental method to assess the contribution of saliency and semantic factors to gaze control](/202607/09/biorxiv-10-64898-2026-07-01-735892-v1-judging-the-reasons-for-fixations-a-direct-experimental-method-to-assess-the-contribution-of-saliency-and-semantic-factors-to-gaze-control)  
-   标签：评分：8.0/10、query:q5
-   evidence：评估注视控制中语义因素的实验方法
-4. [The Premotor Language Area Encodes a Full Acoustic-to-semantic Speech Hierarchy](/202607/09/biorxiv-10-64898-2026-07-01-735929-v2-the-premotor-language-area-encodes-a-full-acoustic-to-semantic-speech-hierarchy)  
-   标签：评分：8.0/10、query:q7
-   evidence：从声学到语义的语音层级神经机制
-5. [Escaping the Procrustean Bed: Groupwise Orthogonal Connectors for Audio-Language Models](/202607/09/2607.06014v1-escaping-the-procrustean-bed-groupwise-orthogonal-connectors-for-audio-language-models)  
+   evidence：促进言语计划和执行的神经机制
+5. [Beyond Words: Towards Effective Modeling of Non-Verbal Vocalizations in ASR](/202607/10/2607.01563v1-beyond-words-towards-effective-modeling-of-non-verbal-vocalizations-in-asr)  
    标签：评分：7.5/10、query:q8
-   evidence：在语音语言模型中保留韵律等副语言线索
-6. [A unified theory of context-conditioned efficient and predictive coding](/202607/09/biorxiv-10-1101-2025-02-24-639817-v2-a-unified-theory-of-context-conditioned-efficient-and-predictive-coding)  
-   标签：评分：7.5/10、query:profile-1
-   evidence：多模态语境信息与预测编码
-7. [Neural Tracking of Speech Envelope as an Index of Spatial Release from Masking](/202607/09/biorxiv-10-64898-2026-06-29-734758-v1-neural-tracking-of-speech-envelope-as-an-index-of-spatial-release-from-masking)  
-   标签：评分：7.5/10、query:q9
-   evidence：使用脑电图进行语音神经追踪以量化加工过程
-8. [The human language processing system straightens natural speech](/202607/09/biorxiv-10-64898-2026-06-30-735613-v1-the-human-language-processing-system-straightens-natural-speech)  
+   evidence：对笑声和呼吸等非言语发声进行建模
+6. [Using embeddings to predict spoken word duration and pitch in Mandarin monosyllabic words](/202607/10/2607.02002v1-using-embeddings-to-predict-spoken-word-duration-and-pitch-in-mandarin-monosyllabic-words)  
+   标签：评分：7.5/10、query:q8
+   evidence：预测普通话口语单词的时长和音高
+7. [Early Language Learning via Spreading Activation and Category Exploration in Complex Networks](/202607/10/2607.06258v1-early-language-learning-via-spreading-activation-and-category-exploration-in-complex-networks)  
    标签：评分：7.5/10、query:q1
-   evidence：自然语言处理中时间预测的神经机制
-9. [Single-Channel EEG-Based Cognitive Load Assessment in Online Learning: A Hybrid Deep Learning Approach](/202607/09/2607.01795v1-single-channel-eeg-based-cognitive-load-assessment-in-online-learning-a-hybrid-deep-learning-approach)  
+   evidence：模拟儿童早期语言学习与单词习得
+8. [RABBiT: Rapidly adaptive BOLD foundation model via brain-tuning for accurate zero-shot and few-shot prediction of speech-elicited responses in the brain](/202607/10/2607.05171v1-rabbit-rapidly-adaptive-bold-foundation-model-via-brain-tuning-for-accurate-zero-shot-and-few-shot-prediction-of-speech-elicited-responses-in-the-brain)  
+   标签：评分：7.0/10、query:q7
+   evidence：预测大脑对语音刺激反应的基础模型
+9. [Single-Channel EEG-Based Cognitive Load Assessment in Online Learning: A Hybrid Deep Learning Approach](/202607/10/2607.01795v1-single-channel-eeg-based-cognitive-load-assessment-in-online-learning-a-hybrid-deep-learning-approach)  
    标签：评分：6.5/10、query:profile-1
-   evidence：基于脑电的认知负荷评估及学习中的视觉线索
-10. [Overt visual attention modulates decision-related signals in the frontal cortex](/202607/09/biorxiv-10-1101-2024-10-25-620227-v3-overt-visual-attention-modulates-decision-related-signals-in-the-frontal-cortex)  
+   evidence：基于脑电的认知负荷评估与生理方法
+10. [Frontal Eye Field Leads a Distributed Oculomotor Circuit for Abstract Categorical Decisions](/202607/10/biorxiv-10-64898-2026-06-30-735630-v1-frontal-eye-field-leads-a-distributed-oculomotor-circuit-for-abstract-categorical-decisions)  
    标签：评分：6.5/10、query:q5
-   evidence：结合眼动追踪和fMRI研究注意力引导的证据积累
-11. [Changes in perceptual sampling contribute to representational drift](/202607/09/biorxiv-10-64898-2026-06-24-734121-v3-changes-in-perceptual-sampling-contribute-to-representational-drift)  
-   标签：评分：6.5/10、query:q5
-   evidence：纵向眼动追踪实验以量化注视密度图
+   evidence：额叶眼动区和决策的动眼神经回路
+11. [The neural signature of simple overlearned temporal expectations resembles episodic retrieval](/202607/10/biorxiv-10-64898-2026-07-07-737020-v1-the-neural-signature-of-simple-overlearned-temporal-expectations-resembles-episodic-retrieval)  
+   标签：评分：6.5/10、query:q4
+   evidence：时间预期中视觉目标前的听觉线索
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,20 @@
+---
+title: The Premotor Language Area Encodes a Full Acoustic-to-semantic Speech Hierarchy
+authors: "Guo, S., Huth, A."
+date: 2026-07-06
+pdf: "https://www.biorxiv.org/content/10.64898/2026.07.01.735929v2.full.pdf"
+tags: ["query:q1"]
+score: 8.5
+evidence: 前运动皮层中的声学到语义语音层级
+tldr: 刻画了前运动皮层中从声学到语义的语音表征功能组织。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-01-735929-v2/fig-001.webp\", \"caption\": \"Figure 1. The premotor language area (PML) and other functional areas localized in the (pre)motor region. All ROIs are hand-drawn from contrast maps, not based on a prespecified\", \"page\": 4, \"index\": 1, \"width\": 1012, \"height\": 817}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-01-735929-v2/fig-002.webp\", \"caption\": \"Figure 2. Speech representations in PML follow a functional gradient that is aligned with the anterior-posterior axis. (A & B) Top: Encoding performance of WavLM layers (A) and other discrete speech features (B) shows that acoustic features (lower WavLM layers, spectral, and articulation) well model posterior PML only, while anterior PML is well modeled by semantic features (upper WavLM layers, word embedding, and contextual embedding) only. All models predicted PML bin performances significantly better than chance ( , permutation test, 𝑝 < 0 . 001 FDR corrected), except for spectral and WavLM layer 0 in the two most anterior bins in the right hemisphere. Bottom: center of mass across bins for each feature space shows a gradual increase in model performance towards anterior bins for higher-level features, indicating a\", \"page\": 7, \"index\": 2, \"width\": 1019, \"height\": 898}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-01-735929-v2/fig-003.webp\", \"caption\": \"Figure 3. PML among other functional networks in the greater cortical landscape. (A) tsFC strength (hue) and preference to anterior (blue) or posterior (red) PML, for all cortical voxels. The PML functional gradient is correlated with the known speech processing pathway in temporal AR. Bin preference is calculated as the center of mass (CoM) for the average tsFC in\", \"page\": 10, \"index\": 3, \"width\": 1021, \"height\": 986}]"
+motivation: 前运动皮层中的声学到语义语音层级。
+method: 方法与实现细节请参考摘要与正文。
+result: 结果与对比结论请参考摘要与正文。
+conclusion: 总体而言，该工作在所述任务上展示了有效性，并提供了可复用的思路或工具。
+---
+
+## Abstract
+Classic neurobiological models of human speech and language have emphasized the dominant role of temporal lobe in speech perception, while premotor regions including the ventral premotor cortex (PMv) are situated at the level of articulatory processing. However, accumulating evidence from neuroimaging, clinical, and computational studies suggests that premotor cortex may contribute to speech processing beyond articulation. The precise extent and functional organization of these speech-related representations, however, remain unclear. In this study, we combined naturalistic speech perception with computational encoding models to characterize the organization of speech representations within PMv. We functionally localized a cortical region that encompasses previously described premotor speech areas, which we term the premotor language area (PML). Using acoustic, phonemic, semantic, and deep neural speech representations, we found that PML contains representations spanning the full speech-processing hierarchy, from low-level acoustic features to high-level semantic information. These representations are arranged along a smooth posterior-anterior gradient, with increasingly abstract speech representations emerging toward anterior PML. Moreover, this organizational gradient mirrors the canonical speech processing hierarchy in the temporal auditory regions. These findings challenge the traditional view of premotor cortex as primarily an acoustic-articulatory unit, and instead identify PML as a hierarchically organized speech-processing region that parallels the temporal auditory cortex. This provides a new framework for understanding the role of premotor cortex in speech perception.
