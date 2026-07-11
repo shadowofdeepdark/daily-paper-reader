@@ -1,0 +1,20 @@
+---
+title: Neurophysiological Evidence for Reduced Use of Prior Sound Patterns to Shape Speech Processing in Autism
+authors: "Lau, J. C. Y., McHaney, J. R., Goldman, L., Robinshaw, K., Mou, F., McFarlane, K., Chandrasekaran, B., Losh, M."
+date: 2026-07-10
+pdf: "https://www.biorxiv.org/content/10.64898/2026.07.09.737536v1.full.pdf"
+tags: ["query:profile-1"]
+score: 8.5
+evidence: 关于语调音高轮廓和语音编码的脑电研究
+tldr: 利用脑电和FFR研究语调音高和上下文如何塑造语音加工过程。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-09-737536-v1/fig-001.webp\", \"caption\": \"Table 5: Correlations Between Degrees of Contextual Modulation (ΔPC1, ΔPC2) and Clinical-behavioral Measures in the AUT group\", \"page\": 30, \"index\": 1, \"width\": 901, \"height\": 582}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-09-737536-v1/fig-002.webp\", \"caption\": \"Table 4. Linear Mixed-Effects Model Results – Principal Component 2 (neural encoding timing)\", \"page\": 29, \"index\": 2, \"width\": 924, \"height\": 582}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-09-737536-v1/fig-003.webp\", \"caption\": \"Table 3. Linear Mixed-Effects Model Results – Principal Component 1 (neural encoding fidelity)\", \"page\": 28, \"index\": 3, \"width\": 924, \"height\": 612}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-09-737536-v1/fig-004.webp\", \"caption\": \"Table 1. Participant Demographics\", \"page\": 27, \"index\": 4, \"width\": 702, \"height\": 227}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-09-737536-v1/fig-005.webp\", \"caption\": \"Table 2: Principal Component Analysis (PCA) Loadings for Frequency Following Response Metrics\", \"page\": 27, \"index\": 5, \"width\": 958, \"height\": 468}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-09-737536-v1/fig-006.webp\", \"caption\": \"Table 6: Correlations Between Degrees of Contextual Modulation (ΔPC1, ΔPC2) and Clinical-behavioral Measures in the Non-AUT group\", \"page\": 31, \"index\": 6, \"width\": 901, \"height\": 582}]"
+motivation: 关于语调音高轮廓和语音编码的脑电研究。
+method: 方法与实现细节请参考摘要与正文。
+result: 结果与对比结论请参考摘要与正文。
+conclusion: 总体而言，该工作在所述任务上展示了有效性，并提供了可复用的思路或工具。
+---
+
+## Abstract
+Reported perceptual differences in autism may arise from reduced use of prior context to shape incoming sensory input. Speech perception provides a critical test of this account because stable perception requires listeners to integrate variable acoustic signals with contextual expectations. This study examined context-dependent modulation of speech encoding in autistic and non-autistic adults using the frequency-following response (FFR), a neurophysiological measure of phase-locked auditory encoding. Participants heard English intonational pitch contours presented in repetitive and variable contexts while EEG was recorded. Principal component analysis of FFR metrics yielded components indexing neural encoding fidelity and timing. Non-autistic participants showed enhanced encoding fidelity in more predictable contexts, whereas autistic participants showed reduced context-dependent modulation. Neural encoding timing also showed divergent context effects across groups, suggesting altered balance between feedback-based predictive mechanisms and locally driven adaptation processes. Within the autistic group, greater context-related modulation of encoding fidelity was associated with lower ADOS-2 Social Affect severity but poorer speech-in-noise perception, suggesting that the functional impact of contextual modulation depends on input reliability and task demands. These findings indicate that context-dependent modulation of speech encoding is altered in autism and may contribute to individual differences in auditory and social-communicative function.
