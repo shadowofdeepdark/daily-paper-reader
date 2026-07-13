@@ -1,0 +1,3400 @@
+Title: Behavioral characterization of dynamic facial expression perception in rhesus monkeys (Macaca mulatta) using naturalistic and synthetic stimuli
+
+URL Source: https://www.biorxiv.org/content/10.64898/2026.03.18.712749v2.full.pdf
+
+Number of Pages: 57
+
+Markdown Content:
+1
+
+# Behavioral characterization of dynamic facial expression perception in rhesus 1
+
+# monkeys (Macaca mulatta) using naturalistic and synthetic stimuli 2
+
+Ramona Siebert 1,3 , Nick Taubert 2, Martin A. Giese 2* , Peter Thier 1* 
+
+3 
+
+> 1
+
+Cognitive Neurology Laboratory, Hertie Inst itute for Clinical Brain Research, University of Tübingen ,4
+
+Germany 5 
+
+> 2
+
+Computational Sensomotorics, Centre for Integrative Neuroscience & Hertie Institute for Clinical Brain 6
+
+Research, University of Tübingen , Germany 7 
+
+> 3
+
+Graduate School of Neural and Behavioura l Sciences, University of Tübingen , Germany 8 
+
+> *
+
+equal contributions 9
+
+10 
+
+Correspondence should be addressed to Peter Thier at  thier@uni -tuebingen.de  or Ramona Siebert at 11 
+
+ramona.siebert@uni -tuebingen.de 12 
+
+13 
+
+ABSTRACT 14 
+
+Facial displays are an important channel of communication for primates, yet it remains unclear based on 15 
+
+which criteria monkeys evaluate facial expressions. We trained two rhesus macaques to categorize vid eos 16 
+
+of four facial expression types (neutral, lip -smacking, silent bared -teeth (SBT) and open -mouth threat 17 
+
+displays) and then tested generalization to novel individuals and avatars while measuring pupillary 18 
+
+responses. The animals were able to categorize fa cial expressions and generalize their classifications to 19 
+
+novel, untrained videos, although performance was not perfect. Misclassifications were not driven solely 20 
+
+by visual similarity between expression categories, as demonstrated by a novel automated appro ach 21 
+
+integrating deep learning -based motion tracking with the Macaque Facial Action Coding System to enable 22 
+
+objective quantification of facial action units. Instead, open -mouth threats were readily categorized 23 
+
+correctly and distinguished from lip -smacking, while also eliciting the strongest arousal responses. By 24 
+
+contrast, categorization of SBT displays varied substantially across stimulus identities, influenced by body 25 
+
+weight, gaze direction, and coordinated movements of eyebrows and ears. Morphed avatar exp ressions 26 
+
+were categorized according to expression component intensity, demonstrating graded perception. Avatar 27 
+
+manipulations revealed that categorization was robust against lack of coherent motion, lack of realism 28 
+
+beyond a basic level of texture, and to so me extent transcended species form boundaries to a human 29 
+
+face. However, human facial expressions elicited no systematic categorizations or differential arousal. Our 30 
+
+findings indicate that conspecific facial expressions were perceived as functionally meanin gful, context -31 
+
+dependent social signals shaped by all components of facial behavior and signaler characteristics, rather 32 
+
+than fixed , mouth movement -defined categories. 33 
+
+34 
+
+Keywords: Facial expression, rhesus macaque, social cognition, face avatar 35 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+2
+
+INTRODUCTION 36 
+
+The ability to distinguish and interpret facial expressions is an important social skill for all primate species. 37 
+
+Since Darwin (1872) pioneered the systematic investigation of facial displays in humans and animals, many 38 
+
+ethological studies in non -human primates have provided descriptions of facial movements and the 39 
+
+situations in which they usually occur (e.g. Andrew, 1963; Hinde, 1966; Maestripieri, 1997; Partan, 2002; 40 
+
+Preuschoft, 2000; van Hooff, 1967) . Laboratory studies have reported how macaque monkeys visually 41 
+
+scan facials displays (Go thard, Erickson, & Amaral, 2004; Mosher, Zimmerman, & Gothard, 2011; Nahm, 42 
+
+Perret, Amaral, & Albright, 1997; Siebert et al., 2020) and examined neural responses to viewing 43 
+
+conspecific facial expressions (e.g. Gotha rd, Battaglia, Erickson, Spitler, & Amaral, 2007; Hadj -Bouziane, 44 
+
+Bell, Knusten, Ungerleider, & Tootell, 2008; Hasselmo, Rolls, & Baylis, 1989; Hoffman, Gothard, Schmid, & 45 
+
+Logothetis, 2007; J. Taubert et al., 2020; Yang & Freiwald, 2021; Zhu et al., 2013) . The most frequently 46 
+
+employed expressions in these studies were aggressive open -mouth threat, affiliative/appeasing lip -47 
+
+smacking with puckered lips and rapid opening and closing of the mouth, and fearful/submissive fear -grin 48 
+
+or -grimace, more objectively c alled the silent bared -teeth display (SBT), with mouth corners and lips 49 
+
+retracted to expose the teeth. However, despite the widespread use of these stereotypical categories, 50 
+
+few studies have explicitly asked monkeys to behaviorally discriminate facial expr essions. Kanazawa 51 
+
+(1996) reported that one Japanese macaque differentiated facial displays in a match -to -sample paradigm 52 
+
+along a “subordinate – dominant” dimension, distinguishing SBT and threat faces by mouth shape and eye 53 
+
+width, and a “neutral – tense” dimension, separating relaxed faces from faces with raised eyebrows, 54 
+
+whereas the macaque only distinguished the human smile among other human expressions. This study 55 
+
+only used one Japanese macaqu e’s and one human’s displays as stimuli, leaving unclear whether the 56 
+
+subject resorted to any semantic information about expression categories or simply differentiated 57 
+
+dissimilar pictures. Parr and Heintz (2009) performed a similar experiment wi th seven rhesus macaques 58 
+
+and the categories open -mouth threat, SBT, play face and scream face. The macaques struggled when the 59 
+
+identity of the sample, the matching and the non -matching stimulus were all different and confusion 60 
+
+apparently occurred due to sh ared features between expression categories, especially mouth opening 61 
+
+and teeth exposure. However, overlapping features alone could not explain the overall error pattern. 62 
+
+Notably, the macaques exhibited a bias for selecting the play face, presumably the mo st positively valued 63 
+
+among the offered categories. An analogous approach was used by Micheletta, Whitehouse, Parr, and 64 
+
+Waller (2015) who teste d three crested macaques and reported that the visual similarity between 65 
+
+expressions was not correlated with performance, and speculated that functional similarity between 66 
+
+expressions could be responsible for errors. J. Taubert and Japee (2024) trained four rhesus macaques to 67 
+
+select a “positive” facial expression (neutral or lip -smack) over a “negative” expression (threat or SBT). 68 
+
+When tested with novel images, the macaques most frequently selected the lip -smack sti muli and least 69 
+
+frequently selected the threat stimuli, as expected, but also selected two SBT displays over most neutral 70 
+
+faces, while the other three SBTs ranked among the threat displays, suggesting variable valence of SBTs. 71 
+
+All four studies relied on sta tic images, although Micheletta et al. (2015) also included dynamic video 72 
+
+stimuli and anecdotally noted improved performance. 73 
+
+While these studies have demonstrated that macaques are able to distinguish facial expressions in 74 
+
+experimental settings, it remains unclear I) which strategy they used to discriminate expressions and II) 75 
+
+which facial motion, shape and appearance features are necessary and sufficient for the pe rception and 76 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+3
+
+differentiation of a facial expression category. To answer these questions, we trained two rhesus 77 
+
+macaques to explicitly discriminate videos of neutral, lip -smacking, SBT and threat displays in a forced -78 
+
+choice categorization paradigm, avoiding a potential bias to select more pleasant expressions in a match -79 
+
+to -sample configuration.  We subsequently assessed them using novel expression videos in catch trials and 80 
+
+measured physiological arousal through pupillary responses.  For part I), the test vide os were filmed real 81 
+
+macaques and a naturalistic monkey avatar. We reasoned that if the macaques used elementary facial 82 
+
+features to make their decisions without attaching any meaning to the videos, they would perform 83 
+
+comparably well across expression catego ries for the new test videos, with mistakes occurring among 84 
+
+visually similar expressions and without physiological reactions to the videos. However, i f the macaques 85 
+
+perceived the videos as the described mouth movement -defined morphological categories (neut ral, lip -86 
+
+smacking, SBT and open -mouth threat), each with discrete meaning, they would exhibit the same 87 
+
+performance and error pattern, but experience differential arousal when seeing the different expression 88 
+
+categories. To quantify similarity among the expr essions, we combined the Facial Action Coding System 89 
+
+(FACS), which allows the objective, muscle -based description of facial movements (Ekman & Friesen, 90 
+
+1978; Ekman, Friesen, & Hager, 2002; Parr, Waller, Burrows, Got hard, & Vick, 2010) and deep learning -91 
+
+based motion tracking (DeepLabCut) (Mathis et al., 2018; Nath et al., 2019) . If the meaning the macaques 92 
+
+extracted from the stimuli is not fully captured by the defined catego ries, inconsistent performance across 93 
+
+expression categories and test identities should occur and visual similarity should fail to explain the 94 
+
+pattern of miscategorizations . I nstead confusions between expressions with similar function should occur, 95 
+
+like lip -smacking and neutral, lip -smacking and SBT or SBT and threat, and a clear distinction between lip -96 
+
+smacking and threat. However, if they only learned the association of the rewarded target for each 97 
+
+individual training video, they should fail to categorize the new videos according to expression type, 98 
+
+although rhesus macaques were able to categorize action videos in a similar paradigm (Cui et al., 2023) .99 
+
+For part II), we made use of a monkey avatar to continuo usly morph one expression into another, to 100 
+
+remove motion coherence, to systematically change the facial appearance by gradually decreasing realism 101 
+
+(no fur, no color, no texture, no shape), to change the species -specific facial form to a human avatar and 102 
+
+to change the species -specific motion pattern to human expressions. Note that we use the conventional 103 
+
+term facial expression interchangeably with facial display, facial configuration, facial behavior or facial 104 
+
+movement pattern, without assuming any expressio n of an emotional state. 105 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+4
+
+MATERIALS AND METHODS 106 
+
+Subjects 107 
+
+Data was collected from two adult male rhesus macaques ( Macaca mulatta ), monkey 1 (7 years, 10.5 kg) 108 
+
+and monkey 2 (8 years, 8.5 kg). They were born at the German Primate Center, raised in social group s, 109 
+
+and pair -housed in our laboratory with visual and auditory contact to conspecifics. For both monkeys, this 110 
+
+was the first scientific experiment in which they participated. Following chair training, they were 111 
+
+implanted with individually adapted titanium h ead posts for head immobilization during eye tracking and 112 
+
+subsequently planned neurophysiological experiments. All surgical procedures were conducted 113 
+
+aseptically under general anesthesia and control of vital parameters. After recovery, the monkeys were 114 
+
+gra dually trained to accept the head immobilization and to receive liquid rewards (juice and water) for 115 
+
+fixating dots and images on a computer screen. All animal procedures were approved by the veterinary 116 
+
+administration (Regierungspräsidium Tübingen, Abteilun g Tierschutz) and complied with German law 117 
+
+(Tierschutz -Versuchstierverordnung) and the National Institutes of Health’s Guide for the Care and Use of 118 
+
+Laboratory Animals. 119 
+
+120 
+
+Visual stimuli 121 
+
+Real monkeys. Training stimuli consisted of 13 videos per expression c ategory from diverse sources: 13 122 
+
+rhesus macaques from our and neighboring laboratories (known and unknown to subjects) sitting in a 123 
+
+primate chair with their head s free to move , natural environment footage 124 
+
+(www.youtube.com/@rhesusvideo6831 , channel photo credit: Lauren Brent ), and still photographs 125 
+
+(PrimFace database:  http://visiome.neuroinf.jp/primface/ , funded by Grant -in -Aid for Scientific research 126 
+
+on Innovative Areas, "Face Perception and Recognition" from the Ministry of Education, Culture, Sports, 127 
+
+Science, and Technology (MEXT), Japan ). This provided variability in background, face size, and dynamic 128 
+
+content. The test stimuli (all male rhesus maca ques ) comprised one set of expression videos of monkeys 129 
+
+contained in the training set (unknown individuals ) which had not been shown during training, and nine 130 
+
+new identities. Eight of these (ID 1 –2, 5 –9) were monkeys from neighboring laboratories (ages 12 –17, 131 
+
+weight 8.8 –15.6 kg), unknown to the subjects, and one corresponded to the subject’s cage partner (ID 3 132 
+
+and 4, respectively). Four test expression sets (ID 1 –4) comprised the complete desired expression 133 
+
+repertoire (neutral, lip -smacking, silent bared -te eth and open -mouth threat), whereas five individuals (ID 134 
+
+5–9) did not show the silent bared -teeth display. Facial behaviors were elicited by the experimenter 135 
+
+interacting with the monkey, mimicking macaque displays and showing positive (treats) and negative 136 
+
+(tools) stimuli. Each test monkey was filmed in a single recording session under standardized conditions 137 
+
+seated in a primate chair with unrestrained head against a neutral white background. Test videos were 138 
+
+cropped to show the heads only, cut into clips o f single continuous facial displays, manually scored 139 
+
+according to the Macaque Facial Action Coding System (MaqFACS) (Parr et al., 2010) and assigned to four 140 
+
+exp ression categories. “Neutral”: no activation of mouth action units (AUs) and little to no eyebrow or ear 141 
+
+movements. “Lip -smacking”: AU18i (true lip pucker) and AD181 (lip -smacking action descriptor). “Silent 142 
+
+bared -teeth” (SBT) display (fear -grin): AU10 (up per lip raiser), AU12 (lip corner puller), AU16 (lower lip 143 
+
+depressor), AU25 (lips parted) and optionally AU26 (jaw drop). “Open -mouth threat”: AU25 (lips parted) 144 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+5
+
+and either AU26 (jaw drop) (without any AU12) or AU27 (mouth stretch). Only clear expressions were 145 
+
+used. Similar definitions for macaque facial expression categories were employed by others (Parr et al., 146 
+
+2010; J. Taubert & Japee, 2024) .147 
+
+Monkey and human avatars. The monkey avatar was created from an MRI -ba sed mesh surface controlled 148 
+
+by ribbons modeled after rhesus macaque facial muscles, driven by motion -captured facial movements 149 
+
+(Siebert et al., 2020; N. Taubert et al., 2021) . We have previously demonstrated that t his monkey avatar 150 
+
+elicits behavioral reactions similar to real macaque videos and does not fall into the “uncanny valley” of 151 
+
+aversion in the visual perception of rhesus macaques towards synthetic agents (Siebert et al., 2020) . The 152 
+
+human avatar used equivalent control points following human muscle anatomy. In addition to the pure, 153 
+
+prototypical motion -captured expressions, the monkey avatar displayed expressions morphed in 25 %154 
+
+intensity steps between prototypical cat egory pairs. Additional test conditions included variations of the 155 
+
+prototypical expressions monkey avatar: temporally scrambled frames, point -light displays (movement 156 
+
+patterns without texture) and degraded realism versions (furless, grayscale, wireframe); as well as human 157 
+
+expressions (smiling/happy, gasping/fearful, scowling/angry) on human and monkey avatars. More details 158 
+
+on the avatar stimuli are available in the Supplementary  Methods .159 
+
+160 
+
+Experimental paradigm and procedu re 161 
+
+Subjects sat head -restrained in a primate chair 60 cm in front of a computer monitor in a darkened booth. 162 
+
+Stimuli were presented via the NREC open -source control system (https://nrec.neurologie.un i-163 
+
+tuebingen.de/ ) on a gray background. Eye position and pupil size (vertical diameter) were recorded with 164 
+
+an eye tracker (ISCAN ETL -200, 120 Hz). A trial was initiated by fixation on a dot (radius 0.2° visual angle) 165 
+
+for 1 s, followed by a 1–2 s centrally presented video (12° x 12°) and 0.5 s of blank screen. Then four 166 
+
+differently colored targets (0.4° radius) appeared in the screen corners (each 12° horizontally and 7° 167 
+
+vertically from the screen center). Subjects indicated the perceived expression category via a saccade to 168 
+
+the corresponding target (detection window 6° x 6°) (Fig. 1). Target -category associations were learned 169 
+
+through reward contingencies assigned by the experimenter. Eye positions outside the bounds of the 170 
+
+video or failure to saccade to any of the targets after 10 s aborted the trial. During the training phase, 171 
+
+subjects were only rewarded for choosing the correct target. T ask t raining started with expression 172 
+
+categories separately in blocks with a single target and a subset of stimuli , then su ccessively more stimuli 173 
+
+and more targets were added and more categories were nested until full randomization of trials was 174 
+
+reached. The training procedure was flexibly adapted to then animal’s current needs and abilities. Once 175 
+
+performance stably exceeded 7 0 % per category (Supplementary Fig. S1A -B) , the test phase was started 176 
+
+with new videos presented interleaved with the trained videos in 5 -10 % catch trials, in which choice of 177 
+
+any target was rewarded. The performance on the trained videos throughout the t est phase is shown in 178 
+
+Supplementary Fig. S1C -D. In part I of the test phase, all new real macaque videos and the monkey avatar 179 
+
+with prototypical expressions were tested. Then , the subjects were specifically re -trained on the 180 
+
+prototypical expression avatar videos for approximately two weeks, which were subsequently 181 
+
+incorporated in to the training set. In part II, the morphed avatar expressions, the scrambled -frame avatar, 182 
+
+the point -light avatar, the degraded realism avatars and the human avatar were tested. T he morphed test 183 
+
+stimuli were presented in 9.9 % of avatars trials (among the prototypical avatar expressions), nested 184 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+6
+
+among the original training videos, i.e. in 7.7 % of all trials. Testing sessions were conducted in blocks of 185 
+
+234 to 344 trials (depending of the percentage of catch -trials), with breaks between blocks, and lasted for 186 
+
+as long as the animal was willing to work. When the animal stopped working before completion of a block, 187 
+
+the remainder of the block was finished in the next testing session . Ty pically, monkey 1 completed 188 
+
+between 1000 and 1500 trials per day and monkey 2 completed between 300 and 900 trials per day. We 189 
+
+aimed to collect at least 50 trials per individual test video from each subject . Unfortunately, data collection 190 
+
+for part II from monkey 2 could not be completed due to administrative delay s in the renewal of our 191 
+
+animal testing license. Thus, only 18 (morphed avatar expressions), 30 (scrambled -frame avatar), 29 192 
+
+(point -light avatar), 15 (degraded realism avatars) and 29 (human avatar) repetitions per test video, are 193 
+
+available from monkey 2. The human facial expressions, displayed by both the human avatar and the 194 
+
+monkey avatar, could only be tested with monkey 1 for the same reason. 195 
+
+196  
+
+> Fig. 1 Forced -choice expression categorization par adigm
+
+197 
+
+198 
+
+Quantification of facial movements 199 
+
+Manual FACS coding. MaqFACS AU activations per video were coded before data collection by R. Siebert ,200 
+
+who is a certified MaqFACS coder .201 
+
+Automatic FACS coding. Facial movements in the real macaque test videos were tracked via markerless 202 
+
+pose estimation implemented in DeepLabCut (DLC) (Mathis et al., 2018; Nath et al., 2019) , using the pre -203 
+
+trained “primate face” from the DeepLabCut Animal Zoo, provided by Claire Witham, Centr e for 204 
+
+Macaques, MRC Harwell, UK (Fig. 2 A) and a model confidence threshold of 0.6. The Eyes_Mid marker was 205 
+
+used as a reference and its position was subtracted from all other markers in order to obtain local motion 206 
+
+only. For the avatars, mesh joints equiva lent to the DLC markers were used (Fig. 2B). AU activations were 207 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+7
+
+coded based on the movements of the marker estimates provided by DLC and the avatar mesh 208 
+
+coordinates (“automatic coding”). This allowed the metric calculation of AU activation intensity in te rms 209 
+
+of Euclidian distance from the AU -associated marker position at its neutral starting frame to its position 210 
+
+at expression apex (Fig. 2C and detailed in Supplementary Table S1). The thus obtained automatic coding 211 
+
+was compared to the initial manual coding by normalizing the scores for each automatically quantified AU 212 
+
+between 0 and 1 and subsequently setting all values < 0.1 to 0 (no AU activation) and all other values to 213 
+
+1, thereby mapping the automatic coding onto the format of the manual coding. The agre ement between 214 
+
+automatic and manual coding could then be compared in the same way as the agreement between two 215 
+
+human coders: 𝐴𝑔𝑟𝑒𝑒𝑚𝑒𝑛𝑡 = 2∗𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝐴𝑈𝑠 𝑎𝑔𝑟𝑒𝑒𝑑   
+
+> 𝐴𝑈𝑠 𝑎𝑢𝑡𝑜𝑚𝑎𝑡𝑖𝑐 +𝐴𝑈𝑠 𝑚𝑎𝑛𝑢𝑎𝑙
+
+216 
+
+The agreement between DL C-tracked real videos and manual coding was 0.72 and the agreement 217 
+
+between avatar mesh coordinate trajectories and manual coding was 0.84. Using the minimum agreement 218 
+
+of novice coders with certified coders of > 0.7, required to become a new certified MaqFA CS coder, we 219 
+
+considered the performance of the automatic coding acceptable. Therefore, the quantified automatic 220 
+
+coding results were used for all subsequent analyses. 221 
+
+Visual similarity. Visual similarities among the different expressions of each real test identity and the 222 
+
+naturalistic avatar with prototypical expressions were calculated as the pairwise Pearson correlations 223 
+
+between the quantified FACS compositions of the videos (analogous to Micheletta et al., 2015) .224 
+
+225  
+
+> Fig. 2 (A) Facial movements in the real monkey videos were tracked using DeepLabCut (pre -trained “primate face” model).
+
+226 Markers used to approximate MaqFACS AUs are outlined in black and labeled. (B) Avatar mesh joints. Joints equivalent to the 227 employed DLC markers are color -coded and labeled accordingly. (C) Schematic of the automatic MaqFACS AU activation and 228 intensity calculation , for details see Supplementary Table S1 229 
+
+230 
+
+Dat a analysis 231 
+
+All data were analyzed using MATLAB R2024a and the MATLAB Statistics and Machine Learning Toolbox 232 
+
+(MathWorks). 233 
+
+Generalization tests. The binomial cumulative distribution function was used to determine whether the 234 
+
+relative choice frequency of the category -associated target for each test stimulus exceeded chance (0.25; 235 
+
+one -sided p < 0.05) . We grouped tests into families corresponding to distinct sub -questions: (1) 236 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+8
+
+generalization to novel real monkey videos , (2) prototypical avatar expressions, (3) degraded avatar 237 
+
+variants , and ( 4) human expressions. Each family except family 4 , which only contained data from one 238 
+
+monkey, was additionally split in to a) tests over the pooled data of both monkeys and b) test s for both 239 
+
+monkey s separately. Within family 2 a and 2b , we applied a Bonferroni correction given the small number 240 
+
+of comparisons. W ithin all other families, we applied a Benjamini -Hochberg false discovery rate (FDR) 241 
+
+correction, given the larger number of tests and the more exploratory nature of these comparisons .242 
+
+Difference in expected choices according to visual similarity. Expected choice frequencies were equated 243 
+
+to the visual similarity matrix (correlations between FACS compositions) and the difference in expected 244 
+
+choices was calculated by subtracti ng the visual similarity matrix from the observed relative choice 245 
+
+frequency matrix. The overall Pearson correlation between the visual similarities and the choice 246 
+
+frequencies for incorrect targets was calculated (diagonals of visual similarity autocorrelat ion and 247 
+
+correctly chosen targets were excluded). 248 
+
+Multinomial Logistic Regression (MLR). To identify factors driving categorization, we fitted MLR models 249 
+
+to the trial -level choices using the MATLAB fitmnr function . Predictors included: “Expression” (categor ical) 250 
+
+for unambiguous expressions or expression intensities of “Lipsmack”, “SBT” and “Threat” (i.e. morphing 251 
+
+weights in the range of 0 to 0.75) for the ambiguous morphed expressions, stimulus monkey identity 252 
+
+(“Identity”, categorical), stimulus monkey body weight (“Weight”), stimulus monkey averting the gaze 253 
+
+away from the camera (“Avert”, scored manually: 0 = direct gaze, 1 = gaze aversion), subject monkey 254 
+
+(“Subject”, categorical), and the quantified MaqFACS AU composition of each video were considered as 255 
+
+pr edictors. To avoid multicollinearity among AUs, we omitted redundant AUs (AU8, AU9, AU25) and 256 
+
+combined correlated AUs into the following composite predictors: “BrowRaise” (AU1_2), “BrowLow” 257 
+
+(AU41), “TeethBare” (AU10+AU12+AU16), “LipPucker” (AU18i*(AD181+1) ), “JawOpen” (AU26+AU27), 258 
+
+“EarsErect” (EAU1+EAU2) and “EarsFlat” (EAU3). All n umeric predictors were z -scored. Choice of the 259 
+
+Neutral target was set as reference category and the log -odds of choosing each of the other categories 260 
+
+relative to this reference w ere calculated. Models with different sets of predictors were compared based 261 
+
+on the Deviance D (generalized residual sum of squares), which measures the goodness of fit compared 262 
+
+to a saturated/perfect model (lower values indicating better fit) : 𝐷 = −2(log 𝐿 (𝑏 1, 𝑦 ) − log (𝑏𝑠 , 𝑦 )),263 
+
+whereby L(b,y) represents the maximum value of the likelihood function for a model with the parameters 264 
+
+b. b1 contains the estimated parameters for model 1 and bs the estimated parameters for the saturated 265 
+
+model. When model 1 ha s a subset of the predictors in model 2, 𝛥 𝐷 = 𝐷 2 − 𝐷 1 has a Chi 2-distribution 266 
+
+with degrees of freedom equal to the difference in the number of predictors in model 1 and model 2, 267 
+
+allowing for the calculation of a p-value. If the p < 0.05, we considered mode l 2 significantly better than 268 
+
+model 1 and included the additional predictor(s). 269 
+
+Random Forest Classification. To clarify which (potentially non -linear) combinations of AU activation 270 
+
+thresholds would lead to which categorization choice, we trained random f orest classifiers (500 trees) on 271 
+
+the trial -level target choice data using the MATLAB TreeBagger function, considering the composite AU 272 
+
+predictor set (see MLR) and the full set of AU predictors. Random forests are a robust, non -parametric 273 
+
+ensemble learning method (Breiman, 2001) increasingly used for classification problems in animal 274 
+
+behavior research (Bergen et al., 2023) , and have previously been appl ied to human facial AU data to 275 
+
+classify facial expressions (Pu, Fan, Chen, Ji, & Zhou, 2015) or predict valence and arousal rating s (Zhang 276 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+9
+
+et al., 2024) . Random forests aggregate predictions from multiple decision trees, each trained on a 277 
+
+bootstrapped data sample with random feature subsets considered at each split. The out -of -bag (OOB) 278 
+
+error is computed from predictions on data not included in each tree's bootstrap sample, providing an 279 
+
+internal validation metric. Feature importance was quantified using OOB permutation importance scores, 280 
+
+which measure the increase in prediction error when each predictor's values are randomly permuted. 281 
+
+Decision rules were extracted through simplified decision trees (fitctree) and partial dependence plots, 282 
+
+showing how category probabilitie s change as a function of individual predictor activation while holding 283 
+
+the other predictors at their mean values. 284 
+
+Pupil size. Raw pupil size (vertical diameter) was preprocessed by first removing blinks (arbitrary eye 285 
+
+tracker units < -4) and other artifa cts larger or smaller than the mean +/ - 2*standard deviation, then 286 
+
+smoothing the signal with a 2 nd order Savitzky -Golay filter of window size 100 ms and finally translating 287 
+
+the signal within each block to z-scores. Average pupil size per trial from 1750 ms (when the pupillary light 288 
+
+reflex to the movie onset was assumed to have settled) to 2750 ms was calculated , which was the unit for 289 
+
+all statistical comparisons. The brightness of each test video frame was calculated as the mean pixel 290 
+
+intensity of the grays cale image. The brightness between expressions was neither significantly different 291 
+
+for the complete real expression set (Kruskal -Wallis ANOVA, p = 0.92) nor the incomplete real expression 292 
+
+set missing the SBT (Kruskal -Wallis ANOVA, p = 0.69). All avatar vid eos had been rendered using the exact 293 
+
+same lightning and scene settings for each expression . Pupil sizes between expression categories were 294 
+
+compared using ANOVAs and post -hoc Tukey -Kramer tests. Post -hoc comparisons were based on 295 
+
+estimated marginal means f rom the constrained (Type III) ANOVA model, which adjusts for unequal trial 296 
+
+numbers across subjects and identities rather than weighting by raw cell sizes . General Linear Models 297 
+
+(GLMs) were fitted to the pupil size data using the same stepwise approach and the same set of predictors 298 
+
+as for the MLR models of the choice behavior, plus the additional predictor video brightness and the 299 
+
+control predictors total AUs intensity (operationalized as the sum of all normalized (range 0, 1) AU scores 300 
+
+per video) and numb er of activated AUs (operationalized as the number of AUs with normalized scores >= 301 
+
+0.1 per video , analogous to the operational definition of AU activation for the automatic to manual coding 302 
+
+comparison) .303 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+10 
+
+RESULTS 304 
+
+Part I: Naturalistic monkey stimuli 305 
+
+Partial generalization of facial expression categorization to new videos with differential pupil reaction 306 
+
+to the expression categories 307 
+
+After the monkeys had been trained to categorize videos of conspecifics showing neutral, lip -smacking, 308 
+
+silent bared -teeth (SBT) and open -mouth threat facial expressions, they could to some extent generalize 309 
+
+the learnt categories to new monkey identities, including a naturalistic monkey avatar. The threat 310 
+
+expression was largely correctly categorized and also the lip -smacking express ion was often reliably 311 
+
+categorized as such, however rarely distinguished from neutral expressions, whereas the classification of 312 
+
+the SBT display varied the most (Fig. 3A). Overall, the correct classification of real expressions was 313 
+
+moderate with 42.01 % (n eutral 20.96 %, lip -smacking 53.04 %, SBT 26.08 %, threat 67.97 %). Similarly, 314 
+
+the correct classification of the monkey avatar videos was 38.56 % (neutral 48.21 %, lip -smacking 27.68 315 
+
+%, SBT 13.16 %, threat 65.18 %) (Fig. 3C). A Multinomial Logistic Regress ion (MLR) analysis of the real 316 
+
+monkey video and naturalistic avatar categorization choices with “Expression” as categorical predictor 317 
+
+corroborated that the expression category significantly predicted the target choice (MLR Model 1: Chi 2(9,318 
+
+4086 ) = 1593.55, p < 0.001; Fig. 4B and Supplementary Table S2). 319 
+
+Errors were not explained by FACS -based visual similarity between expressions alone , as the visual 320 
+
+similarity, in terms of correlation between the FACS compositions of expression pairs, was not correlated 321 
+
+with the choice frequency of an incorrect target, neither for both monkeys together (Pearson’s rho -0.079, 322 
+
+p = 0.39), nor for monkey 1 (Pearson’s rho -0.13, p = 0.20) or monkey 2 (Pearson’s rho -0.053, p = 0.59) 323 
+
+individually. The differences between observe d relative choice frequency of each target in response to 324 
+
+each expression video and expected choice frequency according to the visual similarity between the 325 
+
+shown expression and the expression associated with the selected target for each test identity are 326 
+
+presented in Fig. 3B and D. If the monkeys selected a target as often as predicted by the visual similarity, 327 
+
+the difference in expected choices would be zero (white), whereas the frequent positive (red) and 328 
+
+negative (blue) values indicate that targets were selected more and less often as visual similarity would 329 
+
+predict. Performances and differences in expected choice frequencies for both monkeys separately, along 330 
+
+with the visual similarity matrices, are depicted in Supplementary Fig. S 2 and Supplementary Fi g. S 3.331 
+
+Analysis of the pupil size during the stimulus presentation underlines the facilitated recognition of threat 332 
+
+and suggests that the expression categories are perceived differentially despite partial lack of behavioral 333 
+
+distinction, as pupil size was s ignificantly different between the seen facial expression categories. Pupil 334 
+
+size is a measure of autonomic arousal with larger pupils found in states of higher arousal (Grujic, Polania, 335 
+
+& Burdakov, 2024) and has been shown to change in reaction to socially important rhesus macaque stimu li 336 
+
+(Ebitz, Pearson, & Platt, 2014) . In our study, pupils were overall largest, indicating highest arousal, when 337 
+
+seeing threatening expressions, second largest when presented with the SBT or the lip -smacking display, 338 
+
+and smallest wh en the stimulus monkey kept a neutral expression (real monkey videos , one -factorial 339 
+
+ANOVA for Expression : F(3 , 3620 ) = 211.42, p < 0.001), see Fig. 3E left and Supplementary Fig. S 4 for the 340 
+
+pupil sizes of both monkeys during the viewing of each test stimu lus separately. Also for the naturalistic 341 
+
+avatar alone, pupils were significantly enlarged when viewing the threatening expression ( one -factorial 342 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+11 
+
+ANOVA for Expression: F(3 , 446 ) = 11. 80 , p < 0.001) (Fig. 3E right). A General Linear Model (GLM) analysis 343 
+
+of the pupillary reactions to the real monkey and naturalistic avatar expressions confirmed these results 344 
+
+while explicitly accounting for the influence of video brightness (GLM Model 2: F(4 , 4069 ) = 593.56, p <345 
+
+0.001 ; Fig. 4E and Supplementary Table S4). Conv ersely, pupil size alone was significantly predictive of the 346 
+
+choice behavior in an MLR: larger pupils predicted choice of the Threat target and smaller pupils predicted 347 
+
+choice of the Lipsmack target. ( MLR Model 2: Chi 2(3, 4074) = 631.30, p < 0.001; Fig 4C and Supple mentary 348 
+
+Table S2). 349 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+12 
+
+350 
+
+351 
+
+Fig. 3 (A) Confusion matrices of categorization frequencies for all real monkey test identities, averaged performance of the two 352 
+
+monkeys. Asterisks indicate significant generalization (binomial tests, chance level 0.25 , p < 0.05, FDR -corrected ). (B) Difference 353 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint 13   
+
+> matrices for all real monkey test identities ,averaged performance of the two monkeys . Differences were calculated between
+
+354   
+
+> observed relative choice frequency and the expected choice frequency according to the FACS -ba sed visual similarity between the
+
+355 
+
+> test expression and the expression associated with the selected target. A value of zero (white) indicates that the target was
+
+356  
+
+> selected as often as predicted by the visual similarity, positive values (red) indicate that the target was selected more often, and
+
+357   
+
+> negative values (blue) indicate that the target was selected less often. (C) Confusion matrix of categorization frequencies for the
+
+358   
+
+> naturalistic monkey avatar with prototypical expressions, averaged performance of the t wo monkeys. Asterisks indicate
+
+359     
+
+> significant generalization (binomial tests, chance level 0.25 ,p< 0.05, Bonferroni -corrected ). (D) Difference matrix for the
+
+360     
+
+> naturalistic monkey avatar with prototypical expressions. (E) Boxplots of pupil sizes (both monkeys ) during the viewing of each
+
+361   
+
+> expression category for all real monkey test identity expressions (left) and the monkey avatar with prototypical expressions
+
+362     
+
+> (right). *** p< 0.001 (ANOVAs, post -hoc Tukey -Kramer tests ). Systematic pupil size differences between real monkey videos and
+
+363    
+
+> monkey avatar are influenced by differences in stimulus background brightness
+
+364 
+
+365 
+
+Interactions between face parts and additional social information influence the categorization behavior 366 
+
+Examination of the categorization performances fo r each test identity in Fig. 3A and of the individual 367 
+
+performances of both monkeys (Supplementary Fig. S 2) suggested that the monkeys used idiosyncratic 368 
+
+categorization strategies for different test identities. This was confirmed by an MLR analysis with 369 
+
+“Id entity” added to “Expression” as predictors of the target choice, which significantly improved the 370 
+
+model fit (MLR Model 3: ΔD = 1184.44 , p < 0.001 ; Supplementary Table S2 and Fig. 4A). We therefore 371 
+
+wondered what factors exactly in the faces and facial move ments of the different test identities might 372 
+
+lead to these differences in categorization. We hypothesized that subtle variations in the exact facial 373 
+
+movement compositions (eyebrow and ear movements, degree of mouth movements), information about 374 
+
+the monkey’ s perceived strength, or direct vs. averted gaze might cause facial expressions to be perceived 375 
+
+differently, and that the two monkey subjects might have pursued individual categorization strategies. To 376 
+
+test these hypotheses, we compared different MLR model s in a step -wise procedure, the results of which 377 
+
+are summarized in Supplementary Table S2 and Fig. 4A. In order to describe facial movements agnostic of 378 
+
+a priori category labels, we used the MaqFACS framework to identify and quantify activated facial actio n379 
+
+units (AUs) and thus deconstruct the facial expressions into their muscle movement components. The 380 
+
+composite FACS predictors (MLR Model 4: D = 9048.91, Chi 2(21, 4086) = 1584.04, p < 0.001 ) yielded similar 381 
+
+explanatory power as using the expression categor y predictor (MLR Model 1: D = 9039.40, Chi 2(9, 4086) =382 
+
+1593.55, p < 0.001 ). However, including three -way interactions between the mouth predictors 383 
+
+(“ LipPucker”, “TeethBare”, “JawOpen”), the brow predictors (“BrowRaise”, “BrowLow”) and the ear 384 
+
+predictors (“ EarsErect”, “EarsFlat”) , which we abbreviated as “FACSx”, yielded a significantly improved 385 
+
+model ( MLR Model 5 : ΔD = 940.64, p < 0.001). Moreover, the monkeys did not seem to judge only the 386 
+
+shown expression, but rather interpret a facial display differently depending on the stimulus monkeys’ 387 
+
+weight (assumed to be associated with perceived strength), and depending on whether the facial display 388 
+
+included averted gaze, as adding the predictors “Weight” ( MLR Model 6 : ΔD = 2311.96, p < 0.001) and 389 
+
+“Avert” ( MLR Model 7 : ΔD = 461.58, p < 0.001) both yielded significantly improved models. Finally, the 390 
+
+two subject monkeys’ indi vidual strategies (“Subject”) also had a small, but significant influence ( MLR 391 
+
+Model 8 : ΔD = 248.41, p < 0.001; see also Supplementary Table S3). Higher body weight significantly 392 
+
+decreased the probability that the SBT target would be chosen, whereas averti ng of the gaze significantly 393 
+
+decreased the probabilities for the choice of the Lipsmack and Threat targets, and increased the 394 
+
+probability for the choice of the SBT target ( Fig. 4D and Supplementary Table S3). 395 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+14 
+
+Identical stepwise GLM analysis was performed for the pupil size whilst taking video brightness into 396 
+
+account for all models (Supplementary Table S4 and Supplementary Fig. S5 ). Analogously to the choice 397 
+
+behavior, the pupil size was similarly well explained by expression category (GLM Model 2: D = 1835. 38, 398 
+
+F(4, 4069) = 593.56, p < 0.001) and FACS composition (GLM Model 4: D = 1862.84, F(8, 4065) = 284.63, p399 
+
+< 0.001) and model fit was improved by accounting for interactions between the mouth, brow and ear AU 400 
+
+predictors (GLM Model 5: ΔD = 107.79, p < 0.001 ), as well as by including “Weight” (GLM Model 6: ΔD =401 
+
+379.76, p < 0.001), “Avert” (GLM Model 7: ΔD = 58.07, p < 0.001) and “Subject” (GLM Model 8: ΔD =402 
+
+123.02, p < 0.001) as predictors . Control analyses using the total intensity of AUs in the video (GLM Model 403 
+
+9: D = 2044.42 , F(2, 4071) = 858.13 , p < 0.001 ) or the number of activated AUs (GLM Model 10: D =404 
+
+2082.14 , F(2, 4071) = 805.71 , p < 0.001) as predictors explained the pupil size markedly worse than the 405 
+
+expression category or the FACS composition , ind icating that the amount of motion per se did not drive 406 
+
+arousal .407 
+
+408        
+
+> Fig. 4 Models of choice and pupil size data in response to the pure (real and naturalistic monkey avatar) expression videos .All
+
+409   
+
+> model details are available in Supplementary Table S2 (c hoice) and Supplementary Table S4 (pupil size). Error bars represent 95%
+
+410 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+15   
+
+> confidence intervals. (A) Proportion of the variance in choice behavior explained (adjusted R 2) by MLR models with different sets
+
+411              
+
+> of predictors. “FACS” stands for the composite FACS predictors BrowRaise (AU1_2), BrowLow (AU41), TeethBare
+
+412 
+
+> (AU10+AU12+AU16), LipPucker (AU18i*(AD181+1)), JawOpen (AU26+AU27), EarsErect (EAU1+EAU2) and EarsFlat (EAU3).
+
+413     
+
+> “FACSx” stands for the composite FACS predictors + 3 -way interactions between mouth predic tors (LipPucker, TeethBare.
+
+414       
+
+> JawOpen) x brow predictors (BrowRaise, BrowLow) x ear predictors (EarsErect, EarsFlat) .(B) Log odds coefficients for choosing
+
+415 
+
+> each target relative to choosing the Neutral target (reference category) in MLR model 1 with expressi on category as predictor.
+
+416    
+
+> (C) Log odds coefficients of MLR model 2 with pupil size as predictor. (D) Log odds coefficients for the predictors body weight and
+
+417    
+
+> averted gaze in MLR model 8; full model results are available in Supplementary Table S3. (E) Beta coefficients in GLM Model 2
+
+418 
+
+> with expression category and video brightness as predictors of the pupil size
+
+419 
+
+420 
+
+Part II: Synthetic stimuli (avatar variants )421 
+
+Categorization of morphed expressions reflects their position in morphing space and pupil size reflects 422 
+
+the threat intensity 423 
+
+Having found that facial expression perception is influenced by a number of factors beyond the expression 424 
+
+itself, namely depending on who is showing the expression and where exactly the individual is looking, we 425 
+
+investigated with a ful ly controlled avatar stimulus set, 1) which combination of facial features lead to the 426 
+
+perception of a facial expression category, and 2) which facial shape and appearance features are 427 
+
+necessary and sufficient for a facial movement to be perceived as falli ng into one of the trained facial 428 
+
+expression categories. Before this second test phase, the pure , prototypical facial expression videos of the 429 
+
+naturalistic avatar were added to the training stimulus set and the monkeys were briefly trained again 430 
+
+until they could reliably categorize the avatar videos. To answer question 1), we generated a stimulus set 431 
+
+of morphed expressions (depicting one identity with constant direct gaze), whereby expressions were 432 
+
+interpolated continuously between two prototypical facial expressions in steps of 25 % intensity (Fig. 5). 433 
+
+The target choice frequencies, presented in Fig. 6 and Supplementary Fig. S 6 (performance of monkey 1 434 
+
+and 2 separately) show that the categorization of the morphed avatar videos followed the morph axes, 435 
+
+i.e. the stronger a facial expression category was represented in a video, the more frequently the video 436 
+
+was classified as belonging to this category. Clearer lip -smacking features, compared to SBT or Threat 437 
+
+features, seemed necessary though for an expression to be categorized as Lipsmack, particularly along 438 
+
+the Lipsmack – SBT morph axis, and a general preference for the SBT target was apparent. 439 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+16 
+
+440 
+
+Fig. 5 Monkey avatar expression space, comprising the pure, motion capture -based expressions neutral, lip -smacking, silent 441 
+
+bared -teeth display (SBT) and open -mouth threat, and graded morphs in steps of 25 % between two pure expressions 442 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint 17 
+
+443 
+
+Fig. 6 (A) Relative choice frequencies for all morphed avatar videos, shown for each morph axis between the prototypical 444 
+
+expressions Neutral, Lipsmack, SBT and Threat . (B) Relative choice frequencies of the Neutral -, Lipsmack -, SBT - and Threat -445 
+
+associated targets for each morph axis, plotted against the intensity of the associated expression in the morphed video. Hori zontal 446 
+
+dashed lines indicate the chance choice levels of 0.25, vertical dashed lines indicate the 0.5 expression intensity levels. Logistic 447 
+
+fits are overlaid 448 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+18 
+
+MLR analysis (Supplementary Table S5) showed that the choice behavior was very similarly well predicted 449 
+
+by the intensi ties of “Lipsmack”, “SBT” and “Threat” in the morphed expression (Morphs MLR Model 1: D450 
+
+= 3180.25, Chi 2(9, 1432) = 706.41, p < 0.001; Fig. 7A) as by the FACS compositions (Morphs MLR Model 3: 451 
+
+D = 3164.55, Chi 2(21, 1432) = 734.73 , p < 0.001; Fig. 7B), which suggests that the category transitions were 452 
+
+well captured by the AU metrics. Adding two -way interaction terms to the expression intensities yielded 453 
+
+only a small improvement (Morphs MLR Model 2: ΔD = 28.33 , p < 0.001). When attempting to add 454 
+
+interaction te rms to the FACS AU predictors, analogously to the analysis in part I, maximum likelihood 455 
+
+estimation failed to converge because the design matrix was nearly singular, indicating multicollinearity 456 
+
+in the predictor matrix, likely resulting from lack of featur e variance among the standardized morphed 457 
+
+expressions. Adding “Subject” as predictor (Morphs MLR Model 4: ΔD = 3.80 , p = 0.051) did not 458 
+
+significantly improve the model, demonstrating that the two monkeys did not adopt diverging strategies 459 
+
+to categorize the morphed videos. 460 
+
+Analogous GLM analysis for the pupil size under inclusion of video brightness as predict or yielded small, 461 
+
+but significant effect sizes ( Supplementary Table S6). Again, expression component intensities (Morphs 462 
+
+GLM Model 2: D = 639.19, F(4, 1423) = 35.32, p < 0.001) explained pupil reactions similarly well as the 463 
+
+FACS composition of the video ( Morphs GLM Model 4: D = 635.15, F(8, 1422) = 18.85, p < 0.001), but 464 
+
+considering interactions among the expression intensities did not significantly improve the model video 465 
+
+(Morphs GLM Model 3: ΔD = 1.92, p = 0.59), whereas adding interaction terms to the FACS AU model 466 
+
+again resulted in a rank deficient predictor matrix. Including “Subject” resulted in a marginally better 467 
+
+model (Morphs GLM Model 5: ΔD = 10.59, p = 0.001). As evident from Morphs GLM Model 2 in Fig. 7C 468 
+
+and from Supplementary Fig. S 7, p upil size was larger the higher the intensity of threat components in 469 
+
+an expression , while Lipsmack and SBT component intensity in the morphed expressions did not 470 
+
+consistently influence pupil size to one direction. Control analyses using the total intensity of AUs in the 471 
+
+video (Morphs GLM Model 6: D = 67 7.87 , F(2, 1428) = 23.78 , p < 0.001 ) or the number of activated AUs 472 
+
+(Morphs GLM Model 7: D = 679.06 , F(2, 1428) = 24.66 , p < 0.001 ) as predictors expla ined the pupil size 473 
+
+not or only marginally better than the brightness alone and markedly worse than the expression 474 
+
+intensities or the FACS composition , which shows that motion intensity per se did not increase arousal .475 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+19 
+
+476 
+
+477 
+
+Fig. 7 Select m odels of choice and pupil size data in response to the morphed avatar expressions. All m odel details are available 478 
+
+in Supplementary Table S5 (choice) and Supplementary Table S6 (pupil size). Error bars represent 95% confidence intervals. (A) 479 
+
+Log odds coefficients for choosin g each target relative to choosing the Neutral target (reference category) in Morphs MLR Model 480 
+
+1 with expression intensities in the morphed expressions as predictors. (B) Log odds coefficients in Morphs MLR Model 3 with 481 
+
+the composite FACS predictors. (C) Beta coefficients in Morphs GLM Model 2 with expression component intensities in the 482 
+
+morphed expressions and video brightness as predictors of the pupil size 483 
+
+484 
+
+Eyebrow and ear movements influence the categorization of ambiguous expressions 485 
+
+To further elucida te which facial movement features decided categorization choices at which threshold, 486 
+
+we trained Random Forest Classifiers (RFC), which are based on decision trees and thus naturally handle 487 
+
+multicollinearity, complex interactions and non -linear relationship s among predictors without the need 488 
+
+for explicit modeling. The first RFC used the same set of composite FACS predictors as for the MLR analysis 489 
+
+(composite model). Classification accuracy of 53.6 % (OOB error 0.464) exceeded chance level (25 %) and 490 
+
+was 18.8 % better than a baseline model only predicting the most frequently chosen category (the SBT 491 
+
+target). This modest prediction accuracy is expected given the ambiguous nature of morphed expressions 492 
+
+near category boundaries. Classification results are shown i n Fig. 8A. 493 
+
+Given the robustness of tree -based methods against multicollinearity – correlated predictors simply 494 
+
+compete for inclusion rather than inflating each other's apparent importance, leaving predictions 495 
+
+unbiased (Breiman, 2001) – we asked whether the full set of AUs might yield better prediction and 496 
+
+compared the composite model to a model using t he full set of individual AU predictors (full AU model). 497 
+
+We obtained comparable prediction accuracy with the full AU model (OOB error 0.457, Supplementary 498 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+20 
+
+Fig. S 8A), which is why we focus on the results from the more parsimonious composite model, which als o499 
+
+facilitated comparison with the MLR findings. 500 
+
+Our analysis revealed JawOpen as the most important feature (Fig. 8B), which was also the most frequent 501 
+
+root split in 35.0 % of trees, while TeethBare was used most frequently overall in 18.2 % of splits. Si milarly, 502 
+
+the most important feature in the full AU model was AU25 (lips parted) ( Supplementary Fig. S 8B), used in 503 
+
+11.0 % of splits and as most frequent root split in 30 % of trees, which makes sense as parted lips are 504 
+
+involved both in teeth baring and jaw opening, but limits the diagnostic value of AU25 for distinguishing 505 
+
+between SBT and threat expressions, which is why we omitted it from the set of composite predictors . A 506 
+
+simplified decision tree (accuracy 54.3 %) shows that given large, but ambiguous degr ees of jaw opening, 507 
+
+lowered brows led to the selection of the SBT target over the Threat target, and given small degrees of 508 
+
+both jaw opening and teeth baring, lowered brows decided the choice of the Lipsmack target instead of 509 
+
+the Neutral target in our morp hed stimulus set (Fig. 8C). This confirms MLR results indicating that brow 510 
+
+and ear predictors also significantly influence category choices in addition to mouth predictors (Morphs 511 
+
+MLR Model 3, Fig. 7B). A simplified decision tree for the full AU model prom pts similar conclusions 512 
+
+(Supplementary Fig. S 8C). Partial dependency plots elucidate how category choice probabilities change as 513 
+
+a function of a single predictor value. Sharp category probability transitions occurred expectedly in 514 
+
+TeethBare (max. probabili ty change 24 % towards the SBT target), JawOpen (max. probability change 20 515 
+
+% towards the Threat target) and LipPucker (max. probability change 10 % towards the Lipsmack target), 516 
+
+but also in EarsErect (max. probability change 21 % towards the Threat target ) or BrowRaise (max. 517 
+
+probability change 8 % towards the Threat target) (Fig. 8D). 518 
+
+In order to compare the observed feature importance in the morphed expressions to the unambiguous 519 
+
+expressions, we also fitted the composite model to the categorization choice s for all pure expression 520 
+
+videos (real monkey videos and naturalistic avatar). Trained with the categorizations of these 521 
+
+unambiguous expressions, model accuracy increased to 64.5 % ( Supplementary Fig. S 9A), 26.8 % better 522 
+
+than a baseline model predicting on ly the most common category in this data set (the Lipsmack target). 523 
+
+As for the morphed expressions, JawOpen was the most important feature ( Supplementary Fig. S 9B) and 524 
+
+comparable probability changes depending on individual predictor values were observed ( Supplementary 525 
+
+Fig. S 9D). Examination of a simplified decision tree suggests that for unambiguous expressions compared 526 
+
+to morphed expressions, LipPucker was more often used as a diagnostic feature to identify Lipsmack 527 
+
+expressions, while lowered brows still h elped the distinction between Neutral and Lipsmack. However, 528 
+
+eyebrow and ear movements seemed overall less influential when the mouth movement was clear 529 
+
+(Supplementary Fig. S 9C). 530 
+
+A control analysis using an RFC model with the relative intensities of Lipsma ck, SBT and Threat in the 531 
+
+morphed expressions as predictors yielded nearly identical prediction accuracy as the composite model 532 
+
+(OOB error 0.460, Supplementary Fig. S 10 A) and ascertained Threat intensity as the most important 533 
+
+feature ( Supplementary Fig. S 10B) and most frequent root split (67.6 % of trees). A simplified decision 534 
+
+tree for this model ( Supplementary Fig. S 10 C) suggests that the degree of jaw opening can be equated to 535 
+
+Threat intensity, and the degree of teeth baring can be equated to SBT intensi ty, while obscuring the fact 536 
+
+that eyebrow lowering seems to be more influential than lip puckering for deciding on the Lipsmack 537 
+
+category within our morphed expression stimulus set. Partial dependency plots ( Supplementary Fig. S 10 D) 538 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+21 
+
+corroborate what choice frequencies (Fig. 6) indicated: the largest category probability increases occurred 539 
+
+between 0.25 and 0.5 expression intensity, with additional smaller increases between 0.5 and 0.75. 540 
+
+541 
+
+Fig. 8 Random Forest Classification results of the morphed avatar expr essions using the composite FACS predictors “BrowRaise”, 542 
+
+“BrowLow”, “TeethBare”, “LipPucker”, “JawOpen”, “EarsErect” and “EarsFlat” (composite model). (A) Heatmap showing the 543 
+
+predicted category vs. the chosen category. (B) Out -of -bag feature importance of the predictors. (C) Simplified decision tree 544 
+
+elucidating which combinations of predictor activation intensities lead to which category choices. (D) Partial dependency plots 545 
+
+showing how individual predictor intensities influence the probability for a catego ry to be chosen 546 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+22 
+
+547 
+
+Facial expression recognition requires biologically plausible texture, but not fully realistic monkey faces 548 
+
+or coherent motion 549 
+
+In order to further dissect which attributes are necessary for reliable facial expression perception, we first 550 
+
+tested versions of the prototypical avatar expressions with time -scrambled frame order, thus abolishing 551 
+
+temporal continuity of the movement. Next, we manipulated the facial shape and appearance in two 552 
+
+ways: On the one hand, we reduced the realism of the ava tar in a stepwise manner while keeping the 553 
+
+same movement pattern as for the prototypical expressions of the naturalistic avatar. We first removed 554 
+
+the fur (furless avatar), then the color (gray avatar), then the texture (wire avatar), and finally all 555 
+
+discer nable facial shape (form -from -motion point -light avatar). On the other hand, we changed the facial 556 
+
+shape and appearance completely by changing the species of the avatar head from monkey to human, 557 
+
+while displaying the exact same monkey facial expressions. 558 
+
+A three -way ANOVA of the pupil size with factors Expression , AvatarType and Subject, including all two -559 
+
+way interactions , revealed significant main effects of Expression, F(2, 1870 ) = 14.99 , p < 0.0 01 , AvatarType ,560 
+
+F(4, 1870 ) = 12 78 .45 , p < 0.001, and Subject , F(1, 1870 ) = 144.67 , p < 0.001. The Expression x AvatarType 561 
+
+interaction was significant, F(1 4, 1870 ) = 5.70 , p < 0.001, as was the Subject x AvatarType interaction, F(5,562 
+
+1870 ) = 19.31 , p < 0.001. The Subject x Expression interaction was not significant, F(3, 1870 ) = 0. 39, p =563 
+
+0.76 , showing that the expression effect did not differ between the two monkeys. Given the significant 564 
+
+Expression x Identity interaction and the fact that the effect of AvatarType cannot be disentangled from 565 
+
+systematic differences in brightness between the different avatars, we conducted post -hoc pairwise 566 
+
+comparisons (Tukey -Kramer tests) to investigate expression differences within each avatar type 567 
+
+separately. 568 
+
+The scrambled -frame avatars were still well recognized and correctly catego rized significantly above 569 
+
+chance (Fig. 9C and B, right -most panel), while eliciting pupil reactions comparable to the prototypical 570 
+
+monkey avatar and real monkey videos, with arousal increasing from Lipsmack over SBT to Threat (Fig. 571 
+
+9D, right -most panel). While the monkeys categorized the furless and gray avatars reasonably well, 572 
+
+struggling only with the Lipsmack expression, the wire avatar without texture, consisting only of the 573 
+
+wireframe mesh surface, and the point -light avatar were not categorized, instea d the monkeys tended to 574 
+
+select only one target for these avatar types (Fig. 9A and B). This behavioral pattern is corroborated by 575 
+
+the pupil size, which exhibited expression -dependent modulation for the furless and grayscale avatars 576 
+
+(though for the latter o nly marginally significant) , but not for the wireframe avatar or the point -light avatar 577 
+
+(Fig. 9D). Note that the (limited) data from monkey 2 suggests that he seemed able to discern the Threat 578 
+
+expression of the wireframe avatar, possibly due to the conspic uous downward motion of the jaw for this 579 
+
+expression, in the absence of a differential pupil reaction (see Supplementary Fig. S1 1 for the 580 
+
+categorization performances and Supplementary Fig. S1 2 for the pupil sizes of the two monkeys 581 
+
+separately). Moreover, t he monkeys seemed to some extent recognize the Neutral, SBT and Threat 582 
+
+expressions on the human avatar (Fig. 9A and B) with significant pupil size modulation (Fig. 9D). 583 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+23 
+
+584 
+
+Fig. 9 (A) Expression categorization frequencies for different avatar variants , asteri sks indicate correct categorization significantly 585 
+
+above chance level (binomial tests , p < 0.05, FDR -corrected ). The first four avatar types increase in realism: point -light 586 
+
+expressions, wireframe mesh, grayscale avatar and furless avatar. Additionally, a h uman avatar with monkey expressions was 587 
+
+tested; peak lip -smack, SBT and threat expressions (top to bottom) are depicted next to the confusion matrix. (B) Difference in 588 
+
+fraction of correct categorizations relative to the (now trained) naturalistic avatar fo r each expression category. Percentages at 589 
+
+the bottom indicate the overall difference in correct categorizations. (C) Expression categorization frequencies for the naturalistic 590 
+
+monkey avatar with time -scrambled frame order ( binomial tests, p < 0.05, FDR -co rrected ). (D) Boxplots of pupil sizes during the 591 
+
+viewing of each expression category for all avatar variants . *p < 0.05, *** p < 0.001 (ANOVAs, post -hoc Tukey -Kramer tests ). The 592 
+
+difference in pupil size between the Neutral and Threat category for the Gray A vatar marginally missed significan ce at p = 0.0 82 .593 
+
+Systematic pupil size differences between avatar variants are influenced by differences in avatar type brightness 594 
+
+595 
+
+Human facial expressions do not fit into the trained categories 596 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+24 
+
+We also tested how human f acial expressions, displayed by the human avatar or the monkey avatar (Fig. 597 
+
+10A), would be categorized, in order to explore the possibility of a homologous interpretation across 598 
+
+primate facial expressions. These stimuli could only be tested with one monkey . We did not find a 599 
+
+systematic categorization pattern of the human facial expressions. They were neither categorized 600 
+
+according to putative homologous meanings (smiling/happy and lip -smacking, gasping/fearful and SBT, 601 
+
+scowling/angry and threat) , nor accordi ng to potential phylogenetic homology, such as SBT displays and 602 
+
+human smiles (Fig. 10B) . Moreover, the target choice frequencies were uncorrelated with the visual 603 
+
+similarities between the human expressions and the target -associated monkey expressions, meas ured as 604 
+
+the correlation between the FACS compositions of each expression pair (Supplementary Fig. S2A), for the 605 
+
+human avatar (Pearson’s rho 0.05, p = 0.89) and the monkey avatar (Pearson’s rho -0.34, p = 0.29). The 606 
+
+differences between observed relative cho ice frequency of each target and expected choice frequency 607 
+
+according to the visual similarity between the viewed human expression and the target -associated 608 
+
+monkey expression are depicted in Fig. 10C. These findings suggest that the human facial expression did 609 
+
+not carry meaning for the subject monkey, a notion that is supported by the lack of differential pupil 610 
+
+reactions between expressions (Fig. 10D). A two -factorial ANOVA of the pupil size showed neither a main 611 
+
+effect of Expression (F(2, 381) = 1.53, p = 0 .22), nor a n interaction between Expression and AvatarType 612 
+
+(F(2, 381) = 1.36, p = 0.26), only a significant main effect of AvatarType ( F(1, 381) = 778.18, p < 0.001), 613 
+
+likely due to differences in stimulus and background brightness between the human and mon key avatar s.614 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+25 
+
+615 
+
+Fig. 10 (A) Smiling (happy), gasping (fearful) and scowling (angry) human expressions of the human avatar (left) and the monkey 616 
+
+avatar (right). (B) Expression categorization frequencies of monkey 1 for the human avatar and the monkey avatar displaying the 617 
+
+human facial expressions smiling, gasping and scowling ( N per video = 60). The Lipsmack, SBT and Threat targets, respectively, 618 
+
+were considered the “valid” according to putative homologous meanings. Asterisks indicate generalization significa ntly above 619 
+
+chance level (binomial tests , p < 0.05, FDR -corrected ). (C) Difference matrices calculated between observed relative choice 620 
+
+frequency and the expected choice frequency according to the visual similarity between the human test expression and the 621 
+
+monkey expression associated with the selected target. A value of zero (white) indicates that the target was selected as ofte n as 622 
+
+predicted by the visual similarity, positive values (red) indicate that the target was selected more often, and negative valu es (blue) 623 
+
+indicate that the target was selected less often. (D) Boxplots of pupil sizes of monkey 1 during the viewing of each human 624 
+
+expression category for the human and monkey avatars . Systematic pupil size differences between human avatar and monkey 625 
+
+avat ar are influenced by differences in stimulus and background brightness, compare (A). 626 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+26 
+
+DISCUSSION 627 
+
+We investigated how rhesus macaques categorize facial expressions, and which facial features enable 628 
+
+expression perception. In a forced -choice categorization par adigm with neutral, lip -smacking, silent 629 
+
+bared -teeth (SBT) and open -mouth threat displays, two rhesus macaques successfully applied learned 630 
+
+categories to unfamiliar individuals and avatars. Pupil size measurements showed graded physiological 631 
+
+responses acro ss expression types, demonstrating that the macaques extracted behavioral meaning 632 
+
+rather than simply sorting low -level visual patterns. When viewing expressions morphed between two 633 
+
+prototypes, categorization frequencies tracked the proportional intensity o f each expression component, 634 
+
+indicating perception along a continuum. To quantify similarity between expressions, we developed a 635 
+
+novel automated approach combining DeepLabCut landmark tracking with the MaqFACS framework, 636 
+
+enabling objective, muscle -based qu antification of all facial movements in frontal videos of monkey faces 637 
+
+without being limited to mouth movements only (Blumrosen, Hawellek, & Pesaran, 2017) or requiring 638 
+
+pre -labeled training datasets (Morozov, Parr, Gothard, Paz, & Pryluk, 2021) . This approach showed that 639 
+
+FACS -based visual similarity between expressions alone did not explain error patterns . Instead, 640 
+
+categorization was influenced by how facial regions (m outh, eyebrows, ears) moved in coordination, 641 
+
+whether gaze was averted , and by signaler characteristics exemplified by the displaying individual's body 642 
+
+weight. Th is suggests that the tested expression s types were not interpreted as rigid categories with one 643 
+
+meaning, but instead category -defining movements were interpreted in a nuanced manner embedded 644 
+
+within their entire facial and signaler contexts. Systematic manipulation of avatar properties showed that 645 
+
+neither temporally coherent motion, nor photorealisti c rendering or a conspecific face were essential for 646 
+
+expression recognition, but discernible facial shape and surface texture were required. Notably, human 647 
+
+expressions displayed by human and monkey avatars failed to elicit systematic categorization or 648 
+
+diff erential arousal .649 
+
+650 
+
+Categorization of facial expressions does not follow clear morphological categories 651 
+
+In part I, we show that two rhesus macaques trained to categorize facial expressions into neutral, lip -652 
+
+smacking, silent bared -teeth (SBT) and open -mouth threat displays c ould to some extent generalize these 653 
+
+learned categories to new instances of those expressions presented by new agents, both real monkeys 654 
+
+and monkey avatars. Critically, viewing these expressions was accompanied by differential arousal as 655 
+
+measured by pupil size, with incremental pupillary responses to neutral, lip -smacking, SBT and threatening 656 
+
+faces. Addressing our first hypothesis regarding discrimination strategy, the differential physiological 657 
+
+arousal precludes that the macaques resorted to the categorization of elementary facial movement 658 
+
+features without attaching any meaning to the expressions. If they had relied solely on low -level visual 659 
+
+features, we would have expected comparable performance across expression categories without 660 
+
+physio logical differentiation. Instead, the pattern of arousal responses , which was not explained by 661 
+
+motion intensity per se , particularly the robust arousal to threatening faces, suggests that these videos 662 
+
+were perceived as meaningful categories rather than arb itrary visual patterns. However, the 663 
+
+categorization patterns did not align with a perception of the expressions as clear , mouth -movement -664 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+27 
+
+defined morphological categories, as miscategorization frequencies differed vastly between expressions, 665 
+
+but were not co rrelated with the visual similarity between expressions as measured by the correlation 666 
+
+between their FACS compositions. Open -mouth threat was most frequently recognized as such, reliably 667 
+
+differentiated from lip -smacking and elicited the strongest arousal, confirming previous reports of 668 
+
+heightened arousal when seeing threatening faces (Dal Monte, Costa, Noble, Murray, & Averbeck, 2015; 669 
+
+Landman, Sharma, Sur, & Desimone, 2014; Siebert et al., 2020) and conceivably resu lting from an 670 
+
+evolutionar ily conserved predisposition for prioritized processing of threatening faces (e.g. Frischen, 671 
+
+Eastwood, & Smilek, 2008; Gong & Smart, 2021; Kawai, Kubo, Masataka, & Hayakawa, 2016; Öhman, 672 
+
+Lun dqvist, & Esteves, 2001; Sackett, 1966) . Although , note that human data have suggested contesting 673 
+
+views (e.g. Becker, Anderson, Mortensen, Neufeld, & Neel, 2011; Nummenmaa & Calvo, 2015; Savage, 674 
+
+Lipp, Craig, Becker , & Horstmann, 2013) . Lip -smacking, a behavior usually observed in affiliative or 675 
+
+appeasing contexts, was correctly categorized for most test monkey identities, but neutral expressions 676 
+
+were frequently miscategorized as lip -smacking despite lacking any lip -smacking movement elements, 677 
+
+confirming categorization based on factors beyond simple motion patterns. However, the categorization 678 
+
+of the SBT display varied substantially across test identities. Using multinomial logistic regression (MLR), 679 
+
+we explored whic h factors might explain these identity -dependent categorization patterns and identified 680 
+
+the stimulus monkey body weight, gaze direction (direct vs. averted) and differential interactions between 681 
+
+mouth, eyebrow and ear movements as significant predictors wi thin our stimulus set. 682 
+
+After integrating mouth, eyeb row and ear movements, gaze direction and signaler characteristics such as 683 
+
+body weight, which criterium could the macaques have used to make their categorization choice? One 684 
+
+possibility is that the y evalu ated the facial displays based on the expressed putative internal states. Ever 685 
+
+since Darwin (1872) systematically des cribed facial expressions and proposed that they might relate to 686 
+
+inner states, facial behavior in humans has been directly linked to the expression of discrete emotions and 687 
+
+widely assumed to be universal (Ekman, 197 3, 1992; Ekman & Friesen, 1971; Izard, 1994; Russell, 1994) .688 
+
+This notion has only recently been questioned, with growing acknowledgement of the amenability of facial 689 
+
+expressions to cultural learning and modulation by individual variation and context (e.g. Barrett, Adolphs, 690 
+
+Marsella, Martinez, & Pollak, 2019; Durán & Fernández -Dols, 2021; Le Mau et al., 2021; Valente, Theurel, 691 
+
+& Gentaz, 2018) . Considering that macaques as nonverbal animals lack semantic emotion conc epts, they 692 
+
+might sort facial expression images similarly to human dementia patients, who have lost semantic 693 
+
+emotion concepts, categorizing them by valence into negative, positive and neutral faces (Lindquist, 694 
+
+Gendron, Barrett, & D ickerson, 2014) . If the macaques classified the videos according to expressed affect, 695 
+
+this would predict a clear separation of positive (presumably lip -smacking) and neutral faces, contrary to 696 
+
+our observations. Another possibility is that they sorted the videos according to perceived behavioral 697 
+
+intent (Crivelli & Fridlund, 2019; Fridlund, 1994; Frijda & Tcherkassof, 1997; Waller, Whitehouse, & 698 
+
+Micheletta, 2017) , similarly to a crested macaque ( M. nigra ) that w as ab le to predict social interaction 699 
+
+outcomes from facial expressions (Waller, Whitehouse, & Micheletta, 2016) . The Relational Model of 700 
+
+conflict resolution distinguishes tolerant, avoidant and aggressive intent i n social decision making (de 701 
+
+Waal & Aureli, 1997) . This would explain the lack of differentiation between neutral faces and lip -702 
+
+smacking, as both might convey tolerance of the other, whereas the open -mouth threat display appears 703 
+
+to unequivocally conve y aggression. The SBT display with exposed teeth and pulled back lip corners has 704 
+
+traditionally been described as negatively valued in the majority of anthropoid species, including the 705 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+28 
+
+rhesus macaque, associated with fleeing, submission or subordination, wh ich can be summarized as 706 
+
+avoidant intent (de Waal & Luttrell, 1985; Maestripieri, 1997; Preuschoft, 2000; van Hooff, 1967) , and 707 
+
+which has brought forth the alternative name “fear -grin”. However, the SBT display is used in more 708 
+
+positive contexts in some species, like Tonkean macaques ( M. tonkeana ) (Thierry, Demaria, Preuschoft, & 709 
+
+Desportes, 1989) , bonobos (Vlaeyen et al., 2022) and humans (the “smile”), where it signals affiliation, 710 
+
+appeasement or pleasure, and sometimes dominance, with considerable cultural variation in humans 711 
+
+(Rychlowska et al., 2015) . Preuschoft and van Hooff (1995) proposed a power asymmetry in the use of 712 
+
+this expression across macaque species: While despotic species, such as M. mulatta , have a clearer 713 
+
+distinction between submission (SBT) and friendliness (lip -smacking), this distinction is blurred in more 714 
+
+tolerant species, li ke M. tonkeana or M. nigra . For instance, Clark et al. (2020) were able to identify 715 
+
+morphological subtypes of the SBT display in M. nigra linked to distinct contexts ranging from affiliation 716 
+
+over play and copulatio n to submission. While it is unclear whether such morphological subtypes also 717 
+
+exist in M. mulatta , context -defined functional subtypes of SBTs have been reported: Conflict SBTs (cSBTs) 718 
+
+are shown as signs of immediate submission in aggressive encounters, wh ereas peaceful SBTs (pSBTs) are 719 
+
+preemptively presented as signs of formal hierarchical subordination (Beisner & McCowan, 2014) , as 720 
+
+previously o bserved in M. nemestrina (Flack & de Waal, 2007) . We hypothesize that some SBT displays in 721 
+
+our study were interpreted as submission or fear in order to avoid an imminent threat (cSBTs), leading to 722 
+
+the choice of the SBT target (or confusion with the Threat target ), whereas other SBTs were perceived as 723 
+
+mor e tolerant, appeasing or affiliative (pSBTs), entailing confusion with the lip -smacking category. This 724 
+
+interpretation may also explain the inconsistent evaluation of SBTs reported by J. Taubert and Japee 725 
+
+(2024) . Th e basis for distinguishing these two SBT subtypes could include subtle facial signs of tension, 726 
+
+specific combinations of AUs or AU intensities, or the factors identified by our MLR analysis, body weight 727 
+
+and gaze aversion. High body weight of the stimulus m onkey reduced the likelihood for the selection of 728 
+
+the SBT target, suggesting that an SBT produced by a large, presumably strong monkey was unlikely to be 729 
+
+perceived as submission. Direct gaze appeared important for threat ening or lip -smacking gestures 730 
+
+(asso ciated with approach) to be categorized correctly , as gaze aversion decreased the probabilities for 731 
+
+the selection of the Threat and Lipsmack targets. Conversely, gaze aversion (potentially signaling 732 
+
+avoidance) increased the chances of an expression to be s orted into the avoidance -congruent SBT 733 
+
+category. Averting gaze during a threat ening or lip -smacking gesture might create the impression of 734 
+
+underlying fear and/or avoidance , contradicting the approach -indicating mouth display , thereby leading 735 
+
+with higher pr obability to the choice of the avoidance -associated SBT category . This aligns with studies in 736 
+
+humans reporting a facilitated recognition of approach -associated expressions (happiness and anger) with 737 
+
+direct gaze and a facilitated recognition of avoidance -as sociated expressions (fear and sadness) with 738 
+
+averted gaze due to congruent behavioral intent signaled by gaze and facial expression (Adams & Kleck, 739 
+
+2003, 2005) . These findings collectively highlight the nuance of p rimate facial behavior and reveal the 740 
+
+limits of mouth movement -defined expression categories, calling for further research into which 741 
+
+variations in facial displays carry communicative meaning. 742 
+
+743 
+
+Mouth, eyebrow and ear movements are integrated to discrimina te facial expressions 744 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+29 
+
+In part II, we exploited a fully controllable monkey avatar to map out which facial motion and shape 745 
+
+features are important for the perception and differentiation of the four facial expression categories. The 746 
+
+categorization frequenci es of expressions morphed between two prototypical expression s closely 747 
+
+followed the choice frequencies to be expected according to the intensity of each expression category in 748 
+
+the respective video. Moreover, increasing threat intensity was paralleled by in creasing pupil size. This 749 
+
+suggests that expressions were perceived along a continuum beyond simple template matching. This 750 
+
+graded sensitivity may reflect the m acaque s’ ability to extract multifaceted information from natural facial 751 
+
+displays, as behavioral contexts require assessment of expression strength, e.g. distinguishing mild threat 752 
+
+from severe aggression, or evaluation of blended signals, e.g. appeasement displays despite aggressive 753 
+
+impulses or threat displays despite fearful disposition. Random fores t classification using the 754 
+
+automatically quantified composite FACS predictors showed that the degree of jaw opening and teeth 755 
+
+baring expectedly predicted the choice probability of the Threat and SBT categories, respectively, and 756 
+
+revealed that lowered brows in ambiguous morphed expressions often informed the choice of the 757 
+
+Lipsmack instead of the Neutral target, and the choice of the SBT instead of the Threat target, whereas 758 
+
+erected ears served as a predictor for the choice of the Threat target. Under the ass umption that the SBT 759 
+
+category in our study was predominantly interpreted as a submissive signal to avoid conflict ( cSBTs )760 
+
+(Beisner & McCowan, 2014; Flack & de Waal, 2007) , lowering the brows and thus protecting the eye region 761 
+
+against an imminent threat would be an adaptive behavior (Andrew, 1963) . Conversely, raising of the 762 
+
+brows during SBTs given as signs of formal subordination (pSBTs ) could serve to enlarge the visual field 763 
+
+for attentive monitoring of more distant possible threats, as has been implicated for human wide -eyed 764 
+
+fear expressions (Susskind et al., 2008) . However, given the restricted nature of our stimulus set and the 765 
+
+small sample size of two monkeys, these conclusions should be taken with caution and used as the basis 766 
+
+for further research explicitly probing and manipulating the role of eyebrow and ear movements in facial 767 
+
+displays, which are currently underexplored in the literature. Anecdotal accounts of eye brow movements 768 
+
+in macaques describe lowered eyebrows combined with a staring gaze, as well as “eyebrow -flashes” (brief 769 
+
+raising of the eyebrows) as low -grade threats, unless combined with lip -smacking (Fortman, Hewett, & 770 
+
+Halliday, 2001; Wolfensohn & Lloyd, 2003) . Rincon et al. (2023) examined the specificity of FACS AU use 771 
+
+in rhesus macaques across different contexts and found that t hey raised their brows mostly in aggressive 772 
+
+contexts and less so in submissive or affiliative situations, whereas lowered eyebrows were almost 773 
+
+exclusively displayed in submissive contexts. Erected ears (EAU1 or EAU2) occurred in aggressive 774 
+
+encounters, wher eas flattened ears were registered in all three contexts. In a similar vein, Partan (2002) 775 
+
+reported that pant -threat vocalizations were most frequently accompanied by forward facing ears. 776 
+
+Humans possess little ear muscle control and thus ear movements do not play a role in facial expressions, 777 
+
+whereas human eyebrow movements are extensive and nuanced, but do not seem diagnostic for a specific 778 
+
+facial expression category (Mielke et al., 2022) . It has been suggested that eyebrows are moved according 779 
+
+to the momentary appropriate biological function of increasing or decreasing the visual input (Ekman, 780 
+
+1979, 2004; Susskind et al., 2008) .781 
+
+782 
+
+Expression recognition transcends motion coherence, appearance degradation and species -specific 783 
+
+form but requires knowledge of social meaning 784 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+30 
+
+Temporal continuity of motion was not necessary for the perception of a facial expression, as frame -785 
+
+scra mbled prototypical avatar expressions were well recognized and elicited the same pupil reactions as 786 
+
+temporally coherent sequences. Furthermore, fully naturalistic facial appearance was not critical, as the 787 
+
+prototypical monkey expressions displayed by furle ss and colorless monkey avatars, as well as a human 788 
+
+avatar, were still largely correctly categorized and accompanied by differential pupil sizes. The furless and 789 
+
+colorless avatars were previously shown to be perceived as “uncanny”, causing gaze aversion an d790 
+
+distressed facial reactions (Siebert et al., 2020) . The current findings , demonstrating preserved 791 
+
+categorization and pupil size modulation, underline that these avatars were realistic enough to be 792 
+
+perceived as bi ologically plausible agents, which tend to evok e feelings of eeriness towards realistic, yet 793 
+
+not fully realistic artificial agents ("uncanny valley", Mori, 1970/2012) . This becomes clearest in contrast 794 
+
+to the even more unrealistic bare wireframe head avatar that did not elicit aversion in Siebert et al. (2020) 795 
+
+and for which categorization failed in the present study, mirrored by a lack of pupil size differences 796 
+
+between expressions. We found the same results for form -from -motion point -light expressions. This 797 
+
+indicates that monkeys r equire discernable facial shape and somewhat realistic texture to interpret facial 798 
+
+movements as meaningful facial expressions. Point -light stimuli are widely used in human research (for a 799 
+
+review see e.g. Giese and Poggio (2003) ), but behavioral discrimination studies using point -light stimuli in 800 
+
+macaques are rare and may require training (Vangeneugden, Vancleef, Jaeggli, VanGool, & Vogels, 2010) .801 
+
+The relative inva riance of monkey facial expressions to species -specific facial shape parallels previous 802 
+
+findings that human observers recognize expressions displayed by both human and monkey avatars (N. 803 
+
+Taubert et al., 2021) . Both findings align with the hypothesis that facial dynamics are represented 804 
+
+independently of facial form (Bernstein, Erez, Blank, & Yovel, 2018; Bernstein & Yovel, 2015; Duchaine & 805 
+
+Yovel, 2015) and could be achieved v ia norm -referenced encoding of facial expression in terms of 806 
+
+difference to a neutral (norm) face within a particular shape domain (Stettler, Lappe, & Giese, 2026) .807 
+
+However, human facial expressions received unsystematic categorizations and did not eli cit differential 808 
+
+pupil reactions , suggesting that they were not mapped onto the trained categories. Under the caveat that 809 
+
+only one monkey could be tested with human expressions, this argues against a homologous 810 
+
+interpretation of human and macaque expressio ns. Categorizations followed neither presumed 811 
+
+homologous intent (smiling/happy and lip -smacking, gasping/fearful and SBT, scowling/angry and threat), 812 
+
+nor proposed phylogenetic homology, such as human smiles and macaque SBT displays (e.g. Kanazawa 813 
+
+(1996) , but compare Preuschoft (1992) , Preuschoft and van Hooff (1995) and van Hooff (1967) for 814 
+
+discussions on phylogenetic homology in facial displays) . Moreover, t he categorization patte rn was not 815 
+
+indicative of low -level feature matching, as human expressions sharing elements with monkey 816 
+
+expressions , such as tooth exposure and retracted lip corners in smiles and SBT displays , or mouth opening 817 
+
+in gasping (fear) expression s and threats, wer e not categorized accordingly. Instead, FACS -based visual 818 
+
+similarities between human expressions and monkey expressions were uncorrelated with the target 819 
+
+choice frequencies. This failure to categorize human expressions likely reflects limited experience, a s820 
+
+monkeys in our facility rarely see human faces without masks, let alone have the opportunity to learn 821 
+
+behavioral consequences associated with distinct human facial expressions. Without learned associations 822 
+
+linking these facial configurations to behaviora l intentions and predicted outcomes, human expressions 823 
+
+remained socially meaningless to the tested macaque , eliciting neither systematic categorization nor 824 
+
+differential arousal. These results accord with Zhu et al. (2013) , who found no differential fMRI activations 825 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+31 
+
+for human facial expressions in macaques . While some studies have used human facia l expressions to 826 
+
+probe visual encoding mechanisms of subtle facial feature changes in the macaque brain (e.g. Wehrheim, 827 
+
+Alamooti, Ramezanpour, & Kar, 2025) , our findings highlight the importance of using conspecific facial 828 
+
+expressions for connecting visual perception to social information . Thus, we conclude that facial 829 
+
+expression perception in the present study emerge d from integrating expression -characteristic v isual 830 
+
+features with social knowledge, enabling flexible, context -sensitive interpretation of communicative 831 
+
+signals. 832 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+32 
+
+DECLARATIONS 833 
+
+Ethics approval: All animal procedures were approved by the veterinary administration 834 
+
+(Regierungspräsidium Tübingen, Abteilung Tierschutz), permit number N7/18, and complied with German 835 
+
+law (Tierschutz -Versuchstierverordnung) and the National Institutes of Health’s Guide for the Care and 836 
+
+Use of Laboratory Animals. 837 
+
+838 
+
+Competing interests: The authors declare no competing interests. 839 
+
+840 
+
+Funding: This work was supported by the European Research Council (ERC 2019 -SyG -RELEVANCE -841 
+
+856495) and the Deutsche Forschungsgemeinschaft (DFG Th 425/17 -1). 842 
+
+843 
+
+Author contributions : R.S., M.A.G., and P.T. designed research; N.T. generated the avatar stimuli ; R.S. 844 
+
+collected data, analyzed data and wrote the initial version of the manuscript; R.S., N.T., M.A.G., and P.T. 845 
+
+revised the manuscript. 846 
+
+847 
+
+Acknowledgements : We are grateful to Andreas Nieder, Ziad Hafed, Markus Siegel and their respective 848 
+
+coworkers for pr oviding access to and letting us film their animals, which served as experimental stimuli 849 
+
+in this study. 850 
+
+851 
+
+Data availability : All data are available on the Open Science Framework repository at 852 
+
+https://osf.io/y3gc8/?view_only=f17d5149e32e4a94ba3d0940b6f32b3f 853 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+33 
+
+# References 854 
+
+855 
+
+Adams, R. B., & Kleck, R. E. (2003). Perceived Gaze Direction and the Processing of Facial Displays of 856 
+
+Emotion. Psychological Science, 14 (6), 644 -647. doi:10.1046/j.0956 -7976.2003.psci_1479.x 857 
+
+Adams, R. B., & Kleck, R. E. (2005). Effects of Direct and Averted Gaze on the Perception of Facially 858 
+
+Communicated Emotion. Emotion, 5 (1), 3 -11. doi:10.1037/1528 -3542.5.1.3 859 
+
+Andrew, R. J. (1963). Evolution of Facial Expression. Science, 142 (3595), 1034 -1041. 860 
+
+doi:10.1126/science.142.3595.1034 861 
+
+Barrett, L. F., Adolphs, R., Marsella, S., Martinez, A. M., & Pollak, S. D. (2019). Emotional Expressions 862 
+
+Reconsidered: Challenges to Inferring Emotion From Human Facial Movements. Psychological 863 
+
+Science in the Public Interest, 20 (1), 1 -68. doi:10.1177/1529100619832930 864 
+
+Becker, D. V., Anderson, U. S., Mortensen, C. R., Neufeld, S. L., & Neel, R. (2011). The face in the crowd 865 
+
+effect unconfounded: Happy faces, not angry faces , are more efficiently detected in single - and 866 
+
+multiple -target visual search tasks. Journal of Experimental Psychology: General, 140 (4), 637 -867 
+
+659. doi:10.1037/a0024060 868 
+
+Beisner, B. A., & McCowan, B. (2014). Signaling context modulates social function of sile nt bared -teeth 869 
+
+displays in rhesus macaques (Macaca mulatta). American Journal of Primatology, 76 (2), 111 -121. 870 
+
+doi:10.1002/ajp.22214 871 
+
+Bergen, S., Huso, M. M., Duerr, A. E., Braham, M. A., Schmuecker, S., Miller, T. A., & Katzner, T. E. (2023). 872 
+
+A review of su pervised learning methods for classifying animal behavioural states from 873 
+
+environmental features. Methods in Ecology and Evolution, 14 (1), 189 -202. doi:10.1111/2041 -874 
+
+210X.14019 875 
+
+Bernstein, M., Erez, Y., Blank, I., & Yovel, G. (2018). An Integrated Neural Fram ework for Dynamic and 876 
+
+Static Face Processing. Scientific Reports, 8 (1), 7036. doi:10.1038/s41598 -018 -25405 -9877 
+
+Bernstein, M., & Yovel, G. (2015). Two neural pathways of face processing: A critical evaluation of 878 
+
+current models. Neuroscience & Biobehavioral Re views, 55 , 536 -546. 879 
+
+doi:10.1016/j.neubiorev.2015.06.010 880 
+
+Blumrosen, G., Hawellek, D., & Pesaran, B. (2017). Towards Automated Recognition of Facial Expressions 881 
+
+in Animal Models. Paper presented at the Proceedings of the IEEE International Conference on 882 
+
+Comp uter Vision Workshops. 883 
+
+Breiman, L. (2001). Random Forests. Machine Learning, 45 (1), 5 -32. doi:10.1023/A:1010933404324 884 
+
+Clark, P. R., Waller, B. M., Burrows, A. M., Julle -Daniere, E., Agil, M., Engelhardt, A., & Micheletta, J. 885 
+
+(2020). Morphological variants of silent bared -teeth displays have different social interaction 886 
+
+outcomes in crested macaques (Macaca nigra). American Journal of Physical Anthropology, 887 
+
+173 (3), 411 -422. doi:10.1002/ajpa.24129 888 
+
+Crivelli, C., & Fridlund, A. J. (2019). Inside -Out: From Basic Emotions Theory to the Behavioral Ecology 889 
+
+View. Journal of Nonverbal Behavior, 43 (2), 161 -194. doi:10.1007/s10919 -019 -00294 -2890 
+
+Cui, D., Sypré, L., Vissers, M., Sharma, S., Vogels, R., & Nelissen, K. (2023). Categorization learning 891 
+
+induced changes in action representations in the macaque STS. Neuroimage, 265 , 119780. 892 
+
+doi:10.1016/j.neuroimage.2022.119780 893 
+
+Dal Monte, O., Costa, V. D., Noble, P. L., Murray, E. A., & Averbeck, B. B. (2015). Amygdala lesions in 894 
+
+rhesus macaques decrease attention to threat. Nature C ommunications, 6 (1), 10161. 895 
+
+doi:10.1038/ncomms10161 896 
+
+Darwin, C. (1872). Expression of the emotions in man and animals (1 ed.). London, UK: John Murray. 897 
+
+de Waal, F. B. M., & Aureli, F. (1997). Conflict resolution and distress alleviation in monkeys and apes. In 898 
+
+S. C. Carter, I. I. Lederhendler, & B. Kirkpatrick (Eds.), The Integrative Neurobiology of Affiliation 899 
+
+(pp. 317 -328). New York: New York Academy of Sciences. 900 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+34 
+
+de Waal, F. B. M., & Luttrell, L. M. (1985). The Formal Hierarchy of Rhesus Macaques - an Inve stigation 901 
+
+of the Bared -Teeth Display. American Journal of Primatology, 9 (2), 73 -85. 902 
+
+doi:10.1002/ajp.1350090202 903 
+
+Duchaine, B., & Yovel, G. (2015). A Revised Neural Framework for Face Processing. Annual Review of 904 
+
+Vision Science, 1 (Volume 1, 2015), 393 -416. do i:10.1146/annurev -vision -082114 -035518 905 
+
+Durán, J. I., & Fernández -Dols, J. -M. (2021). Do emotions result in their predicted facial expressions? A 906 
+
+meta -analysis of studies on the co -occurrence of expression and emotion. Emotion, 21 (7), 1550 -907 
+
+1569. doi:10.1037 /emo0001015 908 
+
+Ebitz, R. B., Pearson, J. M., & Platt, M. L. (2014). Pupil size and social vigilance in rhesus macaques. 909 
+
+Frontiers in Neuroscience, 8 , 100. doi:10.3389/fnins.2014.00100 910 
+
+Ekman, P. (1973). Universal facial expressions in emotion. Studia Psycholog ica, 15 (2), 140. 911 
+
+Ekman, P. (1979). About brows: Emotional and conversational signals. In M. Von Cranach, K. Foppa, W. 912 
+
+Lepenies, & D. Ploog (Eds.), Human Ethology: Claims and Limits of a New Discipline (pp. 169 -913 
+
+202). Cambridge: Cambridge University Press. 914 
+
+Ekman, P. (1992). An argument for basic emotions. Cognition and Emotion, 6 (3/4), 169 -200. 915 
+
+doi:10.1080/02699939208411068 916 
+
+Ekman, P. (2004). Emotional and conversational nonverbal signals. Paper presented at the Language, 917 
+
+knowledge, and representation: Procee dings of the sixth international colloquium on cognitive 918 
+
+science (ICCS -99). 919 
+
+Ekman, P., & Friesen, W. V. (1971). Constants across cultures in the face and emotion. Journal of 920 
+
+Personality and Social Psychology, 17 (2), 124 -129. doi:10.1037/h0030377 921 
+
+Ekman, P., & Friesen, W. V. (1978). Facial action coding system: A technique for the measurement of 922 
+
+facial movement . Palo Alto, CA: Consulting Psychologists Press. 923 
+
+Ekman, P., Friesen, W. V., & Hager, J. C. (2002). Facial action coding system - investigator's guide . Salt 924 
+
+Lake City, UT: Research Nexus. 925 
+
+Flack, J. C., & de Waal, F. (2007). Context modulates signal meaning in primate communication. 926 
+
+Proceedings of the National Academy of Sciences, 104 (5), 1581 -1586. 927 
+
+doi:10.1073/pnas.0603565104 928 
+
+Fortman, J. D., Hewett, T. A. , & Halliday, L. C. (2001). The Laboratory Nunhuman Primate (1 ed.). Boca 929 
+
+Raton: CRC Press. 930 
+
+Fridlund, A. J. (1994). Human facial expression: An evolutionary view . San Diego, CA: Academic Press. 931 
+
+Frijda, N. H., & Tcherkassof, A. (1997). Facial expressions as modes of action readiness. In J. A. Russell & 932 
+
+J. M. Fernández -Dols (Eds.), The Psychology of Facial Expression (pp. 78 -102). Cambridge: 933 
+
+Cambridge University Press. 934 
+
+Frischen, A., Eastwood, J. D., & Smilek, D. (2008). Visual search for faces with emotional expressions. 935 
+
+Psychological Bulletin, 134 (5), 662 -676. doi:10.1037/0033 -2909.134.5.662 936 
+
+Giese, M. A., & Poggio, T. (2003). Neural mechanisms for the recognition of biological movements. 937 
+
+Nature Reviews Neuroscience, 4 (3), 179 -192. doi:10.1038/nrn1057 938 
+
+Gong, M. , & Smart, L. J. (2021). The anger superiority effect revisited: a visual crowding task. Cognition 939 
+
+and Emotion, 35 (2), 214 -224. doi:10.1080/02699931.2020.1818552 940 
+
+Gothard, K. M., Battaglia, F. P., Erickson, C. A., Spitler, K. M., & Amaral, D. G. (2007). Neu ral Responses to 941 
+
+Facial Expression and Face Identity in the Monkey Amygdala. Journal of Neurophysiology, 97 (2), 942 
+
+1671 -1683. doi:10.1152/jn.00714.2006 943 
+
+Gothard, K. M., Erickson, C. A., & Amaral, D. G. (2004). How do rhesus monkeys (Macaca mulatta) scan 944 
+
+faces in a visual paired comparison task? Animal Cognition, 7 , 25 -36. doi:10.1007/s10071 -003 -945 
+
+0179 -6946 
+
+Grujic, N., Polania, R., & Burdakov, D. (2024). Neurobehavioral meaning of pupil size. Neuron, 112 (20), 947 
+
+3381 -3395. doi:10.1016/j.neuron.2024.05.029 948 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+35 
+
+Hadj -Bouziane, F., Bell, A. H., Knusten, T. A., Ungerleider, L. G., & Tootell, R. B. H. (2008). Perception of 949 
+
+emotional expressions is independent of face selectivity in monkey inferior temporal cortex. 950 
+
+Proceedings of the National Academy of Sciences, 105 (14), 5591 -5596 .951 
+
+doi:10.1073/pnas.0800489105 952 
+
+Hasselmo, M. E., Rolls, E. T., & Baylis, G. C. (1989). The role of expression and identity in the face -953 
+
+selective responses of neurons in the temporal visual cortex of the monkey. Behavioural Brain 954 
+
+Research, 32 (3), 203 -218. doi :10.1016/S0166 -4328(89)80054 -3955 
+
+Hinde, R. A. (1966). Ritualization and social communication in Rhesus monkeys. Philosophical 956 
+
+Transactions of the Royal Society of London. Series B, Biological Sciences, 251 (772), 285 -294. 957 
+
+doi:doi:10.1098/rstb.1966.0012 958 
+
+Hoffma n, K. L., Gothard, K. M., Schmid, Michael C., & Logothetis, N. K. (2007). Facial -Expression and 959 
+
+Gaze -Selective Responses in the Monkey Amygdala. Current Biology, 17 (9), 766 -772. 960 
+
+doi:10.1016/j.cub.2007.03.040 961 
+
+Izard, C. E. (1994). Innate and universal facial expressions: Evidence from developmental and cross -962 
+
+cultural research. Psychological Bulletin, 115 (2), 288 -299. doi:10.1037/0033 -2909.115.2.288 963 
+
+Kanazawa, S. (1996). Recognition of facial expressions in a Japanese monkey (Macaca fuscata) and 964 
+
+humans (Homo sa piens). Primates, 37 (1), 25 -38. doi:Doi 10.1007/Bf02382917 965 
+
+Kawai, N., Kubo, K., Masataka, N., & Hayakawa, S. (2016). Conserved evolutionary history for quick 966 
+
+detection of threatening faces. Animal Cognition, 19 (3), 655 -660. doi:10.1007/s10071 -015 -0949 -967 
+
+y968 
+
+La ndman, R., Sharma, J., Sur, M., & Desimone, R. (2014). Effect of distracting faces on visual selective 969 
+
+attention in the monkey. Proceedings of the National Academy of Sciences, 111 (50), 18037 -970 
+
+18042. doi:doi:10.1073/pnas.1420167111 971 
+
+Le Mau, T., Hoemann, K., Lyons, S. H., Fugate, J. M. B., Brown, E. N., Gendron, M., & Barrett, L. F. (2021). 972 
+
+Professional actors demonstrate variability, not stereotypical expressions, when portraying 973 
+
+emotional states in photographs. Nature Communications, 12 (1), 5037. doi:10.1038 /s41467 -974 
+
+021 -25352 -6975 
+
+Lindquist, K. A., Gendron, M., Barrett, L. F., & Dickerson, B. C. (2014). Emotion perception, but not affect 976 
+
+perception, is impaired with semantic memory loss. Emotion, 14 (2), 375 -387. 977 
+
+doi:10.1037/a0035293 978 
+
+Maestripieri, D. (1997). Gestu ral Communication in Macaques: Usage and Meaning of Nonvocal Signals. 979 
+
+Evolution of Communication, 1 (2), 193 -222. doi:10.1075/eoc.1.2.03mae 980 
+
+Mathis, A., Mamidanna, P., Cury, K. M., Abe, T., Murthy, V. N., Mathis, M. W., & Bethge, M. (2018). 981 
+
+DeepLabCut: marke rless pose estimation of user -defined body parts with deep learning. Nature 982 
+
+Neuroscience, 21 (9), 1281 -1289. doi:10.1038/s41593 -018 -0209 -y983 
+
+Micheletta, J., Whitehouse, J., Parr, L. A., & Waller, B. M. (2015). Facial expression recognition in crested 984 
+
+macaques (Macaca nigra). Animal Cognition, 18 (4), 985 -990. doi:10.1007/s10071 -015 -0867 -z985 
+
+Mielke, A., Waller, B. M., Perez, C., Rincon, A. V., Duboscq, J., & Micheletta, J. (2022). NetFACS: Using 986 
+
+network science to understand facial communication systems. Behavior Research Methods, 987 
+
+54 (4), 1912 -1927. doi:10.3758/s13428 -021 -01692 -5988 
+
+Mori, M. (1970/2012). The uncanny valley (K. F. MacDorman & N. Kageki, Trans.). IEEE Robotics & 989 
+
+Automation, 19 (2), 3. doi:10.1109/MRA.2012.2192811 990 
+
+Morozov, A., Parr, L. A., Gothard, K., Paz , R., & Pryluk, R. (2021). Automatic Recognition of Macaque 991 
+
+Facial Expressions for Detection of Affective States. eNeuro, 8 (6). doi:10.1523/ENEURO.0117 -992 
+
+21.2021 993 
+
+Mosher, C. P., Zimmerman, P. E., & Gothard, K. M. (2011). Videos of conspecifics elicit interact ive 994 
+
+looking patterns and facial expressions in monkeys. Behavioral Neuroscience, 125 (4), 639 -652. 995 
+
+doi:10.1037/a0024264 996 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+36 
+
+Nahm, F. K. D., Perret, A., Amaral, D. G., & Albright, T. D. (1997). How do monkeys look at faces? Journal 997 
+
+of Cognitive Neuroscience, 9 (5 ), 611 -623. doi:10.1162/jocn.1997.9.5.611 998 
+
+Nath, T., Mathis, A., Chen, A. C., Patel, A., Bethge, M., & Mathis, M. W. (2019). Using DeepLabCut for 3D 999 
+
+markerless pose estimation across species and behaviors. Nature Protocols, 14 (7), 2152 -2176. 1000 
+
+doi:10.1038/s41 596 -019 -0176 -01001 
+
+Nummenmaa, L., & Calvo, M. G. (2015). Dissociation between recognition and detection advantage for 1002 
+
+facial expressions: A meta -analysis. Emotion, 15 (2), 243 -256. doi:10.1037/emo0000042 1003 
+
+Öhman, A., Lundqvist, D., & Esteves, F. (2001). The face in the crowd revisited: a threat advantage with 1004 
+
+schematic stimuli. Journal of Personality and Social Psychology, 80 (3), 381 -396. 1005 
+
+doi:10.1037/0022 -3514.80.3.381 1006 
+
+Parr, L. A., & Heintz, M. (2009). Facial expression recognition in rhesus monkeys, Macaca mulatt a. 1007 
+
+Animal Behavior, 77 (6), 1507 -1513. doi:10.1016/j.anbehav.2009.02.024 1008 
+
+Parr, L. A., Waller, B. M., Burrows, A. M., Gothard, K. M., & Vick, S. J. (2010). MaqFACS: A muscle -based 1009 
+
+facial movement coding system for the rhesus macaque. American Journal of Phys ical 1010 
+
+Anthropology, 143 (4), 625 -630. doi:10.1002/ajpa.21401 1011 
+
+Partan, S. R. (2002). Single and Multichannel Signal Composition: Facial Expressions and Vocalizations of 1012 
+
+Rhesus Macaques (Macaca mulatta). Behaviour, 139 (8), 993 -1027. Retrieved from 1013 
+
+http://www.jstor.org/stable/4535968 1014 
+
+Preuschoft, S. (1992). “Laughter” and “Smile” in Barbary Macaques (Macaca sylvanus). Ethology, 91 (3), 1015 
+
+220 -236. doi:10.1111/j.1439 -0310.1992.tb00864.x 1016 
+
+Preuschoft, S. (2000). Primate Faces and Facial Expressions. Social Research, 67 (1), 245 -271. Retrieved 1017 
+
+from  http://www.jstor.org/stable/40971384 1018 
+
+Preuschoft, S., & van Hooff, J. A. (1995). Homologizing primate facial displays: a cri tical review of 1019 
+
+methods. Folia Primatologica, 65 (3), 121 -137. doi:10.1159/000156878 1020 
+
+Pu, X., Fan, K., Chen, X., Ji, L., & Zhou, Z. (2015). Facial expression recognition from image sequences 1021 
+
+using twofold random forest classifier. Neurocomputing, 168 , 1173 -1180. 1022 
+
+doi:10.1016/j.neucom.2015.05.005 1023 
+
+Rincon, A. V., Waller, B. M., Duboscq, J., Mielke, A., Pérez, C., Clark, P. R., & Micheletta, J. (2023). Higher 1024 
+
+social tolerance is associated with more complex facial behavior in macaques. Elife, 1025 
+
+12 (RP87008). doi:10.7 554/eLife.87008 1026 
+
+Russell, J. A. (1994). Is there universal recognition of emotion from facial expression? A review of the 1027 
+
+cross -cultural studies. Psychological Bulletin, 115 (1), 102 -141. doi:10.1037/0033 -2909.115.1.102 1028 
+
+Rychlowska, M., Miyamoto, Y., Matsumot o, D., Hess, U., Gilboa -Schechtman, E., Kamble, S., . . . 1029 
+
+Niedenthal, P. M. (2015). Heterogeneity of long -history migration explains cultural differences in 1030 
+
+reports of emotional expressivity and the functions of smiles. Proceedings of the National 1031 
+
+Academy of Sciences, 112 (19), E2429 -E2436. doi:doi:10.1073/pnas.1413661112 1032 
+
+Sackett, G. P. (1966). Monkeys Reared in Isolation with Pictures as Visual Input: Evidence for an Innate 1033 
+
+Releasing Mechanism. Science, 154 (3755), 1468 -1473. doi:doi:10.1126/science.154.3755 .1468 1034 
+
+Savage, R. A., Lipp, O. V., Craig, B. M., Becker, S. I., & Horstmann, G. (2013). In search of the emotional 1035 
+
+face: Anger versus happiness superiority in visual search. Emotion, 13 (4), 758 -768. 1036 
+
+doi:10.1037/a0031970 1037 
+
+Siebert, R., Taubert, N., Spadacenta, S., Dicke, P. W., Giese, M. A., & Thier, P. (2020). A Naturalistic 1038 
+
+Dynamic Monkey Head Avatar Elicits Species -Typical Reactions and Overcomes the Uncanny 1039 
+
+Valley. eNeuro, 7 (4). doi:10.1523/ENEURO.0524 -19.2020 1040 
+
+Stettler, M., Lappe, A., & Giese, M. A. (2026). Facial expression recognition based on multi -domain 1041 
+
+norm -referenced encoding. Neural Networks, 197 , 108384. doi:10.1016/j.neunet.2025.108384 1042 
+
+Susskind, J. M., Lee, D. H., Cusi, A., Feiman, R., Grabski, W., & Anderson, A. K. (2008). Expressing fear 1043 
+
+enhances sensory acquisition. Nature Neuroscience, 11 (7), 843 -850. doi:10.1038/nn.2138 1044 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+37 
+
+Taubert, J., & Japee, S. (2024). Real Face Value: The Processing of Naturalistic Facial Expressions in the 1045 
+
+Macaque Inferior Temporal Cortex. Journal of Cognitive Neuroscience, 3 6(12), 2725 -2741. 1046 
+
+doi:10.1162/jocn_a_02108 1047 
+
+Taubert, J., Japee, S., Murphy, A. P., Tardiff, C. T., Koele, E. A., Kumar, S., . . . Ungerleider, L. G. (2020). 1048 
+
+Parallel Processing of Facial Expression and Head Orientation in the Macaque Brain. Journal of 1049 
+
+Neuro science, 40 (42), 8119 -8131. doi:10.1523/jneurosci.0524 -20.2020 1050 
+
+Taubert, N., Stettler, M., Siebert, R., Spadacenta, S., Sting, L., Dicke, P., . . . Giese, M. A. (2021). Shape -1051 
+
+invariant encoding of dynamic primate facial expressions in human perception. Elif e, 10 .1052 
+
+doi:10.7554/eLife.61197 1053 
+
+Thierry, B., Demaria, C., Preuschoft, S., & Desportes, C. (1989). Structural convergence between silent 1054 
+
+bared -teeth display and relaxed open -mouth display in the Tonkean macaque (Macaca 1055 
+
+tonkeana). Folia Primatologica, 52 (3 -4) , 178 -184. doi:10.1159/000156396 1056 
+
+Valente, D., Theurel, A., & Gentaz, E. (2018). The role of visual experience in the production of emotional 1057 
+
+facial expressions by blind people: a review. Psychonomic Bulletin & Review, 25 (2), 483 -497. 1058 
+
+doi:10.3758/s13423 -017 -1338 -01059 
+
+van Hooff, J. A. R. A. M. (1967). The Facial Displays of the Catarrhine Monkeys and Apes. In D. Morris 1060 
+
+(Ed.), Primate Ethology (pp. 7 -68). Chicago, IL: Aldine Pub. 1061 
+
+Vangeneugden, J., Vancleef, K., Jaeggli, T., VanGool, L., & Vogels, R. (2010). Discr imination of locomotion 1062 
+
+direction in impoverished displays of walkers by macaque monkeys. Journal of Vision, 10 (4), 22, 1063 
+
+21 -19. doi:10.1167/10.4.22 1064 
+
+Vlaeyen, J. M. R., Heesen, R., Kret, M. E., Clay, Z., Bionda, T., & Kim, Y. (2022). Bared -teeth displays in 1065 
+
+bonobos (Pan paniscus): An assessment of the power asymmetry hypothesis. American Journal 1066 
+
+of Primatology, 84 (9), e23419. doi:10.1002/ajp.23419 1067 
+
+Waller, B. M., Whitehouse, J., & Micheletta, J. (2016). Macaques can predict social outcomes from facial 1068 
+
+expressio ns. Animal Cognition, 19 (5), 1031 -1036. doi:10.1007/s10071 -016 -0992 -31069 
+
+Waller, B. M., Whitehouse, J., & Micheletta, J. (2017). Rethinking primate facial expression: A predictive 1070 
+
+framework. Neuroscience & Biobehavioral Reviews, 82 , 13 -21. 1071 
+
+doi:10.1016/j.neubi orev.2016.09.005 1072 
+
+Wehrheim, M., Alamooti, S. T., Ramezanpour, H., & Kar, K. (2025). Facial expression discrimination 1073 
+
+emerges from neural subspaces shared with detection and identity. bioRxiv ,1074 
+
+2025.2008.2025.672186. doi:10.1101/2025.08.25.672186 1075 
+
+Wolfensohn, S., & Lloyd, M. (2003). Handbook of Laboratory Animal Management and Welfare (3 ed.). 1076 
+
+Oxford, UK: Blackwell Publishing Ltd. 1077 
+
+Yang, Z., & Freiwald, W. A. (2021). Joint encoding of facial identity, orientation, gaze, and expression in 1078 
+
+the middle dorsal face a rea. Proceedings of the National Academy of Sciences, 118 (33), 1079 
+
+e2108283118. doi:10.1073/pnas.2108283118 1080 
+
+Zhang, J., Sato, W., Kawamura, N., Shimokawa, K., Tang, B., & Nakamura, Y. (2024). Sensing emotional 1081 
+
+valence and arousal dynamics through automated faci al action unit analysis. Scientific Reports, 1082 
+
+14 (1), 19563. doi:10.1038/s41598 -024 -70563 -81083 
+
+Zhu, Q., Nelissen, K., Van den Stock, J., De Winter, F. -L., Pauwels, K., de Gelder, B., . . . Vandenbulcke, M. 1084 
+
+(2013). Dissimilar processing of emotional facial expre ssions in human and monkey temporal 1085 
+
+cortex. Neuroimage, 66 , 402 -411. doi:10.1016/j.neuroimage.2012.10.083 1086 
+
+1087 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+38 
+
+SUPPLEMENTARY 1088 
+
+Methods: Generation of avatars 1089 
+
+The creation of the dynamic monkey head avatar is described in detail elsewhere (Siebert et al., 2020; N. 1090 
+
+Taubert et al., 2021) . In short, the monkey head model was based on MRI scans transformed into a mesh 1091 
+
+surface, which was controlled by embedded ribbons modeled after the macaque's facial muscles (Parr et 1092 
+
+al., 2010) . The ribbon control joints corresponded to motion -captured infrared markers, which had been 1093 
+
+attached to a monkey’s face in order to record the facial movem ents with a VICON FX20 Motion Capture 1094 
+
+System. Human facial movements were recorded analogously from a 40 -year -old male human subject. 1095 
+
+The segmented movement trajectories were preprocessed with VICON Nexus 1.85 software and time -1096 
+
+normalized and smoothed with a generative Bayesian method combining Gaussian process latent variable 1097 
+
+models and Gaussian process dynamic models, which allows for morphing between expressions (see N. 1098 
+
+Taubert et al. (2021) Appendix 1 for detail s on the algorithm). The textures and skin material of the 1099 
+
+monkey avatar were hand -painted using photographic references, and additional texture maps were 1100 
+
+created in Adobe Photoshop to represent various skin layers. The fur was simulated with Autodesk Maya ’s 1101 
+
+XGen Interactive Grooming tool. All movie frames were generated with Autodesk Arnold Renderer. The 1102 
+
+human avatar was based on a female face scan and texture maps provided by EISKO, with custom 1103 
+
+adjustments to the color and texture maps to match the monkey head model. The movement 1104 
+
+deformations were achieved via control points equivalent to the monkey motion -captured markers, 1105 
+
+following the human muscle anatomy (N. Taubert et al., 2021) .1106 
+
+This resulted in a monkey head avatar able to display the prototypical , naturalistic neutral, lip -smacking, 1107 
+
+SBT and threat expressions, as well as expressions morphed across two categories in steps of 25 % 1108 
+
+intensity between each pair of prototypical expressions. Additionally, we tested scrambled -frame versions 1109 
+
+of the prototypical expressions (lacking temporal continuity of the movement), dynamic point -light 1110 
+
+expressions, which contained the same movement patterns as the prototypical naturalistic avatars, but 1111 
+
+no texture (instead white dot s of 200 ms limited -lifetime distributed over the avatar surface mesh on a 1112 
+
+black background), and less realistic render types of the monkey avatar, which had been used in a previous 1113 
+
+study to test for an “uncanny valley” of aversion towards artificial agent s (Siebert et al., 2020) : an 1114 
+
+unnatural wireframe head without texture; a textured, but grayscale avatar ; and a colored, but still furless 1115 
+
+avatar. Furthermore, we tested the monkeys’ categorization of the human avat ar displaying monkey 1116 
+
+expressions, the human avatar presenting human expressions (smiling/happy , gasping/fearful ,1117 
+
+scowling/angry ) and the monkey avatar showing those human expressions. 1118 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+39 
+
+Supplementary Tables and Figures 1119       
+
+> Table S1 Overview of automatic MaqFACS (Macaque Facial Action Coding System) AU (Action Unit) activation and intensity
+
+1120 
+
+> calculation. Note that AU6 was not quantified, because it was not present in our stimuli and because appropriate markers are
+
+1121 
+
+> not available in the DLC primate face model
+
+1122 
+
+Action Unit 
+
+(AU) 
+
+Action Unit 
+
+Descriptor 
+
+Intensity calculation description 
+
+AU1_2  brow raiser  max. distance of Brow_y (average of BrowTop_R_y, Brow_Mid_y, 
+
+BrowTop_L_y) upwards relative to its start position 
+
+AU41  glabella 
+
+lowerer 
+
+max. distance of Brow_y downward s relative to its start position 
+
+AU8  lips toward 
+
+each other 
+
+abs. min. distance between LipUpper_Mid_y and LipLower_Mid_y 
+
+relative to the ir start distance 
+
+AU9  nose wrinkle  max. distance of Nose_Mid_y upwards relative to its start position 
+
+AU10  upper l ip 
+
+raiser 
+
+max. distance of LipUpper_Mid_y upward s relative to its start position 
+
+AU12  lip corner 
+
+puller 
+
+max. distance between LipCorner_R and LipCorner_L larger than the ir 
+
+start distance 
+
+AU16  lower lip 
+
+depressor 
+
+abs. min. distance between LipUpper_Mid_ y and Chin_Mid_y smaller 
+
+than the ir start distance 
+
+AU18i  true pucker  abs. min. distance between LipCorner_R_x and LipCorner_L_x smaller 
+
+than the ir start distance. If AU25 larger than 3 pixels was present 
+
+throughout the presence of AU18, AU18ii (outer puc ker) was scored 
+
+instead (however not present in our stimuli) 
+
+AU25  lips parted  max. distance between LipUpper_Mid_y and LipLower_Mid_y relative 
+
+to the ir start distance 
+
+AU26/AU27  jaw drop/ 
+
+mouth 
+
+stretch 
+
+max. distance of Chin_Mid_y downwards relative to its start position ;
+
+AU26 and AU27 were not distinguishable automatically and were thus 
+
+pooled 
+
+EAU1  ears forward  max. distance between Ear_R_x and Ear_L_x relative to the ir start 
+
+distance 
+
+EAU2  ear elevator  max. distance of Ears_y (average trace of Ear_L_ y and Ear_R_y) 
+
+upwards relative to its start position 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+40 
+
+EAU3  ear flattener  abs. min. distance between Ear_R_x and Ear_L_x relative to the ir start 
+
+distance 
+
+AD181 
+
+(Action 
+
+Descriptor) 
+
+lip -smacking  the number of local minima in the position of LipUpper_Mid_y, when at 
+
+least one local minimum and at least one local maximum, each with 
+
+min. peak prominence 1, were present 
+
+1123 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+41 
+
+1124 
+
+Fig. S1 Categorization performances for the training stimuli. (A) Performance of monkey 1 for each expression category during 1125 the final train ing phase, in which trials were presented fully randomized. (B) Performance of monkey 2 during the final training 1126 phase. (C) Performance of monkey 1 on the trained videos for each test session . The left panel shows the main test phase, the 1127 right panel show s the later test phase, during which only the human expressions were tested . (D) Performance of monkey 2 on 1128 
+
+the trained videos for each test session .1129 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+42 
+
+1130 
+
+Fig. S2 Expression categorization frequencies of all pure test expression s for monkey 1 (M1) and monkey 2 (M2), N per video 1131 
+
+between 50 and 60 for each stimulus identity and each subject. Asterisks indicate significant generalization (binomial tests , p < 1132 
+
+0.05, FDR -corrected for all real monkey videos/Bonferroni -corrected for the monkey avatar s). (A) New monke y identities (ID1 -4), 1133 
+
+previously seen monkey identities with previously unseen expression categories (Training IDs/New expr.) and naturalistic monk ey 1134 
+
+avatar, complete expression repertoire. (B) New monkey identities with incomplete expression repertoire, S BT missing (ID 5 -9) 1135 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+43 
+
+1136 
+
+Fig. S3 (A) Visual similarity matrices per test ID for all pure test expressions and visual similarity matrices between human 1137 
+
+expressions and monkey expressions. Visual similarity was calculated as the Pearson correlation between the quantified FACS 1138 
+
+compositions of an expression pair. (B) Difference matrices per test ID for all pure test expressions, for monkey 1 (M1) and 1139 
+
+monkey 2 (M2) separately . Differences were calculated between observed relative choice frequency and the expected c hoice 1140 
+
+frequency according to the visual similarity between the test expression and the expression associated with the selected targ et. 1141 
+
+A value of zero (white) indicates that the target was selected as often as predicted by the visual similarity, positive v alues (red) 1142 
+
+indicate that the target was selected more often, and negative values (blue) indicate that the target was selected less often 1143 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+44 
+
+1144 
+
+Fig. S4 Boxplots of pupil sizes during the viewing of each expression category for monkey 1 (M1) and monkey 2 (M2) . (A) N New 1145 
+
+monkey identities (ID1 -4), previously seen monkey identities with previously unseen expression categories (Training IDs/New 1146 
+
+expr.) and naturalistic monkey avatar, complete expression repertoire (B) New monkey identities with incomplete expression 1147 
+
+repertoire, SBT missing (ID 5 -9) 1148 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+45 
+
+Table S2 Multinomial Logistic Regression (MLR) model comparisons for categorization choices of the pure (real and naturalistic 1149 
+
+monkey avatar) expression videos (N = 4086) 1150 
+
+MLR 
+
+Model 
+
+Nr. 
+
+Predictors [number of 
+
+predictors] 
+
+Adj . R 2
+
+(explained 
+
+variance) 
+
+Deviance 
+
+D (from 
+
+a perfect 
+
+model) 
+
+Δ Deviance D, p Chi 2, df, p
+
+1 Expression [1]  0.1476  9039.40  – 1593.55, 9, 
+
+p<0.0001 
+
+2 Pupil size [1]  0.0582  10001.65  – 631.30, 3, 
+
+p<0.0001 
+
+3 Expression + Identity [2]  0.2517  7854.96  1184.44, p<0 .0001 
+
+(Δ to Model 1) 
+
+2777.99, 
+
+48, 
+
+p<0.0001 
+
+4 FACS (LipPucker, TeethBare, 
+
+JawOpen, BrowRaise, BrowLow, 
+
+EarsErect, EarsFlat) [7] 
+
+0.1445  9048.91  – 1584.04, 
+
+21, 
+
+p<0.0001 
+
+5 FACSx: FACS + 3 -way 
+
+interactions between mouth 
+
+predictors (LipPucker, 
+
+TeethBare, JawOp en) x brow 
+
+predictors (BrowRaise, 
+
+BrowLow) x ear predictors 
+
+(EarsErect, EarsFlat) [19] 
+
+0.2262  8108.27  940.64, p<0.0001 
+
+(Δ to Model 4) 
+
+2524.68, 
+
+57, 
+
+p<0.0001 
+
+6 FACSx + Weight [20]  0.4430  5796.31  2311.96, p<0.0001 
+
+(Δ to Model 5) 
+
+4836.64, 
+
+60, 
+
+p<0.0001 
+
+7 FACS x + Weight + Avert [21]  0.4859  5334.73  461.58, p<0.0001 
+
+(Δ to Model 6) 
+
+5298.22, 
+
+63, 
+
+p<0.0001 
+
+8 FACSx + Weight + Avert + 
+
+Subject [22] 
+
+0.5087  5086.32  248.41, p<0.0001 
+
+(Δ to Model 7) 
+
+5546.63, 
+
+66, 
+
+p<0.0001 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+46 
+
+1151     
+
+> Table S3 MLR Model 8 for the categorizations of the pure (real and naturalistic monkey avatar) expressions. Coefficient names,
+
+1152 
+
+> log odds values, standard errors and t -statistics with p -values
+
+1153 
+
+Coefficient  Value  Standard 
+
+error 
+
+t-statistic  p-value 
+
+(Intercept_TargetLipsmack)  3.40  1.00  3.38  0.00072 
+
+Subject_M2_ TargetLipsmack  -0.91  0.14  -6.41  < 0.0001 
+
+Weight_TargetLipsmack  0.092  0.12  0.78  0.44 
+
+BrowRaise_TargetLipsmack  -0.24  0.15  -1.56  0.12 
+
+BrowLow_TargetLipsmack  -1.14  2.63  -0.44  0.66 
+
+TeethBare_TargetLipsmack  -5.76  1.39  -4.15  < 0.0001 
+
+LipPucker_TargetLipsmack  2.88  1.11  2.59  0.0095 
+
+JawOpen_TargetLipsmack  7.36  1.52  4.84  < 0.0001 
+
+EarsErect_TargetLipsmack  -3.65  0.97  -3.77  0.00016 
+
+EarsFlat_TargetLipsmack  5.99  2.25  2.67  0.0076 
+
+Avert_TargetLipsmack  -4.79  0.46  -10.45  < 0.0001 
+
+BrowRaise:TeethBare:EarsErect_TargetL ipsmack  -8.25  1.89  -4.36  < 0.0001 
+
+BrowLow:TeethBare:EarsErect_TargetLipsmack  -11.99  3.77  3.18  0.0015 
+
+BrowRaise:LipPucker:EarsErect_TargetLipsmack  15.88  3.42  4.95  < 0.0001 
+
+BrowLow:LipPucker:EarsErect_TargetLipsmack  -21.26  7.76  -2.74  0.0062 
+
+BrowRaise:Jaw Open:EarsErect_TargetLipsmack  8.88  2.32  3.83  0.00013 
+
+BrowLow:JawOpen:EarsErect_TargetLipsmack  -19.32  7.58  -2.55  0.011 
+
+BrowRaise:TeethBare:EarsFlat_TargetLipsmack  9.67  2.32  4.16  < 0.0001 
+
+BrowLow:TeethBare:EarsFlat_TargetLipsmack  40.17  13.33  3.01  0.0026 
+
+BrowRaise:LipPucker:EarsFlat_TargetLipsmack  -14.41  3.41  -4.23  < 0.0001 
+
+BrowLow:LipPucker:EarsFlat_TargetLipsmack  15.13  4.63  3.27  0.0011 
+
+BrowRaise:JawOpen:EarsFlat_TargetLipsmack  -12.53  2.73  -4.58  < 0.0001 
+
+BrowLow:JawOpen:EarsFlat_TargetLipsmack  -45.57  11.37  -4.01  < 0.0001 
+
+(Intercept_TargetSBT)  10.55  2.07  5.09  < 0.0001 
+
+Subject_M2_TargetSBT  -2.07  0.19  -10.81  < 0.0001 
+
+Weight_TargetSBT  -2.05  0.37  -5.59  < 0.0001 
+
+BrowRaise_TargetSBT  -5.91  0.98  -6.03  < 0.0001 
+
+BrowLow_TargetSBT  5.46  3.95  1.38  0.17 
+
+TeethBar e_TargetSBT  -12.69  1.94  -6.56  < 0.0001 
+
+LipPucker_TargetSBT  0.95  1.32  0.72  0.47 
+
+JawOpen_TargetSBT  14.16  2.00  7.08  < 0.0001 
+
+EarsErect_TargetSBT  9.45  1.81  5.22  < 0.0001 
+
+EarsFlat_TargetSBT  24.31  4.20  5.79  < 0.0001 
+
+Avert_TargetSBT  3.05  0.81  3.77  < 0.0001 
+
+BrowRaise:TeethBare:EarsErect_TargetSBT  -8.82  1.30  -6.77  < 0.0001 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+47 
+
+BrowLow:TeethBare:EarsErect_TargetSBT  -2.82  2.89  -0.98  0.33 
+
+BrowRaise:LipPucker:EarsErect_TargetSBT  52.33  6.91  7.57  < 0.0001 
+
+BrowLow:LipPucker:EarsErect_TargetSBT  -30.80  10.71  -2.88  0.004 0
+
+BrowRaise:JawOpen:EarsErect_TargetSBT  36.23  4.63  7.82  < 0.0001 
+
+BrowLow:JawOpen:EarsErect_TargetSBT  11.65  8.30  1.40  0.16 
+
+BrowRaise:TeethBare:EarsFlat_TargetSBT  7.46  2.21  3.38  < 0.0001 
+
+BrowLow:TeethBare:EarsFlat_TargetSBT  108.11  16.29  6.64  < 0.0001 
+
+Br owRaise:LipPucker:EarsFlat_TargetSBT  -23.11  5.74  -4.03  < 0.0001 
+
+BrowLow:LipPucker:EarsFlat_TargetSBT  -8.39  7.46  -1.12  0.26 
+
+BrowRaise:JawOpen:EarsFlat_TargetSBT  -35.82  4.84  -7.41  < 0.0001 
+
+BrowLow:JawOpen:EarsFlat_TargetSBT  -128.50  18.07  -7.11  < 0.0001 
+
+(Intercept_TargetThreat)  0.68  0.91  0.74  0.46 
+
+Subject_M2_TargetThreat  0.083  0.15  0.55  0.58 
+
+Weight_TargetThreat  -0.52  0.16  -3.26  0.0011 
+
+BrowRaise_TargetThreat  -1.22  0.22  -5.67  < 0.0001 
+
+BrowLow_TargetThreat  -11.71  2.49  -4.71  < 0.0001 
+
+TeethBare_TargetThrea t -9.26  1.37  -6.77  < 0.0001 
+
+LipPucker_TargetThreat  0.50  0.99  0.51  0.61 
+
+JawOpen_TargetThreat  10.26  1.51  6.81  < 0.0001 
+
+EarsErect_TargetThreat  -0.0014  0.72  -0.0019  0.99 
+
+EarsFlat_TargetThreat  6.54  2.01  3.26  0.0011 
+
+Avert_TargetThreat  -2.15  0.42  -5.18  < 0.0 001 
+
+BrowRaise:TeethBare:EarsErect_TargetThreat  -5.94  0.83  -7.20  < 0.0001 
+
+BrowLow:TeethBare:EarsErect_TargetThreat  3.57  2.30  1.55  0.12 
+
+BrowRaise:LipPucker:EarsErect_TargetThreat  23.44  3.55  6.61  < 0.0001 
+
+BrowLow:LipPucker:EarsErect_TargetThreat  -15.90  7. 44  -2.14  0.033 
+
+BrowRaise:JawOpen:EarsErect_TargetThreat  16.57  2.38  6.97  < 0.0001 
+
+BrowLow:JawOpen:EarsErect_TargetThreat  -8.16  6.74  -1.21  0.23 
+
+BrowRaise:TeethBare:EarsFlat_TargetThreat  6.03  1.41  4.27  < 0.0001 
+
+BrowLow:TeethBare:EarsFlat_TargetThreat  86.1 5 12.42  6.94  < 0.0001 
+
+BrowRaise:LipPucker:EarsFlat_TargetThreat  -20.28  3.51  -5.78  < 0.0001 
+
+BrowLow:LipPucker:EarsFlat_TargetThreat  22.74  4.79  4.75  < 0.0001 
+
+BrowRaise:JawOpen:EarsFlat_TargetThreat  -17.22  2.76  -6.23  < 0.0001 
+
+BrowLow:JawOpen:EarsFlat_Targ etThreat  -65.53  10.66  -6.15  < 0.0001 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+48 
+
+1154 
+
+Table S4 General Linear Model (GLM) model comparisons for pupil size when viewing the pure (real and naturalistic monkey 1155 
+
+avatar) expression videos (N = 4074) 1156 
+
+GLM 
+
+Model 
+
+Nr. 
+
+Predictors [number of 
+
+predictors] 
+
+Adj. R 2
+
+(ex plained 
+
+variance) 
+
+Deviance 
+
+D (from 
+
+a perfect 
+
+model) 
+
+Δ Deviance D, p F, df, df error , p
+
+1 Brightness [1]  0.2142  2283.24  – 1111.21, 1, 
+
+4074, 
+
+p<0.0001 
+
+2 Brightness + Expression [2]  0.3679  1835.38  447.86, p<0.0001 
+
+(Δ to Model 1) 
+
+593.56, 4, 
+
+4069, 
+
+p<0.0001 
+
+3 Brightness + Expression + 
+
+Identity [3] 
+
+0.4088  1711.13  124.25, p<0.0001 
+
+(Δ to Model 2) 
+
+166.65, 17, 
+
+4056, 8, 
+
+p<0.0001 
+
+4 Brightness + FACS (LipPucker, 
+
+TeethBare, JawOpen, 
+
+BrowRaise, BrowLow, 
+
+EarsErect, EarsFlat) [8] 
+
+0.3578  1862.84  420.40, p<0.0001 
+
+(Δ to Model 1) 
+
+284.63, 8, 
+
+4065, 
+
+p<0.0001 
+
+5 Brightness + FACSx: FACS + 3 -
+
+way interactions between 
+
+mouth predictors (LipPucker, 
+
+TeethBare, JawOpen) x brow 
+
+predictors (BrowRaise, 
+
+BrowLow) x ear predictors 
+
+(EarsErect, EarsFlat) [20] 
+
+0.3931  1755.04  107.79, p<0.0001 
+
+(Δ to Model 4) 
+
+132.93, 20, 
+
+4053, 
+
+p<0.0001 
+
+6 Brightness + FACSx + Weight 
+
+[21] 
+
+0.3624  1375.29  379.76, p<0.0001 
+
+(Δ to Model 5) 
+
+86.02, 21, 
+
+3120, 
+
+p<0.0001 
+
+7 Brightness + FACSx + Weight + 
+
+Avert [22] 
+
+0.3892  1317.21  58.07, p<0.0001 
+
+(Δ to Model 6) 
+
+91.96, 22, 
+
+3119, 
+
+p<0.0001 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+49 
+
+8 Brightness + FACSx + Weight + 
+
+Avert + Subje ct [23] 
+
+0.4460  1194.19  123.02, p<0.0001 
+
+(Δ to Model 7) 
+
+110.96, 23, 
+
+3118, 
+
+p<0.0001 
+
+9 Brightness + Total AUs Intensity 
+
+[2] 
+
+0.2 962  2044 .42  238.82 , p<0.0001 
+
+(Δ to Model 1) 
+
+858.13 , 2, 
+
+4071, 
+
+p<0.0001 
+
+10  Brightness + Number of 
+
+activated AUs [2] 
+
+0.2 832  2082 .1 4 201.09 , p<0.00 01
+
+(Δ to Model 1) 
+
+805.71 , 2, 
+
+4071, 
+
+p<0.0001 
+
+1157 
+
+Fig. S5 Proportion of the variance in pupil size when 1158 
+
+viewing the pure (real and naturalistic monkey 1159 
+
+avatar) expression videos explained (adjusted R 2) by 1160 
+
+GLM models with different sets of predict ors .1161 
+
+“FACSx” stands for the FACS predictors + 3 -way 1162 
+
+interactions between mouth predictors x brow 1163 
+
+predictors x ear predictors 1164 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+50 
+
+1165 
+
+Fig. S6 Relative choice frequencies for all morphed avatar videos, shown for each morph axis between the prototypical 1166 
+
+expressions Neutral, Lipsmack, SBT and Threat separately for monkey 1 (A) , N per video = 53, and monkey 2 (B) , N per video = 18 1167 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint 51 
+
+Table S5 Multinomial Logistic Regression (MLR) model comparisons for categorization choices of the morphed avatar expressions 1168 
+
+(N = 1432) 1169 
+
+Mo rphs 
+
+MLR 
+
+Model 
+
+Nr. 
+
+Predictors [number of predictors]  Adj. R 2
+
+(explained 
+
+variance) 
+
+Deviance 
+
+D (from a 
+
+perfect 
+
+model) 
+
+Δ Deviance D,
+
+p
+
+Chi 2, df, p
+
+1 Lipsmack, SBT and Threat 
+
+intensities [3] 
+
+0.1756  3180.25  – 706.41, 9, 
+
+p<0.0001 
+
+2 Lipsmack, SBT and Threat 
+
+int ensities + 2 -way interactions [6] 
+
+0.1782  3151.92  28.33, p<0.001 
+
+(Δ to Model 1) 
+
+734.73, 
+
+18, 
+
+p<0.0001 
+
+3 FACS (LipPucker, TeethBare, 
+
+JawOpen, BrowRaise, BrowLow, 
+
+EarsErect, EarsFlat) [7] 
+
+0.1734  3164.55  – 722.11, 
+
+21, 
+
+p<0.0001 
+
+4 FACS + Subject [8]  0.1729  3160 .75  3.80, p=0.051 
+
+(Δ to Model 3) 
+
+725.90, 
+
+24, 
+
+p<0.0001 
+
+1170 
+
+Table S6 General Linear Model (GLM) model comparisons for pupil size when viewing the morphed avatar expressions (N = 1431) 1171 
+
+Morphs 
+
+GLM 
+
+Model 
+
+Nr. 
+
+Predictors [number of 
+
+predictors] 
+
+Adj. R 2
+
+(explained 
+
+va riance) 
+
+Deviance 
+
+D (from 
+
+a perfect 
+
+model) 
+
+Δ Deviance D, p F, df, 
+
+df error , p
+
+1 Brightness [1]  0.0261  683.71  – 39.30, 1, 
+
+1429, 
+
+p<0.0001 
+
+2 Brightness + Lipsmack, SBT and 
+
+Threat intensity [4] 
+
+0.0876  639.19  44.52, p<0.0001 
+
+(Δ to Model 1) 
+
+35.32, 4, 
+
+1426, 
+
+p<0.0 001 
+
+3 Brightness + Lipsmack, SBT and 
+
+Threat intensities + 2 -way 
+
+interactions [7] 
+
+0.0884  637.27  1.92, p=0.59 (Δ to 
+
+Model 2) 
+
+20.81, 7, 
+
+1423, 
+
+p<0.0001 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+52 
+
+4 Brightness + FACS (LipPucker, 
+
+TeethBare, JawOpen, 
+
+BrowRaise, BrowLow, EarsErect, 
+
+EarsFlat) [8] 
+
+0.0908  63 5.15  48.55, p<0.0001 
+
+(Δ to Model 1) 
+
+18.85, 8, 
+
+1422, 
+
+p<0.0001 
+
+5 Brightness + FACS + Subject [9]  0.1053  624.57  10.59, p=0.001 (Δ 
+
+to Model 4) 
+
+19.70, 9, 
+
+1421, 
+
+p<0.0001 
+
+6 Brightness + Total AUs Intensity 
+
+[2] 
+
+0.0 309  67 9.87  3.84 , p=0.050 (Δ 
+
+to Model 1) 
+
+23.78 , 2,
+
+1428, 
+
+p<0.0001 
+
+7 Brightness + Number of 
+
+activated AUs [2] 
+
+0.0 320  679.06  4.65 , p=0.0 31 (Δ 
+
+to Model 1) 
+
+24.66 , 2, 
+
+1428, 
+
+p<0.0001 
+
+1172 
+
+1173 
+
+Fig. S7 Swarm plots show pupil sizes of both monkeys during the viewing of the morphed avatar expressions, separated by 1174 
+
+exp ression intensity and color -coded by morph axis. Averages for each morph axis are plotted as large symbols with SEM error 1175 
+
+bars and linear trend lines are overlaid 1176 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+53 
+
+1177 
+
+Fig. S8 Random Forest Classification results of the morphed avatar expressions using the fu ll set of FACS AUs as predictors (full 1178 
+
+AU model). (A) Heatmap showing the predicted category vs. the chosen category. (B) Out -of -bag feature importance of the 1179 
+
+predictors. (C) Simplified decision tree 1180 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint 54 
+
+1181 
+
+Fig. S9 Random Forest Classification results of the pu re (unambiguous) real and naturalistic avatar expressions using the 1182 
+
+composite FACS predictors (composite model). (A) Heatmap showing the predicted category vs. the chosen category. (B) Out -of -1183 
+
+bag feature importance of the predictors. (C) Simplified decisio n tree. (D) Partial dependency plots 1184 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint 55 
+
+1185 
+
+Fig. S10 Random Forest Classification results of the morphed avatar expressions using the expression intensities in the morphs 1186 
+
+as predictors. (A) Heatmap showing the predicted category vs. the chosen category. (B) Out -of -bag feature importance of the 1187 
+
+predictors. (C) Simplified decision tree. (D) Partial dependency plots 1188 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint 56 
+
+1189 
+
+Fig. S11 Expression categorization frequencies for avatar variants for monkey 1 (M1)/monkey 2 (M2). The first four avatar types 1190 
+
+increase in realism: point -light expressions ( N per video = 60/29), wireframe mesh ( N per video = 53/15), grayscale avatar 1191 
+
+(N=53/15) and furless avatar ( N per video = 53/15). Additionally, a human avatar with monkey expressions ( N per video = 59/29), 1192 
+
+and a naturalistic monkey avatar with time -scrambled frame order ( N per video = 60/30) were tested (binomial tests , p < 0.05, 1193 
+
+FDR -corrected )1194 
+
+1195 
+
+Fig. S12 Boxplots of pupil sizes during the viewing of each expression category of the avatar variants for monkey 1 (M1) and 1196 
+
+monkey 2 (M2); ** p < 0.01, *** p < 0.001 (ANOVA, post -hoc Tukey -Kramer tests ). The difference in pupil size of monkey 1 between 1197 
+
+> (which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
+
+57 
+
+the Neutral and the Threat category for the Gray Avatar marginally missed significan ce at p = 0.0 51 . Systematic pupil size 1198 
+
+differences between avatar types are influenced by differences in stimulus type brightness 1199 
+
+(which was not certified by peer review) is the author/funder. All rights reserved. No reuse allowed without permission. The copyright holder for this preprint this version posted July 10, 2026. ;https://doi.org/10.64898/2026.03.18.712749 doi: bioRxiv preprint
