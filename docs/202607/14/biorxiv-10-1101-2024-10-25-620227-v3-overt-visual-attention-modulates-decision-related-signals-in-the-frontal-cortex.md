@@ -1,0 +1,20 @@
+---
+title: Overt visual attention modulates decision-related signals in the frontal cortex
+authors: "Shevlin, B. R. K., Gwinn, R. E., Makwana, A., Krajbich, I."
+date: 2026-07-07
+pdf: "https://www.biorxiv.org/content/10.1101/2024.10.25.620227v3.full.pdf"
+tags: ["query:q5"]
+score: 9.0
+evidence: 同步眼动追踪和功能磁共振成像研究注意力引导的证据积累
+tldr: 结合眼动追踪和fMRI研究视觉注意力如何调节神经决策信号。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-1101-2024-10-25-620227-v3/fig-001.webp\", \"caption\": \"Figure 7. Sample-level correlations between value signal regressors. Pearson correlations 654 computed across samples for different quantifications of sampled value (∆SV) and accumulated 655 value (∆AV). Values represent correlations between absolute magnitudes of each measure. |∆SV| 656 = absolute sampled value difference; |∆AV| = absolute accumulated value difference; lagged 657 |∆AV| = absolute accumulated value difference up to the previous sample; |∆SVGaze| = gaze-658 weighted sampled value; |∆AVGaze| = gaze-weighted accumulated value; lagged |∆AVGaze| = 659 gaze-weighted accumulated value from the previous sample. 660 661 We constructed each trial’s sequence of items pseudo-randomly to minimize the 662 correlation between the sampled value signal (|∆SV|; i.e., the absolute difference in sampled input 663 values) and the accumulated value signal (|∆AV|; i.e., the absolute difference in accumulated 664\", \"page\": 32, \"index\": 1, \"width\": 679, \"height\": 589}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-1101-2024-10-25-620227-v3/fig-002.webp\", \"caption\": \"Figure 2. Example trial with the sampled value and accumulated value. The sampled value 187 (∆SV; red) and accumulated value (∆AV; black) are plotted for this example trial. For the first draw, 188 ∆SV and ∆AV are identical. However, as the trial proceeds, the two signals diverge. In the model, 189 a choice is made when the |∆AV| reaches a pre-specified decision boundary. 190 191 192 Behavioral results 193 A core assumption of SSMs is that individuals decide based on the evidence accumulated 194 over the course of the decision. We thus anticipated that subjects would choose in line with ∆AV 195\", \"page\": 9, \"index\": 2, \"width\": 945, \"height\": 323}]"
+motivation: 同步眼动追踪和功能磁共振成像研究注意力引导的证据积累。
+method: 方法与实现细节请参考摘要与正文。
+result: 结果与对比结论请参考摘要与正文。
+conclusion: 总体而言，该工作在所述任务上展示了有效性，并提供了可复用的思路或工具。
+---
+
+## Abstract
+When indicating a preference between two options, decision makers are thought to compare and accumulate evidence in an attention-guided process. Little is known about this processs neural substrates or how visual attention affects the representations of accumulated evidence. We conducted a simultaneous eye-tracking and fMRI experiment in which human subjects gradually learned about the value of two food-lotteries. With this design we were able to extend decisions over a prolonged time-course, manipulate the temporal onset of evidence, and therefore dissociate sampled and accumulated evidence. We observed inconsistent correlations of both sampled and accumulated evidence with activity in the ventromedial prefrontal cortex (vmPFC), the ventral striatum, and the intraparietal sulcus (IPS), and more consistent correlations of accumulated evidence with activity in the dorsolateral prefrontal cortex (dlPFC) and pre-supplementary motor area (pre-SMA). We also found that more gaze on an option increased its choice probability and that gaze consistently amplified accumulated-value signals above and beyond the non-gaze-modulated signals in the pre-SMA and partially in the dlPFC, providing novel evidence that visual attention has lasting effects on decision variables and suggesting that activity in the pre-SMA and dlPFC reflect gaze-weighted accumulated evidence. These results shed new light on the neural mechanisms underlying gaze-driven decision processes.

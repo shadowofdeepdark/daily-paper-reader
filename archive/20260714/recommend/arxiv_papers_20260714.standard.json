@@ -1,0 +1,822 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-14T20:22:13.665286+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 20,
+    "deep_cap": 6,
+    "deep_selected": 10,
+    "quick_candidates": 44,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2607.11102v1",
+      "source": "arxiv",
+      "title": "CHARM: Charge Calibration and Acoustic Rescue for LLM-based Multimodal Sarcasm Detection",
+      "abstract": "Sarcasm detection, the identification of discrepancies between literal and intended meaning, is a fundamental task in affective computing. However, zero-shot instruction-tuned Large Language Models (LLMs) systematically over-predict the positive (sarcastic) class across the entire capability spectrum, while the prosodic cues humans rely on remain underexploited and transfer unevenly across languages. We introduce CHARM (Charge Calibration and Acoustic Rescue for Multimodal Sarcasm Detection), a training-free framework that couples two modules. Bidirectional Charge Calibration (BiCAL) steers the LLM toward opposing sarcastic and literal verdicts along a symmetric axis of charged prompts; the induced directional biases cancel by construction, and a simple aggregation recovers an unbiased pragmatic signal. Acoustic Late-Fusion Rescue (ALFR) then fuses the calibrated votes with prosodic descriptors and LLM-generated auditory-perception probes through a shallow classifier, actively down-weighting saturated text votes in favour of acoustic evidence. Without fine-tuning any backbone, BiCAL attains the highest reported zero-shot text-only Macro-F1 of 0.787 on MUStARD, while ALFR lifts weak backbones by up to +0.382 Macro-F1 on CMMA. A Stouffer meta-analysis confirms statistical significance on MUStARD and CMMA (Z = 13.89 and Z = 34.64, respectively; p < 10^-43). Our analysis further uncovers a cross-cultural prosodic decoupling: low-level acoustics fail to transfer across languages, whereas high-level perceptual abstractions remain robust. Together, these components yield an explainable, cross-lingual multimodal detector.",
+      "authors": [
+        "Qiyang Sun",
+        "Yi Chang",
+        "Yupei Li",
+        "Xi Shao",
+        "Zixing Zhang",
+        "Björn W. Schuller"
+      ],
+      "primary_category": "cs.SD",
+      "categories": [
+        "cs.SD"
+      ],
+      "published": "2026-07-13T05:19:36+00:00",
+      "link": "https://arxiv.org/pdf/2607.11102v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "multimodal sarcasm detection using acoustic/prosodic cues and LLMs",
+      "llm_evidence_cn": "利用声学/韵律线索和大语言模型进行多模态讽刺检测",
+      "llm_evidence": "利用声学/韵律线索和大语言模型进行多模态讽刺检测",
+      "canonical_evidence": "利用声学/韵律线索和大语言模型进行多模态讽刺检测",
+      "llm_tldr_en": "Proposes CHARM for multimodal sarcasm detection by leveraging acoustic cues and prompt calibration.",
+      "llm_tldr_cn": "提出CHARM框架，利用声学线索和提示词校准进行多模态讽刺检测。",
+      "llm_tldr": "提出CHARM框架，利用声学线索和提示词校准进行多模态讽刺检测。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.08152v1",
+      "source": "arxiv",
+      "title": "LEXIC: Lightweight Eye-tracking eXtension via Injected Complexity",
+      "abstract": "On the recent EyeBench benchmark, predicting reading comprehension from eye movements exposes a stark gap: text-aware models using pretrained language models reach 56--63% AUROC, while gaze-only models operate at chance. We ask how far a gaze-only model can be pushed by lightweight, language-model-free conditioning. Building on the EyeBench AhnCNN baseline, LEXIC-Base, we propose two mechanisms to inject three precomputed word-level difficulty signals, GPT-2 surprisal, word frequency, and word length, into the per-fixation input: direct concatenation, LEXIC-Concat, and a residual mechanism, LEXIC-Res, where a small head predicts typical-reader gaze response and the encoder is conditioned on the deviation. On the OneStop reading comprehension task, with K=5 seed-ensemble training across ten folds, both mechanisms produce statistically consistent AUROC gains on Unseen Text, +1.8 to +2.2 percentage points, Wilcoxon p <= 0.065. LEXIC-Concat additionally lifts Unseen Reader by +2.9 percentage points, p = 0.010. We trace an architectural boundary in LEXIC-Res on Unseen Reader, +1.8 percentage points, p = 0.19, to the prediction head being calibrated to training readers, transferring imperfectly to out-of-distribution readers.",
+      "authors": [
+        "Sumin Lee",
+        "Kyeonghun Kim",
+        "Subeen Lee",
+        "Jiwon Yang",
+        "Tien Nguyen",
+        "Ken Ying-Kai Liao",
+        "Nam-Joon Kim"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-07-09T06:46:19+00:00",
+      "link": "https://arxiv.org/pdf/2607.08152v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "predicting reading comprehension from eye movements and word difficulty",
+      "llm_evidence_cn": "通过眼动和词汇难度预测阅读理解",
+      "llm_evidence": "通过眼动和词汇难度预测阅读理解",
+      "canonical_evidence": "通过眼动和词汇难度预测阅读理解",
+      "llm_tldr_en": "Enhances gaze-only reading comprehension models by injecting word-level difficulty signals like surprisal and frequency.",
+      "llm_tldr_cn": "通过注入词频和惊奇度等词级难度信号，增强了仅基于注视的阅读理解模型。",
+      "llm_tldr": "通过注入词频和惊奇度等词级难度信号，增强了仅基于注视的阅读理解模型。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.09576v1",
+      "source": "arxiv",
+      "title": "Conceptual Networks for Cross-Linguistic Idiomatic Expressions:A Feature-Based Graph Approach",
+      "abstract": "We present an interpretable network-based framework for representing idiomatic and figurative meaning across eight typologically diverse languages, totaling 160 conventional expressions, the large majority of which are idiomatic. Each expression is annotated with binary conceptual features (containment, concealment, emotional, social, etc.) derived from cognitive-linguistic theory, and pairwise Jaccard similarities define a weighted graph. Community detection reveals that idioms cluster by conceptual schema rather than by language, producing a structure consistent with cognitive-linguistic predictions. The conceptual network captures unique semantic information not present in distributional embeddings, can be scaled via automatic annotation with LLMs, improves downstream idiom detection, and remains robust when enriched with corpus frequencies. Cross-lingual transfer experiments show that conceptual proximity alone can identify acceptable translation equivalents across five language families, with substantial gains over embedding-based baselines. Ablation studies demonstrate that all three feature dimensions -- schemas, roles, and valence -- contribute non-redundantly to both the network's organizational properties and its performance on idiom detection, and that specific graph-derived signals (community membership, neighbor similarity) are particularly informative. The framework offers an interpretable, cross-linguistically stable representation of idiomatic meaning, combining theoretical grounding with practical utility.",
+      "authors": [
+        "Kiran Pala",
+        "Punam Silu",
+        "Lixun Yu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.ET"
+      ],
+      "published": "2026-07-10T16:25:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.09576v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "cross-linguistic idiomatic expressions and cognitive-linguistic conceptual features",
+      "llm_evidence_cn": "跨语言习语表达与认知语言学概念特征",
+      "llm_evidence": "跨语言习语表达与认知语言学概念特征",
+      "canonical_evidence": "跨语言习语表达与认知语言学概念特征",
+      "llm_tldr_en": "Presents a network framework for representing idiomatic meaning across languages using cognitive features.",
+      "llm_tldr_cn": "提出了一个利用认知特征表示跨语言习语含义的网络框架。",
+      "llm_tldr": "提出了一个利用认知特征表示跨语言习语含义的网络框架。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "explore cognitive and neural mechanisms of non literal language comprehension",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.09576v2",
+      "source": "arxiv",
+      "title": "Conceptual Networks for Cross-Linguistic Idiomatic Expressions: A Feature-Based Graph Approach",
+      "abstract": "We present an interpretable network-based framework for representing idiomatic and figurative meaning across eight typologically diverse languages, totaling 160 conventional expressions, the large majority of which are idiomatic. Each expression is annotated with binary conceptual features (containment, concealment, emotional, social, etc.) derived from cognitive-linguistic theory, and pairwise Jaccard similarities define a weighted graph. Community detection reveals that idioms cluster by conceptual schema rather than by language, producing a structure consistent with cognitive-linguistic predictions. The conceptual network captures unique semantic information not present in distributional embeddings, can be scaled via automatic annotation with LLMs, improves downstream idiom detection, and remains robust when enriched with corpus frequencies. Cross-lingual transfer experiments show that conceptual proximity alone can identify acceptable translation equivalents across five language families, with substantial gains over embedding-based baselines. Ablation studies demonstrate that all three feature dimensions -- schemas, roles, and valence -- contribute non-redundantly to both the network's organizational properties and its performance on idiom detection, and that specific graph-derived signals (community membership, neighbor similarity) are particularly informative. The framework offers an interpretable, cross-linguistically stable representation of idiomatic meaning, combining theoretical grounding with practical utility.",
+      "authors": [
+        "Kiran Pala",
+        "Punam Silu",
+        "Luxin Yu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.ET"
+      ],
+      "published": "2026-07-10T16:25:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.09576v2",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "idiomatic and figurative meaning across diverse languages",
+      "llm_evidence_cn": "跨语言的成语和比喻意义加工",
+      "llm_evidence": "跨语言的成语和比喻意义加工",
+      "canonical_evidence": "跨语言的成语和比喻意义加工",
+      "llm_tldr_en": "Proposes a network framework for representing idiomatic meaning based on cognitive-linguistic theory.",
+      "llm_tldr_cn": "基于认知语言学理论，提出了一个用于表示成语意义的网络框架。",
+      "llm_tldr": "基于认知语言学理论，提出了一个用于表示成语意义的网络框架。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "explore cognitive and neural mechanisms of non literal language comprehension",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-1101-2024-10-25-620227-v3",
+      "source": "biorxiv",
+      "title": "Overt visual attention modulates decision-related signals in the frontal cortex",
+      "abstract": "When indicating a preference between two options, decision makers are thought to compare and accumulate evidence in an attention-guided process. Little is known about this processs neural substrates or how visual attention affects the representations of accumulated evidence. We conducted a simultaneous eye-tracking and fMRI experiment in which human subjects gradually learned about the value of two food-lotteries. With this design we were able to extend decisions over a prolonged time-course, manipulate the temporal onset of evidence, and therefore dissociate sampled and accumulated evidence. We observed inconsistent correlations of both sampled and accumulated evidence with activity in the ventromedial prefrontal cortex (vmPFC), the ventral striatum, and the intraparietal sulcus (IPS), and more consistent correlations of accumulated evidence with activity in the dorsolateral prefrontal cortex (dlPFC) and pre-supplementary motor area (pre-SMA). We also found that more gaze on an option increased its choice probability and that gaze consistently amplified accumulated-value signals above and beyond the non-gaze-modulated signals in the pre-SMA and partially in the dlPFC, providing novel evidence that visual attention has lasting effects on decision variables and suggesting that activity in the pre-SMA and dlPFC reflect gaze-weighted accumulated evidence. These results shed new light on the neural mechanisms underlying gaze-driven decision processes.",
+      "authors": [
+        "Shevlin, B. R. K.",
+        "Gwinn, R. E.",
+        "Makwana, A.",
+        "Krajbich, I."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-07T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.1101/2024.10.25.620227v3.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "simultaneous eye-tracking and fMRI to study attention-guided evidence accumulation",
+      "llm_evidence_cn": "同步眼动追踪和功能磁共振成像研究注意力引导的证据积累",
+      "llm_evidence": "同步眼动追踪和功能磁共振成像研究注意力引导的证据积累",
+      "canonical_evidence": "同步眼动追踪和功能磁共振成像研究注意力引导的证据积累",
+      "llm_tldr_en": "Combines eye-tracking and fMRI to investigate how visual attention modulates neural decision signals.",
+      "llm_tldr_cn": "结合眼动追踪和fMRI研究视觉注意力如何调节神经决策信号。",
+      "llm_tldr": "结合眼动追踪和fMRI研究视觉注意力如何调节神经决策信号。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-1101-2024-11-19-624356-v4",
+      "source": "biorxiv",
+      "title": "Ocular Response Functions reveal how ocular processes relate to neural activity",
+      "abstract": "Oculomotor activity provides critical insights into cognition and health, with growing evidence demonstrating its involvement in various cognitive functions such as attention, memory, and sensory processing, and that it is a significant indicator of psychopathologies and neurological disorders. Despite its crucial importance across domains, the neural mechanisms supporting oculomotion have been underexplored, largely because eye movements are typically treated as artefacts to be removed from the neural signal. While useful for data cleaning, this approach risks discarding valuable information about oculomotor control, and there has been recent interest in modelling these signals instead to understand them. Using time-resolved regression methods with magnetoencephalography (MEG) and eye tracking during the resting state, we thus here sought to model  Ocular Response Functions (ORFs), that characterise the neural signatures of distinct oculomotor events, specifically saccades, blinks, and pupil dilation. We demonstrate the relationships between ocular action and neural activity (encoding), revealing a range of sensory cortical, cerebellar and frontal signatures preceding and following such ocular events. We conversely show how we can reconstruct ocular events from brain activity, and further apply resting-state derived ORFs to a passive listening task - demonstrating how some neural markers interpreted as directly related to sensation may in principle indirectly result from oculomotor contributions to task-related neural processing. By providing an accessible framework for examining the interplay between eye movements and neural processes, we offer a range of insights with potential applications across cognitive and clinical neuroscience.",
+      "authors": [
+        "Gehmacher, Q.",
+        "Schubert, J.",
+        "Kaltenmaier, A.",
+        "Weisz, N.",
+        "Press, C."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-08T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.1101/2024.11.19.624356v4.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "modeling oculomotor activity to understand neural mechanisms of cognitive functions",
+      "llm_evidence_cn": "模拟动眼活动以理解认知功能的神经机制",
+      "llm_evidence": "模拟动眼活动以理解认知功能的神经机制",
+      "canonical_evidence": "模拟动眼活动以理解认知功能的神经机制",
+      "llm_tldr_en": "Develops Ocular Response Functions to link eye movements directly to neural activity and cognitive processes.",
+      "llm_tldr_cn": "开发眼动响应函数，将眼动直接与神经活动和认知过程联系起来。",
+      "llm_tldr": "开发眼动响应函数，将眼动直接与神经活动和认知过程联系起来。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-07-01-735892-v1",
+      "source": "biorxiv",
+      "title": "Judging the reasons for fixations: A direct experimental method to assess the contribution of saliency and semantic factors to gaze control",
+      "abstract": "Current debates regarding the relative contribution of saliency versus semantics to gaze control often rely on comparing the predictive power of saliency and meaning maps. We argue that such indirect, global approaches are fundamentally limited because fixations arise from heterogeneous, local causes that are conflated in whole-scene comparisons. To substantiate this claim, we used a direct method where participants explicitly identified the reasons for fixation at specific clusters of high fixation density, distinguishing between low-level saliency and various semantic categories, as well as the most important one. The obtained judgments revealed that multiple factors contribute simultaneously to gaze control. Although their influence varied across fixation clusters, semantics generally dominated saliency. Notably, abstract semantic categories, particularly \"unknown/unusual,\" proved important, highlighting the role of prior knowledge and novelty besides personal relevance in guiding attention. To interpret these findings in the context of existing models, we propose a framework distinguishing between processes highlighting interesting locations in the image from a sampling strategy translating this information into scanpaths. Within this framework, classic saliency and meaning maps are viewed as restricted inputs to the strategy, whereas deep learning-based models (e.g., DeepGaze IIE) are more general and may also implicitly encode aspects of the strategy itself. Consistent with this, we found that the predictive performance of DeepGaze IIE varied less significantly with the specific reasons for fixation than that of classic saliency and meaning map approaches.",
+      "authors": [
+        "Faul, F.",
+        "Nuthmann, A."
+      ],
+      "primary_category": "animal behavior and cognition",
+      "categories": [
+        "animal behavior and cognition"
+      ],
+      "published": "2026-07-07T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.07.01.735892v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "experimental method to assess semantic factors in gaze control and fixations",
+      "llm_evidence_cn": "评估注视控制和眼动中语义因素的实验方法",
+      "llm_evidence": "评估注视控制和眼动中语义因素的实验方法",
+      "canonical_evidence": "评估注视控制和眼动中语义因素的实验方法",
+      "llm_tldr_en": "Proposes a direct method to distinguish between saliency and semantic factors in eye movement and gaze control.",
+      "llm_tldr_cn": "提出了一种直接方法来区分眼动和注视控制中的显著性与语义因素。",
+      "llm_tldr": "提出了一种直接方法来区分眼动和注视控制中的显著性与语义因素。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "use of eye movement data to measure reading and comprehension processes",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-07-05-736621-v1",
+      "source": "biorxiv",
+      "title": "BCCWJ-Brain: A Multi-Modal fMRI, MEG, and EEG Dataset of Naturalistic Japanese Reading",
+      "abstract": "We present the BCCWJ-Brain dataset, a multi-modal neuroimaging resource comprising functional magnetic resonance imaging (fMRI), magnetoencephalography (MEG), and electroencephalography (EEG) data recorded from native Japanese speakers reading newspaper articles from the Balanced Corpus of Contemporary Written Japanese (BCCWJ). Neural data were collected from 112 participants (36 fMRI, 35 MEG, and 41 EEG) as they read twenty newspaper articles presented in a Rapid Serial Visual Presentation (RSVP) paradigm. By providing three complementary neuroimaging modalities collected under identical naturalistic reading stimuli, this dataset provides a cognitive benchmark for computational models such as large language models. The dataset is publicly available on the OpenNeuro platform, offering a valuable resource for neuroscience, natural language processing, and related research fields.",
+      "authors": [
+        "Sugimoto, Y.",
+        "Asahara, M.",
+        "Jeong, H.",
+        "Kanno, A.",
+        "Koizumi, M.",
+        "Oseki, Y."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-09T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.07.05.736621v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-modal neuroimaging (fMRI, MEG, EEG) of naturalistic reading",
+      "llm_evidence_cn": "自然阅读的多模态神经影像（fMRI, MEG, EEG）",
+      "llm_evidence": "自然阅读的多模态神经影像（fMRI, MEG, EEG）",
+      "canonical_evidence": "自然阅读的多模态神经影像（fMRI, MEG, EEG）",
+      "llm_tldr_en": "Provides a large-scale multi-modal dataset of brain activity during naturalistic Japanese reading.",
+      "llm_tldr_cn": "提供了一个包含fMRI、MEG和EEG的日语自然阅读大规模多模态神经影像数据集。",
+      "llm_tldr": "提供了一个包含fMRI、MEG和EEG的日语自然阅读大规模多模态神经影像数据集。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-07-08-737094-v1",
+      "source": "biorxiv",
+      "title": "Augmenting Speech Comprehension using Rapid Frequency Tagging",
+      "abstract": "Speech comprehension under adverse listening conditions benefits from visual speech, but whether visual input can be modulated to improve listening remains unclear. Here we used rapid frequency tagging, a non-invasive sensory stimulation technique, in which the visual tag at 55 Hz over the mouth region of a talking face was amplitude-modulated by the envelope of either the task-relevant or task-irrelevant speech stream. When the visual modulation followed the task-relevant speech envelope, comprehension improved relative to task-irrelevant modulation and to an unmodulated tagging control. MEG responses showed enhanced 55 Hz visual tagging, altered 40 Hz auditory tagging and a non-linear 15 Hz intermodulation. Individual comprehension gains were associated with intermodulation responses in left inferior frontal cortex, linking behavioural benefit to audiovisual interaction. These findings show that task-relevant visual stimulation can improve comprehension by strengthening audiovisual interaction, establishing amplitude-modulated frequency tagging as a tool for probing and supporting comprehension in challenging environments.",
+      "authors": [
+        "Reynolds, C.",
+        "Pan, Y.",
+        "Pesquita, A.",
+        "Jensen, O.",
+        "Segaert, K.",
+        "Park, H."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-13T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.07.08.737094v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "effects of visual speech modulation on auditory speech comprehension",
+      "llm_evidence_cn": "视觉语音调制对听觉语音理解的影响",
+      "llm_evidence": "视觉语音调制对听觉语音理解的影响",
+      "canonical_evidence": "视觉语音调制对听觉语音理解的影响",
+      "llm_tldr_en": "Demonstrates how visual cues can be modulated to enhance speech comprehension in adverse listening conditions.",
+      "llm_tldr_cn": "展示了如何通过调制视觉线索来增强不利听音条件下的语音理解。",
+      "llm_tldr": "展示了如何通过调制视觉线索来增强不利听音条件下的语音理解。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "effects of visual, auditory, and typographic cues on language understanding",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-07-11-737945-v1",
+      "source": "biorxiv",
+      "title": "Prior knowledge reveals two computational regimes for syntactic processing in the human brain",
+      "abstract": "The human brain rapidly transforms continuous speech into structured, meaningful linguistic representations, yet how prior knowledge constrains this process remains unclear. To characterize this influence, we combined MEG recordings acquired during audiobook listening with corpus-derived transition probabilities over syntactic features defined within both phrase-structure and dependency-based grammars. Across grammatical formalisms, prior knowledge selectively sharpened the neural representation of memory-related features indexing syntactic structures that must remain open for future completion. This enhancement was strictly local: immediately preceding contexts improved neural decoding at both word onset and offset, whereas longer histories produced either a return to baseline at the word level or a deterioration in decoding performance. By contrast, integration-related features indexing the completion of syntactic operations showed no benefit from prior knowledge and were represented most strongly at word offset, consistent with their dependence on word-level structural resolution. These dissociable dynamics reveal two concurrent neural computational regimes for syntactic processing: a forward-looking, locally maintained predictive code for pending structure and an integrative code engaged when structure is resolved. More broadly, our findings impose a mechanistic constraint on neural theories of language processing and on accounts that equate prediction in human language comprehension with the comparatively unconstrained operations of large language models (LLMs).",
+      "authors": [
+        "Iaia, C.",
+        "Tavano, A."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-11T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.07.11.737945v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "neural representation of syntactic processing and predictive contexts in speech",
+      "llm_evidence_cn": "语音中句法加工和预测语境的神经表征",
+      "llm_evidence": "语音中句法加工和预测语境的神经表征",
+      "canonical_evidence": "语音中句法加工和预测语境的神经表征",
+      "llm_tldr_en": "Uses MEG to show how prior knowledge constrains syntactic processing and predictive decoding during listening.",
+      "llm_tldr_cn": "利用MEG揭示了先验知识如何约束听力过程中的句法加工和预测解码。",
+      "llm_tldr": "利用MEG揭示了先验知识如何约束听力过程中的句法加工和预测解码。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.11703v1",
+      "source": "arxiv",
+      "title": "Production and Perception in LLMs: A Token Probability Approach",
+      "abstract": "The asymmetry between language production and perception has been well-documented in psycholinguistics. Whether large language models (LLMs) exhibit a functionally analogous distinction remains an open question, particularly given that LLMs rely on the same underlying mechanism (next-token prediction) for both input and output processing. In this exploratory study, we operationalize the production-perception distinction through direct token probability measurements rather than metalinguistic prompting. Using the base Llama-3.1-8B model, we generated poems under a production prompt and re-scored the same tokens under both rephrased production prompts and perception-oriented prompts. Across an extended experiment with four production and three perception prompts, production-perception distances consistently and substantially exceeded production-production distances, with non-overlapping ranges across conditions and an overall average ratio of approximately 1.8. Near-ceiling correlations in the production-production control confirm that the effect is specific to communicative framing rather than prompt surface variation, and we show the effect replicates across five open-weight models (Llama-3.1-8B, EuroLLM-9B, gemma-2-9b-it, Mistral-7B-Instruct-v0.3, and Qwen2.5-7B-Instruct), spanning both base and instruction-tuned variants. Temporal analysis revealed that the perception prompt exerts its strongest influence at the beginning of the sequence, with divergence decaying as generated context accumulates, though the specific shape of this decay varies across prompt pairs. These findings suggest that prompt framing alone induces a production-perception distinction in LLM probability distributions, even within a decoder-only architecture.",
+      "authors": [
+        "Anna Marklová",
+        "Jiří Milička",
+        "Martina Vokáčová",
+        "Rudolf Rosa"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-13T15:33:45+00:00",
+      "link": "https://arxiv.org/pdf/2607.11703v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.5,
+      "llm_evidence_en": "asymmetry between language production and perception in psycholinguistics",
+      "llm_evidence_cn": "心理语言学中语言产出与感知的非对称性",
+      "llm_evidence": "心理语言学中语言产出与感知的非对称性",
+      "canonical_evidence": "心理语言学中语言产出与感知的非对称性",
+      "llm_tldr_en": "Investigates the production-perception distinction in LLMs using token probability measurements.",
+      "llm_tldr_cn": "利用标记概率测量研究了大语言模型中产出与感知之间的区别。",
+      "llm_tldr": "利用标记概率测量研究了大语言模型中产出与感知之间的区别。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "study of cognitive and linguistic processes underlying language comprehension and production",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.11120v1",
+      "source": "arxiv",
+      "title": "Simple Features and Honest Calibration for Ambivalence and Hesitancy Recognition in Video",
+      "abstract": "We address ambivalence and hesitancy (A/H) recognition in the ABAW 2026 BAH Challenge: given a short interview video, predict whether the person shows signs of A/H. Our system combines affect-specialised text, audio, and visual representations with a small set of readable linguistic hesitation cues, fused by a reliability gate we call Affective Marker Fusion (AMF), and finished with a simple AP-weighted ensemble at a fixed decision threshold. We also introduce \\emph{ASR-erased time}: speech recognisers delete fillers and hesitation pauses from the transcript, but the chunk timestamps keep the time those events took, and sixteen features built from these gaps form the strongest and most independent non-verbal channel we measured (AP $0.718$, correlation $0.11$--$0.36$ with all other members). Across controlled experiments we find three things: cross-modal conflict design does not reliably help on BAH; language is by far the strongest channel while affect-specialised audio is a useful second; and calibration matters more than architecture. Fitting ensemble weights and a threshold on the small validation split overfits: it scores $0.741$ macro-F1 on validation but only $0.690$ on the untouched test set. AP-weighting at a fixed threshold instead reaches $\\mathbf{0.731}$ on test.",
+      "authors": [
+        "Vikas Kumar",
+        "Aditya Mishra",
+        "Haroon R. Lone"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CL",
+        "eess.AS"
+      ],
+      "published": "2026-07-13T05:52:40+00:00",
+      "link": "https://arxiv.org/pdf/2607.11120v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "recognition of linguistic hesitation cues and non-verbal channels in video",
+      "llm_evidence_cn": "视频中语言犹豫线索和非言语通道的识别",
+      "llm_evidence": "视频中语言犹豫线索和非言语通道的识别",
+      "canonical_evidence": "视频中语言犹豫线索和非言语通道的识别",
+      "llm_tldr_en": "Explores multimodal cues like hesitation pauses and fillers for affect recognition in video interviews.",
+      "llm_tldr_cn": "探讨了视频访谈中用于情感识别的犹豫停顿和填充词等多种模态线索。",
+      "llm_tldr": "探讨了视频访谈中用于情感识别的犹豫停顿和填充词等多种模态线索。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.10599v1",
+      "source": "arxiv",
+      "title": "MRUF: Multi-granularity Routing with Uncertainty-Aware Fusion for Robust Multimodal Sentiment Analysis",
+      "abstract": "Multimodal sentiment analysis relies on language, visual, and acoustic cues, but utterance-level modality quality may vary due to occlusion, background noise, motion blur, or imperfect transcripts, causing conventional fusion to over-trust unreliable modalities. We propose MRUF, a reliability-aware fusion method that combines multi-granularity routing with uncertainty-aware calibration. MRUF summarizes sentiment-relevant representations, performs subspace- and modality-level routing, and supervises modality routing with leave-one-out error increases to estimate utterance-level modality importance. It further predicts modality-wise uncertainty and refines modality gates through inverse-variance reweighting, while modality-invariant contrastive alignment stabilizes the shared representation space. Experiments on CMU-MOSI and CMU-MOSEI under aligned and unaligned settings show consistent improvements over strong baselines, and mechanism analysis verifies that modalities with higher predicted uncertainty receive lower fusion weights.",
+      "authors": [
+        "Haoran Ma",
+        "Yinfeng Yu",
+        "Liejun Wang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "eess.SP"
+      ],
+      "published": "2026-07-12T06:32:54+00:00",
+      "link": "https://arxiv.org/pdf/2607.10599v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "multimodal sentiment analysis using language, visual, and acoustic cues",
+      "llm_evidence_cn": "利用语言、视觉和声学线索进行多模态情感分析",
+      "llm_evidence": "利用语言、视觉和声学线索进行多模态情感分析",
+      "canonical_evidence": "利用语言、视觉和声学线索进行多模态情感分析",
+      "llm_tldr_en": "Proposes a reliability-aware fusion method for multimodal sentiment analysis using language and acoustic cues.",
+      "llm_tldr_cn": "提出了一种利用语言和声学线索进行多模态情感分析的可靠性感知融合方法。",
+      "llm_tldr": "提出了一种利用语言和声学线索进行多模态情感分析的可靠性感知融合方法。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-07-09-737536-v1",
+      "source": "biorxiv",
+      "title": "Neurophysiological Evidence for Reduced Use of Prior Sound Patterns to Shape Speech Processing in Autism",
+      "abstract": "Reported perceptual differences in autism may arise from reduced use of prior context to shape incoming sensory input. Speech perception provides a critical test of this account because stable perception requires listeners to integrate variable acoustic signals with contextual expectations. This study examined context-dependent modulation of speech encoding in autistic and non-autistic adults using the frequency-following response (FFR), a neurophysiological measure of phase-locked auditory encoding. Participants heard English intonational pitch contours presented in repetitive and variable contexts while EEG was recorded. Principal component analysis of FFR metrics yielded components indexing neural encoding fidelity and timing. Non-autistic participants showed enhanced encoding fidelity in more predictable contexts, whereas autistic participants showed reduced context-dependent modulation. Neural encoding timing also showed divergent context effects across groups, suggesting altered balance between feedback-based predictive mechanisms and locally driven adaptation processes. Within the autistic group, greater context-related modulation of encoding fidelity was associated with lower ADOS-2 Social Affect severity but poorer speech-in-noise perception, suggesting that the functional impact of contextual modulation depends on input reliability and task demands. These findings indicate that context-dependent modulation of speech encoding is altered in autism and may contribute to individual differences in auditory and social-communicative function.",
+      "authors": [
+        "Lau, J. C. Y.",
+        "McHaney, J. R.",
+        "Goldman, L.",
+        "Robinshaw, K.",
+        "Mou, F.",
+        "McFarlane, K.",
+        "Chandrasekaran, B.",
+        "Losh, M."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-10T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.07.09.737536v1.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.5,
+      "llm_evidence_en": "intonational pitch contours and neurophysiological speech processing",
+      "llm_evidence_cn": "语调音高轮廓与神经生理言语加工",
+      "llm_evidence": "语调音高轮廓与神经生理言语加工",
+      "canonical_evidence": "语调音高轮廓与神经生理言语加工",
+      "llm_tldr_en": "Uses EEG to examine how prior sound patterns and intonation influence speech encoding in autism.",
+      "llm_tldr_cn": "利用脑电图研究先前的声音模式和语调如何影响自闭症患者的言语编码。",
+      "llm_tldr": "利用脑电图研究先前的声音模式和语调如何影响自闭症患者的言语编码。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "biorxiv-10-64898-2026-01-27-702044-v4",
+      "source": "biorxiv",
+      "title": "Peripheral phoneme encoding and discrimination in aging and hearing impairment",
+      "abstract": "Speech perception difficulties in noise are common among older adults and individuals with hearing impairment, but also occur among younger adults whose audiometric thresholds are within the clinically-normal range. We examined how aging, cochlear synaptopathy (CS), and outer hair cell (OHC) damage affect speech encoding and phoneme discrimination. Envelope-following responses (EFRs) to rectangular amplitude-modulated (RAM) tones and speech-like phoneme pairs were recorded in quiet using EEG, and behavioral discrimination was assessed in quiet, and with ipsilateral and contralateral noise. Stimuli were designed to target temporal envelope (TENV) or temporal fine structure (TFS) encoding. Results showed that RAM-EFR amplitudes decreased gradually with increasing age, consistent with emerging CS, while magnitudes of high-frequency TENV-based EFRs in quiet were most reduced in older hearing-impaired subjects with combined CS and OHC damage. In contrast, EFRs targeting low-frequency TENV encoding in quiet remained preserved. Behaviorally, discrimination of predominantly TFS-based phoneme contrasts worsened with OHC loss and age in quiet and contralateral noise, respectively, whereas discrimination of predominantly TENV-based contrasts showed no significant age effect. Considering that high-frequency contrasts are discriminated via place-based spectral cues, low-frequency contrasts rely on TFS, and the EFR reflects primarily TENV, this framework explains why EFRs decline for high-frequency cues without perceptual loss, while EFRs remain stable for low-frequency cues even as TFS-based discrimination deteriorates. These findings highlight the need to investigate how neural coding deficits relate to perception. Combining electrophysiological and behavioral measures might provide a framework for detecting subclinical auditory deficits to earlier diagnose age-related and hidden hearing loss.",
+      "authors": [
+        "Wouters, M.",
+        "Gaudrain, E.",
+        "Dapper, K.",
+        "Schirmer, J.",
+        "Baskent, D.",
+        "Rüttiger, L.",
+        "Knipper, M.",
+        "Verhulst, S."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-11T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.01.27.702044v4.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "phoneme encoding and discrimination using EEG and behavioral methods",
+      "llm_evidence_cn": "使用脑电图和行为方法进行音素编码和辨别",
+      "llm_evidence": "使用脑电图和行为方法进行音素编码和辨别",
+      "canonical_evidence": "使用脑电图和行为方法进行音素编码和辨别",
+      "llm_tldr_en": "Examines speech encoding and phoneme discrimination in aging and hearing impairment using EEG and behavior.",
+      "llm_tldr_cn": "利用脑电和行为实验研究老龄化和听力受损对语音编码和音素辨别的影响。",
+      "llm_tldr": "利用脑电和行为实验研究老龄化和听力受损对语音编码和音素辨别的影响。",
+      "llm_tags": [
+        "query:q9"
+      ],
+      "matched_query_tag": "query:q9",
+      "matched_query_text": "compare reading and listening comprehension using behavioral and physiological methods",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "biorxiv-10-1101-2025-02-24-639817-v2",
+      "source": "biorxiv",
+      "title": "A unified theory of context-conditioned efficient and predictive coding",
+      "abstract": "Sensory processing does not occur in isolation: what neurons represent in a given sensory modality is shaped by signals from other senses, actions, and behavioral context. This context dependence raises a fundamental question for theories of neural coding: how can circuits efficiently encode their local input while using information available elsewhere in the brain? Here we develop a unified theory of efficient and predictive coding that shows how multimodal contextual information can optimize representations within a local sensory circuit. We demonstrate analytically that the efficient-coding solution maps onto an interpretable neural algorithm: contextual signals provide expectations about the sensory input to the local circuit, local neurons encode deviations from those expectations, and recurrent interactions whiten the residual signals. This result establishes a mathematical equivalence between context-conditioned efficient coding and predictive coding, revealing that predictive computations can emerge from efficient input compression guided by context. The resulting framework is distinct from both classical redundancy reduction within a single modality and hierarchical Bayesian inference. The theory explains and unifies diverse experimental phenomena, including cross-modal suppression of responses to predicted inputs and multimodal receptive fields across sensorimotor, audiovisual, visual-olfactory, and auditory-somatosensory circuits, while recovering classical unimodal coding effects as limiting cases. By linking coding objectives, circuit mechanisms, and experimentally observed phenomena within a single analytical framework, this work provides a principled foundation for understanding how distributed neural systems use context to shape local representations.",
+      "authors": [
+        "Tavoni, G."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-07-06T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.1101/2025.02.24.639817v2.full.pdf",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "multimodal contextual information and predictive coding in neural circuits",
+      "llm_evidence_cn": "神经回路中的多模态上下文信息和预测编码",
+      "llm_evidence": "神经回路中的多模态上下文信息和预测编码",
+      "canonical_evidence": "神经回路中的多模态上下文信息和预测编码",
+      "llm_tldr_en": "Proposes a theory of how multimodal context optimizes sensory representations via predictive coding.",
+      "llm_tldr_cn": "提出了一种关于多模态上下文如何通过预测编码优化感官表征的理论。",
+      "llm_tldr": "提出了一种关于多模态上下文如何通过预测编码优化感官表征的理论。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.05171v1",
+      "source": "arxiv",
+      "title": "RABBiT: Rapidly adaptive BOLD foundation model via brain-tuning for accurate zero-shot and few-shot prediction of speech-elicited responses in the brain",
+      "abstract": "Language understanding in the brain is context-dependent, varying across experimental stimuli and individuals, which makes it difficult to build computational models that generalize across both. This calls for a foundation model of language-evoked brain activity that can capture shared structure while adapting efficiently to new participants and inputs. We introduce RABBiT (Rapidly Adaptive BOLD foundation model via BraIn-Tuning), a compact audio-to-fMRI encoder designed for accurate zero- and few-shot prediction. A comprehensive evaluation on 324 participants across multiple unseen fMRI datasets shows that RABBiT enables accurate zero-shot prediction of fMRI responses to natural speech across auditory and language-selective regions, surpassing the SOTA foundation model for fMRI and predictions based on group averages. With as little as 10 minutes of participant-specific data, RABBiT further improves performance via parameter-efficient tuning, substantially outperforming per-participant linear models. RABBiT's performance is driven by two key innovations: (1) learned region-specific attention, and (2) a decomposition of brain responses into shared and subject-specific components, combined with a brain-tuned speech backbone. In addition to supporting strong predictive accuracy, the structured, region-specific representations that RABBiT learns enable interpretability. By eliminating the need for extensive per-participant data and model fitting, RABBiT enables scalable population-level analyses of language in the human brain. We make the code available at https://github.com/bridge-ai-neuro/rabbit.",
+      "authors": [
+        "Omer Moussa",
+        "Mariya Toneva"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-06T14:54:19+00:00",
+      "link": "https://arxiv.org/pdf/2607.05171v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "foundation model for language-evoked brain activity and neural mechanisms",
+      "llm_evidence_cn": "语言诱发脑活动的基石模型与神经机制",
+      "llm_evidence": "语言诱发脑活动的基石模型与神经机制",
+      "canonical_evidence": "语言诱发脑活动的基石模型与神经机制",
+      "llm_tldr_en": "Develops a foundation model to predict brain responses to speech across individuals and contexts.",
+      "llm_tldr_cn": "开发了一个基石模型，用于预测不同个体和语境下大脑对语音的反应。",
+      "llm_tldr": "开发了一个基石模型，用于预测不同个体和语境下大脑对语音的反应。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "explore cognitive and neural mechanisms of non literal language comprehension",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.05365v1",
+      "source": "arxiv",
+      "title": "SPEARBench: A Benchmark for Naturalness Evaluation in Streaming Speech-to-Speech Language Models",
+      "abstract": "Streaming speech-to-speech language models aim to answer spoken queries directly with synthetic speech. However, standard speech and text benchmarks do not capture whether these systems behave naturally in conversations, where timing, turn-taking, prosody, interpersonal stance, language and dialect consistency, and relationship-aware appropriateness jointly shape perceived quality. We introduce SPEARBench, a benchmark for evaluating naturalness in speech-to-speech language models from question-answer interactions. SPEARBench constructs controlled dialogue prompts from the Seamless Interaction corpus, runs inference across multiple models, and evaluates generated answers using a multidimensional protocol that covers response latency, interruptions, speech quality, ASR robustness, language and dialect consistency, emotional naturalness, interpersonal stance, and explainable distributional baselines. The benchmark includes original human answers as a reference condition and reports results for several contemporary models. Results show that current models can achieve high signal-level quality and low ASR error while still differing from human conversational behavior in latency, overlap, dialect preservation, emotional adaptation, and interpersonal stance dynamics.",
+      "authors": [
+        "Thomas Thebaud",
+        "Yuzhe Wang",
+        "Hao Zhang",
+        "Sathvik Manikantan Napa Ugandhar",
+        "Ashish Hallur",
+        "Georgi Tinchev",
+        "Venkatesh Ravichandran",
+        "Laureano Moro-Velazquez"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "eess.AS"
+      ],
+      "published": "2026-07-06T17:42:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.05365v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "prosody and interpersonal stance in naturalness evaluation of speech models",
+      "llm_evidence_cn": "语音模型自然度评估中的韵律与人际立场",
+      "llm_evidence": "语音模型自然度评估中的韵律与人际立场",
+      "canonical_evidence": "语音模型自然度评估中的韵律与人际立场",
+      "llm_tldr_en": "Introduces a benchmark for evaluating naturalness in speech models, including prosody and conversational timing.",
+      "llm_tldr_cn": "引入了一个评估语音模型自然度的基准，涵盖了韵律和对话时机。",
+      "llm_tldr": "引入了一个评估语音模型自然度的基准，涵盖了韵律和对话时机。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "investigate multimodal and prosodic cues influencing pragmatic interpretation in communication",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.05165v1",
+      "source": "arxiv",
+      "title": "Physiological Noise Augmentation Improves Non-Invasive Brain-to-Speech",
+      "abstract": "Non-invasive brain-to-speech decoding aims to restore communication to patients suffering from neurodegenerative disease, without the risks of neurosurgery. Existing MEG- and EEG-based methods, while scalable, continue to suffer from high word error rates driven by relatively low signal-to-noise ratios compared to invasive recordings. We propose physiological noise augmentation (PNA), a data augmentation method that explicitly trains decoders to become invariant to task-agnostic artifacts (e.g. ocular and cardiac activity). PNA draws inspiration from automatic speech recognition systems, where environmental noise (e.g. dogs barking, city traffic) is added to clean speech to improve robustness. Analogously, we decompose brain recordings into clean data and noise artifacts using independent component analysis (ICA), before scaling and remixing to generate biophysically realistic, label-preserving training examples. We show that PNA approximates anisotropic regularization, penalizing decoder sensitivity along artifact-dominated directions. On MegNIST, a 12k-trial imagined-digit MEG dataset, PNA with 10-trial averaging improves EEGNet decoding accuracy by 4.7 percentage points (absolute) over training on real data alone. Our results suggest that artifact-aware augmentation and trial averaging are complementary tools for improving robustness in non-invasive speech BCIs.",
+      "authors": [
+        "Benjamin Ballyk",
+        "Teyun Kwon",
+        "Miran Özdogan",
+        "Oiwi Parker Jones"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-06T14:47:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.05165v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "EEG-based methods and physiological noise augmentation for brain-to-speech decoding",
+      "llm_evidence_cn": "基于脑电的方法和生理噪声增强用于脑机语音解码",
+      "llm_evidence": "基于脑电的方法和生理噪声增强用于脑机语音解码",
+      "canonical_evidence": "基于脑电的方法和生理噪声增强用于脑机语音解码",
+      "llm_tldr_en": "Proposes a data augmentation method to improve the robustness of non-invasive brain-to-speech decoding systems.",
+      "llm_tldr_cn": "提出一种生理噪声增强方法，旨在提高非侵入式脑机语音解码系统的鲁棒性。",
+      "llm_tldr": "提出一种生理噪声增强方法，旨在提高非侵入式脑机语音解码系统的鲁棒性。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.05822v1",
+      "source": "arxiv",
+      "title": "Using hierarchical statistical learning models to model individual statistical learning",
+      "abstract": "Statistical learning is essential for individuals to discover structure in the sensory environment, especially during communication via speech or music. Individual differences in statistical learning abilities have been proposed to account for differences in various cognitive functions and development, including developmental disorders such as dyslexia. In this study, we used a Hierarchical Bayesian Statistical Learning (HBSL) model to model individual learning trajectories as recorded using electroencephalography (EEG) while adults with and without dyslexia listened to structured tone sequences. Although we did not find a significant group difference, our results showed a close correspondence of between the model simulations and the real EEG data and novel sequences generated based on individual models were highly similar to the original stimulus sequence. This provides a proof of concept for future research and suggests that the HBSL model accurately represented the statistical sequence structure in a similar way as did human listeners.",
+      "authors": [
+        "Hanna Ringer",
+        "Tatsuya Daikoku"
+      ],
+      "primary_category": "q-bio.NC",
+      "categories": [
+        "q-bio.NC"
+      ],
+      "published": "2026-07-07T04:39:04+00:00",
+      "link": "https://arxiv.org/pdf/2607.05822v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "modeling individual statistical learning trajectories using EEG during auditory sequences",
+      "llm_evidence_cn": "使用脑电图模拟听觉序列期间的个体统计学习轨迹",
+      "llm_evidence": "使用脑电图模拟听觉序列期间的个体统计学习轨迹",
+      "canonical_evidence": "使用脑电图模拟听觉序列期间的个体统计学习轨迹",
+      "llm_tldr_en": "Uses Bayesian models and EEG to study individual differences in statistical learning during auditory processing.",
+      "llm_tldr_cn": "利用贝叶斯模型和脑电图研究听觉处理过程中统计学习的个体差异。",
+      "llm_tldr": "利用贝叶斯模型和脑电图研究听觉处理过程中统计学习的个体差异。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 我研究心理语言学，关注人们理解讽刺与反语等非字面语言的机制，探讨在口语与书面语中的多模态和排版线索（如大小写、标点、表情符号）、语音语调及语用加工的作用。我采用眼动追踪和自定步阅读方法，同时对脑电等手段感兴趣，也广泛涉及实验语用学、比喻语言加工、内在言语、语言预测及双语语言加工。, especially work that connects or combines: study of cognitive and linguistic processes underlying language comprehension and production; processing and comprehension of sarcastic language as non-literal meaning; understanding of ironic expressions and pragmatic inference; effects of visual, auditory, and typographic cues on language understanding; use of eye movement data to measure reading and comprehension processes; investigation of pragmatic language phenomena through controlled experiments; explore cognitive and neural mechanisms of non literal language comprehension; investigate multimodal and prosodic cues influencing pragmatic interpretation in communication; compare reading and listening comprehension using behavioral and physiological methods; examine predictive processes and inner speech in bilingual language understanding.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2607.06258v1",
+      "source": "arxiv",
+      "title": "Early Language Learning via Spreading Activation and Category Exploration in Complex Networks",
+      "abstract": "Is word acquisition in children uneven with respect to semantic and lexical categories? To answer this question, we model early language learning as a search on a graph-based mental lexicon, driven by two interacting processes: spreading activation and an enforced exploration (rather than exploitation) of lexical categories. We evaluate model performance on four languages (German, English, Dutch, and Rioplatense Spanish), using CDIs as ground-truth data for lexical categories, normative ages derived from the Wordbank repository, and state-of-the-art resources for reconstructing graphs of word similarities. We find that spreading activation outperforms a shortest path baseline in simulating normative word acquisition. At the category level, we highlight complex transitions between CDIs. By studying their sequences in terms of burstiness and average persistence time within the same CDI, we find that spreading activation better captures the exploration dynamics observed empirically. Overall, our findings suggest that vocabulary development can be understood through the non-trivial interplay between activation dynamics and some degree of constraints regulating the visiting of lexical categories in complex networks.",
+      "authors": [
+        "Salvatore Citraro"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-07T13:25:18+00:00",
+      "link": "https://arxiv.org/pdf/2607.06258v1",
+      "tags": [
+        "keyword:心理语言",
+        "query:心理语言"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "modeling early language learning and semantic/lexical category acquisition",
+      "llm_evidence_cn": "模拟早期语言学习及语义/词汇类别习得",
+      "llm_evidence": "模拟早期语言学习及语义/词汇类别习得",
+      "canonical_evidence": "模拟早期语言学习及语义/词汇类别习得",
+      "llm_tldr_en": "Models early word acquisition using spreading activation and category exploration in mental lexicons.",
+      "llm_tldr_cn": "利用心理词库中的激活扩散和类别探索模型模拟早期单词习得。",
+      "llm_tldr": "利用心理词库中的激活扩散和类别探索模型模拟早期单词习得。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "study of cognitive and linguistic processes underlying language comprehension and production",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
