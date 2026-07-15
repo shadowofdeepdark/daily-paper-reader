@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2607.09657v1/fig-001.webp",
+      "caption": "Table 2: VP improves cross-modal alignment and multimodal transfer without labeled multimodal pretraining data. Left (a): alignment metrics on 100 held-out scientific document image–text pairs before and after VP; lower centroid separation and higher cosine similarity, CKA, andmutual 𝑘-NN indicate better alignment. Right (b): pass@1 performance on multimodal benchmarks for native multimodal models, comparing the base checkpoint, TP, and VP. The gains show that unlabeled visual-document pretraining improves both representation compatibility and downstream visual reasoning.",
+      "page": 6,
+      "index": 1,
+      "width": 996,
+      "height": 328
+    },
+    {
+      "url": "assets/figures/arxiv/2607.09657v1/fig-002.webp",
+      "caption": "Figure 1: Matched text and visual pretraining from the same scientific-document corpus. In the TP pathway, PDF pages are parsed into text, tokenized, and trained with text-token prediction, which can discard or distort page-level structure such as diagrams, equations, tables, and layout. In the VP pathway, the same pages are rendered as images, filtered into foreground visual patches, and trained with next visual latent prediction in a frozen visual-feature space. The t-SNE [31] projections on the right illustrate the representation change quantified in Table 2: VP brings matched visual and textual document embeddings closer in the shared representation space.",
+      "page": 2,
+      "index": 2,
+      "width": 983,
+      "height": 536
+    },
+    {
+      "url": "assets/figures/arxiv/2607.09657v1/fig-003.webp",
+      "caption": "Table 1: VP improves text-only scientific reasoning under matched document sources. All rows use the same starting checkpoint and SFT stage. TP and VP differ only in how the scientific-PDF corpus is represented: MinerU2.5-parsed text for TP and rendered page images for VP. Scores are reported on text-only reasoning benchmarks; GPQA denotes GPQA Diamond and AIME denotes AIME 2025.",
+      "page": 3,
+      "index": 3,
+      "width": 983,
+      "height": 375
+    },
+    {
+      "url": "assets/figures/arxiv/2607.09657v1/fig-004.webp",
+      "caption": "Figure 2: Visual pretraining scales with retained PDF visual tokens and benefits most from structure-heavy pages. (a), VP reaches a more favorable SFT trajectory after comparable CPT loss. (b), Increasing the retained visual-token budget consistently raises downstream gains, normalized by the TP-over-base improvement. (c), VP’s advantage is largest on examples with high visual-structure density, where figures, equations, tables, and layout carry more of the evidence. (d), Better next-token visual-feature prediction is associated with larger multimodal gains over TP, linking visual-space modeling quality to downstream transfer.",
+      "page": 4,
+      "index": 4,
+      "width": 982,
+      "height": 764
+    },
+    {
+      "url": "assets/figures/arxiv/2607.09657v1/fig-005.webp",
+      "caption": "Figure 3: The main VP setting balances visual-token budget and rendering resolution. Left, with the training context fixed for each forward pass, varying the visual token budget shows that the 1× setting (8,192 foreground visual tokens per batch) offers the best trade-off. Right, with the visual budget fixed at 8,192 tokens, lowering the maximum resolution preserves strong performance, indicating the efficiency of VP under compressed visual input.",
+      "page": 5,
+      "index": 5,
+      "width": 969,
+      "height": 432
+    },
+    {
+      "url": "assets/figures/arxiv/2607.09657v1/fig-006.webp",
+      "caption": "Figure 5: Architecture comparison between the generative-decoder variant and decoder-free visual pretraining. (Left) The generative-decoder variant (VP with Decoder) adds a MAR decoder and a frozen VAE decoder to reconstruct pages from LLM-refined latents, providing additional pixel-level supervision at the cost of extra parameters and computation. (Right) Our decoder-free formulation (VP w/o Decoder) predicts foreground patch latents autoregressively without pixel reconstruction.",
+      "page": 16,
+      "index": 6,
+      "width": 983,
+      "height": 527
+    }
+  ]
+}

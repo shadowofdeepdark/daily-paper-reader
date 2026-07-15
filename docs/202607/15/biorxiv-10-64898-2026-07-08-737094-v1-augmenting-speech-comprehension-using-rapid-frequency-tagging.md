@@ -1,0 +1,20 @@
+---
+title: Augmenting Speech Comprehension using Rapid Frequency Tagging
+authors: "Reynolds, C., Pan, Y., Pesquita, A., Jensen, O., Segaert, K., Park, H."
+date: 2026-07-13
+pdf: "https://www.biorxiv.org/content/10.64898/2026.07.08.737094v1.full.pdf"
+tags: ["query:q8"]
+score: 9.0
+evidence: 影响言语理解和MEG响应的多模态线索（视觉言语）
+tldr: 利用快速频率标记技术展示视觉言语调制如何改善听觉理解和神经反应。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-001.webp\", \"caption\": \"\", \"page\": 6, \"index\": 1, \"width\": 1263, \"height\": 819}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-002.webp\", \"caption\": \"\", \"page\": 7, \"index\": 2, \"width\": 601, \"height\": 602}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-003.webp\", \"caption\": \"\", \"page\": 7, \"index\": 3, \"width\": 601, \"height\": 602}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-004.webp\", \"caption\": \"\", \"page\": 8, \"index\": 4, \"width\": 1411, \"height\": 706}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-005.webp\", \"caption\": \"\", \"page\": 8, \"index\": 5, \"width\": 1411, \"height\": 706}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-006.webp\", \"caption\": \"\", \"page\": 8, \"index\": 6, \"width\": 699, \"height\": 397}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-007.webp\", \"caption\": \"\", \"page\": 10, \"index\": 7, \"width\": 1427, \"height\": 715}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-008.webp\", \"caption\": \"\", \"page\": 10, \"index\": 8, \"width\": 1428, \"height\": 715}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-009.webp\", \"caption\": \"\", \"page\": 10, \"index\": 9, \"width\": 1428, \"height\": 712}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-010.webp\", \"caption\": \"\", \"page\": 11, \"index\": 10, \"width\": 558, \"height\": 276}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-011.webp\", \"caption\": \"\", \"page\": 11, \"index\": 11, \"width\": 1408, \"height\": 703}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-012.webp\", \"caption\": \"\", \"page\": 11, \"index\": 12, \"width\": 1412, \"height\": 705}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-08-737094-v1/fig-013.webp\", \"caption\": \"\", \"page\": 11, \"index\": 13, \"width\": 558, \"height\": 278}]"
+motivation: 影响言语理解和MEG响应的多模态线索（视觉言语）。
+method: 方法与实现细节请参考摘要与正文。
+result: 结果与对比结论请参考摘要与正文。
+conclusion: 总体而言，该工作在所述任务上展示了有效性，并提供了可复用的思路或工具。
+---
+
+## Abstract
+Speech comprehension under adverse listening conditions benefits from visual speech, but whether visual input can be modulated to improve listening remains unclear. Here we used rapid frequency tagging, a non-invasive sensory stimulation technique, in which the visual tag at 55 Hz over the mouth region of a talking face was amplitude-modulated by the envelope of either the task-relevant or task-irrelevant speech stream. When the visual modulation followed the task-relevant speech envelope, comprehension improved relative to task-irrelevant modulation and to an unmodulated tagging control. MEG responses showed enhanced 55 Hz visual tagging, altered 40 Hz auditory tagging and a non-linear 15 Hz intermodulation. Individual comprehension gains were associated with intermodulation responses in left inferior frontal cortex, linking behavioural benefit to audiovisual interaction. These findings show that task-relevant visual stimulation can improve comprehension by strengthening audiovisual interaction, establishing amplitude-modulated frequency tagging as a tool for probing and supporting comprehension in challenging environments.
