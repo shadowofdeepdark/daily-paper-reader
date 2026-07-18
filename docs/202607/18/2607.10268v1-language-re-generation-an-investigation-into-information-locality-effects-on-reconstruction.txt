@@ -1,0 +1,457 @@
+Title: Language Re-generation: An investigation into information locality effects on reconstruction
+
+URL Source: https://arxiv.org/pdf/2607.10268v1
+
+Published Time: Tue, 14 Jul 2026 00:42:55 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+## Language Re-generation: An investigation into information locality effects on reconstruction 
+
+Amirhossein Mohammadi, Laurence E. Frank, Albert Gatt, Robert A. Bagheri 
+
+Utrecht University, a.mohammadi@uu.nl 
+
+Abstract 
+
+Information locality, the tendency for syntac-tically related words to appear close together, shapes both human language processing and language model learning. While prior work has examined whether language models can ac-quire impossible languages, it remains unclear whether they can recover natural language from such input and what this reveals about their inductive biases. We address this by comple-menting learnability-based approaches with a reconstruction framework — fine-tuning GPT-2 models pre-trained on impossible languages to reconstruct natural English from three per-turbation types. Our findings show that the re-covered structures exhibit shorter dependency lengths than the original text, mirroring the lo-cality preference observed in unconstrained lan-guage model generation and providing a quan-titative signature of an architectural bias that learnability experiments alone do not reveal. Recovery difficulty increases with the degree of locality disruption. Structural recovery (de-pendency Triple F 1) dissociates from surface recovery (Exact Match), while fluency dissoci-ates from faithful reconstruction under global shuffling. Sentence length further modulates performance: longer sentences facilitate recov-ery when local structure is preserved but lead to complete collapse under global shuffling. Fi-nally, recovery difficulty tracks learnability dif-ficulty across perturbation types, suggesting that information locality is the shared constraint governing both. 
+
+§ Repository 
+
+1 Introduction 
+
+There are many conceivable linguistic systems, but not all langauges are equally learnable given hu-man cognitive constraints (Chomsky, 1957, 1986; Jackendoff, 2002; Pinker, 1994). Natural lan-guages share structural properties precisely because those properties keep them within cognitive reach (Hawkins, 1994; Futrell et al., 2020). One such  
+
+> Perturbed
+> sentence
+> Original
+> sentence
+> The cat Rmat the on sat
+> The loudly barked dog
+> Shire. Bag live Frodo the End at in
+> LLMs
+> The cat sat on the mat
+> The dog barked loudly
+> Frodo lives at Bag End in the Shire.
+
+Figure 1: Translation task overview. Three separate LLMs are fine-tuned on specific perturbation types (top to bottom PARTIAL REVERSE , L OCAL SHUFFLE , FULL SHUFFLE ). Each model translates its corresponding perturbed language input (left) into the original language output (right), recovering dis-rupted natural structure. 
+
+property is Information locality : the tendency for semantically and syntactically related elements to appear close together in linear order. This is rooted in memory limitations of the human brain (Gib-son et al., 2000; Musso et al., 2003). Dependency Locality Theory (DLT) formalizes this principle, predicting that processing difficulty increases as the linear distance between dependent elements grows, reflecting the limits of working memory during incremental comprehension (Gibson, 1998). Cross-linguistic research corroborates the informa-tion locality principle through dependency length minimization (DLM), demonstrating that natural languages tend to converge on word order strategies that keep grammatically related elements adjacent or close (Hawkins, 1994; Liu, 2008; Futrell et al., 2020; Temperley, 2018). When dependent elements are separated from their heads by intervening and unrelated words, this order is disrupted, and the dependency struc-ture of a sentence becomes harder to recover. As a result, the text becomes cognitively inaccessi-ble even though its lexical content remains intact. arXiv:2607.10268v1 [cs.CL] 11 Jul 2026 Scrambling word order in violation of the syntactic constraints of a given language, through operations such as shuffling or reversal, increases dependency lengths and disrupts local syntactic relationships, producing inputs that are harder for humans to pro-cess despite intact vocabulary. Although some stud-ies argue that LMs process such violations similarly to natural language (Ziv et al., 2025), Kallini et al. (2024) demonstrate systematic differences in the learnability of languages which have undergone such perturbations, showing a clear inductive bias toward natural language structures. Someya et al. (2025) further establish that information locality is the primary driver of this bias. This bias extends to text generation: LMs exhibit a strong tendency to place semantically and syntactically related el-ements close together (Khandelwal et al., 2018; Futrell et al., 2020). Despite this body of evidence, which suggests that LMs exhibit comparable tendencies to humans in terms of learnability, we still lack direct tests of the hypothesis that information is harder to recover as information locality is violated. In this paper, we address this question, by framing it as a trans-lation task. Translating perturbed inputs back into the original text directly tests whether LMs can identify scattered dependencies and restore their characteristic proximity. To address this, we take the pre-trained GPT-2 models from Kallini et al. (2024) as our starting point and fine-tune them to reconstruct valid English forms from inputs which undergo perturbations that disrupt locality to dif-ferent degrees. We finetune one model per per-turbation type. These models have already been exposed to impossible language distributions, so fine-tuning tests recovery directly without conflat-ing the difficulty of acquisition with the difficulty of reconstruction. Investigating whether LMs can restore information locality from structurally de-graded inputs provides theoretical insight into LM architectural biases (Kallini et al., 2024; Xu et al., 2025; Tran et al., 2018; Khandelwal et al., 2018), while practically informing how systems process corrupted or noisy text. We investigate two core questions: First , what does the pattern of recov-ery success and failure across perturbation types and dependency metrics reveal about LMs’ induc-tive biases toward information locality? Second ,does recovery difficulty scale with locality viola-tion severity? These experiments revealed three key findings. 
+
+First , recovery performance varies systematically by perturbation type, directly reflecting the de-gree of locality violation. Second , dependency-based evaluation shows that LMs recover substan-tial syntactic structure even when the reconstructed string is not an exact match to the original, indi-cating that structural recovery is dissociable from surface-level reconstruction rather than tied to it; moreover, recovered structures systematically un-dershoot natural dependency length, revealing an architectural bias toward shorter-than-natural de-pendency arcs, consistent with DLM bias. Third ,sentence length interacts with locality violation severity: longer sentences improve recovery for perturbations that preserve some local structure by providing richer contextual cues, but cause com-plete collapse for global shuffling, where depen-dency distances grow proportionally with sentence length. Together, these results suggest that LMs are sensitive to information-locality constraints but not fully bounded by them, exhibiting architectural bi-ases that are partially aligned with human linguistic feasibility. 1
+
+2 Background 
+
+Cognitive constraints on language learning 
+
+One goal of linguistics is to distinguish natural languages from the vast space of conceivable gram-mars — to identify which structural properties de-fine human language (de Saussure, 1983; Hock-ett, 1958; Lyons, 1968). Chomsky’s Universal Grammar (UG) framework formalizes this distinc-tion, proposing that all human languages share con-strained structural principles derived from innate cognitive mechanisms (Chomsky, 1965). Crucially, a language can be formally describable without being cognitively learnable. In other words, the question of whether a grammatical formalism can represent a linguistic system is distinct from the question of whether humans can acquire that sys-tem (Moro, 2016; Musso et al., 2003). Under thiz view, ‘impossible languages’ are those whose gram-mars humans cannot acquire despite exposure, not because they cannot be formally characterised, but because they violate cognitive constraints (Moro, 2016). Empirical evidence for this boundary comes from acquisition studies and neurolinguistics. Smith and Tsimpli (1993) showed that humans successfully acquire artificial languages consistent with known                                                                     
+
+> 1All data and source code for this paper are available on GitHub Language Example 1 Example 2
+> ORIGINAL TEXT It is nice in there we ’d need to look at it again , would n’t we LOCAL SHUFFLE (W=3) nice is It there in we ’d need to it look again at , would n’t we PARTIAL REVERSE It is Rthere in nice we ’d need Rwe n’t would , again it at look to FULL SHUFFLE nice is there It in again , at n’t we it would we need look ’d to
+> Table 1: Example data for each perturbation function. For ease of comparison, we use a similar visualisation to Kallini et al. (2024).
+
+principles governing natural languages, but fail to learn those that violate them, suggesting cer-tain grammars remain unlearnable regardless of exposure. Neurolinguistic studies corroborate this: brain regions for syntactic processing selectively respond to natural language-compatible structures (Moro, 2016; Musso et al., 2003). Nefdt (2024) further argues that identifying possible grammar boundaries requires grounding in theoretical lin-guistic competence, not solely distributional regu-larities. Yet this evidence remains limited — Smith and Tsimpli (1993) focused on a single individual and most theoretical claims lack systematic em-pirical testing — leaving the boundary between possible and impossible languages underspecified. Among the cognitive constraints that define this boundary, information locality is the most robustly documented. Cross-linguistic research demon-strates that natural languages systematically min-imize dependency length to keep grammatically related elements adjacent (Gibson et al., 2000; Gib-son, 1998; Hawkins, 1994; Liu, 2008; Futrell et al., 2020; Temperley, 2018). Someya et al. (2025) es-tablishes information locality as the primary driver of learnability differences between possible and impossible languages. This makes information lo-cality not merely a descriptive property of natural language but a diagnostic for the possible/impos-sible boundary itself. Mollica et al. (2020) find evidence that the human brain can recover mean-ingful dependencies from natural language strings even if they violate word order constraints, as long as dependents are located in close proximity. 
+
+LMs as models of linguistic competence Stan-dard neural architectures do not automatically re-spect the constraints that define possible languages. Hahn (2020) shows that self-attention architectures have theoretical limitations when syntactic depen-dencies span arbitrary distances, and Mitchell and Bowers (2020) demonstrate that recurrent neural networks learn highly unnatural patterns that hu-mans do not acquire — highlighting a potential misalignment between human and neural inductive biases. The extent of this misalignment, however, is not uniform across all linguistic phenomena. Abdou et al. (2022) show that models trained on shuf-fled text retain non-trivial word order information; Huang et al. (2023) demonstrate that lexically in-variant transformer variants match standard models under long contexts; and Ebrahimi et al. (2020) show that self-attention networks learn certain hier-archical languages with appropriate cues. However, Delétang et al. (2023) argue that standard architec-tures face considerable challenges in representing complex hierarchical dependencies without explicit structured memory. Kallini et al. (2024) demonstrate that LLMs exhibit systematic learnability differences between possi-ble and impossible languages, showing biases to-ward natural patterns while struggling with highly unnatural systems. Xu et al. (2025) find that GPT-2 shows learning slowdowns aligned with typological universals when acquiring implausible counterfac-tual languages, though it can ultimately learn them. Together, these findings show that LLM biases only partially overlap with human cognitive constraints — leaving open whether LLMs can actively recover possible language from impossible inputs by revers-ing the locality violations that define the boundary. 
+
+3 Method 
+
+The main goal of this research is to train an LLM to recover meaningful strings from perturbed in-puts, where the latter can loosely be regarded as strings of an ‘impossible language’. Formally, we define a perturbation function f : A → A′ where A
+
+represents standard English text and A′ is the per-turbed version. Our objective is to train a model M
+
+such that M(A′) := A, effectively reversing the perturbation and recovering the original linguistic information. A critical constraint is that M must not have "Fix this text: The cat R mat the on sat\nCorrected: The cat sat on the mat" <[-100][-100][-100][-100]...[-100][-100][-100][-100]> <tokens>     
+
+> Ignored in loss Learned from
+
+Figure 2: The mechanism of masking labels and calculating loss 
+
+been pre-trained on A. If M had prior exposure to A (e.g. standard English), it could leverage that knowledge rather than genuinely learning to re-cover linguistic structure from perturbed input, con-founding our evaluation of information recovery. To satisfy this requirement, we adopt the models pre-trained by Kallini et al. (2024) as the start-ing point for our fine-tuning process, since these models were trained from scratch on impossible languages, generated by applying different pertur-bation functions to standard English sentences. 
+
+3.1 Data Generation 
+
+We use the bnc_spoken and Gutenberg subsets of BabyLM (Warstadt et al., 2023). These subsets al-low us to analyse the impact of contrasting sentence lengths on translation performance. Applying per-turbations to these subsets yields paired examples (perturbed, original), which we use for fine-tuning. Following Kallini et al. (2024), we apply three per-turbation functions (Table 1). 
+
+LOCAL SHUFFLE : shuffling tokens randomly within a local window (size 3 in this study), disrupt-ing the sequential arrangement while maintaining words within bounded distances. 
+
+FULL SHUFFLE : shuffling tokens globally at random, disrupting the sequential arrangement throughout the entire text, thereby also disrupting information locality. 
+
+PARTIAL REVERSE : A random starting point is selected within the sentence, and an R token is placed in this position, and subsequent tokens are reversed in order. This creates a partition where the initial segment remains unchanged, the final segment is reversed, and R marks the boundary. These three perturbations from Kallini et al. (2024) span a spectrum of locality violation: L O-
+
+> CAL
+
+SHUFFLE disrupts local order within bounded windows, P ARTIAL REVERSE disrupts order from a random point, preserving the initial segment, and FULL SHUFFLE produces the most severe violation by scattering tokens globally, making dependency recovery maximally difficult. We created three datasets, each containing paired text (impossible, possible), by applying one pertur-bation strategy to each. To investigate training scale effects, we use datasets of 100 K sample pairs from 
+
+bnc_spoken .
+
+3.2 Model Fine-tuning 
+
+The models were fine-tuned by combining the causal language modelling paradigm of GPT-2 (Radford et al., 2019) with a masked label strat-egy. Each training sample consists of a pair: a perturbed text and its corresponding original ver-sion. These pairs are formatted into the following instruction-response structure:     
+
+> Fix this text: <impossible_text> Corrected: <possible_text><|endoftext|>
+
+To ensure the model learns to generate correc-tions rather than memorising instructions, masked labelling is applied. The instruction tokens (se-quence start to Corrected ) receive label value 
+
+[−100] , while the response tokens (correct text and <|endoftext|> token) retain their IDs as la-bels. By excluding the input from the loss calcula-tion, the model is still presented with the full input during the forward pass, but the loss is computed only over the target (correct) tokens (Ouyang et al., 2022). The GPT-2 tokenizer was extended with special tokens { R } before fine-tuning to accom-modate perturbation markers. Figure 2 displays the label masking and loss calculation. 
+
+3.3 Evaluation metrics 
+
+To assess how well the model recovers syntactic structure from perturbed input, we employ Exact Match (EM), measuring perfect reconstruction (Ra-jpurkar et al., 2016); and the BLEU score quantify-ing n-gram overlap (Papineni et al., 2002). We use BLEU purely as a measure of the extent to which a model is able to recover surface sequences of varying length in the original. We also consider two complementary metrics based on dependency triples: Average Dependency Length (ADL). We com-pute the mean absolute positional distance between each non-root token and its syntactic head, based on head-dependent relationships identified in the 
+
+original sentence: ADL = 1
+
+n
+
+Pni=1 |pos (wi) −
+
+pos (head (wi)) |, where n is the number of non-root tokens. Scrambled text disrupts this locality, pro-ducing higher ADL. 
+
+Dependency Triple F1. From each parse, we ex-tract triples (wd, r, w h) where wd is the dependent, 
+
+r is the relation label, and wh is the head. We com-pute set-based precision, recall, and F1 between the triple sets in the model’s prediction and the original (unperturbed) string. A triple matches only if all three elements are identical. As a baseline, we also compare the scrambled input against the actual text to quantify how many arcs survive perturbation by chance (Buchholz and Marsi, 2006; Cai and Knight, 2013). For both ADL and Dependency Triple F1, dependency parses were produced using the 
+
+en_core_web_trf model in spaCy. 
+
+3.4 Experimental Design 
+
+We conduct three experiments testing whether re-construction difficulty scales with locality viola-tion severity. We hypothesise that perturbations more severely disrupting the proximity of related elements should be harder to reverse, reflecting a gradient rather than a categorical boundary. If LLMs exhibit locality constraints, translation per-formance should degrade as violations intensify: longer sentences increase difficulty by expanding distances between related elements and enlarging reordering search spaces, while perturbation types should vary by locality disruption severity. For full fine-tuning details see A. 
+
+Experiment 1: Effect of training sample size. 
+
+This experiment investigates how training data size influences translation performance. Models were fine-tuned on the 100 K subset of bnc_spoken , with learning progress evaluated at multiple checkpoints using our four metrics (§ 3.3). This multi-metric approach suits our task because perturbed and orig-inal texts share vocabulary but differ in token order, making both strict reconstruction (EM) and par-tial accuracy (BLEU, Triple F1), and structural locality (ADL) informative. The hypothesis is that larger datasets will improve performance across all perturbations and metrics, but with different learn-ing rates: P ARTIAL REVERSE should be learned 
+
+Dataset Size Average Length 
+
+bnc_spoken train 100 K 12 .77 
+
+bnc_spoken test 1K 11 .72 
+
+Gutenberg train 100 K 40 .61 
+
+Gutenberg test 1K 46 .78 
+
+Table 2: Average sentence lengths for the training and test datasets. 1000 2000 3000 4000 5000        
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> Full Shuffle EM
+> Full Shuffle BLEU
+> Local Shuffle (w=3) EM
+> Local Shuffle (w=3) BLEU
+> Partial Reverse EM
+> Partial Reverse BLEU
+> (a) bnc_spoken 1000 2000 3000 4000 5000
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> Full Shuffle EM
+> Full Shuffle BLEU
+> Local Shuffle (w=3) EM
+> Local Shuffle (w=3) BLEU
+> Partial Reverse EM
+> Partial Reverse BLEU (b) Gutenberg
+
+Figure 3: Training curves comparing short (a) versus long (b) sentences. Longer contexts improve all perturbations, with PARTIAL REVERSE showing largest gains. 
+
+most readily as it preserves the initial segment of each sentence, while F ULL SHUFFLE will require the most examples as global shuffling completely destroys all dependency structure, with L OCAL -SHUFFLE showing intermediate difficulty. 
+
+Experiment 2: Effect of sentence length. Build-ing on the locality principle introduced above, this experiment tests how sentence length affects re-covery difficulty. Results were compared between the bnc_spoken dataset and the Gutenberg dataset (see Table 2). The hypothesis is that longer sen-tences provide more training signal, potentially im-proving overall performance, but simultaneously increase difficulty for perturbations disrupting in-formation locality. Specifically, L OCAL SHUFFLE 
+
+and P ARTIAL REVERSE are expected to show com-plex effects: benefits from additional training con-tent may be offset by challenges from related words scattered over greater distances, which exponen-tially expand the space of possible reorderings and integration costs. FULL SHUFFLE is expected to show the greatest difficulty with longer sentences, as global shuffling exponentially expands the re-ordering search space and provides no preserved structure to guide reconstruction. 
+
+Experiment 3: Quality of generated text. Be-cause the goal of this research is to translate dis-turbed languages and recover information, this ex-periment evaluates whether generated texts con-verge toward natural language distributions using perplexity. We measure against GPT-2 base on standard English to measure how well generated text aligns with natural language distributions (Je-1000 2000 3000 4000 5000                             
+
+> 2.2
+> 2.3
+> 2.4
+> 2.5
+> 2.6
+> 2.7
+> 2.8 Full Shuffle (input=3.3)
+> Local Shuffle (w=3) (input=1.8)
+> Partial Reverse (input=3.3)
+> Original (2.49) (a) ADL -bnc_spoken 1000 2000 3000 4000 5000
+> 3.10
+> 3.15
+> 3.20
+> 3.25
+> 3.30
+> 3.35
+> Full Shuffle (input=15.3)
+> Local Shuffle (w=3) (input=3.6)
+> Partial Reverse (input=6.9)
+> Original (3.16) (b) ADL -Gutenberg 1000 2000 3000 4000 5000
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Baseline Full Shuffle (0.18)
+> Full Shuffle
+> Baseline Local Shuffle (w=3) (0.36)
+> Local Shuffle (w=3)
+> Baseline Partial Reverse (0.48)
+> Partial Reverse (c) Triple F1-bnc_spoken 1000 2000 3000 4000 5000
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Baseline Full Shuffle (0.29)
+> Full Shuffle
+> Baseline Local Shuffle (w=3) (0.49)
+> Local Shuffle (w=3)
+> Baseline Partial Reverse (0.62)
+> Partial Reverse (d) Triple F1-Gutenberg
+
+Figure 4: Dependency-based evaluation across perturbation types and datasets. Dashed lines show per-perturbation scrambled-input baselines; solid line shows the natural language reference. (a), (b) P ARTIAL REVERSE and L OCAL SHUFFLE converge toward natural ADL on both datasets; F ULL SHUFFLE output ADL also approaches the natural value on Gutenberg despite near-zero EM, reflecting fluent but unfaithful generation (ADL is measured on the model’s own output, not against the source). (c), (d) All three perturbation types surpass their scrambled-input baselines on bnc_spoken ; on Gutenberg , P ARTIAL REVERSE 
+
+and L OCAL SHUFFLE improve further while F ULL SHUFFLE collapses. 
+
+linek et al., 2005). Lower perplexity values in-dicate greater consistency with natural language distributions (Radford et al., 2019). We hypothe-sise that prediction perplexity will converge toward that of the original text as training progresses, with rates varying by perturbation type. Specifically, FULL SHUFFLE and L OCAL SHUFFLE inputs are ex-pected to show the highest initial perplexity given their severe locality disruption, with predictions converging toward natural language distributions as training progresses. P ARTIAL REVERSE inputs should show lower initial perplexity due to partial structure preservation, with predictions converging more rapidly toward baseline. To ensure reproducibility, all fine-tunings were repeated across five different random seeds. The figures report average performance across all seeds, with error bars showing standard deviation. 
+
+4 Experimental results 
+
+Experiment 1: Figure 3a shows learning curves across checkpoints on bnc_spoken . The scrambled-input Dependency Triple F 1 baseline measures how much information locality survives each perturba-tion: P ARTIAL REVERSE (0.48) > LOCAL SHUF -
+
+FLE (0.36) > FULL SHUFFLE (0.18). PARTIAL -REVERSE improves most rapidly and reaches the highest final performance (EM ≈ 0.29, BLEU ≈
+
+0.55), while L OCAL SHUFFLE and F ULL SHUFFLE 
+
+improve more slowly. On surface metrics, F ULL -SHUFFLE reaches a slightly higher EM ceiling ( ≈
+
+0.23) than L OCAL SHUFFLE (≈ 0.17). Dependency Triple F 1 (Figures 4a and 4c) shows a consistent ordering throughout training - P AR -
+
+TIAL REVERSE ≈ 0.67, L OCAL SHUFFLE ≈ 0.53, FULL SHUFFLE ≈ 0.51 — indicating that EM un-derestimates L OCAL SHUFFLE ’s structural recovery. Under L OCAL SHUFFLE , the model recovers more correct syntactic relationships than F ULL SHUFFLE 
+
+despite its lower EM, because exact match penal-izes position errors regardless of structural correct-ness. LOCAL SHUFFLE ’s within-window scram-bling produces errors that are locally bounded and structurally recoverable, while F ULL SHUFFLE ’s global randomisation creates dependency distances proportional to sentence length, limiting structural reconstruction. The ADL analysis (Figure 4a) fur-ther supports this: P ARTIAL REVERSE predictions converge most closely to the actual ADL ( ≈2.49), while L OCAL SHUFFLE predictions fall below base-line (predicted ADL ≈ 2.28). Qualitative examples at different checkpoints are provided in Appendix (Tables 3, 4, and 5). 
+
+Experiment 2: Table 2 shows average sentence lengths for both datasets. Comparing final per-formance (Figure 3) reveals sentence length ef-fects that diverge sharply across perturbation types. PARTIAL REVERSE improves substantially from 
+
+bnc_spoken to Gutenberg (EM: 0.29 → 0.52; BLEU: 55% → 79%), and L OCAL SHUFFLE also improves (EM: 0.17 → 0.25; BLEU: 40% → 68%). FULL SHUFFLE , however, collapses dramatically on longer sentences (EM: 0.23 → 0.01; BLEU: 42% → 4%), despite performing comparably to PARTIAL REVERSE on short sentences (see also Appendix Figure 6). This collapse is reflected in the ADL of the perturbed input: FULL SHUFFLE input ADL reaches 15.26 on Gutenberg , compared to 3.34 on bnc_spoken , while P ARTIAL REVERSE and L O-
+
+CAL SHUFFLE show far more moderate increases (6.90 and 3.59 respectively). Dependency-based evaluation confirms this pattern: on Gutenberg , L O-
+
+CAL SHUFFLE and P ARTIAL REVERSE achieve F 1
+
+scores of 0.77 and 0.84, compared to 0.53 and 0.67 on bnc_spoken , while F ULL SHUFFLE F1 falls to 0.14 (Figures 4c and 4d). ADL analysis (Figures 4a and 4b) shows that P ARTIAL REVERSE and L OCAL -SHUFFLE predictions converge toward the actual ADL ( ≈3.16) on Gutenberg ; F ULL SHUFFLE out-put ADL also sits near the natural value ( ≈3.20) despite near-zero EM, but since ADL is measured on the model’s own output, this reflects fluent gen-eration rather than source recovery — confirmed by the collapse in Triple F 1, which is referenced against the gold structure. These results show that P ARTIAL REVERSE ’s par-tial structure preservation and L OCAL SHUFFLE ’s bounded disruption enable recovery to scale with sentence length, whereas F ULL SHUFFLE ’s global shuffling creates dependency distances that grow proportionally with sentence length, exceeding the model’s recovery capacity. Longer sequences in-crease dependency distances and enlarge the re-ordering search space, consistent with prior work on long-range dependency limitations (Khandelwal et al., 2018; Hahn, 2020; Tran et al., 2018) and de-graded order information under global disruption (Sinha et al., 2021; Abdou et al., 2022). 
+
+Experiment 3: We use the pre-trained (base) GPT-2 model — not the fine-tuned models from Kallini et al. (2024) — to evaluate whether gener-ated text aligns with general natural language dis-tributions: lower perplexity indicates output more consistent with standard English. Figure 5 compares perturbed input perplexity against model prediction perplexity, relative to the unperturbed text baseline (129.34). All three mod-els show reduced prediction perplexity relative to their perturbed inputs. P ARTIAL REVERSE input perplexity (1500.32) reduces to 152.38 (89.8%), converging closest to baseline. L OCAL SHUFFLE in-put perplexity (3902.56) reduces to 204.24 (94.8%). FULL SHUFFLE shows the highest input perplexity (6143.02); predictions reduce to 1398.49 (77.2%), yet remain far above baseline. The prediction per-plexity ordering (P ARTIAL REVERSE < LOCAL -SHUFFLE ≪ FULL SHUFFLE ) mirrors the recovery-difficulty ordering seen across the other metrics. Concrete examples at different training stages are provided in Appendix Tables 3, 4, and 5. 
+
+5 Discussion 
+
+We investigate whether LLMs can recover acces-sible natural linguistic structure from systemati-cally degraded input, and whether recovery diffi-culty scales with the degree of locality violation. Our results show that: recovery difficulty scales Full Shuffle Local Shuffle (w=3) Partial Reverse 
+
+> 10 3
+> Average Perplexity
+> 6143
+> 3903
+> 1500 1398
+> 204
+> 152
+> -77.2%
+> -94.8%
+> -89.8%
+> Baseline (129.34)
+> Input
+> Prediction
+
+Figure 5: Perplexity of perturbed inputs versus text predict-ed/recovered by each model, relative to baseline unperturbed text (129.34, dashed line), evaluated using pretrained GPT-2. 
+
+systematically with information locality violation; structural recovery measured by dependency met-rics precedes surface reconstruction measured by EM; and sentence length interacts differently across perturbation types, amplifying recovery for P AR -
+
+> TIAL
+
+REVERSE and L OCAL SHUFFLE while causing FULL SHUFFLE to collapse completely. 
+
+Information Locality. Our results demonstrate that model performance reflects the degree to which perturbations violate information locality (Gibson et al., 2000). PARTIAL REVERSE proved most tractable, as its preserved initial segment provides structural anchors for recovery. L OCAL SHUFFLE 
+
+and F ULL SHUFFLE show comparable difficulty on short sentences, though the metric matters: L O-
+
+> CAL
+
+SHUFFLE achieves higher Dependency Triple F1 despite lower EM, indicating that surface re-construction underestimates its structural recov-ery. This is because L OCAL SHUFFLE ’s within-window scrambling produces errors that are locally bounded and structurally recoverable, whereas FULL SHUFFLE ’s global randomisation creates de-pendency distances proportional to sentence length, limiting structural reconstruction. F ULL SHUFFLE 
+
+collapses completely on longer texts for the same reason, while L OCAL SHUFFLE ’s bounded disrup-tion allows recovery to scale. This ordering holds not only for final performance but also for the rate of improvement: PARTIAL REVERSE converges rapidly, while L OCAL SHUFFLE and F ULL SHUF - 
+
+> FLE
+
+improve more slowly, reflecting their greater degree of locality disruption. The Dependency Triple F 1 analysis reinforces this, showing that the model recovers a substantial por-tion of correct syntactic relationships even when full string reconstruction remains elusive. When we consider alignment with the natural-language distribution, forL OCAL SHUFFLE and P ARTIAL RE-
+
+> VERSE
+
+, prediction perplexity drops to near the un-perturbed baseline and co-occurs with high EM and Triple F 1, so here low perplexity reflects gen-uinely recovered, locality-respecting text (Hahn et al., 2020; Hahn, 2020). For F ULL SHUFFLE , per-plexity also drops substantially, yet EM is near zero: the model produces fluent English without re-constructing the original. This dissociation shows that surface naturalness can be achieved without faithful recovery, and that accurate reconstruction must be established through the dependency-based metrics rather than perplexity alone. 
+
+Performance across perturbation functions. 
+
+FULL SHUFFLE shows intermediate performance on short sentences but collapses on longer ones, while L OCAL SHUFFLE plateaus at a lower ceiling despite its narrower disruption window. This aligns with theoretical arguments about transformer lim-itations on unbounded hierarchical dependencies (Tran et al., 2018; Delétang et al., 2023; Hahn, 2020; Khandelwal et al., 2018). The ADL analysis further reveals an architectural locality bias: un-der L OCAL SHUFFLE ’s within-window disruption, the model defaults to shorter-than-natural depen-dency arcs (predicted ADL ≈ 2.28 vs. actual 2.49 on bnc_spoken ). This pattern suggests that the model’s inductive bias prioritizes shorter depen-dencies, even when they are not always the correct ones, a tendency that is partially consistent with the principle of dependency length minimization observed in natural language (Futrell et al., 2020). The ordering of recovery difficulty across pertur-bations mirrors the learnability ordering reported by Kallini et al. (2024) for the same perturbations. Performance varies gradually across the invertible conditions, while F ULL SHUFFLE exhibits a clear categorical break, suggesting that the locality bias operates consistently regardless of the direction of learning. 
+
+Importance of sentence length. Our second ex-periment revealed that sentence length interacts with perturbation type, reflecting information lo-cality directly. In longer sentences, all pertur-bation types scatter related words further apart: PARTIAL REVERSE reverses a longer trailing seg-ment and F ULL SHUFFLE disperses tokens across a wider range, both increasing absolute dependency distances. For P ARTIAL REVERSE and L OCAL -SHUFFLE , however, longer sentences also provide substantially richer training content — more co-occurring dependent elements that help the model learn which words belong together and how to restore their relationships. The performance im-provement from bnc_spoken to Gutenberg directly reflects this: when some local structure is pre-served, the contextual benefit of longer training sen-tences outweighs the increased reordering difficulty. For F ULL SHUFFLE , the opposite pattern emerges. Global randomization removes all structural an-chors, causing dependency distances to grow be-yond the point where contextual information can compensate, which leads to a complete collapse in performance. Longer sequences also exponen-tially increase the number of possible reorderings and integration costs as processing difficulty grows with dependency length (Futrell et al., 2020; Gib-son et al., 2000). Although LLMs lack the cog-nitive and neurobiological constraints that drive information locality in humans, they exhibit archi-tectural constraints that produce similar locality preferences: learning efficiency favors local de-pendencies, creating biases partially aligned with natural language properties (Futrell et al., 2020; Khandelwal et al., 2018). 
+
+6 Conclusion 
+
+This study demonstrates that LLMs can recover information from perturbed inputs, corresponding to strings of ‘linguistically impossible’ languages. Recovery difficulty scales systematically with lo-cality violation severity. Performance varies by perturbation type and sentence length — P ARTIAL -REVERSE easiest, F ULL SHUFFLE collapsing on longer sentences — dependency-based evaluation reveals substantial syntactic recovery even when exact reconstruction fails, and perplexity analysis confirms that recovered text is substantially more natural than the perturbed input. These results pro-vide empirical support for information locality as a graded principle of efficient sequential process-ing whose effect on recovery parallels its reported effects on acquisition and processing. The ADL analysis further shows that the model’s inductive bias favors shorter-than-natural dependency arcs — a structural alignment with dependency length min-imization that emerges from attention architecture rather than explicit optimization. Ongoing work addresses three open questions: whether the recov-ery gradient observed at the output level reflects genuine internal representational change; whether syntactic encoding and causal use dissociate un-der recovery fine-tuning; and whether the locality gradient and the architecture’s recovery capacity generalize across model families and scales. 
+
+7 Limitations 
+
+Our perturbations, inspired by previous work by Kallini et al. (2024), correspond to strings of ‘im-possible languages’ which are designed to violate linguistic universals. These represent only a small subset of the space of possible perturbations. Fu-ture work could explore a broader range of im-possible language constructions, including those that violate other aspects of linguistic structure be-yond word order, and evaluate whether consistent patterns emerge in model behavior. Additionally, investigating whether models can generalize their translation abilities to novel perturbation types or combinations would provide insight into whether they learn abstract principles of information local-ity recovery or task-specific mappings. The notion of "impossible language" itself re-quires careful interpretation. While linguistic the-ory identifies certain systems as impossible for hu-man acquisition based on violations of informa-tion locality and other neurobiological and cogni-tive constraints, these systems remain well-defined computational problems that neural networks can, in principle, solve. Our results highlight an im-portant distinction between cognitive impossibility, which arises from violations of information local-ity, and computational possibility. Recognizing this gap is essential for understanding both the potential and the limits of LLMs as models of human lan-guage and as practical language processing tools. 
+
+References 
+
+Mostafa Abdou, Vinit Ravishankar, Artur Kulmizev, and Anders Søgaard. 2022. Word order does matter (and shuffled language models know it). In Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (ACL 2022) , pages 6904– 6919. Sabine Buchholz and Erwin Marsi. 2006. Conll-x shared task on multilingual dependency parsing. In 
+
+Proceedings of the tenth conference on computational natural language learning (CoNLL-X) , pages 149– 164. Shu Cai and Kevin Knight. 2013. Smatch: an evaluation metric for semantic feature structures. In Proceed-ings of the 51st Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Pa-pers) , pages 748–752, Sofia, Bulgaria. Association for Computational Linguistics. Noam Chomsky. 1957. Syntactic Structures . Mouton, The Hague. Noam Chomsky. 1965. Aspects of the Theory of Syntax .MIT Press, Cambridge, MA. Noam Chomsky. 1986. Knowledge of Language: Its Nature, Origin, and Use . Praeger, New York. Ferdinand de Saussure. 1983. Course in General Lin-guistics . Duckworth, London. R. Harris (Trans.). Original work published 1916. Grégoire Delétang, Anian Ruoss, Jordi Grau-Moya, Tim Genewein, Kevin Li Wenliang, Elliot Catt, Chris Cundy, Marcus Hutter, Shane Legg, Joel Veness, and Pedro A. Ortega. 2023. Neural networks and the chomsky hierarchy. In Proceedings of the In-ternational Conference on Learning Representations (ICLR 2023) .Javid Ebrahimi, Dhruv Gelda, and Wei Zhang. 2020. How can self-attention networks recognize dyck-n languages? In Findings of the Association for Com-putational Linguistics: EMNLP 2020 , pages 4307– 4313. Richard Futrell, Roger Levy, and Edward Gibson. 2020. Dependency locality as an explanatory principle for word order. Language , 96(2):372–413. Edward Gibson. 1998. Linguistic complexity: locality of syntactic dependencies. Cognition , 68(1):1–76. Edward Gibson et al. 2000. The dependency locality theory: A distance-based theory of linguistic com-plexity. Image, language, brain , 2000:95–126. Michael Hahn. 2020. Theoretical limitations of self-attention in neural sequence models. Transactions of the Association for Computational Linguistics , 8:156– 171. Michael Hahn, Dan Jurafsky, and Richard Futrell. 2020. Universals of word order reflect optimization of gram-mars for efficient communication. Proceedings of the National Academy of Sciences , 117(5):2347–2353. John A. Hawkins. 1994. A Performance Theory of Or-der and Constituency . Cambridge University Press, Cambridge. Charles F. Hockett. 1958. A Course in Modern Linguis-tics . Macmillan, New York. Qian Huang, Eric Zelikman, Sarah Li Chen, Yuhuai Wu, Gregory Valiant, and Percy Liang. 2023. Lex-invariant language models. In Advances in Neural Information Processing Systems .Ray Jackendoff. 2002. Foundations of Language: Brain, Meaning, Grammar, Evolution . Oxford University Press, Oxford. F. Jelinek, R. L. Mercer, L. R. Bahl, and J. K. Baker. 2005. Perplexity—a measure of the difficulty of speech recognition tasks. The Journal of the Acousti-cal Society of America , 62(S1):S63–S63. Julie Kallini, Isabel Papadimitriou, Richard Futrell, Kyle Mahowald, and Christopher Potts. 2024. Mis-sion: Impossible language models. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (ACL 2024) , pages 14691– 14714. Urvashi Khandelwal, He He, Peng Qi, and Dan Jurafsky. 2018. Sharp nearby, fuzzy far away: How neural language models use context. In Proceedings of ACL 2018 , pages 284–294. Haitao Liu. 2008. Dependency distance as a metric of language comprehension difficulty. Journal of Cognitive Science , 9(2):159–191. John Lyons. 1968. Introduction to Theoretical Linguis-tics . Cambridge University Press, Cambridge. Jennifer J. Mitchell and Jeffrey S. Bowers. 2020. Pri-orless recurrent networks learn curiously. In Pro-ceedings of the 28th International Conference on Computational Linguistics (COLING 2020) , pages 5002–5015. Francis Mollica, Matthew Siegelman, Evgeniia Diachek, Steven T. Piantadosi, Zachary Mineroff, Richard Futrell, Hope Kean, Peng Qian, and Evelina Fe-dorenko. 2020. Composition is the Core Driver of the Language-selective Network. Neurobiology of Language (Cambridge, Mass.) , 1(1):104–134. Andrea Moro. 2016. Impossible Languages . MIT Press, Cambridge, MA. Mariacristina Musso, Andrea Moro, Volkmar Glauche, Michel Rijntjes, Jürgen Reichenbach, Christian Büchel, and Cornelius Weiller. 2003. Broca’s area and the language instinct. Nature Neuroscience ,6(7):774–781. Ryan M. Nefdt. 2024. The Philosophy of Linguistics .Cambridge University Press, Cambridge. Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et al. 2022. Training language models to follow instruc-tions with human feedback. Advances in neural in-formation processing systems , 35:27730–27744. Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002. Bleu: a method for automatic evalu-ation of machine translation. In Proceedings of the 40th Annual Meeting of the Association for Compu-tational Linguistics , pages 311–318, Philadelphia, Pennsylvania, USA. Association for Computational Linguistics. Steven Pinker. 1994. The Language Instinct . William Morrow, New York. Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever, et al. 2019. Language models are unsupervised multitask learners. Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016. SQuAD: 100,000+ questions for machine comprehension of text. In Proceedings of the 2016 Conference on Empirical Methods in Natu-ral Language Processing , pages 2383–2392, Austin, Texas. Association for Computational Linguistics. Koustuv Sinha, Robin Jia, Dieuwke Hupkes, Joelle Pineau, Adina Williams, and Douwe Kiela. 2021. Masked language modeling and the distributional hy-pothesis: Order word matters pre-training for little. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing (EMNLP 2021) , pages 2888–2913. Neil V. Smith and Ianthi-Maria Tsimpli. 1993. The acquisition of possible and impossible languages by a polyglot savant. Lingua , 91(1):279–347. Taiga Someya, Anej Svete, Brian DuSell, Timothy J. O’Donnell, Mario Giulianelli, and Ryan Cotterell. 2025. Information Locality as an Inductive Bias for Neural Language Models. In Proceedings of the 63rd Annual Meeting of the Association for Compu-tational Linguistics (Volume 1: Long Papers) , pages 27995–28013, Vienna, Austria. Association for Com-putational Linguistics. David Temperley. 2018. Dependency-length minimiza-tion and the link between word order and cognition. 
+
+Cognitive Science , 42(8):3039–3061. Ke Tran, Arianna Bisazza, and Christof Monz. 2018. The importance of being recurrent for modeling hier-archical structure. In Proceedings of EMNLP 2018 ,pages 4731–4736. Alex Warstadt, Leshem Choshen, Aaron Mueller, Adina Williams, Ethan Wilcox, and Chengxu Zhuang. 2023. Call for papers – the babylm challenge: Sample-efficient pretraining on a developmentally plausible corpus. Tianyang Xu, Tatsuki Kuribayashi, Yohei Oseki, Ryan Cotterell, and Alexander Scott Warstadt. 2025. Can language models learn typologically implausible lan-guages? ArXiv , abs/2502.12317. Imry Ziv, Nur Lan, Emmanuel Chemla, and Roni Katzir. 2025. Biasless language models learn unnaturally: How llms fail to distinguish the possible from the impossible. arXiv preprint arXiv:2510.07178 .
+
+A Fine-tuning Implementation Details 
+
+All models were fine-tuned using Hugging Face Transformers (v4.35.0) with PyTorch 2.1.0, em-ploying the masked instruction-following approach described in Section 3.2. 
+
+Batch size: Effective batch size of 512 (per-device 128 with 4 gradient accumulation steps). 
+
+Optimization: AdamW optimizer with learning rate 2 × 10 −5, cosine schedule, 500 warmup steps, weight decay 0.01, and gradient clipping at norm 1.0. 
+
+Training steps: 200 steps (10K dataset), 5,000 steps (100K dataset), determined by validation loss convergence. 
+
+Precision: Mixed precision training with bfloat16 and TensorFloat-32 on NVIDIA H100 GPUs. 
+
+Regularization: Label smoothing factor of 0.1. 
+
+Checkpointing: Every 20 steps (10K) or 200 steps (100K). Best model selected by lowest evalu-ation loss on 10% held-out validation set. 
+
+Reproducibility: All fine-tuning experiments were repeated with five random seeds (1337, 2025, 314159, 42, 8675309). 
+
+B Examples 
+
+During training, we evaluated model perfor-mance at multiple checkpoints to monitor learn-ing progress. We tracked generated text quality across checkpoints for each impossible language type. This section provides examples illustrating the improvement trajectory throughout training (Ta-bles 3, 4, 5). Additionally, we investigate how performance varies by input text length for the L OCAL SHUF - 
+
+> FLE
+
+perturbation. Since L OCAL SHUFFLE uses a window size of 3, we classify input texts by the number of shuffling windows they contain. Specif-ically, we define class (text i) = ⌈len (text i)/3⌉,where len (text i) is the number of tokens in the text. This groups texts by how many 3-token win-dows were shuffled during perturbation. Figure 6 shows model improvement across these classes, revealing how performance scales with the number of shuffled segments. Figure 6: Improvement of the BLEU score for each class. The red line corresponds to the BLEU score before translating and for shuffled text, and the green line is for texts after translation by the final model. Table 3: Learning process for translation L OCAL SHUFFLE at different learning checkpoints in a successful example. The red colour determines the difference between the current text and with original text, and the green colour determines similarity. 
+
+Input Text Type 
+
+Reggie was able to find out for them the place at which Fleming was putting up in Boston. Having ascertained from the clerk that he was still staying there, the next thing was to get hold of Louis Anderson. original text 
+
+able Reggie was to find out the for them place at which putting Fleming was Boston in up ascert. Havingained the from that clerk he still was staying the there, next was thing hold to get Louis of Anderson . 
+
+LOCAL SHUFFLE 
+
+“Steve had to find out what they were going to put him in the hotel, the next thing was that was that he was going to put on to Tom. Having he was staying in the Boston car, which was the next thing 
+
+Checkpoint-200 
+
+Reggie was able to find out for the them place at which Fleming was putting up in Boston. Having ascertained from the clerk that he was still staying there, the next thing was to get on Louis Anderson. 
+
+Checkpoint-600 
+
+Reggie was able to find out for them the place at which Fleming was putting up in Boston. Having ascertained from the clerk that he was still staying there, the next thing was to get to Louis Anderson of. 
+
+Checkpoint-1000 
+
+Reggie was able to find out for them the place at which Fleming was putting up in Boston. Having ascertained from the clerk that he was still staying there, the next thing was to get hold of Louis Anderson. 
+
+Checkpoint-1400 Table 4: Learning process for translation P ARTIAL REVERSE at different learning checkpoints in a successful example. The red colour determines the difference between the current text and with original text, and the green 
+
+> colour determines similarity.
+
+Input Text Type 
+
+Bunny and Sue, so impatient they could hardly keep still, waited. They heard the front door open. They heard their father talking. Then came a funny, squeaking, whining sound. original text Bunny and Sue , so impatient R . sound whining , aking sque , funny a came Then . talking father their heard They . open door front the heard They . waited , still keep hardly could they 
+
+PARTIAL REVERSE 
+
+Bessie and Sue, so impatient and impatiently. The children were not allowed to keep them shut up. They were not allowed to keep them shut. They were not allowed to keep them shut, and they were not allowed to 
+
+Checkpoint-200 
+
+Bucky and Sue, so impatient they could hardly keep still, waited, waited, waited, waited. They heard their father talking. Then Then came a funny, squeaky voice. 
+
+Checkpoint-600 
+
+Bumper and Sue, so impatient they could hardly keep still, waited. They heard the front door open. They heard their father talking. Then came a funny, squeaking, whining sound. 
+
+Checkpoint-1000 
+
+Bunny and Sue, so impatient they could hardly keep still, waited. They heard the front door open. They heard their father talking. Then came a funny, squeaking, whining sound. 
+
+Checkpoint-1400 Table 5: Learning process for translation F ULL SHUFFLE at different learning checkpoints in a successful example. The red colour determines the difference between the current text and with original text, and the green colour determines similarity. 
+
+Input Text Type 
+
+"If the papers in the packet are of the sort you think they are," he declared, "they will destroy them before they will permit you to get hold of them." original text 
+
+of, the " before packet" they are sort papersIf he the are you to in the destroy." of they themthey declared will think get permit hold you them," will 
+
+FULL SHUFFLE 
+
+The order of the envelope," they are all the papers," said the papers," said the papers. "They will be able to them to take them to them." 
+
+Checkpoint-200 
+
+of the before the packet," they are sort papers "If he are to the destroy in the of them." they declared them will get the permit you take them," will." 
+
+Checkpoint-600 
+
+"The of before the " packet they" are sort papers he are the to destroy the destroy of they declared them." they will think you take hold them," will you will." 
+
+Checkpoint-1000 
+
+"And, before the " packet they" sort papers are the papers he are to the destroy in the of they." declared them they will get permit you hold hold them," will 
+
+Checkpoint-1400 
+
+"And, before the " packet they are sort papers are the papers he to destroy you in the destroy of them." they declared them will get hold you hold them," will 
+
+Checkpoint-1800 
+
+"And, before the packet they are sort papers "If he are the to destroy you in the destroy of them." they declared them will get think you permit hold them," will 
+
+Checkpoint-2200 
+
+", before the packet they" packet papers are sort to the he are to you destroy in the of them." they declared them will get get hold them," will them," 
+
+Checkpoint-2600 
+
+", before the " packet they are sort papers are the papers he are to you destroy in the of them." they declared them will get hold you hold them will," 
+
+Checkpoint-3000 
+
+", before the " packet they are sort papers are the he if you are to destroy in the of them." they declared them will get think you permit hold them," will 
+
+Checkpoint-3400 
+
+", before the packet they are packet the papers if he are the to destroy you in the destroy of them." they declared them will get get hold you permit them will," 
+
+Checkpoint-3800 
+
+"And of the packet before they are packet the papers if he are the to you to destroy in the of them." they declared them will get get you permit hold them," will 
+
+Checkpoint-4200 
+
+", before the packet they are packet the papers if he are the to destroy you in the destroy of them." they declared them will get permit you hold hold them," will 
+
+Checkpoint-4600 
+
+" of the packet before they are packet the papers if he are the to you to destroy in the of them." they declared them will get get hold you permit them will," 
+
+Checkpoint-5000
