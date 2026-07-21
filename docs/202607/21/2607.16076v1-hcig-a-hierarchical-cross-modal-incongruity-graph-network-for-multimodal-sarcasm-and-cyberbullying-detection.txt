@@ -1,0 +1,736 @@
+Title: HCIG: A Hierarchical Cross-Modal Incongruity Graph Network for Multimodal Sarcasm and Cyberbullying Detection
+
+URL Source: https://arxiv.org/pdf/2607.16076v1
+
+Published Time: Mon, 20 Jul 2026 01:25:49 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# HCIG: A Hierarchical Cross-Modal Incongruity Graph Network for Multimodal Sarcasm and Cyberbullying Detection 
+
+Bhavana Verma, Priyanka Meel, Dinesh Kumar Vishwakarma 
+
+Multimodal Data Analytics Research Laboratory Department of Information Technology Delhi Technological University 
+
+{bhavana.verma2905, priyankameel86, dvishwakarma }@gmail.com 
+
+Abstract 
+
+Multimodal sarcasm and cyberbullying detection remain challenging because the intended meaning often emerges from incongruity between textual and visual information rather than from either modality alone. Existing multimodal approaches primarily rely on feature fu-sion or cross-modal attention, which may not effectively capture hierarchical semantic in-consistencies across different levels of representation. To address this limitation, this paper proposes HCIG (Hierarchical Cross-modal Incongruity Graph Network), a novel framework that models cross-modal incongruity at token, phrase, and global levels using graph atten-tion networks and adaptively integrates these representations through a learned hierarchical attention mechanism. As a complementary architecture, we also introduce GCCN (Graph-based Cross-modal Contradiction Network), which performs graph-based reasoning using contradiction-aware pooling for efficient multimodal interaction learning. The proposed models are evaluated on the MMSD sarcasm benchmark and the MultiBully cyberbullying dataset, together with comprehensive ablation studies and cross-task transfer experiments. Experimental results demonstrate that HCIG achieves the best performance on MMSD with 85.74% accuracy and 85.29% macro-F1, while GCCN attains the highest macro-F1 (68.66%) on MultiBully and HCIG achieves the highest accuracy (69.62%) and bullying-class F1 (74.90%). The findings demonstrate that hierarchical multi-granularity incongruity modeling provides more effective multimodal reasoning than conventional fusion strategies, offering a robust framework for sarcasm and cyberbullying detection in social media. 
+
+Keywords: multimodal sarcasm detection; cyberbullying detection; cross-modal incon-gruity; hierarchical graph attention networks; MMSD; MultiBully. 
+
+# 1 Introduction 
+
+Sarcasm and cyberbullying are both pragmatic phenomena that can be signaled as much by what a message shows as by what it says. A caption reading “what a beautiful day” paired with an image of a flooded street is sarcastic precisely because of the mismatch between text and image; a comment that reads as neutral in isolation can become bullying when paired with a mocking or humiliating image. Text-only classifiers, including large pretrained language models [1], systematically miss this class of example because the incongruity is only observable across modalities. This motivates multimodal approaches that explicitly model the relationship ,rather than only the concatenation, between textual and visual signals. 1arXiv:2607.16076v1 [cs.CV] 17 Jul 2026 Multimodal sarcasm detection has been studied through the MMSD benchmark of image– text pairs collected from social media [2,3], with methods spanning hierarchical fusion [2], cross-modality contrast modeling [4], intra-/inter-modality incongruity modeling [5], and graph-based cross-modal reasoning [6, 7] intended to explicitly capture incongruity rather than relying on fusion alone. A revised, de-biased version of the benchmark, MMSD2.0, was later released to re-move spurious textual cues [8]. Cyberbullying detection has a longer history as a predominantly unimodal text classification problem [9, 10]; multimodal cyberbullying datasets that pair short text with an associated image, such as MultiBully [11], are comparatively recent, drawing on the broader multimodal hate-speech and meme-analysis literature established by benchmarks such as the Hateful Memes Challenge [12] and related multimodal hate-speech studies [13–19] as shown in Figure 1. It remains an open question whether incongruity-oriented architectures de-signed for sarcasm generalize to bullying detection, where the relevant signal (mockery, threat, or humiliation) need not involve semantic contradiction between modalities in the same way sarcasm does. 
+
+Figure 1: Representative examples from a multimodal cyberbullying dataset highlighting the role of image–text interaction in distinguishing cyberbullying from non-bullying content. This paper addresses that gap with three contributions. First, and primarily, we propose 
+
+HCIG , a hierarchical cross-modal incongruity graph network that computes incongruity in-dependently at token, phrase, and global granularity and combines the three via a learned softmax attention gate, allowing the model to adaptively emphasize whichever granularity is most informative for a given example. Second, we implement GCCN , a structurally simpler graph-based architecture that represents text tokens and image patches as nodes in a similarity-thresholded graph reasoned over with a graph attention network (GATv2 [20]) and augmented with a single learned contradiction-pooling score, which serves both as an independent point of comparison and as a design precursor that motivates HCIG’s hierarchical extension. Third, we evaluate both architectures, together with unimodal and late-fusion baselines, on both MMSD (sarcasm) and MultiBully (cyberbullying), including in-domain training, MMSD-to-MultiBully fine-tuning, a bidirectional cross-task direct-transfer stress test, and component-level ablation studies for each architecture. 22 Related Work 
+
+2.1 Multimodal sarcasm detection 
+
+Schifanella et al. [3] first framed multimodal sarcasm detection as a joint text–image classi-fication problem. Cai et al. [2] introduced the MMSD benchmark used in this paper and a hierarchical fusion baseline; Qin et al. [8] later identified and corrected spurious textual cues and mis-annotations in the original release, producing MMSD2.0. Subsequent work has increas-ingly modeled the text–image relationship explicitly rather than fusing modalities directly: Xu et al. [4] proposed a decomposition-and-relation network to capture cross-modality contrast and semantic association; Pan et al. [5] modeled intra- and inter-modality incongruity with transformer-based attention; and Liang et al. introduced in-modal and cross-modal graph rep-resentations reasoned over with graph convolutional and graph attention mechanisms in two related studies [6,7], the line of work most directly related to the GCCN and HCIG architectures compared here. A separate line of work, MUStARD, extended multimodal sarcasm detection to video and text modalities drawn from television dialogue rather than static image–text social media posts [21]. 
+
+2.2 Multimodal cyberbullying and hate-speech detection 
+
+Cyberbullying detection has traditionally been treated as a unimodal text classification problem, with a substantial body of work on lexical, syntactic, and pretrained-language-model features [9, 10, 22]. Multimodal treatments are more recent. The Hateful Memes Challenge established that unimodal models systematically fail on memes constructed so that hatefulness emerges only from the text–image combination [12], motivating a growing body of multimodal hate-speech architectures [13–19]. Maity et al. extended this direction to cyberbullying specifically with MultiBully, a code-mixed, multi-label (bully, sentiment, emotion, sarcasm) meme dataset collected from Twitter and Reddit, which we use as the cyberbullying benchmark in this paper [11]. To our knowledge, no prior work has directly compared graph- and hierarchy-based cross-modal incongruity architectures originally developed for sarcasm detection on this dataset, nor examined whether sarcasm-trained incongruity representations transfer to bullying detection. 
+
+2.3 Multimodal sentiment, emotion, and meme analysis 
+
+Beyond sarcasm and bullying specifically, a broader literature on multimodal sentiment and emotion analysis informs the fusion and attention design choices used here. Recent surveys taxonomize fusion strategies, learning paradigms, and attention mechanisms across the field [23], and graph convolutional approaches have been proposed for speaker-aware multimodal emotion recognition [24] and for conversational emotion recognition more broadly [25], motivating the use of graph attention as a cross-modal reasoning mechanism in this work. Attention-based frameworks have also been proposed specifically for multimodal sentiment analysis in memes [26], the same content format used in MultiBully. Graph neural networks more generally have been surveyed extensively [27], and their foundational variants [20, 28, 29] underpin the graph-reasoning modules in both GCCN and HCIG. 
+
+2.4 Architectural components 
+
+GCCN and HCIG both build on Transformer-based encoders [30]: RoBERTa [31] for text and Vision Transformer [32] for images, trained with the AdamW optimizer [33], a decoupled-weight-decay variant of Adam [34]. Both use graph attention networks for cross-modal reasoning, specifically GATv2 [20], which was proposed to correct a static-attention limitation in the orig-inal graph attention formulation [29]; the related graph convolutional network formulation [28] is noted here as an alternative, non-attentive graph reasoning mechanism not used in this work. 3Where relevant we also note CLIP-style joint vision–language pretraining [35] and ViLBERT-style two-stream co-attentional pretraining [36] as alternative encoder strategies not used in this study, and Grad-CAM [37] as the visualization technique underlying part of the exploratory analysis in Section 5. Beyond the graph-attention formulation adopted here, entropic optimal transport [38] and Dirichlet-based evidential uncertainty estimation [39] have both been pro-posed as alternative mechanisms for cross-modal alignment and confidence-aware prediction, respectively; neither is used by GCCN or HCIG in the present study, but both remain relevant directions for future extensions of this work. 
+
+2.5 Summary comparison 
+
+Table 1 summarizes representative prior work by task, modality, core technique, and dataset, situating HCIG and GCCN relative to the existing literature. Table 1: Comparison of representative multimodal sarcasm and cyberbullying detection meth-ods.                                            
+
+> Study Year Task Core Technique Dataset(s)
+> Schifanella et al. [3] 2016 Sarcasm Hand-crafted + CNN visual features Twitter/Instagram Cai et al. [2] 2019 Sarcasm Hierarchical fusion (text/image/attribute) MMSD Xu et al. [4] 2020 Sarcasm Decomposition and relation network MMSD Pan et al. [5] 2020 Sarcasm Intra-/inter-modality trans-former attention MMSD Liang et al. [6] 2021 Sarcasm In-modal +cross-modal graphs MMSD Liang et al. [7] 2022 Sarcasm Cross-modal graph convolu-tional network MMSD Qin et al. [8] 2023 Sarcasm Debiased benchmark +baseline re-evaluation MMSD2.0 Kiela et al. [12] 2020 Hate speech Multimodal meme bench-mark + baselines Hateful Memes Maity et al. [11] 2022 Cyberbullying Multitask sentiment/emotion/sarcasm-aware network MultiBully
+> This work (GCCN)
+> –Sarcasm + Bully-ing Similarity-graph + GATv2 + contradiction pooling MMSD, Multi-Bully
+> This work (HCIG)
+> –Sarcasm + Bully-ing Hierarchical to-ken/phrase/global GATv2 + attention gate MMSD, Multi-Bully
+
+# 3 Proposed Methodology 
+
+Figure 2 provides a conceptual overview of the shared multimodal processing pipeline and po-sitions HCIG and GCCN as alternative task-specific architectures. The detailed computational flows of GCCN and HCIG are shown in Figures 3 and 4, respectively; the exact operations implemented by the models are defined mathematically in Sections 3.4 and 3.5. 4Figure 2: Conceptual overview of the shared multimodal input, preprocessing, encoder, cross-modal interaction, and graph-construction stages, followed by the alternative HCIG and GCCN prediction architectures. 
+
+3.1 Problem Formulation and Notation 
+
+We formulate multimodal sarcasm and cyberbullying detection as binary classification over paired text–image inputs. Let D = {(ti, v i, y i)}Ni=1 denote a dataset of N text–image pairs, where ti is a social-media post’s text, vi is its associated image, and yi ∈ { 0, 1} is a binary label (sarcastic/non-sarcastic for MMSD, bully/non-bully for MultiBully). The text ti is tokenized into a sequence of n subword tokens {w1, . . . , w n} and encoded by a text Transformer to produce contextual token representations Hti ∈ Rn×d and a pooled sentence representation ht 
+
+> CLS ,i
+
+∈ Rd.The image vi is divided into m fixed-size patches and encoded by a vision Transformer to produce patch representations Hvi ∈ Rm×d and a pooled image representation hv 
+
+> CLS ,i
+
+∈ Rd, with 
+
+d the shared hidden dimensionality of both encoders. The goal is to learn a function fθ : ( ti, v i) 7 → ˆyi that predicts ˆ yi ≈ yi while explicitly modeling a cross-modal incongruity signal δ(Hti , H vi ) that captures the degree of semantic mis-match between the text and image, rather than relying only on a fused joint representation [ht
+
+> CLS ,i
+
+; hv
+
+> CLS ,i
+
+]. We denote by zi the learned incongruity-aware representation produced by an architecture’s cross-modal reasoning module, which is combined with the pooled unimodal representations and passed to a classification head gθ(·): ˆyi = gθ
+
+ [ zi ; ht 
+
+> CLS ,i
+
+; hv 
+
+> CLS ,i
+
+] (1) GCCN and HCIG, described below, differ in how zi is computed and, in HCIG’s case, in whether 
+
+ht 
+
+> CLS ,i
+
+and hv 
+
+> CLS ,i
+
+are concatenated again at the classification head or are already subsumed into 
+
+zi (Section 3.5). 
+
+3.2 Backbone Encoders 
+
+Both architectures share a common backbone: text is encoded with RoBERTa-base [31] and images with a ViT-Base/16 Vision Transformer [32], both fine-tuned end-to-end, following the general Transformer encoder design of Vaswani et al. [30]. Text sequences are tokenized to a maximum length of 80 subwords; images are resized to 224 × 224. 5Image features require an explicit alignment step because ViT backbones expose a class token concatenated with patch tokens, which must be separated before cross-modal reasoning. Writing ϕViT (vi) ∈ R(m+1) ×dv for the raw ViT feature sequence and Wv ∈ Rd×dv for a learned projection to the shared hidden size, ˜Hvi = Wv ϕViT (vi) ∈ R(m+1) ×d, hv 
+
+> CLS ,i
+
+= ˜Hvi [0] , Hvi = ˜Hvi [1 :] , (2) so that hv 
+
+> CLS ,i
+
+and the m patch representations Hvi used downstream are disjoint; backbones without a class token instead pool a single pseudo-patch and reuse it as hv
+
+> CLS ,i
+
+.On the text side, the RoBERTa output sequence contains a beginning-of-sequence (BOS) token, an end-of-sequence (EOS) token, and right-padding, none of which should participate in token-level cross-modal reasoning. Let ai,j ∈ { 0, 1} be the attention mask returned by the tokenizer and ℓi = P 
+
+> j
+
+ai,j the true sequence length (including BOS/EOS). The BOS position is used as ht
+
+> CLS ,i
+
+; the remaining n−1 positions form Hti , with a token validity mask 
+
+Mti[j] = ⊮ j < ℓ i − 1 , j = 1 , . . . , n − 1, (3) that excludes BOS, EOS, and padding, so that only genuine subword tokens can enter the contradiction- and incongruity-scoring modules described below. We write Ti = {j : Mti[j] = 1 }
+
+for the resulting set of valid token indices. 
+
+3.3 Shared Cross-Modal Graph Construction and Reasoning 
+
+GCCN and HCIG both reason over text–image node sets using the same graph-construction-and-propagation primitive, applied at different granularities; we describe it once here and reuse it by reference in Sections 3.4–3.5. Given a set of text-side nodes {x1, . . . , x p} (individual tokens, pooled phrases, or a single CLS vector, depending on level) and image-side nodes 
+
+{xp+1 , . . . , x p+q} (patches or a single CLS vector), each node is first tagged with a learned modality embedding emod : {0, 1} → Rd,ˆxu = xu + emod (⊮[u is an image node]) , u = 1 , . . . , p + q, (4) so the subsequent graph attention can distinguish node modality independently of content. A weighted graph is then built by thresholding pairwise cosine similarity, with self-loops inserted explicitly rather than learned: 
+
+suw = ˆxu · ˆxw
+
+∥ˆxu∥ ∥ ˆxw∥ + ϵ , Auw = ⊮[ suw > τ ] ∨ ⊮[u = w], (5) giving a sparse edge set E = {(u, w ) : Auw = 1 } with each retained edge carrying its similarity as an edge attribute, euw = suw . A two-layer GATv2 network [20] propagates over ( {ˆxu}, E, {euw }); for a single attention head, the update at node u over neighborhood N (u) is 
+
+αuw = exp  a⊤LeakyReLU( W1 ˆxu + W2 ˆxw + We euw )P  
+
+> w′∈N (u)
+
+exp  a⊤LeakyReLU( W1 ˆxu + W2 ˆxw′ + We euw ′ ) , (6) 
+
+X(1) = GELU 
+
+ P   
+
+> w∈N (u)
+
+α(h) 
+
+> uw
+
+W (h)2 ˆxw
+
+Hh=1 
+
+
+
+, X(2) = GATv2  X(1) , E, {euw }, (7) where the first layer concatenates H attention heads (Eq. 6 instantiated per head) and the second layer uses a single head to return node states in Rd. We denote this two-stage operator compactly as GraphReason( {xu}, E) in the remainder of this section. 63.4 GCCN: Graph-based Cross-modal Contradiction Network 
+
+GCCN instantiates a single application of GraphReason over the full set of valid text tokens 
+
+{htj : j ∈ T i} and all m+1 image nodes (patches plus CLS), following Eqs. 4–7 with threshold 
+
+τ = 0 .3, and mean-pools the resulting node states into a single graph-level embedding: 
+
+zgraph  
+
+> i
+
+= 1
+
+|T i| + m + 1 
+
+X
+
+> u
+
+X(2)  
+
+> u
+
+(8) In parallel, a dedicated contradiction-pooling module scores every valid token–patch pair di-rectly, independently of the graph pathway. For token j ∈ T i and patch l ∈ { 1, . . . , m },
+
+sjl = htj · hvl
+
+∥htj ∥ ∥ hvl ∥ + ϵ , djl = clip(1 − sjl , 0, 2) , (9) and a small learned gate, conditioned on similarity, distance, and squared similarity, controls how much each pair contributes to the contradiction score: 
+
+Cjl = σ MLP c([ sjl ; djl ; s2 
+
+> jl
+
+])  · djl (10) A single scalar contradiction score per example is obtained by masked top-k pooling ( k=10) over the valid entries of the contradiction matrix Ci = {Cjl }j∈T i, l ≤m,
+
+ci = 1min( k, |valid( Ci)|)
+
+X   
+
+> (j,l )∈TopK k(valid( Ci))
+
+Cjl , (11) so that ci reflects the most strongly contradicted token–patch pairs for the example rather than an average dominated by well-aligned pairs. GCCN instantiates Eq. 1 with 
+
+zi = [ zgraph  
+
+> i
+
+; ci ] (12) The end-to-end GCCN processing sequence, including modality encoding, graph construc-tion, adaptive GATv2 reasoning, contradiction-aware pooling, graph readout, and task-specific prediction, is illustrated conceptually in Figure 3. 
+
+Figure 3: Conceptual architecture of GCCN, showing multimodal encoding, cross-modal graph construction, adaptive GATv2 reasoning, contradiction-aware pooling, graph readout, and task-specific classification. 
+
+3.5 HCIG: Hierarchical Cross-modal Incongruity Graph Network 
+
+HCIG, the primary architecture proposed in this work, computes incongruity at three levels of granularity rather than a single graph pass, motivated by the observation that cross-modal in-congruity in sarcasm and bullying content can manifest as an individual word–object mismatch 7(token level), a short phrase-level mismatch (phrase level), or a single global tone mismatch between the overall message and image (global level). Token and phrase levels share the same three-stage procedure — graph reasoning, incongruity-guided alignment, residual fusion — ap-plied to different text granularities against the same set of image patches; the global level instead operates directly on the pooled [CLS] representations. 
+
+Phrase construction. Before phrase-level reasoning, valid text tokens are mean-pooled into non-overlapping, mask-aware groups of three: 
+
+ht, phr  
+
+> i,g
+
+=
+
+P3 
+
+> r=1
+
+μi,g,r hti, 3( g−1)+ r
+
+P3 
+
+> r=1
+
+μi,g,r + ϵ , μi,g =
+
+> 3
+
+_
+
+> r=1
+
+μi,g,r , (13) for g = 1 , . . . , ⌈n/ 3⌉, where μi,g,r ∈ { 0, 1} marks whether the r-th token of group g is a valid (non-padding) token per Eq. 3; groups with no valid tokens are masked out entirely by μi,g = 0. 
+
+Level graph reasoning. At each level lvl ∈ { tok , phr }, the level’s text units (tokens or phrases) and the m image patches are passed through GraphReason (Eqs. 4–7) using level-specific GATv2 weights, producing graph-updated text units {˜hlvl  
+
+> u
+
+} and graph-updated patches 
+
+{˜hvl }.
+
+Incongruity-guided cross-modal alignment. For each graph-updated text unit u at level lvl and each graph-updated patch l,
+
+sul = cos( ˜hlvl  
+
+> u
+
+, ˜hvl ), dul = clip(1 − sul , 0, 2) , ιul = σ MLP ι([ sul ; dul ; s2 
+
+> ul
+
+])  · dul , (14) using a single MLP ι shared across the token and phrase levels. Rather than aligning each text unit to its most similar patch, HCIG deliberately attends toward the most divergent patches, since it is precisely the mismatched regions of the image that carry incongruity signal: 
+
+wul = exp( dul )
+
+P 
+
+> l′
+
+exp( dul ′ ) , ˜au = X
+
+> l
+
+wul ˜hvl (15) Each text unit is then updated with a residual fusion of itself and its incongruity-aligned image counterpart, 
+
+ru = LN 
+
+
+
+MLP r
+
+ [ ˜hlvl  
+
+> u
+
+; ˜ au ; |˜hlvl  
+
+> u
+
+− ˜au| ; ˜hlvl  
+
+> u
+
+⊙ ˜au ]
+
+, (16) and the level representation is obtained by pooling residual states, weighted by each unit’s peak incongruity across patches, ωu = max l ιul :
+
+zlvl  
+
+> i
+
+=
+
+P 
+
+> u
+
+ωu ru
+
+P 
+
+> u
+
+ωu + ϵ , ιlvl  
+
+> i
+
+= 1
+
+|U i| · m
+
+X
+
+> u∈U i
+
+X
+
+> l
+
+ιul , (17) where Ui is the set of valid units at that level ( Ti for tokens, valid phrase groups for phrases) and ιlvl  
+
+> i
+
+is a scalar level-incongruity score used both for reporting and for the fusion gate below. 
+
+Global level. The pooled [CLS] representations are compared directly, without graph reasoning, via the same pairwise-interaction pattern used at the token and phrase levels: 
+
+zglob  
+
+> i
+
+= LN 
+
+
+
+MLP g
+
+ [ ht 
+
+> CLS ,i
+
+; hv 
+
+> CLS ,i
+
+;
+
+|ht 
+
+> CLS ,i
+
+− hv
+
+> CLS ,i
+
+| ; ht 
+
+> CLS ,i
+
+⊙ hv 
+
+> CLS ,i
+
+]
+
+,ιglob  
+
+> i
+
+= 1 − cos( ht
+
+> CLS ,i
+
+, h v
+
+> CLS ,i
+
+)(18) 
+
+Level-attention fusion. The three level representations and their scalar incongruity scores are combined with a learned softmax attention gate rather than fixed or uniform weighting: 
+
+αi = softmax 
+
+
+
+MLP α
+
+ [ ztok  
+
+> i
+
+; zphr  
+
+> i
+
+; zglob  
+
+> i
+
+; ιtok  
+
+> i
+
+; ιphr  
+
+> i
+
+; ιglob  
+
+> i
+
+]
+
+∈ ∆2, (19) 8so the gate can condition its weighting on how incongruent each level already appears to be, not only on the content of each level’s representation. The gated level representations are then 
+
+concatenated — preserving each level’s identity within the fused vector rather than collapsing them into a single d-dimensional average — and passed to the classifier: 
+
+zi =  αtok  
+
+> i
+
+ztok  
+
+> i
+
+; αphr  
+
+> i
+
+zphr  
+
+> i
+
+; αglob  
+
+> i
+
+zglob 
+
+> i
+
+ ∈ R3d, ˆyi = gθ(zi), (20) which departs from the general fusion form of Eq. 1: because zglob  
+
+> i
+
+(Eq. 18) already integrates 
+
+ht 
+
+> CLS ,i
+
+and hv 
+
+> CLS ,i
+
+through their pairwise interaction, HCIG’s classifier operates directly on zi
+
+rather than re-concatenating the raw CLS vectors, avoiding redundant duplication of the same information. A single scalar incongruity score is additionally defined as the attention-weighted combination of the three level scores, 
+
+ιi = αtok  
+
+> i
+
+ιtok  
+
+> i
+
++ αphr  
+
+> i
+
+ιphr  
+
+> i
+
++ αglob  
+
+> i
+
+ιglob  
+
+> i
+
+(21) All GATv2 layers across the three levels are genuinely active in the forward pass, correcting an implementation issue present in an earlier development version of this architecture in which GAT layers were declared but not used; this is noted explicitly because it is directly relevant to interpreting the corresponding ablation results in Section 5.2. Figure 4 summarizes the hierarchical HCIG workflow, from multimodal feature extraction and cross-modal alignment to token-, phrase-, and global-level graph reasoning, hierarchical attention fusion, and task-specific prediction. 
+
+Figure 4: Conceptual architecture of HCIG, showing token-, phrase-, and global-level incon-gruity reasoning, GATv2-based graph processing, hierarchical attention fusion, and task-specific classification. 
+
+3.6 Training Objective 
+
+Both architectures are trained end-to-end with a standard binary cross-entropy classification loss on ˆ yi against yi, using the AdamW optimizer [33] with a linear warmup schedule. No auxiliary losses (e.g., contrastive, counterfactual, or uncertainty-regularization terms) are used for either GCCN or HCIG in this work; both rely solely on the classification objective operating on the incongruity-aware representation zi defined above. 93.7 Algorithms 
+
+Algorithm 1 summarizes the GCCN forward pass (Section 3.4), and Algorithm 2 summarizes the HCIG forward pass (Section 3.5), which is the main architectural contribution of this paper. 
+
+Algorithm 1 GCCN Forward Pass 
+
+Require: Text tokens t, image v
+
+Ensure: Prediction ˆ y, contradiction score c 
+
+> 1:
+
+Ht, h t 
+
+> CLS
+
+← RoBERTa( t); Hv, h v 
+
+> CLS
+
+← ViT( v) ▷ Eq. 2  
+
+> 2:
+
+T ← { j : Mt[j] = 1 } ▷ Valid token mask, Eq. 3  
+
+> 3:
+
+G ← BuildSimilarityGraph( {Htj }j∈T , H v ∪ hv
+
+> CLS
+
+, τ ) ▷ Eqs. 4–5  
+
+> 4:
+
+X ← GraphReason( G) ▷ Eqs. 6–7  
+
+> 5:
+
+zgraph ← MeanPool( X) ▷ Eq. 8  
+
+> 6:
+
+C ← GatedContradiction( {Htj }j∈T , H v) ▷ Eqs. 9–10  
+
+> 7:
+
+c ← MaskedTopK( C, k =10) ▷ Eq. 11  
+
+> 8:
+
+z ← [zgraph ; c] ▷ Eq. 12  
+
+> 9:
+
+ˆy ← Classifier([ z; ht
+
+> CLS
+
+; hv
+
+> CLS
+
+]) ▷ Eq. 1  
+
+> 10:
+
+return ˆy, c 
+
+Algorithm 2 HCIG Forward Pass 
+
+Require: Text tokens t, image v
+
+Ensure: Prediction ˆ y, level-attention weights α 
+
+> 1:
+
+Ht, h t 
+
+> CLS
+
+← RoBERTa( t); Hv, h v 
+
+> CLS
+
+← ViT( v) ▷ Eq. 2  
+
+> 2:
+
+Gtok ← BuildSimilarityGraph( Ht, H v, τ ); ˜Ht, ˜Hv ← GraphReason( Gtok ) 
+
+> 3:
+
+ztok , ι tok ← IncongruityAlign( ˜Ht, ˜Hv) ▷ Eqs. 14–17  
+
+> 4:
+
+Ht, phr ← PhrasePool( Ht, size=3) ▷ Eq. 13  
+
+> 5:
+
+Gphr ← BuildSimilarityGraph( Ht, phr , H v, τ ); ˜Ht, phr , ˜Hv 
+
+> phr
+
+← GraphReason( Gphr ) 
+
+> 6:
+
+zphr , ι phr ← IncongruityAlign( ˜Ht, phr , ˜Hv
+
+> phr
+
+) ▷ Eqs. 14–17  
+
+> 7:
+
+zglob , ι glob ← GlobalContradiction( ht
+
+> CLS
+
+, h v
+
+> CLS
+
+) ▷ Eq. 18  
+
+> 8:
+
+α ← Softmax(MLP([ ztok ; zphr ; zglob ; ιtok ; ιphr ; ιglob ])) ▷ Level-attention gate, Eq. 19  
+
+> 9:
+
+z ← [αtok ztok ; αphr zphr ; αglob zglob ] ▷ Eq. 20  
+
+> 10:
+
+ˆy ← Classifier( z) ▷ Eq. 20  
+
+> 11:
+
+return ˆy, α
+
+# 4 Implementation Details 
+
+4.1 Dataset and Exploratory Analysis 
+
+4.1.1 Multimodal Sarcasm Detection (MMSD) 
+
+The raw MMSD release [2] comprises 33,696 text–image pairs labeled sarcastic or non-sarcastic. After removing rows with missing or corrupted image files, 24,472 pairs (72.6% of the raw set) remained for experiments. The drop was not uniform across splits: 31.9% of training rows were removed for missing images, versus 0% of validation and test rows, because the validation and test partitions had already been curated in the source release. This asymmetry is reported explicitly because it means the effective training set is smaller, and its class balance and image-quality profile is not guaranteed to match the untouched validation/test partitions. Table 2 and Figure 5 summarize the cleaned splits and their class distributions. 10 4.1.2 MultiBully 
+
+The MultiBully dataset [11] pairs short social-media text with an associated image and a bi-nary bully/non-bully label, collected in a code-mixed language setting from Twitter and Reddit. After removing 61 pairs (1.0%) with missing or unreadable images, 5,793 pairs remained, com-prising 3,188 bully and 2,605 non-bully examples (Table 2, Figure 6), a moderate class imbalance retained without resampling in all reported experiments. Table 2: Statistics of the cleaned MMSD and MultiBully dataset. Dataset Split Total pairs Negative class Positive class MMSD train 19,694 11,067 (Non-sarcastic) 8,627 (Sarcastic) MMSD val 2,394 1,441 (Non-sarcastic) 953 (Sarcastic) MMSD test 2,384 1,428 (Non-sarcastic) 956 (Sarcastic) MultiBully all (cleaned) 5,793 2,605 (Non-bully) 3,188 (Bully) 
+
+Figure 5: MMSD class distribution by split (train/val/test), sarcastic vs. non-sarcastic. 
+
+Figure 6: Label and sentiment distribution in the cleaned MultiBully dataset. 
+
+4.2 Baselines 
+
+Three baselines are reported: (i) Text-BERT , a BERT-base-uncased classifier [1] using only the text modality; (ii) Image-ResNet , a fine-tuned ResNet-50 classifier [40] using only the image modality; and (iii) Late Fusion , which concatenates pooled text and image representations from the shared RoBERTa/ViT backbone before a classification head, without any explicit incongruity modeling. 11 4.3 Training Configuration and Experimental Setup 
+
+Table 3 summarizes the shared training configuration used across all models, baselines, abla-tions, and cross-task experiments unless the ablated component was itself the subject of the change. Three evaluation regimes are reported: (1) in-domain MMSD , where all five models (three baselines, GCCN, HCIG) are trained and evaluated on the MMSD train/validation/test splits described in Section 4.1; (2) in-domain and fine-tuned MultiBully , where the same five architectures are trained from randomly initialized task heads on MultiBully (“in-domain”), and GCCN/HCIG are additionally initialized from their complete MMSD-trained checkpoints before continued training on MultiBully (“fine-tuned”). In this fine-tuning regime, the existing two-class MMSD classification head is retained rather than reinitialized or replaced, and all loaded parameters are further optimized on MultiBully; and (3) a bidirectional cross-task direct-transfer stress test , where models trained only on MMSD are applied directly to the MultiBully test set with no target-task training, and vice versa. Table 3: Experimental settings and training hyperparameters.                
+
+> Setting Value / Description
+> Optimizer AdamW [33], linear warmup schedule Batch size 6 (constrained by combined RoBERTa, ViT, and graph-module mem-ory footprint) Max epochs 10, with early stopping (patience = 3) on validation macro-F1 Text max length 80 subword tokens Image size 224 ×224 Graph similarity threshold 0.3 Contradiction top-k(k)10 Phrase group size 3 tokens Evaluation regimes In-domain MMSD; in-domain and fine-tuned MultiBully; bidirec-tional cross-task direct-transfer stress test Reported metrics Accuracy, Precision, Recall, F1, Macro-F1, ROC-AUC
+
+# 5 Results 
+
+5.1 MMSD in-domain results 
+
+Table 4 reports test-set performance for all five models on MMSD . HCIG achieves the best accuracy, F1, and macro-F1 of any model; GCCN achieves the best ROC-AUC. Both proposed architectures exceed all three baselines on accuracy, F1, and macro-F1. Figure 7 visualizes the same comparison across metrics, and Figure 8 shows the corresponding confusion matrices; Figure 9 shows ROC and precision–recall curves. Table 4: Performance comparison on the MMSD test set. Model Acc. Prec. Rec. F1 Macro-F1 AUC PR-AUC Image-ResNet (baseline) 69.92 59.20 80.44 68.20 69.84 77.92 65.28 Text-BERT (baseline) 83.72 77.79 83.16 80.38 83.24 90.54 85.38 Late Fusion (baseline) 84.35 78.33 84.31 81.21 83.90 90.27 84.18 GCCN (ours) 85.15 78.61 86.51 82.37 84.77 90.99 83.19 
+
+HCIG (ours) 85.74 80.37 85.25 82.74 85.29 90.30 84.34 
+
+12 Figure 7: Performance comparison of baseline and proposed models on MMSD. 
+
+Figure 8: Confusion matrices of the evaluated MMSD models. 
+
+Figure 9: ROC curves (left) and precision–recall curves (right) for the MMSD models. 13 5.2 Ablation studies 
+
+Component ablations were run for GCCN and HCIG on MMSD, holding the training config-uration fixed and removing or isolating one architectural component at a time (Tables 5–6, Figure 10). ROC-AUC for the full models is reported only in Table 4, which is derived from the canonical main-evaluation prediction archive; the ablation tables are therefore restricted to accuracy and F1-family metrics from the common ablation evaluation. Table 5: Ablation study of GCCN on MMSD. Variant Acc. Prec. Rec. F1 Macro-F1 
+
+GCCN (full) 85.15 84.46 85.37 82.37 84.77 
+
+w/o graph reasoning 84.48 83.75 84.37 81.24 84.00 w/o contradiction pooling 84.35 83.68 83.85 80.64 83.76 text-only (no image branch) 84.36 83.15 84.20 81.87 84.09 Table 6: Ablation study of HCIG on MMSD. Variant Acc. Prec. Rec. F1 Macro-F1 
+
+HCIG (full) 85.74 85.04 85.66 82.74 85.29 
+
+token-level only 85.44 84.74 85.50 82.54 85.03 w/o global level 84.65 83.93 84.70 81.61 84.22 w/o graph reasoning 84.65 83.96 84.89 81.81 84.26 text-only (no image branch) 84.23 84.15 84.83 81.88 84.74 
+
+Figure 10: Decrease in positive-class F1 and macro-F1 after removing or isolating individual GCCN and HCIG components, relative to each corresponding full model. 
+
+5.3 MultiBully in-domain and fine-tuning results 
+
+Table 7 reports MultiBully results under two training regimes: models trained in-domain from randomly initialized heads, and GCCN/HCIG initialized from their complete MMSD check-points and then further optimized on MultiBully. The fine-tuning runs retain the existing 14 two-class MMSD classification head and jointly update it with the remaining model parame-ters; the head is not reinitialized or replaced. Using macro-F1 as the primary class-balanced metric, GCCN obtains the highest in-domain score (68.66%), whereas HCIG obtains the highest accuracy (69.62%) and bullying-class F1 (74.90%). Figure 11 shows the in-domain comparison across accuracy, positive-class F1, macro-F1, and ROC-AUC. Table 7: Performance comparison on the MultiBully dataset. Model Regime Acc. Prec. Rec. F1 Macro-F1 AUC Text-BERT In-domain 64.33 63.88 63.66 68.43 63.71 68.78 Image-ResNet In-domain 64.56 64.11 63.83 68.83 63.88 71.60 Late Fusion In-domain 64.67 64.36 63.46 70.17 63.43 69.64 GCCN In-domain 69.39 69.17 68.54 73.45 68.66 75.02 
+
+HCIG In-domain 69.62 70.08 68.20 74.90 68.21 74.91 GCCN Fine-tuned from MMSD 68.24 68.54 66.80 73.76 66.77 73.18 HCIG Fine-tuned from MMSD 65.59 67.35 63.25 73.47 62.27 70.73 
+
+Figure 11: MultiBully in-domain comparison across accuracy, positive-class F1, macro-F1, and ROC-AUC. 
+
+5.4 Bidirectional cross-task direct-transfer stress test 
+
+Models trained exclusively on MMSD were applied directly to the MultiBully test set (MMSD 
+
+→ MB), and models trained exclusively on MultiBully were applied directly to the MMSD test set (MB →MMSD), in both cases without target-task training (Figure 12). Because MMSD predicts sarcasm whereas MultiBully predicts bullying, the source and target labels represent different constructs; this experiment is therefore treated as a bidirectional cross-task direct-transfer stress test rather than conventional zero-shot domain transfer. For both GCCN and HCIG, direct-transfer accuracy in both directions falls in the 51–56% range, close to the corre-sponding majority-class baseline, and neither architecture shows a clear advantage under this cross-task classifier reuse. The in-domain differences between GCCN and HCIG (Tables 4 and 7) are not preserved in the stress-test setting. 15 Figure 12: Accuracy and macro-F1 for GCCN and HCIG across MMSD in-domain evalua-tion, MultiBully in-domain evaluation, bidirectional cross-task direct-transfer stress tests, and MMSD-initialized MultiBully fine-tuning. 
+
+5.5 Explainability and qualitative analysis 
+
+Figure 13 shows HCIG’s learned level-attention weights (token/phrase/global) by label, and Figure 14 shows GCCN’s contradiction score distribution by label. HCIG’s level-attention weights show a strong and consistent preference for the token-level branch across both classes, with the global branch contributing a secondary signal and the phrase-level branch contributing comparatively little, consistent with the ablation finding (Table 6) that a token-only variant already recovers most of HCIG’s full performance. 
+
+Figure 13: HCIG level-attention weights (token/phrase/global) by label. 
+
+Figure 14: GCCN contradiction score by label. 16 6 Conclusion and Future Work 
+
+This paper presented HCIG, a novel Hierarchical Cross-modal Incongruity Graph Network for multimodal sarcasm and cyberbullying detection by explicitly modeling semantic incongruity between textual and visual modalities at token, phrase, and global levels. Unlike conven-tional multimodal fusion approaches that primarily focus on feature aggregation, HCIG per-forms hierarchical graph-based reasoning to capture fine-grained cross-modal inconsistencies and adaptively integrates multi-level representations through an attention-guided fusion mech-anism. In addition, a lightweight Graph-based Cross-modal Contradiction Network (GCCN) was introduced as a complementary architecture to investigate contradiction-aware multimodal reasoning. Extensive experiments on the MMSD and MultiBully benchmark datasets demon-strate the effectiveness of the proposed frameworks. HCIG achieved the best performance on MMSD with an accuracy of 85.74% and a macro-F1 score of 85.29%, whereas GCCN obtained the highest macro-F1 score (68.66%) on MultiBully while HCIG achieved the highest accuracy (69.62%) and bullying-class F1 (74.90%). Furthermore, the ablation studies demonstrate the effectiveness of hierarchical incongruity modeling, highlighting that token-level semantic inter-actions provide the strongest discriminative cues while phrase-level and global representations contribute complementary contextual information. The cross-task transfer analysis further in-dicates that sarcasm and cyberbullying exhibit distinct semantic characteristics, emphasizing the importance of task-specific multimodal reasoning for effective social media understanding. The rapid advancement of multimodal artificial intelligence and foundation models is ex-pected to drive the next generation of multimodal content understanding systems. Future research should focus on developing more context-aware frameworks capable of reasoning over implicit sarcasm, offensive intent, cultural references, conversational history, and temporal de-pendencies across multiple modalities. Integrating graph reasoning with large language mod-els and large multimodal models offers promising opportunities for improving semantic align-ment, cross-modal reasoning, and generalization across diverse social media domains. Future benchmark datasets should also include multilingual, multicultural, and real-world multimodal content while adopting standardized annotation protocols and evaluation settings to improve reproducibility and facilitate meaningful comparison across studies. In addition, enhancing ex-plainability, adversarial robustness, fairness, computational efficiency, and human-centered AI will be essential for building reliable and trustworthy multimodal moderation systems. We be-lieve that the proposed HCIG framework provides a strong foundation for future research toward robust, interpretable, and scalable multimodal sarcasm and cyberbullying detection systems. 
+
+# Data and Code Availability 
+
+All result tables reported in this paper are provided as supplementary CSV files. MMSD is available from [2]; MultiBully is available from [11]. 
+
+# References 
+
+[1] J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, “BERT: Pre-training of deep bidi-rectional transformers for language understanding,” in Proceedings of NAACL-HLT 2019 ,pp. 4171–4186, ACL, 2019. [2] Y. Cai, H. Cai, and X. Wan, “Multi-modal sarcasm detection in Twitter with hierarchical fusion model,” in Proceedings of the 57th Annual Meeting of the Association for Computa-tional Linguistics , pp. 2506–2515, ACL, 2019. 17 [3] R. Schifanella, P. de Juan, J. Tetreault, and L. Cao, “Detecting sarcasm in multimodal social platforms,” in Proceedings of the 24th ACM International Conference on Multimedia ,pp. 1136–1145, ACM, 2016. [4] N. Xu, Z. Zeng, and W. Mao, “Reasoning with multimodal sarcastic tweets via model-ing cross-modality contrast and semantic association,” in Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics , pp. 3777–3786, ACL, 2020. [5] H. Pan, Z. Lin, P. Fu, Y. Qi, and W. Wang, “Modeling intra and inter-modality incongruity for multi-modal sarcasm detection,” in Findings of the Association for Computational Lin-guistics: EMNLP 2020 , pp. 1383–1392, ACL, 2020. [6] B. Liang, C. Lou, X. Li, L. Gui, M. Yang, and R. Xu, “Multi-modal sarcasm detection with interactive in-modal and cross-modal graphs,” in Proceedings of the 29th ACM Inter-national Conference on Multimedia , pp. 4707–4715, ACM, 2021. [7] B. Liang, C. Lou, X. Li, M. Yang, L. Gui, Y. He, W. Pei, and R. Xu, “Multi-modal sarcasm detection via cross-modal graph convolutional network,” in Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics , pp. 1767–1777, ACL, 2022. [8] L. Qin, S. Huang, Q. Chen, C. Cai, Y. Zhang, B. Liang, W. Che, and R. Xu, “MMSD2.0: Towards a reliable multi-modal sarcasm detection system,” in Findings of the Association for Computational Linguistics: ACL 2023 , pp. 10834–10845, ACL, 2023. [9] S. Kim, A. Razi, G. Stringhini, P. J. Wisniewski, and M. De Choudhury, “A human-centered systematic literature review of cyberbullying detection algorithms,” Proceedings of the ACM on Human-Computer Interaction , vol. 5, no. CSCW2, pp. 1–34, 2021. [10] V. Balakrisnan and M. Kaity, “Cyberbullying detection and machine learning: A systematic literature review,” Artificial Intelligence Review , vol. 56, pp. 1375–1416, 2023. [11] K. Maity, P. Jha, S. Saha, and P. Bhattacharyya, “A multitask framework for sentiment, emotion and sarcasm aware cyberbullying detection from multi-modal code-mixed memes,” in Proceedings of the 45th International ACM SIGIR Conference on Research and Devel-opment in Information Retrieval , pp. 1739–1749, ACM, 2022. [12] D. Kiela, H. Firooz, A. Mohan, V. Goswami, A. Singh, P. Ringshia, and D. Testuggine, “The hateful memes challenge: Detecting hate speech in multimodal memes,” in Advances in Neural Information Processing Systems 33 , 2020. [13] R. G´ omez, J. Gibert, L. Gomez, and D. Karatzas, “Exploring hate speech detection in multimodal publications,” in 2020 IEEE Winter Conference on Applications of Computer Vision , pp. 1459–1467, IEEE, 2020. [14] R. K.-W. Lee, R. Cao, Z. Fan, J. Jiang, and W.-H. Chong, “Disentangling hate in online memes,” in Proceedings of the 29th ACM International Conference on Multimedia , ACM, 2021. [15] C. Yang, F. Zhu, G. Liu, J. Han, and S. Hu, “Multimodal hate speech detection via cross-domain knowledge transfer,” in Proceedings of the 30th ACM International Conference on Multimedia , pp. 4505–4514, ACM, 2022. [16] E. Hossain, O. Sharif, M. M. Hoque, and S. M. Preum, “Deciphering hate: Identifying hate-ful memes and their targets,” in Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics , pp. 8347–8359, ACL, 2024. 18 [17] A. Das, J. S. Wahi, and S. Li, “Detecting hate speech in multi-modal memes,” arXiv preprint arXiv:2012.14891 , 2020. [18] P. Lippe, N. Holla, S. Chandra, S. Rajamanickam, G. Antoniou, E. Shutova, and H. Yan-nakoudakis, “A multimodal framework for the detection of hateful memes,” arXiv preprint arXiv:2012.12871 , 2020. [19] M. Mozafari, R. Farahbakhsh, and N. Crespi, “Hate speech detection and racial bias mit-igation in social media based on BERT model,” PLOS ONE , vol. 15, no. 8, p. e0237861, 2020. [20] S. Brody, U. Alon, and E. Yahav, “How attentive are graph attention networks?,” in 
+
+International Conference on Learning Representations , 2022. [21] S. Castro, D. Hazarika, V. P´ erez-Rosas, R. Zimmermann, R. Mihalcea, and S. Poria, “Towards multimodal sarcasm detection (an obviously perfect paper),” in Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , pp. 4619–4629, ACL, 2019. [22] H. Allwaibed, M. Anbar, S. Manickam, and A. Bintang, “Cyberbullying detection ap-proaches for Arabic texts: A systematic literature review,” Frontiers in Artificial Intelli-gence , 2025. [23] B. Verma, P. Meel, and D. K. Vishwakarma, “Navigating sentiment analysis through fusion, learning, utterance, and attention methods: An extensive four-fold perspective survey,” 
+
+Engineering Applications of Artificial Intelligence , vol. 156, p. 111195, 2025. [24] B. Verma, P. Meel, and D. K. Vishwakarma, “SAMER-Net: Speaker-aware multimodal emotion recognition with context-aware attention and graph convolutional networks,” Ap-plied Intelligence , vol. 56, no. 5, p. 162, 2026. [25] J. Hu, Y. Liu, J. Zhao, and Q. Jin, “MMGCN: Multimodal fusion via deep graph convolu-tion network for emotion recognition in conversation,” in Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing , pp. 5666–5675, ACL, 2021. [26] B. Verma, P. Meel, and D. K. Vishwakarma, “MHAM: A novel framework for multi-modal sentiment analysis in memes,” Knowledge and Information Systems , vol. 67, no. 11, pp. 10355–10394, 2025. [27] Z. Wu, S. Pan, F. Chen, G. Long, C. Zhang, and P. S. Yu, “A comprehensive survey on graph neural networks,” IEEE Transactions on Neural Networks and Learning Systems ,vol. 32, no. 1, pp. 4–24, 2021. [28] T. N. Kipf and M. Welling, “Semi-supervised classification with graph convolutional net-works,” in International Conference on Learning Representations , 2017. [29] P. Veliˇ ckovi´ c, G. Cucurull, A. Casanova, A. Romero, P. Li` o, and Y. Bengio, “Graph atten-tion networks,” in International Conference on Learning Representations , 2018. [30] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, and I. Polosukhin, “Attention is all you need,” in Advances in Neural Information Processing Systems 30 , pp. 5998–6008, 2017. [31] Y. Liu, M. Ott, N. Goyal, J. Du, M. Joshi, D. Chen, O. Levy, M. Lewis, L. Zettlemoyer, and V. Stoyanov, “RoBERTa: A robustly optimized BERT pretraining approach,” arXiv preprint arXiv:1907.11692 , 2019. 19 [32] A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. De-hghani, M. Minderer, G. Heigold, S. Gelly, J. Uszkoreit, and N. Houlsby, “An image is worth 16x16 words: Transformers for image recognition at scale,” in International Confer-ence on Learning Representations , 2021. [33] I. Loshchilov and F. Hutter, “Decoupled weight decay regularization,” in International Conference on Learning Representations , 2019. [34] D. P. Kingma and J. Ba, “Adam: A method for stochastic optimization,” in International Conference on Learning Representations , 2015. [35] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh, S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark, G. Krueger, and I. Sutskever, “Learning transferable visual models from natural language supervision,” in Proceedings of the 38th International Conference on Machine Learning , pp. 8748–8763, 2021. [36] J. Lu, D. Batra, D. Parikh, and S. Lee, “ViLBERT: Pretraining task-agnostic visiolin-guistic representations for vision-and-language tasks,” in Advances in Neural Information Processing Systems 32 , 2019. [37] R. R. Selvaraju, M. Cogswell, A. Das, R. Vedantam, D. Parikh, and D. Batra, “Grad-CAM: Visual explanations from deep networks via gradient-based localization,” in 2017 IEEE International Conference on Computer Vision , pp. 618–626, IEEE, 2017. [38] M. Cuturi, “Sinkhorn distances: Lightspeed computation of optimal transport,” in Ad-vances in Neural Information Processing Systems 26 , pp. 2292–2300, 2013. [39] M. Sensoy, L. Kaplan, and M. Kandemir, “Evidential deep learning to quantify classification uncertainty,” in Advances in Neural Information Processing Systems 31 , pp. 3183–3193, 2018. [40] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in 
+
+2016 IEEE Conference on Computer Vision and Pattern Recognition , pp. 770–778, IEEE, 2016. 20
