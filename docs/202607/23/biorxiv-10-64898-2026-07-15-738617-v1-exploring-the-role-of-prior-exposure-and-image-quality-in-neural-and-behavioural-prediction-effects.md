@@ -1,0 +1,20 @@
+---
+title: Exploring the role of prior exposure and image quality in neural and behavioural prediction effects
+authors: "Dang, P. N. U., Mattingley, J. B., Moore, M. J."
+date: 2026-07-21
+pdf: "https://www.biorxiv.org/content/10.64898/2026.07.15.738617v1.full.pdf"
+tags: ["query:q10"]
+score: 6.5
+evidence: 图像序列期间的预测加工与神经活动模式
+tldr: 描述了先验暴露和刺激质量如何影响神经与行为的预测效应。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738617-v1/fig-001.webp\", \"caption\": \"Figure 1: Visual object stimuli used in the experiment. (a) Intact stimuli used to construct\", \"page\": 6, \"index\": 1, \"width\": 919, \"height\": 698}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738617-v1/fig-002.webp\", \"caption\": \"Figure 4: Decoding results for expected and unexpected stimuli across image quality\", \"page\": 14, \"index\": 2, \"width\": 767, \"height\": 998}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738617-v1/fig-003.webp\", \"caption\": \"Figure 6: Cross-decoding model construction and results assessing whether predictors were\", \"page\": 18, \"index\": 3, \"width\": 906, \"height\": 935}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738617-v1/fig-004.webp\", \"caption\": \"Figure 2: Experimental design with counterbalanced behavioural and EEG sessions. (a) The\", \"page\": 8, \"index\": 4, \"width\": 954, \"height\": 877}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738617-v1/fig-005.webp\", \"caption\": \"Figure 3: Reaction time and accuracy results from the behavioural target-detection task. (a)\", \"page\": 12, \"index\": 5, \"width\": 946, \"height\": 579}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738617-v1/fig-006.webp\", \"caption\": \"Figure 5: Decoding results for intact expected and unexpected stimuli across prior exposure\", \"page\": 16, \"index\": 6, \"width\": 752, \"height\": 979}]"
+motivation: 图像序列期间的预测加工与神经活动模式。
+method: 方法与实现细节请参考摘要与正文。
+result: 结果与对比结论请参考摘要与正文。
+conclusion: 总体而言，该工作在所述任务上展示了有效性，并提供了可复用的思路或工具。
+---
+
+## Abstract
+According to predictive processing theories, the brain achieves efficiency in perception by comparing current sensory inputs with stored representations of the external world. Previous research has shown that manipulations of expectation can alter neural processing of low-level visual features as well as more complex, naturalistic objects. It remains unclear, however, precisely how the effects of expectancy are altered through learning and changes in stimulus fidelity. Here, we characterised behaviour and neural activity patterns while systematically varying individuals' prior exposure to object sequences and the quality of the stimuli therein. Participants viewed rapid image sequences while we recorded their brain activity using electroencephalography (EEG). The stimulus sequences were probabilistically structured such that the appearance of each object was either expected, unexpected, or random. Participants were faster and more accurate in detecting cued target stimuli when these were expected relative to unexpected or random. Multivariate analysis of EEG activity patterns time-locked to the appearance of object images revealed reliably reduced decoding accuracy for both expected and unexpected stimuli relative to random stimuli. These patterns were consistent across exposure and image quality conditions, though exploratory analyses suggested that subtle changes in neural prediction effects may be linked to exposure. The findings do not provide strong support that the brain differentially represents expected versus unexpected object information and suggest that exposure and image quality do not reliably interact with predictive processes in object recognition.
