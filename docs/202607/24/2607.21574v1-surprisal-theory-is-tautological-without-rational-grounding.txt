@@ -1,0 +1,642 @@
+Title: Surprisal Theory is Tautological (without Rational Grounding)
+
+URL Source: https://arxiv.org/pdf/2607.21574v1
+
+Published Time: Fri, 24 Jul 2026 01:16:12 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Surprisal Theory is Tautological (without Rational Grounding) 
+
+Ryan Cotterell 
+
+ETH Zürich 
+
+ryan.cotterell@inf.ethz.ch 
+
+Abstract 
+
+Surprisal theory holds that the human process-ing difficulty of a linguistic unit in context is an affine function of its surprisal under some language model. I argue this claim is a tau-tology without further constraint: for any non-negative difficulty measure over units in con-text, there exists a language model whose sur-prisal is an affine function of it under mild tech-nical conditions. Therefore, because any pat-tern of difficulty is consistent with some lan-guage model, without an additional constraint on the language model, surprisal theory makes no falsifiable predictions. The tautology was long obscured by an assumption implicit in two decades of psycholinguistic work—that the rel-evant language model is the distribution that generated the training corpus, so that improving corpus fit improves predictions of human be-havior. Recent empirical work has undermined this assumption, demonstrating that better cor-pus models can be worse predictors of process-ing difficulty. I conclude that breaking the tau-tology requires a rationalist intervention, i.e., the relevant language model must be derived from a non-empirically motivated model of the comprehender, which could be based on, for in-stance, memory constraints or processing goals, and that, thus, does not depend on the behav-ioral data surprisal theory is meant to explain. 
+
+1 Introduction 1
+
+A foundational observation in psycholinguistics is that human language comprehension is incremen-tal , i.e., comprehenders do not wait for a complete utterance before beginning to interpret it, but in-stead build and update their representations unit by unit as the input unfolds (Altmann and Kamide, 1999; Tanenhaus et al., 1995). 2 This fact has deep 
+
+> 1
+
+This draft was completed in March 2026; I am posting it to arXiv now owing to the appearance of the seemingly similar, independently conducted work of Buxó-Lugo et al. (2026). Future versions will compare the two papers more closely. 
+
+> 2
+
+Incrementality is not absolute: eye-tracking reveals regressive saccades in which readers revisit earlier material 
+
+consequences for how one theorizes about pro-cessing. If comprehension proceeds incrementally, then the total effort of understanding an utterance 
+
+u = u1 ··· uT naturally decomposes into a series of per-step costs, one for each unit integrated into the evolving representation. Incrementality thus moti-vates the central theoretical primitive of this paper: the processing difficulty d( ut | u<t ) ≥ 0, a non-negative function that quantifies the effort a com-prehender expends to integrate unit ut given the pre-ceding context u<t def 
+
+= u1 ··· ut−1;3 the notation is formally introduced in §2. 4 In practice, processing difficulty is operationalized through a variety of be-havioral and neural measures—self-paced reading times, eye-tracking fixation durations, and event-related potentials, inter alia —and a successful the-
+
+(Wilcox et al., 2024), and late measures such as go-past time aggregate processing across multiple fixations (Boston et al., 2008; Demberg and Keller, 2008). Nonetheless, the dominant empirical pattern is strongly left-to-right, and the standard modeling assumption in the surprisal literature is that difficulty at position t depends on u<t alone. I adopt this assumption throughout; extending the framework to account for regressions is an open problem. 
+
+> 3
+
+The construct d is agnostic about the source of the pro-cessing effort: it subsumes prediction disconfirmation, the cost of integrating ut into the evolving representation, and any reanalysis of earlier material that ut triggers. Because reanalysis at position t is initiated by observing ut in context 
+
+u<t , its cost remains a function of the pair (ut, u<t ) and is therefore representable by d; indeed, under Levy’s (2008) resource-reallocation interpretation, reanalysis costs are part of what surprisal is meant to quantify. 
+
+> 4
+
+I treat d as a function of the linguistic unit and its context alone, abstracting over reader identity, reader state, and presentation modality. This follows the standard linear mixed-effects regression framework used in psycholinguistics (Smith and Levy, 2013; Goodkind and Bicknell, 2018), which decomposes observed reading times into a surprisal-driven component shared across readers, control predictors (word length, frequency, position), reader-specific random inter-cepts, and residual noise. Under this decomposition, the string-specific difficulty captured by surprisal is the same for all readers; reader-specific variation is absorbed into the random effects. If d were instead reader-specific, the tautology construction in Eq. (2) would produce a different language model for each reader—but surprisal theory posits a single language model shared across readers, which is itself a testable constraint that the present argument does not exploit. 
+
+1arXiv:2607.21574v1 [cs.CL] 23 Jul 2026 ory of sentence processing must explain its varia-tion across positions and contexts. However, for the exposition of this paper, I abstract away from specific operationalizations with the construct d.
+
+1.1 Surprisal Theory 
+
+Surprisal theory (Hale, 2001; Levy, 2008) is a widely adopted information-theoretic framework for prediction-based processing (Kuperberg and Jaeger, 2016) in psycholinguistics that offers a par-ticularly elegant account of incremental processing. It claims that processing difficulty is an affine func-tion of the contextual surprisal of the unit under some language model q (Shain et al., 2024); 5 in symbols, surprisal theory corresponds to 
+
+d( ut | u<t ) = −a log ⃗q(u t | u<t ) + b(u<t ), (1) where a > 0 is a constant and b : Σ ∗ → R is a context-dependent baseline. This paper argues that, in its current conceptualization, surprisal theory is not falsifiable (Popper, 1959) without constraints that go beyond current practice and, moreover, tau-tological. Because the theory leaves q as a free parameter, any observed pattern of processing diffi-culty can be accommodated. Specifically, for any difficulty measure d, one can simply construct a language model whose sur-prisal is an affine function of it: ⃗q d(ut | u<t ) def 
+
+= exp( −d( ut | u<t )) 
+
+P 
+
+> u′∈ΣE
+
+exp( −d( u′ | u<t )) . (2) Under this construction, − log ⃗q d(ut | u<t ) = d( ut | u<t ) + log Z(u<t ), where Z(u<t ) is the partition function—so Eq. (1) holds with 
+
+a = 1 and b(u<t ) = − log Z(u<t ).6 Under mild conditions, explicated in §3, this construction yields a valid language model. 7 The consequence is that, without further constraining q, surprisal              
+
+> 5Shain et al. (2024) provide large-scale evidence that the relationship between word predictability and reading time is linear in log-probability—i.e., that the affine form in Eq. (1) is a better fit than alternatives such as a logarithmic or power-law relationship in raw probability. The affine formulation is important for my tautology argument: the construction in Eq. (2) yields a= 1 and a context-dependent intercept b=−log Z(u<t ), which is exactly the affine form. A strictly proportional formulation ( b= 0 ) would leave a gap, since the partition function varies with context.
+> 6In psycholinguistic practice, context-dependent baselines are absorbed into control predictors in the regression model. The affine formulation with context-dependent bis therefore the natural statement of the theory.
+> 7The tautology argument applies more broadly to any the-ory that defines processing difficulty purely as a function of the language model’s probability distribution. For instance, Hale’s
+
+theory’s claim that difficulty scales with surprisal is vacuous, i.e., it is compatible with every possible pattern of processing difficulty. Of course, proponents of surprisal theory have never claimed that just any language model will do, and neither do I. To escape the tautology, one must restrict attention to a family of language models Q—for example, the set of all probabilistic context-free grammars (PCFGs; Booth and Thompson, 1973)— and select a q ∈ Q . This is precisely the move Hale (2001) makes: invoking his Principle 1, which he terms strong competence—a hypothesis originally proposed by Chomsky (1965)—he restricts Q to the set of PCFGs on rationalist grounds: he be-lieves “the human sentence processing mechanism directly uses rules of grammar in its operation.” The problem is that subsequent empirical work has progressively drifted from such commitments— from PCFGs to recurrent neural networks (Hochre-iter and Schmidhuber, 1997) to transformers (Vaswani et al., 2017)—adopting model families whose cognitive relevance is left unjustified, rely-ing instead on the corpus assumption (§1.3)—the implicit premise that the relevant language model is the very distribution that generated the training corpus, so that fitting that distribution ever more faithfully can only improve predictions of process-ing difficulty—to do the constraining work that the choice of Q no longer provided—leaving be-hind only a weaker, implicit assumption that I will call the cognitivist assumption —that q should ap-proximate a theoretical construct pH, the compre-hender’s internal language model. Levy (2008) comes closest to making the cognitivist assumption explicit, writing “the cognitive entity of primary interest is the resulting probabilistic [unit] model alone” (p. 1138), and that the choice of grammar “is not a commitment to any particular grammatical formalism as the backbone of sentence comprehen-sion” but rather “a formal means of estimating what expectations about upcoming [units] in a sentence implicitly arise” (p. 1138). Under the cognitivist as-sumption, surprisal theory reduces to the claim that 
+
+d( ut | u<t ) = −a log ⃗p H(ut | u<t )+ b(u<t ). (3) But this framing exposes that the cognitivist as-sumption, by itself, does not escape the tautology: 
+
+> (2003) entropy reduction hypothesis—which links processing difficulty to the reduction in entropy over possible parses— faces a similar problem: for any observed pattern of difficulty, one can in principle construct a probability distribution whose entropy reductions match it, though the construction is less direct than in the surprisal case.
+
+2without an independent characterization of pH
+
+that is not grounded in the behavioral data that the field seeks to explain, any pattern of difficulty can be explained by positing a pH whose surprisal matches it. 8
+
+I call the fact that the falsifiability of surprisal theory requires an externally chosen family of lan-guage models Q the grounding problem . No-tably, the grounding problem has two parts: first, what family Q should be considered, and second, how should a specific q ∈ Q be selected? The first question concerns the structural commitments of the family of language models—whether Q
+
+comprises PCFGs, recurrent neural networks, or transformers—while the second concerns the crite-rion by which q is selected from within Q, e.g., is it fit to a corpus, derived from cognitive principles, or optimized against behavioral data? Surprisal theory itself provides no independent answer to ei-ther question—the answer must come from outside the theory. Yet in much of the recent empirical literature on surprisal theory, the choice of Q re-ceives little or no external justification: studies rou-tinely report results for whichever architecture is currently in vogue, e.g., recurrent neural networks or transformers—without arguing that the chosen 
+
+Q is the right one on cognitive or other theoretical grounds. The implicit assumption is that a better corpus model is a better cognitive model, but this assumption is precisely what is at issue. 
+
+1.2 An Analogy from Evolutionary Biology 
+
+Tautologies are not new in science. An instructive parallel comes from evolutionary biology. Dar-win’s (1859) principle of natural selection—that heritable traits conferring reproductive advantage spread through a population—is distilled in the slogan survival of the fittest . But if fitness simply means reproductive success, the slogan reduces to “those who reproduce most, reproduce most”—a tautology, not a law of nature. The observation has a long history (Butler, 1882; Sinnott et al., 1958; Waddington, 1960) and was given its most sustained treatment by Peters (1976); Popper famously concluded that natural selection was a “metaphysical research programme” rather than a testable theory (Popper, 1974). The criticism was not that evolution was false, but that its central explanatory construct was defined in terms of the very phenomenon it was meant to explain. 
+
+> 8The same structural problem afflicts any theory with an unconstrained latent construct.
+
+The resolution came through what Mills and Beatty (1979) called the propensity interpretation of fitness; see also Brandon (1978). On this view, fitness is not a measure of actual reproductive out-put but a propensity —a causal tendency, grounded in an organism’s morphology, physiology, and be-havior in a given environment, to survive. Un-der the propensity interpretation, natural selection makes a falsifiable claim: organisms with higher propensities reproduce more than those with lower ones. The key structural feature of the propensity interpretation—and the one I will exploit below—is that it grounds an explanatory construct in physi-cal or structural properties of the organism itself and how it relates to its environment. Crucially, this grounding is independent of the outcome the construct is meant to explain—reproductive suc-cess. A propensity interpretation of surprisal theory would require an analogous move: grounding the choice of q in independently observable properties of the comprehender—working memory capacity, parsing strategy, attention allocation policy—rather than in the reading-time data the theory is meant to predict. I discuss concrete proposals along these lines in §5. 
+
+1.3 How Surprisal Theory Lost Its Propensity 
+
+While rarely stated explicitly, I contend that sur-prisal theory did historically have a propensity in-terpretation, which I explicate below. Let pC de-note the data-generating language model of the corpus—the distribution over strings that produced the texts used to estimate q. Just as fitness under the propensity interpretation is grounded in how the or-ganism interacts with its environment—observable physical properties independent of reproductive outcomes— pC is grounded in how humans pro-duce text in the wild, observable independently of any processing difficulty measurements. 9         
+
+> 9One might object that the independence is not absolute, i.e.the same cognitive system that produces text also processes it, so pCand processing difficulty are not causally unrelated. The dependence may run deeper than mere causal correlation: influential theories of language processing posit shared representations for production and comprehension (Pickering and Garrod, 2004; Dell, 1986), in which case pCis not independent of pHbut rather a noisy-channel reflection of it. If production and comprehension share the same underlying language model, the corpus assumption and the cognitivist assumption would collapse into one—an identification that, if correct, would simplify the grounding problem considerably. The point, for present purposes, is that pCcan be estimated
+> without recourse to reading-time data, which is sufficient for the propensity move to go through. I concede, however, that the relationship between production and comprehension
+
+3To state it more concisely, the assumption that has anchored two decades of empirical work in sur-prisal theory—call it the corpus assumption —is that q = pC. Under the corpus assumption, sur-prisal theory claims the following 
+
+d( ut | u<t ) = −a log ⃗p C(ut | u<t )+ b(u<t ). (4) One wrinkle is that pC is not known. However, it can be approximated by estimating a language model from a corpus of texts assumed to have been sampled from pC. The corpus assumption led to two concrete payoffs. First, it made finding a q
+
+to experiment with in practice approachable: one can estimate a language model q from a corpus and treat it as an approximation to pC. Second, under maximum-likelihood estimation, the corpus assumption entails what I call the scaling impli-cation —as estimation improves, a model q should asymptotically yield surprisal values that better cor-relate with processing difficulty. This implication is a direct consequence of the corpus assumption, as I formally argue in §4, and forces surprisal theory to make a falsifiable prediction. In practice, however, the corpus assumption has seldom been enforced in pure form. Studies routinely compare many language models by their fit to behavioral data and report the best-fitting configurations (e.g., Goodkind and Bicknell, 2018; Wilcox et al., 2023; Oh and Schuler, 2023), so that subsequent work, in adopting those models, implicitly conditions the choice of q on the very data the theory is meant to explain; hyperparameter and checkpoint selection introduce a logical dependence, albeit a mild one. At the extreme, Kiegeland et al. (2024) fine-tune a language model on reading times directly; I return to the status of this strategy in §4. 10 
+
+On my reading of the literature, two decades of empirical work implicitly operated under the corpus assumption. And, for most of that time, 
+
+> distributions deserves more careful treatment than I am able to give it here.
+> 10 In the same vein, Yoshida et al. (2026) fine-tune neural language models on garden-path reading times, yielding an “existence proof” of a language model whose surprisal repro-duces garden-path effects that off-the-shelf models notoriously underestimate—and they note that such constructibility may render surprisal theory “unfalsifiable in practice.” Their em-pirical construction is the practical counterpart of the formal one in §3; notably, however, their fine-tuned models still fail to reproduce memory-based effects such as the subject–object relative-clause asymmetry, showing that the family reachable by fine-tuning in practice is not yet universal—a contingent bound on flexibility that, as the formal argument shows, cannot be relied upon in principle.
+
+the results suggested that contextual surprisal derived from larger language models did in fact correlate more strongly with a variety of behavioral measurements, e.g., self-paced reading times (Smith and Levy, 2013; Wilcox et al., 2023), eye-tracking measures (Boston et al., 2008; Demberg and Keller, 2008), and neural signals (Frank et al., 2015; Giulianelli et al., 2024) across languages and model architectures—from probabilistic context-free grammars to echo state networks ( cf. Jaeger, 2001; Frank and Bod, 2011), long short-term memory networks ( cf. Hochreiter and Schmidhuber, 1997; Goodkind and Bicknell, 2018), and large pretrained transformers (cf. 
+
+Vaswani et al., 2017; Wilcox et al., 2020). With each architectural shift, the cognitive commitments implicit in the choice of Q became less transparent: a context-free grammar commits to a linguistically motivated Q (Hale, 2001), but for a neural lan-guage model the constraints on q are opaque—even though the family may be surprisingly restricted. 11 
+
+Recently, however, a growing body of evidence appears to falsify the scaling implication—and, with it, the corpus assumption specifically, not sur-prisal theory per se . Oh and Schuler (2023) first reported that the correlation between surprisal and reading times improves as transformers grow larger, but only up to a point—beyond which it degrades 
+
+as models become better approximations to pC.12 
+
+This finding has since been replicated and extended. Oh et al. (2024) confirmed the inverse relationship across four language model families and four read-ing corpora, arguing that word frequency explains much of the degradation. Lin and Schuler (2025) demonstrate that the same inverse trend appears for fMRI-based neural measures, extending the finding beyond latency-based reading times. Finally, Oh et al. (2025) claim to have ruled out data leakage as    
+
+> 11 Yang et al. (2026) characterize the family that autoregres-sive transformer-based language models can compute. Under fixed precision (Li and Cotterell, 2025), it corresponds to a
+> sub regular family. This implies that transformer-based lan-guage models correspond to very big probabilistic finite-state automata, which are less expressive than PCFGs in terms of the Chomsky hierarchy. Bergsträßer et al. (2026) show, more-over, that transformers are an inherently succinct representa-tion of such automata—they can encode PFSAs that would require exponentially more states if represented directly.
+> 12 Kuribayashi et al. (2025) argue that this degradation is an artifact of evaluating only final-layer representations: middle layers of larger models retain strong alignment with human reading times. Relatedly, Tsipidi et al. (2026) find that early-layer representations outperform surprisal itself in predicting early-pass reading measures across five languages. However, this does not rescue the scaling implication, which concerns the model’s closeness to pC.
+
+4an explanation, showing that the inverse relation-ship persists even with models trained on data from which reading-time corpora have been removed. My argument relies on these findings being correct, but I acknowledge that the case is not fully closed: one might argue that the degradation reflects a mis-match between the corpora used to train current language models (predominantly web text) and the cognitively relevant distribution, rather than a fail-ure of the corpus assumption per se .13 
+
+2 Formal Preliminaries 
+
+Alphabets, strings, and language models. An 
+
+alphabet Σ is a finite, non-empty set whose ele-ments I call units —for instance, words, charac-ters, or subword tokens. 1415 The Kleene closure 
+
+Σ∗ is the set of all finite strings over Σ. I denote individual units by u (or ut when indexed by po-sition), strings by u = u1 ··· uT where |u| = T
+
+denotes the length, and prefixes of a string u are denoted by u<t = u1 ··· ut−1. I augment Σ with a distinguished end-of-sequence symbol EOS /∈ Σ
+
+and write ΣE
+
+> def
+
+= Σ ∪ { EOS } for EOS -augmented alphabet. A language model p is a probability distribution over Σ∗, i.e., P 
+
+> u∈Σ∗
+
+p(u) = 1 . Iuse p as a generic language model throughout this section; the specific language models q, pH, and 
+
+pC introduced in §1 are all instances of p. I say 
+
+p has finite expected length if Ey∼p[|y|] < ∞.The prefix probability of a string u under p is ⃗p(u) def 
+
+= P 
+
+> u′∈Σ∗
+
+p(uu ′), i.e., the probability that a string sampled from p begins with u.
+
+From language models to conditionals. For each prefix u<t ∈ Σ∗, the language model induces a conditional distribution over the extended alpha-bet ΣE , given by ⃗p(u t | u<t ) = ⃗p(u <t ut)/⃗ p(u <t )
+
+where ut ∈ ΣE ; this is well-defined whenever ⃗p(u <t ) > 0, which I assume throughout. For 
+
+ut = EOS , I adopt the convention ⃗p(u <t EOS ) def 
+
+=
+
+p(u<t )—the probability that the string ends exactly at u<t —since the prefix probability is otherwise        
+
+> 13 If one considers a corpus of conversational speech rather than web text, the scaling implication might still hold for mod-els trained on that corpus. Distinguishing “no data-generating distribution pCyields the right q” from “the right pChas simply not been identified” is an open empirical question that the formal argument of this paper does not resolve.
+> 14 See Kiegeland et al. (2026) for a careful treatment of the choice of unit inventory in surprisal-based analyses
+> 15 Although Σis finite, it can encode structured objects with unbounded complexity through serialization into strings. Snæbjarnarson et al. (2026) show how infinite-state languages can be represented over a finite alphabet via such encodings.
+
+defined only for strings in Σ∗. This conditional specifies the probability of each next unit ut ∈ ΣE
+
+given the context—including the probability of end-ing the string by generating EOS . Thus, every lan-guage model p decomposes as a product of these conditionals as 
+
+p(u) = ⃗p(EOS | u)
+
+> T
+
+Y
+
+> t=1
+
+⃗p(u t | u<t ), (5) where u = u1 ··· uT is a string of length T . Icall this a language model’s autoregressive fac-torization . Furthermore, Eq. (5) allows one to view p as a collection of conditional distributions 
+
+{⃗p(· | u)} u∈Σ∗ , each over ΣE .
+
+From conditionals to language models. The converse direction is more delicate. A conditional collection is any family {π(· | u)}u∈Σ∗ of distri-butions over ΣE , one for each prefix, where π is not assumed to arise from a language model. A condi-tional collection can be used to compute the proba-bility of a string by plugging the appropriate condi-tionals into Eq. (5). However, the resulting measure over Σ∗ may fail to sum to 1: probability mass can “leak” onto infinite sequences that never produce 
+
+> EOS
+
+. A conditional collection for which no such leakage occurs—i.e., for which P 
+
+> u∈Σ∗
+
+p(u) = 1 —is called tight . A characterization of tightness is given by Du et al. (2023, Theorem 4.7). 
+
+3 Technical Conditions for the Tautology 
+
+In §1, I argued that any non-negative difficulty measure can be converted into a language model whose surprisal reproduces it; see Eq. (2). I now make this precise. Given a difficulty measure 
+
+d : Σ E × Σ∗ → R≥0, the construction in Eq. (2) defines a conditional collection qd over ΣE :⃗q d(ut | u<t ) def 
+
+= exp( −d( ut | u<t )) 
+
+P 
+
+> u′∈ΣE
+
+exp( −d( u′ | u<t )) . (6) The technical subtlety is that qd as defined in Eq. (6) is not guaranteed to be a language model, as discussed in §2. One could translate Du et al.’s (2023) exact characterization of the tightness of conditional collections directly into the notation of d, but the resulting expression is cumbersome. Instead, I give a simpler sufficient condition purely in terms of d, which admits a more lucid discussion about cognitive plausibility. 
+
+Proposition 1. Let d : Σ E × Σ∗ → R≥0 be a non-negative difficulty measure, and let qd be defined by 
+
+5Eq. (6) . If there exists a function f : Z>0 → R≥0
+
+such that 
+
+d( EOS | u) ≤ f (|u| + 1) for all u ∈ Σ∗ (7) 
+
+and P∞ 
+
+> t=1
+
+exp( −f (t)) = ∞, then (a) qd is tight (see §2), i.e., P 
+
+> u∈Σ∗
+
+qd(u) = 1 ; and (b) if more-over f is constant—i.e., there exists C > 0 such that d( EOS | u) ≤ C for all u ∈ Σ∗—then qd has finite expected length: Eqd [|y|] < ∞.
+
+The proof is deferred to §B.1. 
+
+Cognitive plausibility. I now discuss the cog-nitive plausibility of part (b) of Proposition 1, which is referenced as a technical condition in §4. It requires that d( EOS | u)—the difficulty of wrapping up the sentence after a prefix u—be uniformly bounded. Reading times at sentence-final words do exhibit a well-documented wrap-up cost (Smith and Levy, 2013; Meister et al., 2022), but this cost is a fixed penalty associated with sentence-boundary integration and does not appear to scale with the length of the preceding context. The assumption that d is bounded—which I adopt throughout—therefore satisfies the condition for any realistic difficulty measure. 16 Part (b) is needed as a technical condition in §4, where the scaling im-plication requires qd to have finite expected length. 
+
+4 The Scaling Implication 
+
+The corpus assumption (§1.3) identifies the target language model with the data-generating distribu-tion: q = pC. A direct consequence is that one should choose as expressive a family Q as possible and estimate q ∈ Q from the corpus by maximum likelihood—the richer Q is, the better the estimator can approximate pC, and the closer its surprisal val-ues should be to the true surprisal under pC. In §1.3, I noted that Oh and Schuler (2023) gave evidence against this prediction—but the argument relied on a formal result connecting the corpus assumption and the scaling implication. 
+
+4.1 Measuring Psychometric Fitness 
+
+To formalize the scaling implication, I require a measure of how well a language model’s surprisal values predict observed processing difficulty. In practice, researchers operationalize this fit by                     
+
+> 16 Boundedness of dhas a further payoff. Namely, if d( u|
+> u)≤Cfor all uand u, then the constructed model satisfies ⃗qd(u|u)≥exp( −C)/|ΣE|, i.e., its per-unit probabilities are bounded away from zero—so qditself meets the standing assumption placed on Qin Definition 1.
+
+regressing behavioral measures (reading times, fixation durations, or ERP amplitudes) against surprisal values and reporting a goodness-of-fit statistic—typically delta log-likelihood (Goodkind and Bicknell, 2018; Wilcox et al., 2023), R2
+
+(Giulianelli et al., 2024) or mean-squared error (Kiegeland et al., 2024). I abstract over these choices with a general definition. 
+
+Definition 1 (Fitness measure) . Let p be a lan-guage model with finite expected length (§2) and let g : R≥0 × R≥0 → R be a bounded, continuous function. 17 The (p, g )-fitness measure is defined as 
+
+M (q) def 
+
+= (8) 
+
+X
+
+> u∈ΣE
+
+X
+
+> u∈Σ∗
+
+⃗p(uu) g  d( u | u), − log( ⃗q(u | u)) ,
+
+where ⃗ p(uu) is the prefix probability of uu
+
+under p, as defined in §2, with the convention ⃗p(u EOS ) def 
+
+= p(u).
+
+For delta log-likelihood, R2 and MSE, bound-edness of g can be imposed without loss of gener-ality due to the fact that the per-unit probabilities are bounded away from zero. See footnote 17: together with the boundedness of d (§3), it con-fines the arguments of g to the compact rectangle 
+
+[0 , C ] × [0 , log(1 /ε )] , and M depends on g only through its values there; any continuous g may therefore be truncated outside this rectangle with-out changing M , so the boundedness requirement sacrifices no generality. 
+
+Lemma 1 (Continuity of M ). Suppose p has finite expected length and g is continuous and bounded. Then M : Q → R is continuous. 
+
+The proof is deferred to §B.2. 
+
+4.2 Estimation 
+
+Given a (pC, g )-fitness measure M , one seeks the language model q∗ = arg max q∈Q M (q) that best predicts processing difficulty. 18 The choice of Q is                                
+
+> 17 I assume throughout that per-unit probabilities are uni-formly bounded away from zero: there exists ε > 0such that ⃗q(u|u)≥εfor every q∈ Q ,u∈ΣE, and u∈Σ∗; neces-sarily ε≤1/|ΣE|, since the conditional probabilities sum to one. Softmax-based models whose parameters range over a compact set satisfy this assumption. Two consequences are used in what follows: first, surprisal values lie in the compact interval [0 ,log(1 /ε )] ; second, by the geometric argument in the proof of Proposition 1, part (b), every q∈ Q is tight with
+> Eq[|y|]≤(1 −ε)/ε .
+> 18 As discussed in §1.3, Kiegeland et al. (2024) pursued exactly this strategy; as they themselves note, it raises the question of what, if anything, the optimized model explains.
+
+6critical. If Q is the set of all language models—all distributions over Σ∗—then by Proposition 1, q∗
+
+can perfectly accommodate any observed difficulty pattern, and surprisal theory has no grounding. The smaller Q is, the more constrained and falsifiable surprisal theory becomes. Under the corpus as-sumption, however, one need not justify Q on cog-nitive grounds at all: the goal is simply to approx-imate pC as well as possible, so in principle one would choose the most expressive family available. Because one does not have access to pC, a stan-dard method for selecting q ∈ Q under the corpus assumption is maximum-likelihood estimation 
+
+(MLE). 19 Given a corpus u(1) , ... , u(N ) i.i.d. 
+
+∼ pC of 
+
+N strings, the MLE is 
+
+qN def 
+
+= arg max 
+
+> q∈Q
+
+1
+
+N
+
+> N
+
+X
+
+> n=1
+
+log q(u(n)). (9) Under standard regularity conditions— compactness of Q and a uniform integrability condition on log q, both made precise in Theorem 1 of §A—the estimator converges almost surely to the KL projection of pC onto Q:
+
+DKL (pC ∥ qN ) a.s. 
+
+−−−−→  
+
+> N→∞
+
+inf  
+
+> q∈Q
+
+DKL (pC ∥ q) . (10) Let q∗ def 
+
+= arg min q∈Q DKL (pC ∥ q) denote the KL projection of pC onto Q. When Q is well-specified—i.e., pC ∈ Q —the right-hand side of Eq. (10) is zero and q∗ = pC. Under misspecifi-cation, q∗ is the member of Q closest to pC in KL divergence. In either case, the following holds. 20 
+
+Proposition 2 (Scaling implication) . Assume Q∗ is a singleton {q∗}, i.e., the KL-minimizer is unique. Under the regularity conditions of Theorem 1, it holds that 
+
+M (qN ) p
+
+−−−−→  
+
+> N→∞
+
+M (q∗). (11)            
+
+> 19 In practice, neural language models are trained by stochas-tic gradient descent (SGD) on the cross-entropy loss, which is the empirical analogue of the KL objective but does not guarantee convergence to the global MLE. The loss landscape of transformer language models is non-convex with many lo-cal minima and saddle points, and SGD may converge to a spurious local optimum rather than the global KL-minimizer. The scaling implication, as stated, is therefore a claim about the population-level optimum within Q—the best model that
+> could be found—not about the output of any particular train-ing run. Additional theory, perhaps drawing on the empirical observation that overparameterized networks tend to find good minima at scale, may be necessary to bridge this gap.
+> 20 When identifiability fails, the conclusion of Proposition 2 still holds provided Mtakes the same value on all elements of
+> Q∗, since every limit point of {qN}lies in Q∗by Theorem 1.
+
+In particular, for any ε > 0 and δ > 0, there exists N0 such that for all N ≥ N0, it holds that 
+
+Pr  |M (qN ) − M (q∗)| < ε  > 1 − δ.
+
+The proof is deferred to §B.3. Proposition 2 establishes that fitness converges 
+
+to M (q∗) as the estimator improves—but it does not predict that fitness increases monotonically with more data or larger models, which is the in-formal reading of “scaling.” Thus, the convergence result itself is not what is falsified. What the corpus assumption additionally predicts—and what Oh and Schuler’s (2023) findings contradict—is that 
+
+pC maximizes M , i.e., that the true corpus distri-bution is the best predictor of processing difficulty. If M first increases and then decreases as models approach pC, then an imperfect approximation to 
+
+pC is a better predictor than pC itself—a reversal that misspecification alone cannot produce. 21 This is evidence against the corpus assumption specif-ically, not against surprisal theory in its entirety. Even before this empirical falsification, the corpus assumption deserved more scrutiny: pC is determined by who wrote the texts, when, and for what purpose—a model estimated from Wall Street Journal prose (Marcus et al., 1993) converges to a different distribution than one estimated from Reddit ( cf. Radford et al., 2019), encoding corpus-specific statistics (genre, topic, editorial style) with no clear role in accounts of syntactic processing. The grounding problem is not solved but deferred: from “which q?” to “which corpus?” 
+
+5 The Search for a Rationalist Grounding 
+
+If one accepts the corpus assumption as falsified and the early rationalist commitments of Hale (2001) abandoned with the move to neural mod-els, the question becomes whether surprisal the-ory can be rescued by choosing Q on cogni-tive grounds. What I call the rationalist prin-ciple is the commitment to grounding Q and q
+
+in aspects of human cognition motivated inde-pendently of the behavioral data surprisal theory is meant to explain. 22 The clearest examples             
+
+> 21 Strictly, this inference requires that the largest models approach pCitself, not merely the KL projection q∗̸=pC:under misspecification, a rise-and-fall of Malong the path to
+> q∗is compatible with pCmaximizing M. The expressiveness of modern architectures makes approximate well-specification plausible, but it is an assumption, not a theorem.
+> 22 I use “rationalist” loosely, inspired by but not limited to the nativist tradition of Chomsky (1966). The examples below include functionalist and usage-based considerations that sit outside the Chomskyan tradition. I retain the term for its con-
+
+7are constraints on the comprehender’s processing architecture—working memory capacity, incremen-tal processing—established through non-reading-time paradigms. 
+
+5.1 Lossy-Context Surprisal 
+
+Futrell et al. (2020) propose replacing the full con-text u<t with a lossy compression m(u<t ), where 
+
+m is a deletion noise process reflecting memory de-cay. If m is derived from independently motivated assumptions about human memory rather than fit to reading-time data, this move can return propensity to surprisal theory. Hahn et al. (2022) scale this framework by parameterizing m as a resource-rational retention policy optimized to minimize expected surprisal under a fixed resource budget—a rational analysis of the comprehender’s processing problem, not a fit to behavioral data. They confirm the model’s predictions in three experiments on center-embedded relative clauses, producing fine-grained predictions that differ sharply from standard surprisal and that are borne out empir-ically. However, the grounding is partial: m is derived from first principles, but the underlying q
+
+(GPT-2) is not. A complementary route is to build the memory limitation into the architecture itself: Timkey and Linzen (2023) construct a recurrent language model with a single self-attention head whose limited retrieval capacity mirrors cue-based retrieval theories of working memory, and show that it captures semantic and syntactic interference effects observed in human sentence processing— thereby grounding the choice of Q itself, not merely m, in independently motivated memory constraints. McCurdy and Hahn (2024) and De Varda and Marelli (2024) extend this line of work, showing that cognitively justified context degrada-tion improves alignment with human reading times. The promise of lossy-context surprisal lies in the in-dependent derivation of m: a cognitively motivated memory function can break the tautology in a way that an empirically optimized one—which would merely shift the circularity from q to m—cannot. 
+
+5.2 Developmentally Plausible Corpora 
+
+A different strategy—the BabyLM approach (Warstadt et al., 2023; Hu et al., 2024; Charpen-tier et al., 2025)—restricts training data to devel-opmentally plausible corpora, e.g., drawing on the CHILDES corpus (MacWhinney, 2000), thereby 
+
+> trast with the empiricist stance that corpus fit alone suffices.
+
+grounding the corpus choice in language acquisi-tion research rather than reading-time correlations. Two pitfalls remain. First, with a developmentally realistic amount of input, the estimator lacks an asymptotic interpretation, and the resulting model is dominated by its inductive bias (architecture, op-timizer, initialization). Unless that bias is indepen-dently justified on cognitive grounds, the grounding problem reappears. 23 Second, this approach con-flates “what children hear” with “how adult humans process language.” One may be able to resolve this conflation satisfactorily—for instance, by arguing that adult processing reflects the statistics of child-hood input—but the argument requires independent support, of which I am unaware. 
+
+6 Conclusion 
+
+For any pattern of processing difficulty, a language model can be found whose surprisal reproduces it (Proposition 1); without further constraint, sur-prisal theory is therefore unfalsifiable. The corpus assumption once supplied the needed constraint, but the scaling implication it entails (Proposition 2) has been empirically undermined: the degradation that Oh and Schuler (2023) document cannot arise from misspecification alone and constitutes evi-dence against the assumption itself. What remains is the grounding problem: the language model cannot be left free, nor pinned down by the reading-time data it is meant to explain, but must be derived from independently motivated commitments about the comprehender—the same structural move that rescued “survival of the fittest.” 
+
+Limitations 
+
+This paper is a conceptual and mathematical argu-ment about the logical status of surprisal theory; it does not present new experiments or computa-tional results. Several limitations follow from this scope. First, the argument that the corpus assump-tion has been falsified rests on the findings of Oh and Schuler (2023), replicated by Oh et al. (2024) across multiple model families and corpora, and extended to neural measures by Lin and Schuler (2025). While I treat these findings as robust, fu-ture work may refine or qualify them—for instance,   
+
+> 23 One might object that regularization implicitly constrains
+> Qin cognitively relevant ways. If regularization is what makes intermediate-sized models predict reading times better, that would constitute evidence for a simplicity constraint on
+> pH—a promising direction, but one requiring independent theoretical motivation.
+
+8by disentangling the effects of model architecture from those of corpus fit. Second, the sufficient con-dition in Proposition 1 is mild and likely satisfied by any realistic difficulty measure, but I have not verified this empirically for specific psychometric datasets. Third, the paper identifies the grounding problem but does not solve it: I sketch two partial approaches (lossy-context surprisal and develop-mentally plausible corpora) without providing a complete, independently justified specification of 
+
+q. Fourth, Theorem 1 defines the estimator qN as the arg max of the empirical log-likelihood over 
+
+Q, and the scaling implication inherits this ideal-ization: the guarantee concerns the model a per-fect optimizer would find. Perfect optimization is likely unattainable in practice—even training a three-node neural network to fit a dataset is NP-complete (Blum and Rivest, 1992)—and gradient-based training offers no guarantee of reaching the global optimum; bridging this gap would require optimization-aware theory beyond the scope of this paper. Finally, the analogy to the propensity inter-pretation of fitness in evolutionary biology is meant to be structurally illuminating, not to claim that the two cases are identical in all respects; the analogy’s limits have not been fully explored. 
+
+Acknowledgements 
+
+I thank Eleanor Chodroff, Francesco Ignazio Re, Andreas Opedal, Richard Futrell, Samuel Kiege-land, Taiga Someya, Timothy J. O’Donnell, Tim Vieira, Kate McCurdy, Thomas Hikaru Clark, and Zach Hopton for helpful discussion and feedback on earlier drafts of this paper. All errors are surely my own. 
+
+References 
+
+Gerry T. M. Altmann and Yuki Kamide. 1999. Incre-mental interpretation at verbs: Restricting the domain of subsequent reference. Cognition , 73(3):247–264. Pascal Bergsträßer, Ryan Cotterell, and Anthony Wid-jaja Lin. 2026. Transformers are inherently succinct. In Proceedings of the International Conference on Learning Representations .Patrick Billingsley. 2012. Probability and Measure ,anniversary edition. John Wiley & Sons. Avrim L. Blum and Ronald L. Rivest. 1992. Training a 3-node neural network is NP-complete. Neural Networks , 5(1):117–127. Taylor L. Booth and Richard A. Thompson. 1973. Ap-plying probability measures to abstract languages. 
+
+IEEE Transactions on Computers , C-22(5):442–450. Marisa Ferrara Boston, John Hale, Reinhold Kliegl, Umesh Patil, and Shravan Vasishth. 2008. Parsing costs as predictors of reading difficulty: An evalua-tion using the Potsdam sentence corpus. Journal of Eye Movement Research , 2(1):1–12. Robert N. Brandon. 1978. Adaptation and evolutionary theory. Studies in History and Philosophy of Science ,9(3):181–206. Samuel Butler. 1882. Evolution, Old and New , 2nd edition. Hardwicke and Bogue, London. Andrés Buxó-Lugo, Aniello De Santo, Morgan Grobol, Ryan J. Hubbard, and Cassandra L. Jacobs. 2026. surprisal is Not a Theory. ArXiv:2607.20208. Lucas Charpentier, Leshem Choshen, Ryan Cotterell, Mustafa Omer Gul, Michael Y. Hu, Jing Liu, Jaap Jumelet, Tal Linzen, Aaron Mueller, Candace Ross, Raj Sanjay Shah, Alex Warstadt, Ethan Gotlieb Wilcox, and Adina Williams. 2025. Findings of the third BabyLM challenge: Accelerating language modeling research with cognitively plausible data. In 
+
+Proceedings of the First BabyLM Workshop .Noam Chomsky. 1965. Aspects of the Theory of Syntax .MIT Press, Cambridge, MA. Noam Chomsky. 1966. Cartesian Linguistics: A Chap-ter in the History of Rationalist Thought . Harper & Row, New York. Charles Darwin. 1859. On the Origin of Species by Means of Natural Selection . John Murray, London. Andrea De Varda and Marco Marelli. 2024. Locally biased transformers better align with human reading times. In Proceedings of the Workshop on Cognitive Modeling and Computational Linguistics , pages 30– 36. Gary S. Dell. 1986. A spreading-activation theory of re-trieval in sentence production. Psychological Review ,93(3):283–321. Vera Demberg and Frank Keller. 2008. Data from eye-tracking corpora as evidence for theories of syntactic processing complexity. Cognition , 109(2):193–210. Li Du, Lucas Torroba Hennigen, Tiago Pimentel, Clara Meister, Jason Eisner, and Ryan Cotterell. 2023. A measure-theoretic characterization of tight language models. In Proceedings of the 61st Annual Meet-ing of the Association for Computational Linguistics ,pages 9744–9770. Stefan L. Frank and Rens Bod. 2011. Insensitivity of the human sentence-processing system to hierarchical structure. Psychological Science , 22(6):829–834. 
+
+9Stefan L. Frank, Leun J. Otten, Giulia Galli, and Gabriella Vigliocco. 2015. The ERP response to the amount of information conveyed by words in sentences. Brain and Language , 140:1–11. Richard Futrell, Edward Gibson, and Roger P. Levy. 2020. Lossy-context surprisal: An information-theoretic model of memory effects in sentence pro-cessing. Cognitive Science , 44(3):e12814. Mario Giulianelli, Andreas Opedal, and Ryan Cotterell. 2024. Generalized measures of anticipation and re-sponsivity in online language processing. In Find-ings of the Association for Computational Linguistics: EMNLP 2024 , pages 11648–11669. Adam Goodkind and Klinton Bicknell. 2018. Predic-tive power of word surprisal for reading times is a linear function of language model quality. In Pro-ceedings of the 8th Workshop on Cognitive Modeling and Computational Linguistics , pages 10–18. Michael Hahn, Richard Futrell, Roger P. Levy, and Ed-ward Gibson. 2022. A resource-rational model of human processing of recursive linguistic structure. 
+
+Proceedings of the National Academy of Sciences ,119(43):e2122602119. John Hale. 2001. A probabilistic Earley parser as a psycholinguistic model. Proceedings of the Second Meeting of the North American Chapter of the Associ-ation for Computational Linguistics , pages 159–166. John Hale. 2003. The information conveyed by words in sentences. Journal of Psycholinguistic Research ,32(2):101–123. Sepp Hochreiter and Jürgen Schmidhuber. 1997. Long short-term memory. Neural Computation , 9(8):1735– 1780. Michael Y. Hu, Aaron Mueller, Candace Ross, Ad-ina Williams, Tal Linzen, Chengxu Zhuang, Ryan Cotterell, Leshem Choshen, Alex Warstadt, and Ethan Gotlieb Wilcox. 2024. Findings of the second BabyLM challenge: Sample-efficient pretraining on developmentally plausible corpora. In Proceedings of the 2nd BabyLM Challenge at the 28th Confer-ence on Computational Natural Language Learning ,pages 1–21. Herbert Jaeger. 2001. The “echo state” approach to analysing and training recurrent neural networks. 
+
+GMD Report , 148. Samuel Kiegeland, Vésteinn Snæbjarnarson, Tim Vieira, and Ryan Cotterell. 2026. On the proper treatment of units in surprisal theory. In Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 32202– 32224. Samuel Kiegeland, Ethan Wilcox, Afra Amini, David Robert Reich, and Ryan Cotterell. 2024. Reverse-engineering the reader. In Proceedings of the 2024 Conference on Empirical Methods in Natu-ral Language Processing , pages 9367–9389. Gina R. Kuperberg and T. Florian Jaeger. 2016. What do we mean by prediction in language comprehension? 
+
+Language, Cognition and Neuroscience , 31(1):32– 59. Tatsuki Kuribayashi, Yohei Oseki, Souhaib Ben Taieb, Kentaro Inui, and Timothy Baldwin. 2025. Large language models are human-like internally. Transac-tions of the Association for Computational Linguis-tics , 13:1743–1766. Roger Levy. 2008. Expectation-based syntactic compre-hension. Cognition , 106(3):1126–1177. Jiaoda Li and Ryan Cotterell. 2025. Characterizing the expressivity of fixed-precision transformer lan-guage models. In Advances in Neural Information Processing Systems , volume 38. Yi-Chien Lin and William Schuler. 2025. Surprisal from larger transformer-based language models predicts fMRI data more poorly. arXiv preprint .Brian MacWhinney. 2000. The CHILDES Project: Tools for Analyzing Talk , 3rd edition. Lawrence Erl-baum Associates, Mahwah, NJ. Mitchell P. Marcus, Beatrice Santorini, and Mary Ann Marcinkiewicz. 1993. Building a large annotated cor-pus of English: The Penn Treebank. Computational Linguistics , 19(2):313–330. Kate McCurdy and Michael Hahn. 2024. Lossy context surprisal predicts task-dependent patterns in relative clause processing. In Proceedings of the 28th Confer-ence on Computational Natural Language Learning ,pages 36–45. Clara Meister, Tiago Pimentel, Thomas Hikaru Clark, Ryan Cotterell, and Roger P. Levy. 2022. Analyzing wrap-up effects through an information-theoretic lens. In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing .Susan K. Mills and John H. Beatty. 1979. The propen-sity interpretation of fitness. Philosophy of Science ,46(2):263–286. Byung-Doh Oh and William Schuler. 2023. Why does surprisal from larger transformer-based language models provide a poorer fit to human reading times? 
+
+Transactions of the Association for Computational Linguistics , 11:336–350. Byung-Doh Oh, Shisen Yue, and William Schuler. 2024. Frequency explains the inverse correlation of large language models’ size, training data amount, and sur-prisal’s fit to reading times. In Proceedings of the 18th Conference of the European Chapter of the As-sociation for Computational Linguistics , pages 2644– 2663. Byung-Doh Oh, Hongao Zhu, and William Schuler. 2025. The inverse scaling effect of pre-trained lan-guage model surprisal is not due to data leakage. In 
+
+Findings of the Association for Computational Lin-guistics: ACL 2025 .
+
+10 Andreas Opedal, Eleanor Chodroff, Ryan Cotterell, and Ethan Gotlieb Wilcox. 2024. On the role of context in reading time prediction. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing .Robert Henry Peters. 1976. Tautology in evolution and ecology. The American Naturalist , 110(971):1–12. Martin J. Pickering and Simon Garrod. 2004. Toward a mechanistic psychology of dialogue. Behavioral and Brain Sciences , 27(2):169–190. Karl R. Popper. 1959. The Logic of Scientific Discovery .Hutchinson, London. Karl R. Popper. 1974. Darwinism as a metaphysical research programme. In Paul Arthur Schilpp, editor, 
+
+The Philosophy of Karl Popper , pages 133–143. Open Court, La Salle, IL. Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. 2019. Language models are unsupervised multitask learners. Techni-cal report, OpenAI. Henry Scheffé. 1947. A useful convergence theorem for probability distributions. The Annals of Mathe-matical Statistics , 18(3):434–438. Cory Shain, Clara Meister, Tiago Pimentel, Ryan Cot-terell, and Roger P. Levy. 2024. Large-scale evidence for logarithmic effects of word predictability on read-ing time. Proceedings of the National Academy of Sciences , 121(10):e2307876121. Edmund W. Sinnott, L. C. Dunn, and Theodosius Dobzhansky. 1958. Principles of Genetics , 5th edi-tion. McGraw-Hill, New York. Nathaniel J. Smith and Roger Levy. 2013. The effect of word predictability on reading time is logarithmic. 
+
+Cognition , 128(3):302–319. Vésteinn Snæbjarnarson, Samuel Kiegeland, Tianyu Liu, Reda Boumasmoud, Ryan Cotterell, and Tim Vieira. 2026. Transducing language models. In Pro-ceedings of the International Conference on Learning Representations .Michael K. Tanenhaus, Michael J. Spivey-Knowlton, Kathleen M. Eberhard, and Julie C. Sedivy. 1995. Integration of visual and linguistic information in spoken language comprehension. Science ,268(5217):1632–1634. William Timkey and Tal Linzen. 2023. A language model with limited memory capacity captures in-terference in human sentence processing. In Find-ings of the Association for Computational Linguistics: EMNLP 2023 .Eleftheria Tsipidi, Samuel Kiegeland, Francesco Ig-nazio Re, Tianyang Xu, Mario Giulianelli, Karolina Sta´ nczak, and Ryan Cotterell. 2026. Probing for read-ing times. In Proceedings of the 64th Annual Meet-ing of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 12618–12642. Aad W. van der Vaart. 1998. Asymptotic Statistics . Cam-bridge University Press. Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. In Advances in Neural Information Pro-cessing Systems , volume 30. Conrad Hal Waddington. 1960. Evolutionary adapta-tion. In Sol Tax, editor, Evolution After Darwin , vol-ume 1, pages 381–402. University of Chicago Press, Chicago. Alex Warstadt, Aaron Mueller, Leshem Choshen, Ethan Gotlieb Wilcox, Chengxu Zhuang, Juan Ciro, Rafael Mosquera, Bhargavi Paranjabe, Adina Williams, Tal Linzen, and Ryan Cotterell. 2023. Find-ings of the BabyLM challenge: Sample-efficient pre-training on developmentally plausible corpora. In 
+
+Proceedings of the BabyLM Challenge at the 27th Conference on Computational Natural Language Learning , pages 1–34. Halbert White. 1982. Maximum likelihood estimation of misspecified models. Econometrica , 50(1):1–25. Halbert White. 1989. Learning in artificial neural net-works: A statistical perspective. Neural Computa-tion , 1(4):425–464. Ethan Gotlieb Wilcox, Jon Gauthier, Jennifer Hu, Peng Qian, and Roger Levy. 2020. On the predictive power of neural language models for human real-time com-prehension behavior. In Proceedings of the 42nd An-nual Meeting of the Cognitive Science Society , pages 1707–1713. Ethan Gotlieb Wilcox, Tiago Pimentel, Clara Meister, and Ryan Cotterell. 2024. An information-theoretic analysis of targeted regressions during reading. Cog-nition , 249:105765. Ethan Gotlieb Wilcox, Tiago Pimentel, Clara Meister, Ryan Cotterell, and Roger P. Levy. 2023. Testing the predictions of surprisal theory in 11 languages. 
+
+Transactions of the Association for Computational Linguistics , 11:1451–1470. Andy Yang, Anej Svete, Jiaoda Li, Anthony Widjaja Lin, Jonathan Rawski, Ryan Cotterell, and David Chiang. 2026. Probability distributions computed by autoregressive transformers. In Proceedings of the International Conference on Learning Representa-tions .Ryo Yoshida, Shinnosuke Isono, Taiga Someya, Yohei Oseki, and Tatsuki Kuribayashi. 2026. An existence proof for neural language models that can explain garden-path effects via surprisal. In Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 36556–36569. 
+
+11 Contents of the Appendix 
+
+A Consistency of the MLE for Language Models 13 B Deferred Proofs 14 
+
+B.1 Proof of Proposition 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 B.2 Proof of Lemma 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 B.3 Proof of Proposition 2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 12 A Consistency of the MLE for Language Models 
+
+This appendix gives a self-contained proof that the maximum-likelihood estimator converges to the KL projection of the data-generating distribution onto the model family. A proof is included here, rather than merely cited, because the standard references (White, 1982, 1989; van der Vaart, 1998) do not explicitly verify the uniform domination condition for autoregressive language models over Σ∗—a condition that, as I show below, reduces to the assumption that pC has finite expected length. The result below is stated entirely in function space: the family Q is treated as a compact set of language models, with no reference to an underlying parameter space. This formulation sidesteps identifiability issues (e.g., the permutation symmetries of neural networks) and applies uniformly to any compact model class. Following White (1989), the theorem shows convergence to the set of KL-minimizers, so no identification assumption is required—essential for neural language models, whose parameter symmetries (e.g., permutation of attention heads) make point identification impossible. An important caveat: the theorem assumes that the MLE qN is a global maximizer of the empirical log-likelihood over Q. In practice, neural language models are trained by stochastic gradient descent on a non-convex loss landscape, and the optimizer may converge to a local rather than global optimum (see footnote 13 in the main text). The scaling implication, and hence the consistency result, is therefore a statement about the population-level optimum within Q—the best model that could be found—not about the output of any particular training run. Let Σ be a finite alphabet with |Σ| = V , and let pC be a data-generating distribution over Σ∗. Let Q be a family of language models over Σ∗, equipped with the topology of pointwise convergence : qn → q in 
+
+Q if and only if qn(u) → q(u) for every u ∈ Σ∗. Define the expected log-likelihood as 
+
+Q(q) def 
+
+= Ey∼pC [log( q(y))] , (12) and note that Q(q) = −DKL (pC ∥ q)+const , so maximizing Q is equivalent to minimizing KL divergence; the constant is −H( pC), which is finite because finite expected length (assumption (iii) below) implies 
+
+H( pC) ≤ (Ey∼pC [|y|] + 1) log |ΣE | < ∞. Given an i.i.d. corpus y(1) , ... , y(N ) ∼ pC, the maximum-likelihood estimator is qN = arg max q∈Q QN (q), where QN (q) = 1
+
+> N
+
+PNi=1 log( q(y(i))) . Define the set of KL-minimizers as Q∗ def 
+
+= arg min q∈Q DKL (pC ∥ q).
+
+Theorem 1 (Consistency of the MLE) . Suppose the following three conditions hold: (i) Compactness. Q is compact in the pointwise topology. (ii) Uniform domination. There exists a pC-integrable function d : Σ ∗ → R≥0 such that 
+
+sup q∈Q | log( q(u)) | ≤ d(u) for all u ∈ Σ∗.(iii) Finite expected length. Ey∼pC [|y|] < ∞.Then every limit point of the MLE sequence {qN }∞  
+
+> N=1
+
+lies in Q∗. In particular, 
+
+DKL (pC ∥ qN ) a.s. 
+
+−−−−→  
+
+> N→∞
+
+inf  
+
+> q∈Q
+
+DKL (pC ∥ q) . (13) 
+
+If Q∗ is a singleton {q∗}, then qN → q∗ pointwise a.s. 
+
+Discussion of the assumptions. For parametric families—such as neural language models with bounded weights—compactness of the parameter space and continuity of the parameterization give compactness of 
+
+Q in the pointwise topology, provided all models in Q are tight (i.e., are genuine language models rather than defective distributions that leak mass onto infinite sequences). This proviso is non-trivial: even with a compact parameter space, a sequence of language models can converge pointwise to a sub-probability measure if the expected length diverges along the sequence. Requiring that Q be a closed subset of the simplex ∆(Σ ∗) rules this out. Note that finiteness of each model’s expected length does not suffice, since expected lengths may diverge along a sequence; a uniform bound on expected length across Q, by contrast, does suffice, as it uniformly controls the tail mass by Markov’s inequality. For (ii), if every q ∈ Q assigns 13 each conditional probability at least ε > 0 (as softmax-based models on a compact parameter space do), then | log( q(u)) | ≤ (|u| + 1) log(1 /ε ), and the domination condition reduces to (iii). This is precisely the assumption of Definition 1 that per-unit probabilities are bounded away from zero; note that it also delivers the uniform expected-length bound Eq[|y|] ≤ (1 − ε)/ε across Q, which suffices for the closedness in the simplex discussed above. The finite expected length assumption (iii) plays a dual role: it ensures the domination condition (ii) for the consistency theorem and the well-definedness of the fitness measure 
+
+M (Definition 1), since both require that sums over prefixes weighted by ⃗p C converge. This is the key assumption not accounted for by the standard references (White, 1982; van der Vaart, 1998), which work in finite-dimensional parameter spaces and do not consider the structure of distributions over Σ∗.
+
+Proof. The argument follows White (1982, 1989) and proceeds in four steps. 
+
+Step 1: The expected log-likelihood Q is well-defined and finite. For each q ∈ Q , the integrand 
+
+| log( q(y)) | is bounded by the dominating function d(y) from assumption (ii). Since d is pC-integrable by assumption, Ey∼pC [| log( q(y)) |] ≤ Ey∼pC [d(y)] < ∞. Therefore Q(q) = Ey∼pC [log( q(y))] is well-defined and finite for every q ∈ Q .
+
+Step 2: Q is continuous on Q. Let {qn}n≥1 be a sequence in Q with qn → q pointwise. Then for each 
+
+y ∈ Σ∗, log( qn(y)) → log( q(y)) by continuity of the logarithm. By assumption (ii), | log( qn(y)) | ≤ 
+
+d(y) for all n and all y, where d is pC-integrable. The dominated convergence theorem (Billingsley, 2012) then gives Q(qn) = Ey∼pC [log( qn(y))] → Ey∼pC [log( q(y))] = Q(q), so Q is continuous on Q in the pointwise topology. 
+
+Step 3: Uniform law of large numbers. The strong law of large numbers gives QN (q) → Q(q)
+
+a.s. for each fixed q ∈ Q . I upgrade this to uniform convergence over Q. The family of functions 
+
+{y 7 → log( q(y)) : q ∈ Q} is uniformly bounded by the pC-integrable envelope d (assumption (ii)). By assumption (i), Q is compact, and it is metrizable, since the pointwise topology on a countable product of intervals is metrizable; moreover, the map q 7 → log( q(y)) is continuous for each fixed y, as established in the proof of Step 2. The family is therefore a pC-Glivenko–Cantelli class (van der Vaart, 1998, Example 19.8), which yields 
+
+sup 
+
+> q∈Q
+
+|QN (q) − Q(q)| a.s. 
+
+−−−−→  
+
+> N→∞
+
+0. (14) 
+
+Step 4: Convergence of maximizers. Let q† be any limit point of the sequence {qN }. By compact-ness (i), at least one such limit point exists. Passing to a subsequence {qNk } with qNk → q†, the uniform convergence from Step 3 gives 
+
+|QNk (qNk ) − Q(q†)| ≤ | QNk (qNk ) − Q(qNk )|
+
+| {z }  
+
+> →0by Step 3
+
++ |Q(qNk ) − Q(q†)|
+
+| {z }  
+
+> →0by Step 2
+
+→ 0. (15) Now, since qNk maximizes QNk over Q, for any q ∈ Q , it holds that QNk (qNk ) ≥ QNk (q). Taking 
+
+k → ∞ and applying the uniform convergence of Step 3 to both sides, Q(q†) ≥ Q(q) for every 
+
+q ∈ Q . Hence q† ∈ arg max q∈Q Q(q) = Q∗. Since Q(q) = −DKL (pC ∥ q) + const , this is equivalent to q† ∈ arg min q∈Q DKL (pC ∥ q). Because every limit point of {qN } lies in Q∗, the KL divergence converges: DKL (pC ∥ qN ) → inf q∈Q DKL (pC ∥ q) a.s. If Q∗ = {q∗} is a singleton, then every limit point equals q∗, and by compactness the full sequence converges: qN → q∗ pointwise a.s. ■
+
+B Deferred Proofs 
+
+B.1 Proof of Proposition 1 Proposition 1. Let d : Σ E × Σ∗ → R≥0 be a non-negative difficulty measure, and let qd be defined by Eq. (6) . If there exists a function f : Z>0 → R≥0 such that 
+
+d( EOS | u) ≤ f (|u| + 1) for all u ∈ Σ∗ (7) 14 and P∞ 
+
+> t=1
+
+exp( −f (t)) = ∞, then (a) qd is tight (see §2), i.e., P 
+
+> u∈Σ∗
+
+qd(u) = 1 ; and (b) if moreover 
+
+f is constant—i.e., there exists C > 0 such that d( EOS | u) ≤ C for all u ∈ Σ∗—then qd has finite expected length: Eqd [|y|] < ∞.Proof. Part (a). Each factor in Eq. (6) defines a valid conditional distribution over ΣE (by the softmax normalization), so qd is a conditional collection in the sense of §2. I apply Du et al. (2023, Proposition 4.3), which states that a conditional collection is tight if there exists a function h : Z>0 → R≥0 satisfying (a) ⃗q d(EOS | u) ≥ h(|u| + 1) for all u ∈ Σ∗, and (b) P∞ 
+
+> t=1
+
+h(t) = ∞. I construct such an h. Since 
+
+d ≥ 0, each term in the denominator of Eq. (6) satisfies exp( −d( u′ | u)) ≤ 1, so the denominator is at most |ΣE |. The numerator for EOS is exp( −d( EOS | u)) . Therefore: ⃗q d(EOS | u) = exp( −d( EOS | u)) 
+
+P 
+
+> u′∈ΣE
+
+exp( −d( u′ | u)) (16a) 
+
+≥ exp( −d( EOS | u)) 
+
+|ΣE | . (16b) By hypothesis, d( EOS | u) ≤ f (|u| + 1) , so exp( −d( EOS | u)) ≥ exp( −f (|u| + 1)) . Setting h(t) def 
+
+=exp( −f (t)) /|ΣE |, condition (a) is satisfied. For condition (b): P∞ 
+
+> t=1
+
+h(t) = 1 
+
+> |ΣE|
+
+P∞ 
+
+> t=1
+
+exp( −f (t)) = ∞
+
+by hypothesis. Part (b). If f is the constant function f (t) = C, then Eq. (16b) gives ⃗q d(EOS | u) ≥
+
+exp( −C)/|ΣE | for all u. Setting ρ def 
+
+= 1 − exp( −C)/|ΣE | < 1, the probability that a string sampled from 
+
+qd has length at least t is at most ρt. Therefore, note Eqd [|y|] ≤ P∞ 
+
+> t=1
+
+ρt = ρ/ (1 − ρ) < ∞. ■
+
+B.2 Proof of Lemma 1 Lemma 1 (Continuity of M ). Suppose p has finite expected length and g is continuous and bounded. Then M : Q → R is continuous. Proof. Suppose qn → q pointwise, i.e., qn(u) → q(u) for all u ∈ Σ∗. Because every member of Q
+
+is a language model—a probability distribution over Σ∗ with total mass 1—Scheffé’s lemma (Scheffé, 1947) upgrades pointwise convergence to convergence in L1, i.e., P 
+
+> u∈Σ∗
+
+|qn(u) − q(u)| → 0. Each prefix probability is a sum of string probabilities, so ⃗q n(u) →⃗q(u) for every u ∈ Σ∗; and, because per-unit probabilities are bounded away from zero (Definition 1), the limiting denominators satisfy ⃗q(u) > 0 . Hence the conditionals converge: ⃗q n(u | u) →⃗q(u | u) for all u ∈ ΣE and u ∈ Σ∗. Because 
+
+g is continuous, the integrand converges pointwise for each fixed u ∈ ΣE and u ∈ Σ∗. Let C be a bound on |g|, which exists by assumption. Because the conditionals sum to one, P
+
+> u∈ΣE
+
+⃗p(uu) = ⃗p(u) ,and, because p has finite expected length, P
+
+> u∈Σ∗
+
+⃗p(u) = E y∼p[|y|] + 1 < ∞ (Opedal et al., 2024, Proposition 1); hence the weights ⃗p(uu) are summable and C ·⃗p(uu) is an integrable dominating function. To see why this implies continuity, suppose qn → q pointwise. Then for each u and u, the integrand ⃗p(uu) g  d( u | u), − log( ⃗q n(u | u))  converges to ⃗p(uu) g  d( u | u), − log( ⃗q(u | u)) , and all terms are bounded in absolute value by C ·⃗p(uu) , which is summable. The dominated convergence theorem (Billingsley, 2012) then permits interchange of the limit and the sum, yielding M (qn) → M (q)—which is precisely continuity of M in the pointwise topology. ■
+
+B.3 Proof of Proposition 2 Proposition 2 (Scaling implication) . Assume Q∗ is a singleton {q∗}, i.e., the KL-minimizer is unique. Under the regularity conditions of Theorem 1, it holds that 
+
+M (qN ) p
+
+−−−−→  
+
+> N→∞
+
+M (q∗). (11) 
+
+In particular, for any ε > 0 and δ > 0, there exists N0 such that for all N ≥ N0, it holds that 
+
+Pr  |M (qN ) − M (q∗)| < ε  > 1 − δ.Proof. By Theorem 1, under identifiability qN a.s. 
+
+−−−−→  
+
+> N→∞
+
+q∗ pointwise, which implies qNp
+
+−−−−→  
+
+> N→∞
+
+q∗. By Lemma 1, M is a continuous functional of q. The result follows from the continuous mapping theorem (van der Vaart, 1998, Theorem 2.3). ■
+
+15
