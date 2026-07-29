@@ -1,0 +1,2608 @@
+Title: Disentangling the temporal signatures of conditioned pupil dilation: Distinct valence- and prediction-error-related components revealed by mega-analysis
+
+URL Source: https://www.biorxiv.org/content/10.64898/2026.07.16.737017v1.full.pdf
+
+Number of Pages: 49
+
+Markdown Content:
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 1
+
+# Disentanglin g the  temporal signature s of  conditioned  pupil dilation :
+
+# Distinct  valence - and prediction -error -related  components 
+
+# revealed by  mega -analysis 
+
+Johannes B. Finke 1*, Anna M. Schippers 1, Hartmut Schächinger 2, Tim Klucken 1 
+
+> 1
+
+Clinical Psychology  and Psychotherapy,  Department of  Psychology,  University of Siegen, 
+
+Siegen, Germany  
+
+> 2
+
+Department of C linical  Psychophysiology, Institute  of  Psychobiology,  University of  Trier ,
+
+Trier , Germany 
+
+*Address information ( corresponding author ):
+
+University of  Siegen 
+
+Obergraben 23 
+
+5707 2 Siegen 
+
+Germany 
+
+Phone: + 49 271 740 -2969 / -14106 
+
+Email: johannes.finke@uni -siegen.de 
+
+[Pre print] 
+
+Disclosure:  None of the authors have potential conflicts of interest to declare.  The study was 
+
+in part funded by the German Resea rch Foundation (DFG). 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 2
+
+Abstract 
+
+Pupil dilation  offers  a sensitive , non -invasive window into  the neurocognitive processes 
+
+supporting  human associative learnin g. Yet,  the field lacks consensus on how to  quantify 
+
+conditioned pupil  responses , particularly  which  time  intervals  best  serve  as  readout s.
+
+Moreover,  it remains  unresolved  whether pupil dilation  during learning  reflects  a unitary 
+
+arousal  signal  or  multiple  (overlapping  yet distinct ) processes  that unfold sequentially  (e.g., 
+
+cue valuation,  uncertainty -driven attention, anticipation,  prediction -error  [PE]  signaling ). 
+
+To  address this, we  conducted a large -scale  individual -participant -data  re analysis 
+
+(mega -analysis)  of  harmonized  primary studies from our lab ( K = 7 independent samples; 
+
+total  N = 385 ; 562  sessions ), reprocessed  through an  identical  pipeline , with  systematic 
+
+variation in  outcome  valence and modality.  Temporal PCA  of  CS - and  US -locked epochs 
+
+yielded  highly stable component structure s across trials and studies , which carried  dissociable 
+
+information : An  early  (CS -locked ) component  selectively  tracked  appetitive  val ue ,
+
+distinguishing reward cues  before  aversive differentiation emerged. L ater phases  reflected 
+
+differential condition ing  across both valences , increasingly coupled to  arousal  toward  US 
+
+onset . Aversive  learning  was  most  specifically  expressed in  response s peaking  around 
+
+expected  US  delivery , which also  pre dict ed  negative  valence ratings . Two  subsequent 
+
+component s captured unconditioned respon ding  and  its  modulation  by  unexpected outcomes 
+
+and omissions , consistent  with  unsigned  PE  signaling  (amplified  after aversive  cues ) and ,
+
+later , positive  PE s. Generalized additive  mixed  models  largely  converged with  the  PCA 
+
+structure. 
+
+Pupil dilation is  therefore  not a  unitary  marker of conditioning, but rather a high -
+
+resolution readout of sequential  processes  such as  valuation , arousal/attention,  and  outcome 
+
+updating, offering a  promising  framework for future  computational  models of learning .
+
+Keywords : pupil dilation;  Pavlovian  conditioning;  associative learning;  valence; 
+
+prediction error; temporal principal component analysis;  mega -analysis    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 3
+
+1.  Introduction 
+
+As a  non -invasive  index of central  neurocognitive processes , pupil  dilation has been 
+
+highlighted as a promising marker  of  differential Pavlovian conditioning in humans  (Finke et 
+
+al., 2021 ), with the potential  to track  associative learning  over  time  (Pietrock et al., 2019) .
+
+Yet,  approaches to  quantifying conditioned pupil dilation vary widely  betwee n studies ,
+
+especially  in the  time windows extracted for analysis,  which  may blur  temporal  information 
+
+inherent in the signal, and thus  limit  the  inferences that can be drawn fr om it . Moreover, w hile 
+
+noradrenergic arousal  (Aston -Jones & Cohen, 2005; Joshi et al., 2016 ) has  been proposed  as a 
+
+general underlying mechanism (but see Megemont et al., 2022),  and there is evidence for 
+
+pupil -size modulation by  surprise and prediction -error processing  in a rein forcement -learning 
+
+context  (Preuschoff et al., 2011;  de Berker et al., 2016;  Van Slooten et al., 2018) , very little is 
+
+known about the  specific  functional  significance  of pupil dilation  during Pavlovian 
+
+condit ioning , and whether this  also  depends on  laten t (within -trial)  temporal  dynamics .
+
+Several candidate processes have been formalized in  computational models of  associative 
+
+learning (e.g., Rescorla -Wagner [RW], Pearce -Hall [PH] ; Rescorla & Wagner, 1972;  Pearce 
+
+& Hall, 1980) , which  distinguish  learning quantities  such as associative strength, signed or 
+
+unsigned prediction error, and associability/attentional weight . There is  initial evidence that 
+
+some of  these  model -derived  signals  covary with  pupil dilation during Pavlovian learning 
+
+(Pietrock et al., 2019;  Finke et al., 2023 b),  yet it is unclear whether they  also  map  onto 
+
+separable components of  the  pupil response. 
+
+Recent studies have  indeed  begun to link  pupil -size modulation at  different  latencies  to 
+
+distinct types of learning signals, such as  salienc e,  feedback processing , and memory updating 
+
+(Van  Slooten et al., 2018;  Colizoli et al. , 202 6) , raising the possibility that  response  latency 
+
+itself carries functional information about underl ying computations,  but  findings from 
+
+aversive /fear  conditioning studies  remain  inconsistent  (Stemerding et al. , 202 2; Liu  et al., 
+
+202 6), and b etween -study  heterogeneity  in methodological choices  is likely  to  contribute to    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 4
+
+this  lack of understanding.  Beyond value -sensitive  responses to reward -predictive cues 
+
+(Schad et al., 2020) , pupil dilation during Pavlovian learning has been suggested  to index 
+
+either outcome expectancy  (Tzovara et al., 2018) , associability , i.e.,  uncertainty -driven 
+
+attention  (Pietrock et al., 2019), or both ( Koenig et al., 201 8). Moreover,  higher average 
+
+effects in aversive than appetitive conditioning studies were identified by meta -analysis 
+
+(Finke et al. 2021), yet it is unclear whether this  apparent  US -valence effect  reflects 
+
+unsystematic  between -study  heterogeneity , systematic  differences in arousal  and/or stimulus 
+
+intensity , or  genuine  dissociations  in  pupil -linked  neurocognitive  mechanisms.  Disentangling 
+
+the se possibilities, and thus establish ing whether the pupil provides a unitary or more complex 
+
+readout, requires well -powered evidence  linking  varying  temporal phases of pupil  responses 
+
+to  affective and  cognitive processes  during learning. 
+
+Mechanistically, pupil dilation  result s from  the interplay of two  opposing  autonomic 
+
+pathways  acting on different timesc ales : sympathetic ally mediated  activation of the dilator 
+
+muscle as well  as  inhibition of parasympathetic outflow to the sphincter  (Loewenfeld & 
+
+Lowenstein, 1993) . In line with this,  a considerabl y large  body of research  has provided 
+
+evidence for a distinction between rapid parasympathetic  and later sympathetic effects 
+
+unfolding within the same  (biphasic)  response  (e.g.,  Steinhauer & Hakerem, 1992;  Finke et 
+
+al., 2017;  Widmann et al., 2018;  Finke et al., 2023 a). Similarly,  functionally  distinct types of 
+
+pupil responses  subserved by  partly dissociable brain  systems  (in addition to  the locus 
+
+coeruleus -noradrenergic  [LC -NE]  system) and  characterized by different latencies and 
+
+temporal dynamics have been proposed (Strauch  et al. , 2022 ).  Together,  these observations 
+
+argue in favor of a more fine -grained, temporally resolved approach, rather than  averaging 
+
+over extended windows , extracting peak values,  or  imposing  a canonical  response function  of 
+
+fixed shape , which , while  useful for  characteriz ing  learned fear (PsPM; Korn et al., 2017) ,
+
+may be less suited to captur ing  multiple , temporally  overlapping  processes underlying  the 
+
+pupil response  (Hoeks & Levelt, 1993;  Blini et al., 2024) .   
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 5
+
+Beyond such  model -based approaches,  state -of -the -art , data -driven techniques  to 
+
+analyze  pupil traces  include  generalized additive mixed modeling (GAMM; Van Rij et al., 
+
+2019) and  dimensionality reduction  via  temporal principal component analysis ( PCA ), which 
+
+is  well -established in  EEG res earch  (Dien, 2010 ) as well as  in  pupillometry  (Siegle et al., 
+
+2001;  Wetzel et al., 2015;  Finke e t al., 2017 ). Both  methods  are  part icularly suited to examine 
+
+complex dynamics in the  time course of evoked responses.  However,  to our knowledge, 
+
+decomposition of the within -trial temporal structure of pupil dilation, via PCA,  has  so far not 
+
+been applied to pupillometry in  Pav lovian  conditioning, despite recent recommendations 
+
+regarding  its  validity  (Ca stellotti  et al., 2025)  and  growing  use  of single -trial PCA  in  memory 
+
+research  (e.g., Clewett et al., 2020; Xue et al., 202 6, reviewed preprint ). 
+
+The present study aimed to  address both gaps . Specifically , we  set out 1.  to uncover the 
+
+temporal composition of  pupil dilation during Pavlovian learning ; 2.  to probe how  this 
+
+temporal signature  relates  to central  constructs of associative  learning : the CS+ vs . CS -
+
+contrast , the role of  US  valence , and  the interplay of associative strength,  associability and 
+
+prediction  error  across  cue  (CS)  and outcome  (US)  onset ; and 3.  to  validate  this  analysis  by 
+
+examining its convergence with a  comple mentary , assumption -free model  of the raw  pupil 
+
+waveform ( based on  GAMM) . To this end, we conducted a n individual -participant -data 
+
+reanalysis (mega -analysis) of primary studies from our lab.  Whereas our  previous meta -
+
+analysis (Finke et al., 2021) pooled aggregate effect sizes  - reveal ing  robust differentiation in 
+
+both early (post -CS) and late (pre -US) response windows,  yet  marked heterogeneity in 
+
+window  definitions  and  other  methodological choices , alongside  a predominance of aversive 
+
+conditioning studies  – it could not establish whether these intervals  (and  associated 
+
+differences in effect sizes)  reflect distinct underlying processes . By pooling  participant -level 
+
+data , the present mega -analysis  instead allows  us  to  dissociate the temporal dynamics  of 
+
+conditioned pupil dilation  at the single -trial level. Crucially, a ll  included  studies  were planned 
+
+and conducted after that meta -analysis, deliberately harmonized in design and timing to    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 6
+
+address  its  limitations a s well as further  gaps in the literature.  By  linking distinct  temporal 
+
+components to specific learning -related variables,  this approach promises a more precise 
+
+functional  characterization  of  conditioned pupil dilation and  a firmer  basis for  its  future 
+
+application as a marker of  the processes that drive  associative learning. 
+
+2.  Method 
+
+2.1  Selection  of studies , participants 
+
+Table 1  lists the major characteristics of all primary studies included in  th is  reanalysis 
+
+(7 independent samples ).  All  experiments  were  conducted between 2020 and 20 26 at the 
+
+University of Siegen (Sample ID 1 -6) or  at the University of Trier (Sample ID 7), Germany. 
+
+Data sets  from ongoing studies were frozen on  June  10, 2026.  In contrast to several primary 
+
+studies included, the present reanalysis was not preregistered.  All studies  were conducted with 
+
+approval of the respective ethics committee and in accordance with the Declaration of 
+
+Helsinki and  involved  healthy  human individuals  only , with no reported  intake of 
+
+psychotropic medication , no mental health problems during the last two years  and  no 
+
+evidence of acute or severe, chronic somatic disorders . The cumulative  sample size  across all 
+
+experiments amounts  to  N = 385  participants  (6 6.7 % women on average , SD  = 13.5 ) or  M =
+
+562  datasets of  separate conditioning sessions , respectively.  Mean age a cross all studies, 
+
+weighted by number of participants, was  23.3  years ( SD  = 4.8 ).  See Table 1 for details on 
+
+sample  characteristics.  Exclusion decisions  were applied at th e level  of  sessions and trials 
+
+wherever possible rather than at the participant level. Specifically , we retained all session -
+
+level datasets  in which participants contributed at least  50% of  valid trials  per  CS category 
+
+(e.g., CS+ avs ) after  quality checks during preprocessing (see below).  This strategy minimizes 
+
+the risk of  introducing  selection  bias int o PCA  estimation , enhanc ing  the  generalizability  of 
+
+the derived component structure.  As a  consequence , effective  sample sizes  for the present 
+
+analysis  may  deviate slightly from the  original  Ns reported  in the respective publications .
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 1
+
+Table 1. Sample characteristics and design features of the primary studies included 
+
+Study  Sample  US Type/Valence  CS modality  Timing (s)  RR  Trials /CS  Instruction 
+
+Sample 
+
+ID 
+
+Original 
+
+N
+
+Reanalysis 
+
+Na
+
+Gender 
+
+(% fem .)
+
+Sessions 
+
+(M) Appetitive  Aversive  CS  US  Onset 
+
+Delay 
+
+Overlap/ 
+
+Gap b
+
+Finke et al. 
+
+(2023 b) 1 30  28 ( 29) 67.9  (28) 29 monetary 
+
+gain (aud.) 
+
+electric 
+
+shock  visual  8 0.5  7.5  -0.5  0.65  20  full 
+
+Finke et al. 
+
+(2023 b) 2 63 59 (6 1) 89.7  59 (6 1) monetary 
+
+gain (aud.) 
+
+electric 
+
+shock  visual  8 0.5  7.5  -0.5 0.65  20  no 
+
+Finke et al. 
+
+(2025)  3
+
+62 60 83.3 
+
+60 (59)  monetary 
+
+gain (vis.)  visual  8 2 8 0 0.75  16  partial 
+
+Finke et al. 
+
+(2025)  3 58 (5 5) monetary 
+
+gain (vis.)  visual  8 2 12  4 0.75  16  partial 
+
+Finke & Klucken 
+
+(2025)  4
+
+62 62 58.1 
+
+61 (59 ) erotic 
+
+pictures 
+
+aversive 
+
+pictures  visual  6 6 6 0 0.5  18  partial 
+
+Finke & Klucken 
+
+(2025)  4 56 erotic 
+
+sounds 
+
+aversive 
+
+sounds  visual  6 6 6 0 0.5  18  partial 
+
+Schippers et al. 
+
+(2026)  5
+
+71  70 (71)  76.1 
+
+69 (70)  aversive 
+
+odor  visual  8 2 6 -2 0.75  20  partial 
+
+Schippers et al. 
+
+(2026)  5 67 (6 6) aversive 
+
+odor  visual  8 2 12  4 0.75  20  partial 
+
+Finke et al. 
+
+(ongoing A)  6 62 62 67.7  62 erotic 
+
+pictures  auditory  6 6 5.5  -0.5  0.75  20  partial 
+
+Finke et al. 
+
+(ongoing B)  7 44 42 (40)  0 42 (40) erotic 
+
+pictures  auditory  6 6 5.5  -0.5  0.75  20  partial 
+
+TOTAL:  383  (3 85 ) 66.7c 562  (557 )
+
+Note . RR, reinforcement rate ; aud., auditory; vis, visual.  a ‘Reanaly sis  N’ refers to the overall number of participants retained for the re -analysis after study -level inclusion. Because eligibility 
+
+differed between the CS -locked and US -locked analyses, the effective sample for individual analyses  may vary.  In that case , the  sample  size  for the  US-locked analysis  is given in brackets.  For 
+
+ongoing studies, the table reports the subset of participants who had completed the protocol and  met  all  predefined  inclusion and quality -control  criteria at the time the dataset was frozen  for the 
+
+present analysis . b Negative values indicate overlap between the CS and US, positive values a gap (trace) between both stimuli.  c Weighted by number of participants .TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 1
+
+2.2  Design and procedure 
+
+2.2. 1 General  design and  procedure.  As evident from Table 1,  the set of  primary 
+
+studies  covered a broad range of  variation  in US type, valence (aversive vs. appetitive) and 
+
+duration (range:  0.5 -6 s).  In contrast, o ther design features were  largely  comparable across 
+
+studies , especially regarding timing character istics, with  CS duration  ranging  from  6 to  8 s ,
+
+number of trials per CS  from  16  to 20 and  reinforcement rate (RR ) from  50  to  75%. CS -US 
+
+onset delay ranged between 5.5 and 12 s, with  most studies using a standard delay 
+
+conditioning paradigm with  shortly overlapping or  immediately  adjacent  stimuli and  two 
+
+studies (appetitive:  k = 1; aversive:  k = 1) comparing trace and delay conditioning  in two 
+
+separate sessions . Visual CS were use d in  the majority of  studies , with some exceptions 
+
+(auditory  modality : k = 2) . The general procedure (as described in greater detail in the original 
+
+publications) was as follows:  Participants visited the laboratory on  one or  (in case of studies 
+
+involving two conditioning sessions,  k = 3) on two separate  days . Upon arrival at the 
+
+laboratory on their first visit,  they  were first informed about the general methods and 
+
+procedures employed in the study. After signing the informed consent form, they filled in 
+
+questionnaire s about demographic and health -related information  (as well as additional 
+
+questionnaires depending on the study).  Then, they were seated at a desk in the testing 
+
+chamber (in a different room). After the experimenter had attached electrodes for 
+
+psychophysiological measurements, the eye -tracker was calibrated. Then, participants 
+
+performed the  (first ) conditioning session . If there was a  second session , it  was identically 
+
+structured (apart from initial instructions, signing of informed consent and questionnaire s). 
+
+Assignment to the order of different sessions (e.g., trace vs. delay) was always 
+
+counterbalanced between participants.  Immediately before each conditioning phase, 
+
+participants received written instructions on the screen.  In most studies, p articipants were told 
+
+that they would be presented with a series of  (visual  or auditory)  stimuli which were either 
+
+followed or not followed by a nother stimulus (i.e., the  respective US) , and that they would    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 9
+
+have to figure out the relationship  for  themselves (i.e., partial contingency instruction).  To 
+
+assess potential differences between aware vs. unaware learning, two (otherwise identical) 
+
+experiments  (Sample  ID  1 and 2)  directly compared the effects of a full contingency 
+
+instruction vs. no instruction.  At the end of the  last  session,  participants  were thanked and 
+
+fully debriefed. 
+
+2.2.2  Conditioning (acquisition) . During the acquisition phase, each  visual  CS (i.e., 
+
+CS+ and CS -) was shown in the middle of the screen.  Auditory CS (sine and saw tones 
+
+varying in frequency) were presented via closed headphones. Assignment to s timuli  (stimulus 
+
+sets)  was  always  counterbalanced . The order of trials was fully randomized, apart from the 
+
+following constraints: (a)  The first trials contained stimuli from all  CS conditions; (b) the first 
+
+CS+ trial s were  always reinforced; (c) a particular CS did not appear on more than two 
+
+successive trials.  The  inter -trial interval  (ITI)  randomly varied between 11 and 13 s in all 
+
+studies . In  reinforced trials, an US followed the CS at a fixed latency (depending on the 
+
+specific study, see Table 1). In  non reinforced trials  (including all CS - trials) , there was either 
+
+no subsequent stimulus  or a neutral, “non -US” control  stimulus  (e.g.,  “+ 0.00 €”  or neutral 
+
+picture) . During the ITI, including the time before CS onset,  a perceptually matched control 
+
+slide  was shown  (see  Stimuli and  apparatus ), in order  to control for physical influences on 
+
+pupil size and prevent activation of the light reflex of the pupil .
+
+After acquisition, participants were prompted to provide ratings of subjective arousal, 
+
+valence and  US  expectancy for the  (respective)  CS+ and the CS - (see below). 
+
+2.3  Stimuli and apparatus 
+
+2.3.1  Conditioned stimuli.  Greyscale, circular grating stimuli varying either in 
+
+orientation/rotation angle  (Sample ID  1, 2) or in  orientation and  grid width ( within separate 
+
+sets per session; Sample ID  3, 4) were used as CS  in  most studies . One study used  greyscale 
+
+pictures of neutral faces ( Sample ID 5), and two studies  (Sample ID 6 , 7)  simple tones    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 10
+
+varying in frequency  and wave form.  All  visual  stimuli  used as CS  were shown in the center 
+
+of the screen in front of a light -grey background, subtending a visual angle of approximately 
+
+5°  × 5°.  Assignment of stimuli  to conditions  was always  (pseudo -)randomized  and 
+
+counterbalanced  between participants .
+
+2.3. 2 Unc onditioned stimuli.  Aversive unconditioned stimuli included:  (a)  unpleasant 
+
+electro -cutaneous stimulation  (for 0.5 s;  Sample ID 1 , 2),  (b)  fear - and disgust -related pictures 
+
+(Sample ID 4)  as well as (c) aversive  olfactory stimulation (for 2 s);  as appetitive US, (d)  a
+
+sound of coins  (duration : 0.5 s ) signaling a monetary win of 1 €  (Sample ID 1 , 2),  (e)  a visual 
+
+verbal cue (text ; duration : 2 s ) signaling a monetary win of 0.5 €  (Sample ID 3) , and (f) erotic 
+
+sound clips (duration: 6 s; Sample  ID 4) or  (g) erotic  pictures  of couples ( duration: 6 s; 
+
+Sample ID  4, 6 , 7)  were employed.  Grey -scale p ictures  equalized for contrast/dispersion and 
+
+subtending a visual angle of approximately  5°  (horizontally)  × 3.75 ° (vertically) were  used  in 
+
+Samples 6 and  7, whereas  one study (Sample  ID  4)  used  color pictures . A control slide 
+
+matched to  visual  CSs  (or USs: Sample  ID  6, 7)  in terms of brightness, contrast and 
+
+dispersion was presented during the ITI, consisting of a  shape ( circle , ellipsoid  or  rectangle, 
+
+respectively)  filled with randomly scattered pixels as well as a small white fixation cross.  See 
+
+the original articles for further  technical  details  on stimulus  features  and presentation .
+
+2.3. 3 Apparatus.  In the studies conducted at the University of Siegen (Sample  ID  1-6), 
+
+participants were seated in front of a 27 -inch TFT screen (with a resolution of 1920 × 1080 
+
+pixels and a refresh rate of 60 Hz) at a viewing distance of 70 cm, with their forehead and 
+
+chin resting on a head rest mounted on a height -adjustable desk. The experiment was 
+
+programmed with the Psychtoolbox (Version 3.0.10;  Kleiner et al., 2007 ) implemented in 
+
+MATLAB (MathWorks, Inc., Natick, MA, USA) and ran on a standard Windows PC.  In Trier 
+
+(Sample  ID  7), a  TFT screen  with a resolution of 1 600  × 1 080  pixels and a refresh rate of 75    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 11
+
+Hz  was used  (viewing distance : 60  cm ), and stimuli were presented using E -Prime 2.0 (PST 
+
+Software, Inc.). 
+
+2.3. 4 Acquisition of  pupillary  data.  Pupil diameter was recorded from the right eye at 
+
+a sampling frequency of 1000 Hz using a video -based infrared eye -tracking device (EyeLink 
+
+1000 Plus, SR Research Ltd., Ottawa, Canada)  in the Siegen lab  (Sample ID  1-6).  In Trier 
+
+(Sample ID  7), a  SMI eye -tracker (operating at 500 Hz) was used  (iView -X HiSpeed 500, 
+
+SensoMotoric Instruments, GmbH).  Eye -tracker  calibration was performed by means of an in -
+
+built 9 -point calibration routine and repeated until an accuracy of < 1.0° was achieved. 
+
+2.4  Data  recording and  reduction 
+
+2.4. 1 Pupil dilation.  Pupillometric  data from each study were subjected to the same 
+
+pre -processing pipeline (using  MATLAB , MathWorks, Inc.) , applying consistent criteria for 
+
+artifact  correction  in accordance with recently published recommendations  (Steinhauer et al., 
+
+2022)  as well as procedures established by prior conditioning studies  (Finke et al., 2023 b;
+
+Korn et al., 2017; Leuchs et al., 2019) . After segmentation into  long trial  epochs ranging from 
+
+ITI onset to US offset , data were  down -sampl ed  to 100 Hz (by means of a moving window 
+
+filter selecting the median value across 10 -ms epochs) . M issing data points (resulting from 
+
+blink artifacts and small head movements) were replaced by linear interpolation . To 
+
+harmonize data across samples and paradigms, individual pupil -size time series were z -
+
+standardized within participants and sessions . To account for variation in timing features 
+
+between studies ( i.e., CS -US onset delay, etc.;  see Table 1)  and  target responses  after both CS 
+
+and US onset , d ata were then segmented into  CS -locked and US -locked epochs  for further 
+
+analyses  (CS -locked analysis:  -2 to +6 s post CS onset; US -locked analysis:  -2 to +4 s post 
+
+[expected]  US onset) . Criteria  for  trial  rejection  were applied to both analysis windows 
+
+separately  but consistently:  Specifically,  epochs  containing  high amounts (> 50%) of 
+
+interpolated data  or  values exceeding a threshold of 3 SDs above or below the participant’s    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 12
+
+mean pupil size  were discarded. For studies with visual CS  and/ or US , epochs  were also 
+
+discarded if  eye gaze was not  fixated on  the center of the screen (e.g., due to prolonged 
+
+blinking, distraction etc.) for at least 50% of  epoch  duration, based on a cut -off window 
+
+around the participant’s median gaze position (across all trials) covering approximately  ± 5° 
+
+visual angle . Trials with an unreliable pre -stimulus baseline (>  50% missing/interpolated data 
+
+and/or  > 3 MAD  above or below the intraindividual median of the baseline ) were also flagged 
+
+as invalid.  Across  datasets (samples/sessions) , 8.32 % ( SD  = 2. 05) of relevant CS epochs and 
+
+11.46 % (SD  = 3. 70 ) of US epochs were rejected  (excluding completely discarded  individual 
+
+datasets ).  After data cleaning, pupil traces of each  epoch  were  referenced to a common pre -
+
+stimulus  baseline by subtracting the mean value (averaged over a period of 500 ms )
+
+immediately before CS onset  from each subsequent data point.  Datasets (sessions)  from 
+
+participants  with less than  50%  valid  trials  per CS category  and  analysis window  were 
+
+excluded  from  the respective  statistical  analys is (CS -locked:  m = 9; US -locked:  m = 14). 
+
+2.4. 2 Self -report ratings.  Immediately after the acquisition phase, participants were 
+
+prompted to indicate  US  expectancy for each CS using a visual analogue scale (VAS) ranging 
+
+from 0% to 100% (probability of occurrence). Subjective levels of arousal and valence 
+
+attributed to each CS were assessed via VAS as well, with the anchors ‘calm and relaxed’ to 
+
+‘very arousing/tense’ and ‘very unpleasant’ to ‘very pleasant’, respectively. Distances in 
+
+pixels were converted to arbitrary units (ranging from 0 to 1).  Due to technical errors, rating 
+
+data  of  some participants were lost. 
+
+2. 5 Signal decomposition and s tatistical analysis 
+
+2.5.1 Extraction  of PCA  components . After segmentation into trial epochs, b aseline -
+
+corrected pupil data  from  both analysis windows  (across all studies)  were  downsampled to 10 
+
+Hz , arranged in a wide format  and su bjected to PCA at the single trial level.  Extraction of 
+
+latent components was  performed in  R, based on  the covariance matrix.  Due to the high extent 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 13 
+
+of autocorrelation inherent in physiological signals, traditional  decisional  criteria  (such as 
+
+scree test and  parallel analysis)  may be considered  insufficient.  Instead , fo r each window of 
+
+analysis , we aimed for a solution  that  was (a) reproducible across samples (Tucker 
+
+congruence  φs > .95; see below)  and (b)  jointly accounted for  > 80% of total (orthogonal) 
+
+variance,  (c)  yielded a ‘simple structure’ (i.e., minimal cross -loadings after Promax rotation, 
+
+κ = 3; Dien et al., 2010; Wetzel et al., 2015),  and  (d) remained  interpretable , with  little 
+
+temporal  overlap between component  loadings .
+
+PCA was conducted on the clean dataset, with invalid trials (i.e., trials with high 
+
+amounts of artifacts or missing data) removed from the signal.  To  ensure both reliability and 
+
+generalizability of the  final PCA solution, while at the same time avoiding bias  due to 
+
+differences in sample sizes between  primary  studies as well as  selective drop -out resulting 
+
+from  overly  strict exclusion criteria, we  conducted the PCA  based on  single -trial  data 
+
+inversely  weighted by  the number of (valid) trials per participant and the respective sample 
+
+size of the study  (with  normalization of weights) . This approach  ensures  that  each  stud y and 
+
+each  participant  within each study  contribu tes equally to  the covariance matrix.  Moreover, to 
+
+get an unbiased PCA structure that  captures  the within -trial temporal dynamics of associative 
+
+learning and its effect on pupil size, rather than external sources of arousal, trials containing 
+
+acoustic startle probes (noise bursts) during the CS interval (Sample ID 3 only) were  initially 
+
+excluded . Loadings of  the resulting  reference PCA were then used to  conduct reliability 
+
+analyses and to  project  component  scores  (indexing the contribution of each component to the 
+
+pupil signal on each trial)  onto all valid trials  (including startle trials)  for further analyses.  (A 
+
+sensitivity analysis  concerning  all major outcomes  showed that  in - or exclusion  of  startle 
+
+trials yielded equivalent  results. )
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 14 
+
+2.5.2 PCA s tability . The  stability /invariance  of the  component  structure  (1.  within 
+
+studies, i.e., across experimental trials, as well as  2.  between  independent  studies ) was 
+
+evaluated  using  Tucker  congruence  φ (i.e.,  the  uncentered correlation betwee n loadings ;
+
+Lorenzo -Seva & Ten Berge, 2006 ). To this end,  (1)  separate  PCA s (with  identical  number of 
+
+components)  were estimated for each  experimental half  (median split across trials)  across all 
+
+studies  and compared against each other  (split -half Tucker  congruence ). Moreover,  (2)  PCA 
+
+solutions with one  sample  left out  (k -1)  were iteratively  computed  and compared with  the 
+
+loading structure  based on the respective  sample . This ‘leave -one -sample -out’ approach 
+
+avoids  circularity , yielding unbiased estimates in turn  (e.g. , in contrast to fitting a PCA on the 
+
+basis of all studies and comparing  this reference  with  each individual study ). The range  and 
+
+median of resulting  Tucker scores ( φ)  across all iterations  were determined  for  all candidate 
+
+solutions  (i.e.,  varying number s of components ). If there were minor  differences in the 
+
+sequence of extraction,  highly correlated (i.e.,  effectively identical)  components were 
+
+matched based on  an  algorithm as well as visual inspection of loading patterns across time. 
+
+Scores > .95 signal excellent consistency (Lorenzo -Seva & Ten Berge, 2006), which served as 
+
+the main criterion for selection.  Note that , while  solutions based on  a higher  number  of 
+
+components  (as compared to the chosen solution)  would all have led to reduced 
+
+reproducibility  in the  CS -locked  and US -locked  analys es (φmin  ≤ .8 ; see Supplementary 
+
+Material , Table S1 ), a two -component solution would have been equally stable  for the US -
+
+locked window. However,  as  the  distinctness and  interpretability of th e corresponding loading 
+
+pattern  were  comparatively  lower  and  congruence would have been strongly diminished with 
+
+both three  (φmin  ≤ .85)  and five (or more) components ( φmin  ≤ . 55 ) in this window , we decided 
+
+in favor of the four -component solution . See Supplementary Material for further information 
+
+on PCA selection.    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 15
+
+2.5.3 Assessment of conditioning  effects . For scores of each PCA component , linear 
+
+mixed -effects models  (LMMs)  were computed to  evaluate which  temporal  component 
+
+indexes  differential conditioning  (i.e., differentiation  of responses  to the CS  as well as 
+
+unconditioned responding)  and whether this  differs between appetitive and aversive learning .
+
+Models were fitted  (with restricted maximum likelihood estimation)  using the  lme4  package 
+
+in R  (Bates et al., 2015) . In all models, clustering of data was controlled for by entering 
+
+orthogonal random effects of  Subject  and  Sample  as well as  Sessions  nested in  Subjects . (Note 
+
+that  models with random slopes for fixed effects  [such as  CS Type ] varying by  participant 
+
+were also evaluated but yielded singular fits.)  In addition, a core set of  major,  design -based 
+
+predictors were always included as fixed effects.  For CS -locked analyses,  fixed effects 
+
+comprised  CS Type  with  orthogonal , nested  contrast s for  (1)  differential conditioning ( CS+ 
+
+vs. CS -) and  (2)  US  Valence  (appetitive vs. aversive) . In addition to these  predictors ,
+
+responses  in  the US -locked window were modeled by  US  Presence , again with orthogonal, 
+
+nested contrasts for ( 3) unconditioned responding  (US+ vs. US -, i.e., absent vs. present, 
+
+nested within CS+ trials),  and ( 4) US Valence  (appetitive vs. aversive , nested within  US+ 
+
+trials ).  Furthermore,  to  assess  influences of  other  important  design -related factors,  we 
+
+performed additional  exploratory/ sensitivity analyses  by separately entering (i) CS -US 
+
+Contiguity  (trace vs. delay  conditioning ) and  (ii ) CS Trial  (mean -centered)  as well as  all 
+
+respective  two -way interactions  with  CS Type  and (if applicable)  US Presence . We refrained 
+
+from directly comparing effects of  the modality of the CS  (visual vs. auditory) in the present 
+
+study,  as  this design feature was confounded with the type of outcome ( i.e.,  erotic pictures in 
+
+all  primary  studies using auditory cues) .
+
+To evaluate the significance of fixed effects, initial models were incrementally reduced 
+
+using  lik elihood -ratio  tests  (after refitting based on maximum likelihood estimation) . The 
+
+random -effects structure was kept unchanged across model comparisons.  Significance of 
+
+regression estimates  (model  coefficients ) was assessed by t-tests with  Satterthwaite 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 16 
+
+approximation of degrees of freedom. For all analyses, the threshold of significance was  set to 
+
+α = . 05 , with  all  p values reported as two -tailed  and  statistical differences at  p < .10 
+
+considered  as  trend s. Since  PCA  component scores were normalized  (with  SD  ≈ 1) , all 
+
+coefficients ( b) of  contrast -coded factors  can be interpreted  as partially  standardized mean 
+
+differences (analogous to Cohen’s  d), and we  therefore report these coefficients as  effect -size 
+
+ind ices . N ote , however,  that  underlying  SD s reflect total -trial variance  which is  dominated by 
+
+residual (within -subject) va riance  and  thus  directly  comparable  only  to  effects in  single -trial 
+
+models  rather than  Cohen’s  d based on means aggregated at the subject level  (Brysbaert & 
+
+Stevens, 2018) . For the main  a-priori  contrasts  (related to conditioning ), we therefore also 
+
+report  Cohen’s  dz (bas ed on aggregated data)  to enhance comparability with  previous 
+
+research. 
+
+2.5.4 Association with computational learning  signals . As a theory -guided 
+
+characterization , we examined whether the extracted temporal components showed the 
+
+expected correspondence with learning quantities derived from a hybrid  RW -PH  model :
+
+(1)  𝑉 𝑡  = 𝑉 𝑡 −1 + α𝑡 −1δ𝑡 −1, with 
+
+(1a)  α𝑡  = γ | δ𝑡 −1 | + (1 − γ) α𝑡 −1 , and 
+
+(1b)  δ𝑡  = 𝑈𝑆 𝑡  − 𝑉 𝑡 
+
+To  avoid  inferential  circularity  (when  examining  differential  associations with 
+
+component scores)  as well as  noisy fits  resulting from  between -subject and between -study 
+
+heterogeneity , we refrained from estimating  the underlying  parameters  (constant  γ and fixed 
+
+initial  values  V0, α0) based on  observed  pupil  data . Rather,  learning  quantities were 
+
+recursively (trial -by -trial) computed  based on start values informed by  our own as well as 
+
+independent pupillometric research ( Finke et al., 2023 b; Pietrock et al., 2019 ) and  used  as 
+
+regressors at the trial level . Accordingly, the model was not intended to provide an optimal 
+
+description of individual learning behavior, but to generate theoretically motivated , normative    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 17
+
+regressors against which the functional specificity of the extracted components could be 
+
+evaluated . Specifically,  initial  V (value/associative strength)  was set to 0.5, initial  α
+
+(associability)  to  0.7  and the decay parameter  γ (providing  higher weight to earlier trials) to 
+
+0.1  for each CS (within  subjects and sessions) . For each  component score,  a nested series of 
+
+LMM s was fitted  and compared  in terms of fit : (1)  a null model (random effects only) , (2) a
+
+model with learning  variables  only,  (3)  a combined model  with learning  variables  in addition 
+
+to  design -based contrasts  (CS  Type  as well as  US  Presence , if applicable),  and  (4) a  model 
+
+including the  Learning  × CS Type  interaction.  For analyses  of componen ts peaking before  or 
+
+at  (expected)  US onset , α and  V were entered as  (mean -centered)  predictors , indexing 
+
+antecedent  learning  states updated on  the previous trial . Analyses  of components  related to 
+
+outcome responses (after expected US onset)  included  terms reflecting  prediction error s from 
+
+the  current trial , i.e.,  subsequent learning states.  More precisely, to independently model 
+
+signed  (δ) and unsigned prediction  errors  (|δ |) , positive  (δ+)  and negative  (δ-) values were 
+
+used as  separate  regressors , indexing unexpected reinforcement vs. omission.  If there was 
+
+evidence for an overall significant association with learning signals (based on lower AIC  and 
+
+higher likelihood ratio  relative to the null model ), the  incremental  significance of each 
+
+individual predictor (e.g., α) was evaluated  independently . To this end, effects with significant 
+
+coefficients  were  directly  assessed by comparing  a design model with and without this 
+
+learning  variable . To ensure interpretability of model coefficients, m ulticollinearity was 
+
+checked based on  VIF  scores  for all  fitted  models  (to  avoid  models with  strongly collinear 
+
+predictors ).
+
+Furthermore, to  assess robustness against the choice of fixed starting values,  we 
+
+performed additional sensitivity analyses (reported in the Supplementary Material)  by 
+
+iteratively  computing LMM s with  learning signal s as predictor s and each component as 
+
+dependent variable  for a grid of plausible  fixed  values . For each run,  standardized effect 
+
+estimates  (β)  were calculated  and their  distribution  summarized across the grid . Across  all    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 18
+
+combinations of parameters,  the pattern of coefficients remained highly consistent  with the 
+
+reference solution , indicating that the reported associations  between component scores and 
+
+learning quantities  do not depend on the specific set of parameters chosen.  See the 
+
+Supplementary Material for further details on this analysis. 
+
+2.5.5 Association with self -report learning indices.  Furthermore,  to link  variation  in 
+
+self -reported  (‘subjective’)  aspects of learning  to  different pupillary response components ,
+
+score s of each  pre -US component were  regressed on self -report ratings of  US  Expectancy  (of 
+
+the respective outcome),  Valence  and  Arousal , base d on data from  all  participants for  whom 
+
+post -acquisition  CS  ratings  were available  (n = 358 ). Again, we compared  models containing 
+
+only these  variables as  fixed effects  again st  null models and  models with  additional , design -
+
+based  predictors  (see above).  For descriptive purposes, we also calculated  single -predictor 
+
+models.  Note that we  refrained from analyzing the  relationship  of  post -US  component scores 
+
+and self -report ratings  because post -acquisition ratings indicated  CS -related  arousal and 
+
+valence, which  makes any straightforward  interpretation  with US -evoked responses  difficult 
+
+(ratings of US valence and arousal were only available for a subset of studies). 
+
+2.5.6 Triangulation based on  generalized additive mixed  modeling . Using the  mgcv 
+
+and  itsadug  packages in  R (Wood et al., 201 8; Van Rij et al., 2015),  generalized additive 
+
+mixed  model ing  (GAMM)  of average pupillary waveforms (Van Rij et al., 2019) and their 
+
+interplay with experimental factors  was  applied , based on 10 -Hz  trial -level data . GAMMs 
+
+estimate nonlinear relationships through penalized regression splines (smooth terms), 
+
+allowing to fit the time course of evoked responses both within and between trials without a -
+
+priori assumption about its specific shape. For the present data, the average shape of 
+
+waveforms within trials ( Time ),  separately for  CS -locked  and  US -locked  responses , was 
+
+modeled as marginal smooths . To assess whether this  shape  was modulated by  CS Type 
+
+(entered as an ordered factor) , independently penalized  difference smooths  (by  CS+ app ,   
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 19
+
+CS+ avs , with  CS - as reference ) were estimated . For US -locked analyses, effects of  US 
+
+Presence  (in addition  to CS Type ) were modeled  as difference smooth s relative to  non -
+
+reinforced trials  (separately for aversive and  appetitive outcomes) . Moreover, parametric 
+
+terms for  contrasts of  CS Type  (and  US Presence , respectively)  as well as  random intercepts 
+
+analogous to  the LMM analysis  were entered.  In addition,  to improve  overall  model fit,  a
+
+smooth for  change across trials (e.g., habituation)  and  a random smooth  for  Time  (per 
+
+participant)  were  fitted  (thereby  account ing  for unsystematic between -subjects variability in 
+
+waveforms ). Also,  we adjusted  for  CS -US contiguity  (trace vs. delay) and  Startle  Probe 
+
+(present vs. absent)  as ‘nuisance’ difference smooths (including corresponding parametric 
+
+terms) . To control for autocorrelation of adjacent samples within trials, a first -order 
+
+autoregressive error parameter was estimated and accounted for ( ρ = .9 7), with the onset of 
+
+each trial marked. The  bam  function with fast restricted maximum likelihood estimation was 
+
+used for model fitting. To avoid overfitting, the complexity of smooths (‘wiggliness’) was 
+
+adapted based on both statistic al  diagnostic criteria (reflecting the proportion of residual 
+
+variance of adjacent samples, i.e., k-index; Wood et al., 2016) and visual inspection 
+
+(comparison of model -predicted values and aggregated raw data). To localize  effects across 
+
+Time , simultaneous confidence bands  were computed for  each major contrast . The posterior 
+
+distribution of each difference was approximated by drawing 5000 samples from the 
+
+multivariate normal and calculating the maximum absolute studentized deviation across all 
+
+data points. The 95 th  percentile of the resulting distribution of maxima served as critical value 
+
+for confidence bands, controlling for family -wise error rate across the whole  time series 
+
+(adjacent regions with the band excluding zero were treated as a significant cluster). 
+
+Furthermore,  the correspondence between  PCA -reconstructed waveforms  (grand averages  of 
+
+difference wave s for  the  CS+  vs.  CS - contrast  and  the  effect of  US Presence , for each level of 
+
+US Valence ) and GAMM -predicted  waveforms  was evaluated by means of Pearson correlations. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 20 
+
+Figure 1 . Temporal PCA results. Upper panel: Component loadings (scaled by their respective SD). 
+
+Panels below: condition -specific contributions (PCA reconstruction from condition -specific 
+
+component scores), shown separately for the CS - and US -locked analysis. 
+
+Note . CS+ avs : aversive conditioned stimulus; CS+ app : appetitive conditioned stimulus; CS -: never reinforced control stimulus. 
+
+3.  Results 
+
+3.1  Signal decomposition 
+
+3.1.1  CS -locked analysis . Based on all studies, four components were extracted  in the 
+
+CS -locked window , explaining  88 % of total variance  (before rotation) . The time course of 
+
+loadings  after promax rotation  is illustrated in Figure 1  (upper panel, left) , showing an early, 
+
+‘Pre -CS ’ component  (with a peak around  2 s prior  to CS onset ),  another  component peaking 
+
+shortly after CS onset  (‘Post -CS1’:  +1.6  s), and  two later components , each  with similar 
+
+variance  after rotation  (‘Post -CS 2’: +3.3  s;  ‘Post -CS 3’: +5. 5 s).  The  chosen  solution was 
+
+highly  stable across acquisition halves (Tucker  congruence : φs > .9 9) and did not vary 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 21 
+
+between  primary studies  (median  φmin  = 1; range:  [. 99 0 1]), showing excellent consistency .
+
+See  Method and  Supplementary  Material for further  PCA  details .
+
+As shown in Figure 1 (left panels), the extent of differentiation between CS+ and CS -
+
+varied (descriptively) between aversive and appetitive cues as well as early and late 
+
+components. Specifically, the early ( Post -CS 1) component showed a relatively higher affinity 
+
+to appetitive conditioning, and vice versa (see 3.2, below). 
+
+3.1.2  US -locked analysis . In the US -locked window,  four  components emerged that 
+
+together explained  94% of total variance. The temporal pattern fits  with  two  main component s
+
+reflecting unconditioned responding: one  shortly after US onset , with similar latency  as  in the 
+
+CS -locked  window  (‘Post -US 1’: + 1.6  s) and  a later one  towards the end of the  window  (‘P ost -
+
+US 2’:  +3.6  s). By contrast,  a third  component  peaked  markedly  before onset  (‘Pre -US’:  -1.6 
+
+s) , while  the  loadings of  the fourth , slightly  smaller  component  showed a steady  increase until 
+
+very shortly after US onset  (‘P eri -US ’:  +0.2  s) . See Figure 1 (upper panel, right) for the 
+
+pattern of loadings after promax rotation. Again, this component structure was  largely 
+
+rotation -invariant , highly stable across acquisition halves (Tucker congruence:  φs  ≥ .9 8), and 
+
+did not vary between primary studies (median  φmin  = .9 80 ; range:  [. 960 .990 ]).  See Method 
+
+and Supplementary Material for further PCA details. 
+
+The pattern of condition -specific contributions to each component (see Figure 1, right 
+
+panels ) supports the view that the  two (temporally)  earlier  components largely capture 
+
+anticipatory  (conditioned ) responses , while  both components peaking after US onset reflect 
+
+unconditioned ( and  possibly also omission -related ) responses .
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 22 
+
+3. 2 Conditioning effects 
+
+3. 2.1  CS -loc ked analysis.  As reported  in Table 2,  scores of all  post -CS components 
+
+were  significantly  modulated by  CS Type , indicating  differential conditioning  of pupil size  in 
+
+a broad  window after cue onset . All respective models explained significantly more variance 
+
+than a  random -effects -only  model  (all  χ2s[2]  > 9.3 , ps ≤ .010 ). Notably,  the  global  contrast 
+
+between the CS+ and CS - (Post -CS2 : dz = 0.1 9 [0.0 9, 0.2 9]; Post -CS3:  dz = 0.15 [0.0 5, 0.2 5])
+
+was  not significant  for  the  temporally first  (Post -CS1) component , whereas the  US Valence 
+
+contrast was.  Follow -up tests  (with Bonferroni -Holm correction)  revealed that  differential 
+
+responses  (relative to the CS -) in  this initial phase  were  specific to  appetitive  learning  (p =
+
+.00 3; dz = 0. 19  [0.0 8, 0. 30] ), whereas  early responding to  aversive  cues was  characterized by a 
+
+(non -significant ly ) reversed  pattern (p = .1 19 ). The difference between both  valence 
+
+categories  (aversive vs. appetitive  CS+ ) was significant as well ( p < .001).  There was no 
+
+indication for an interplay  of  CS Type  with  US  Valence  for  the two later components  (within 
+
+the CS -locked window) , marked by  more general  response differentiation.  As  expected, no 
+
+effects  on  the Pre -CS component  emerged  (all  ps > . 21 ),  i.e., during pre -stimulus baseline, 
+
+which  was  not favored over  a null model ( χ2[2] =  2. 54 ; p = .2 8). 
+
+Further design -based  predictors . Importantly, no effects  or interactions involving 
+
+CS -US Contiguity  emerged for any CS -locked component  (all  ps ≥ .18) . The effect of 
+
+CS Trial  was significant for the early and middle components (Post -CS1:  p = .013; Post -CS2: 
+
+p = .019), indicating decreasing response  levels  over time (i.e., habituation) , irrespective of 
+
+CS Type  (ps ≥ .31).  See Supplem entary Material for detailed results. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 23 
+
+Table  2. Model  parameters of  primary  linear mixed -effects models predicting component scores in  the  CS -locked analysis window 
+
+Component  (incl. peak latency) 
+
+Pre -CS 
+
+(~  -2.0 s) 
+
+Post -CS1 
+
+(~ +1.6 s) 
+
+Post -CS2 
+
+(~ +3.3 s) 
+
+Post -CS3 
+
+(~ +5.5 s) 
+
+Model (predictors)  b SE  df  t p b SE  df  t p B SE  df  t p b SE  df  t p
+
+Intercept  0.00 2 0.0 14 5. 06  0. 12  .911  0.00 4 0.02 3 5.4 4 0. 17 .869  0.001  0.038  5. 60  0.03  .97 4 -0.017  0.063  5. 88  -0.2 9 .7 85 
+
+CS Type 
+
+CS+ (vs. CS -) -0.0 16  0.01 4 20610  -1. 16 .245  0.012  0.01 3 23210  0.8 8 .3 79  0.04 8 0.01 3 23440  3. 63  <.00 1 0.0 40  0.01 3 23470  3.05  .002
+
+Appetitive (vs. aversive)  0.0 24  0.0 19  600.4  1. 25  .213  0.07 8 0.02 0 4847  3. 97  <. 001  0.002  0.02 0 16020  0.0 2 .9 88  -0.00 8 0.02 0 22220  -0. 40  .692 
+
+Variance Components  σ2 SD  σ2 SD  σ2 SD  σ2 SD 
+
+Sample  0.00 1 0.0 30  0.003  0.05 3 0.009  0.097  0.02 6 0.16 2
+
+Subject  0.0 01 0. 023  0.026  0.161  0.022  0.14 7 0.027  0.163 
+
+Subject:Session  0.00 2 0.0 42  0.0 10 0. 101  0.0 14  0. 119  0.0 15  0. 122 
+
+Residual  1.01 9 1.0 10  0.97 7 0.98 8 0.9 51  0.97 5 0.9 54  0.97 7
+
+Note . Number of samples: 7;  number of  subjects : 383 ; number of sessions : 562 ; number of trials:  23980 . b: estimate ( component score );  SE : standard error . p values significant at the  p < .05  level 
+
+are shown in bold. TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 24 
+
+Table  3. Model parameters of primary linear mixed -effects models predicting component scores in the  US-locked analysis window 
+
+Component  (incl. peak latency) 
+
+Pre -US 
+
+(~  -1.6  s) 
+
+Peri -US 
+
+(~ + 0.2 s )
+
+Post -US1 
+
+(~ + 1.6  s) 
+
+Post -US2 
+
+(~  +3.6  s) 
+
+Model (predictors)  b SE  df  t P b SE  df  t p b SE  df  t p b SE  df  t p
+
+Intercept  -0.0 07  0.0 51 5.8 8 -0. 13  .902  0.0 17  0.06 6 5. 89  0. 26  .801  -0.0 70 0. 092  6.0 7 -0.76  .474  -0.0 24  0.0 49  5. 83  -0. 49  .640 
+
+CS Type 
+
+CS+ (vs. CS -) 0.0 37  0.01 4 226 60 2. 71  .007  0.0 59  0.0 14  22700  4.35  <. 001  0.250  0.01 3 226 50 19.54  <.00 1 0.203  0.01 3 226 60 15.22  <.00 1
+
+Appetitive (vs. aversive)  -0.0 09 0.02 0 20670  -0. 42  .672  -0.074  0.02 0 21 960  -3.65  <. 001  -0. 074  0.0 19  22 530  -3.90  <.00 1 0.017  0.02 0 20480  0. 86  .391 
+
+US Presence 
+
+US+ (vs. US -) -0. 021 0.018  22 660  -1.18  .237  0.021  0.01 8 22 690  1. 16 .248  0. 488  0.01 7 22 650  29.05  <.00 1 0. 396  0.01 7 22660  22.72  <.00 1
+
+Appetitive (vs. aversive)  -0.0 24  0.03 6 22660  -0.6 7 .501  -0.097  0.03 5 22 690  -2.75  .00 6 0. 010  0.03 3 22640  0. 30  .763  0.081  0.03 4 22660  2.34  .019 
+
+Variance Components  σ2 SD  σ2 SD  σ2 SD  σ2 SD 
+
+Sample  0.0 17 0.1 32 0.02 9 0.1 71  0.0 58  0. 240  0.0 16  0.1 25 
+
+Subject  0.0 16 0.1 28  0.0 19 0.1 39  0.0 36  0. 191  0.0 17 0.1 29 
+
+Subject:Session  0.0 30  0. 172  0. 01 1 0. 106  0.0 39  0. 198  0.0 44  0. 209 
+
+Residual  0.9 60  0.9 80  0. 94 5 0.9 72 0. 836  0. 915  0. 903  0.9 50 
+
+Note . Number of samples: 7; number of subjects: 385; number of sessions: 557; number of trials:  23181 . b: estimate ( component score );  SE : standard error . p values significant at the  p < .05  level 
+
+are shown in bold. TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 1
+
+3. 2.2  US -locked analysis.  In the analysis of  US -locked component scores , a clear 
+
+dissociatio n between  effects  on  Pre -US scores  vs.  subsequent  components emerged, with 
+
+evidence fo r general  (valence -unspecific)  CS+ vs. CS - discrimination before US onset and  a
+
+combination  of  valence -specific  and outcome -driven  modulation in the Post -US window  (see 
+
+Table  3).  All  models  except Pre -US  (modeled with the same  fixed -effects  structure as 
+
+outcome -related components ; χ2[4] = 8.57 , p = .0 73)  explained significantly more variance 
+
+than the respective null model (all  other  χ2s[ 4] >  43. 6, ps < .0 01 ).  Since  effects of US delivery 
+
+were absent before US onset  (as expected) , the  only reliable  effect on Pre -US  scores  was  a
+
+general  CS Type  contrast  (p = .0 42 ; dz = 0. 12  [0. 02 , 0. 22 ]) . In the window after (expected) US 
+
+onset , pupil size  was  higher in CS+ trials overall  (both Post -US1 and Post -US2; see Table 3) ,
+
+which was  initially  (Post -US1)  more strongly expressed  after  aversive than appetitive  cues .
+
+However , outcome -related  effects  (of  US Presence ) on Post -US1  (dz = 0.98  [0 .86 , 1. 10])  and 
+
+Post -US2  (dz = 0.92 [0. 81 , 1. 04 ])  scores  were  independent of  US Valence  at first (Post -US1), 
+
+but  became  slightly  more pronounced  for appetitive outcomes  during later stages  of 
+
+responding .
+
+Notably , the Peri -US component , bridging CS and US presentation, was sensitive to 
+
+valence information as well:  In contrast to  the preceding  Pre -US  component,  responses  were 
+
+significant ly  larger  after presentation of aversive  (than appetitive ) CS+  (p < .001) and 
+
+differential responding (relative to the CS -) was significant  only  in  aversive  (p < .00 1; dz =
+
+0. 40  [0 .26 , 0. 53 ]) but not  in  appetitive CS+ trials  (p = . 163  [corrected] ; dz = 0. 10  [-0.0 1,
+
+0.2 1]). Given  this component’s  temporal location and the significant  US Valence  × US 
+
+Presence  interaction , we performed further  post -hoc analyses t o rule out  that  it  was  solely 
+
+driven by delivery of aversive outcomes . Importantly, e stimating  the CS contrast for  non -
+
+reinforced CS+  trials only , response differentiation  remained  significant  for aversive ( b =
+
+0.06 1, SE  = 0.0 24 , z = 2. 52 , p = .0 35  [corrected] ) but not appetitive conditioning  (b = 0.03 6,
+
+SE  = 0.02 2, z = 1.69 , p = . 18 1) even when no US was delivered . Contribution s of differential    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 26
+
+responding to aversive cues  were thus  present  on all trials (rather than  reinforced trials only) 
+
+and  comparable to  the increment added by aversive  outcomes  (b = 0.069) . Taken together ,
+
+this indicates that  both  anticipatory responses  and o utcome evaluation  contributed to  Peri -US 
+
+scores  and that  these preferentially  reflect  aversive learning  (with  absent  or strongly reduced 
+
+differentiation  after  appetitive CS+ ).
+
+Further design -based  predictors . For the Pre -US  and Peri -US  component s, significant 
+
+effect s of  CS -US Contiguity  emerged ( ps < .001 ), indicating overall  reduced  levels of pupil 
+
+dilation  at longer  outcome  delays . Importantly, differences between responses in trace vs. 
+
+delay conditioni ng were again  not  modulated by  CS Type  (all  ps > .44 ).  Moreover , no  effects 
+
+of  CS Trial  or  CS Trial  × CS Type  approached significant  for these components  (all  ps > .26 ). 
+
+By contrast, the  CS -US  Contiguity  × US Presence  interaction  attained  significan ce  for 
+
+components in the post -US window  (ps < .001 ), indicating substantially blunted  responding to 
+
+outcomes in trace conditioning ( Post -US1:  b = -0.4 91 , SE  = 0.03 5, t[2268 0] =  -13.9 8, p <
+
+.001 ; Post -US2:  b = -0. 27 7, SE  = 0.03 6, t[22700 ] =  -7. 56 , p < .001 ).  Early ( Post -US1 ),  but not 
+
+late  responses  in th is window  decrease d over time ( p < .001 ), but  the  slope  of this change  did 
+
+not significantly differ between  reinforced and  non -reinforced trials , suggesting little spe cific 
+
+habituation . See Supplementary Material for more information. 
+
+Since the (CS -locked) Post -CS 3 and (US -locked) Pre -US components showed a very 
+
+similar profile overall  (see also 3.3 and 3.4, below) , and in fact overlap in  several  (delay 
+
+conditioning)  studies with shorter CS -US onset delays , we performed an additional 
+
+exploratory analysis  to  test  this  assumption . To this end,  CS -locked and US -locked  trial  data 
+
+from  all  delay condition ing datasets  (sessions)  were matched based on subject and trial ID .
+
+Confirming our  interpretation , the  correlation between scores of both  components  (across 
+
+trials/participants)  was  r = . 88 , and all effects  of experimental conditions were  effectively 
+
+abolished  (i.e.,  near  zero)  when controlling for the  respective other component as covariate. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 27 
+
+3.3  Computational learning signals 
+
+3.3.1  Antecedent learning  signals (post -CS) . Across  all component scores  peaking 
+
+before  (or  around ) US onset,  model -derived  antecedent  learning  variables  improved  fit over 
+
+the  respective  null model  (see Table  4, A), indicating  systematic , theory -consistent 
+
+associations  with  trial -by -trial  value  (V) and associability  (α ).  This  association was most 
+
+evident for  Post -CS1 scores,  i.e., early responses,  as  suggested  by a  Learning  × CS Type 
+
+interaction. C ollinearity  was moderate  (VIF  of interaction terms < 4 ).  Inspection of model 
+
+coefficients revealed  that both  α and  V jointly  predicted  Post -CS1 scores  (incrementally 
+
+explaining variance over a  purely  design -based model) . While the  α ×  CS Type  interaction 
+
+was non -significant  (overall effect of α across cues:  b = 0. 161 , SE  = 0.0 58 , t[23540 ] =  2.76 ,
+
+p = .0 06 ), V gated  response s specifically for  reinforced cues ( i.e.,  CS+ ; b = 0. 08 2, SE  = 0. 031 ,
+
+z = 2. 67 , p = .00 8; irrespective of  US Valence ; p = .754 ),  whereas  the direction for the  CS -
+
+was reversed ( b = -.26 8). With the appetitive -aversive contrast  still  significant  (p = .001) , this 
+
+pattern suggest s that  both  a graded value signal  and a dynamic learning rate (scaled by 
+
+prediction errors from previous trials)  may contribute incrementally to responses in this early 
+
+window  (see Figure 2A for illustration) .
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 28 
+
+Table  4. Comparison (goodness of fit) of models based on A.  antecedent  learning signals  (V, α) and B. self -report learning indices  for  post -CS  component s
+
+Component  (incl. peak latency) 
+
+Post -CS1 
+
+(~ +1.6 s) 
+
+Post -CS2 
+
+(~ +3.3 s) 
+
+Post -CS3 
+
+(~ +5.5 s) 
+
+Pre -US 
+
+(~  -1.6  s) 
+
+Peri -US 
+
+(~ + 0.2 s) 
+
+Model  Comp.  NP  df  ∆AIC  χ2 p ∆AIC  χ2 p ∆AIC  χ2 p ∆AIC  χ2 p ∆AIC  χ2  p
+
+(1a)  Null model  5 0 0 0 0 0 0
+
+(1b) Design  vs.  1a  7 2 -14 17.5  <. 001  -8 13.3  .00 1 -6 9.30  .010  -3 6.35  .042  -32  35.6  <. 001 
+
+A. 
+
+(2)  Learning  vs. 1a  7 2 -2 5. 91  .05 2 -7 12.5  .00 2 -7 11.1  .00 4 -3 7.03  .030  -8 11.8  .00 3
+
+(3)  Learning  +
+
+Design  vs. 1b  9 2 -2 6.42  .040  +2  2. 35  .308  +2 2.06  .356  +3 1.13  .568  +1  2.85  .241 
+
+vs. 2  9 2 -14 18.0  <. 001  +1 3.20  .202  +3 0. 27  .872  +3  0.45  .799  -23  26.8  <. 001 
+
+(4)  Learning  ×
+
+Design  vs. 3  13 4 -3 11 .4 .02 3 +2 5.85  .211  +7 1.86  .761  +5  2. 85  .583  +6  2.74  .603 
+
+B. 
+
+(5) Self -report  vs. 1a  8 3 -5 11.0  .012  -17 23.1  <. 001  -21  26.8  <.001  -41  46.5  <. 001  -71  76.9  <. 001 
+
+(6) Self -report  +
+
+Design  vs. 1b  10 3 -3 8.86  .031  -8 13.6  .00 4 -17  22.9  <. 001  -12 17.9  <. 001  -36  42.4  <. 001 
+
+vs. 5  10 2 -6 10.5  .00 5 +0 4.23  .121  +3 1.03  .598  +4  0.30  .862  -10  14.4  <. 001 
+
+(7) Self -report  ×
+
+Design  vs. 6  16 6 +6  5.42  .491  +2 9.83  .132  +3 9.41  .152  +9 2.89  .822  +0 12.0  .063 
+
+Note . Comp.:  comparison; NP: number of parameters; AIC: Akaike Information Criterion.  Design -based model included the fixed effect of CS Type.  p values significant at the  p < .05 level are 
+
+shown in bold. TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 1
+
+Figure 2 . Associations  (based on linear mixed -effects models)  of A.  antecedent  learning  signals 
+
+(value,  V; associability,  α) and B.  self -report learning indices ( US Expectancy , Arousal  and  Valence 
+
+ratings) with conditioned pupil dilation across PCA components  (before /around  US onset ).
+
+Note.  X-axis:  b estimate (component score). Squares: estimates based on full models (A. model 3 [cf. Table  4]:  score  ~
+
+CS_Type  + V + α + random effects;  note that the coefficient shown for Post -CS1/ V is based on the pooled effect for the CS+ ,
+
+due to the  significant  V × CS Type  interaction ; B. model 6:  score  ~ CS_Type  + US_Expectancy  + Arousal  + Valence  +
+
+random effects); triangles: estimates based on models without design -based predictors (A. model 2:  score  ~ V + α + random 
+
+effects; B. model 5:  score  ~ US_Expectancy  + Arousal  + Valence  + random effects); circles:  simple  mixed -model regression 
+
+estimates for each predictor.  Error bars indicate 95% CI. 
+
+C.  Differential a ssociation s (by levels of  CS  Type ) with  positive vs. negati ve prediction error s (PE)  for 
+
+response  components  after (expected) US onset. 
+
+Note.  CS+ avs : aversi ve  conditioned stimulus ; CS+ app : appetitive conditioned stimulus ; CS -: never reinforced control stimulus. 
+
+The  negative prediction error  (δ-) was  rectified  for ease of interpretation . Error bars indicate 95% CI.    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 30
+
+By contrast, learning variables did not explain variance beyond the design -based 
+
+predictors for the remaining post -CS components: Inspection of model coefficients (see 
+
+Figure 2, A: triangle symbols) revealed component -specific links to  α (Post -CS2:  p = .018; 
+
+negative trend for Peri -US:  p = .092 ) vs.  V (Post -CS3:  p = .025; marginal for Pre -US: 
+
+p = .088; Peri -US:  p = .002; all other  ps > .35), but none remained reliable after adjustment 
+
+for  CS Type  (i.e., reinforcement/valence of cues; all  χ2s[1] < 2.9,  ps > .24; see Figure 2, A: 
+
+square symbols). Although these later components were thus consistent with hybrid (RW -PH) 
+
+learning dynamics and even suggested dissociable temporal signatures (differential 
+
+associations with  α vs.  V), they explained no variance in pupil responses beyond design -based 
+
+predictors, as modeled expected value approaches the manipulated contingencies. 
+
+3.3. 2 Prediction -error -related learning signals (post -US) . As anticipated, post -US 
+
+components showed clear evidence of specific, incremental contributions of learning signals 
+
+(i.e., prediction errors) to pupil -size modulation (see Table 5): Inspection of model 
+
+coefficients indicated that the associations with the earlier component (Post -US1) showed a 
+
+pattern consistent with unsigned prediction error (| δ| ) signaling, i.e., increased responses to 
+
+both unexpected outcomes and omissions. Collapsing across positive and negative prediction 
+
+errors, this effect was significantly  (p < .001 [Bonferroni -Holm corrected])  more pronounced 
+
+in aversive  (b = 0.320,  SE  = 0.042,  t[22730] = 7.62,  p < .001) than appetitive learning ( b =
+
+0.106,  SE  = 0.036,  t[22680] = 2.97,  p = .003) , indicating stronger prediction -error -evoked 
+
+responses in the early post -US window after expectation of aversive outcomes. In contrast, 
+
+the later component (Post -US2) tracked positive prediction errors  only, i.e., expectation 
+
+violations in terms of unexpected (appetitive as well as aversive) outcomes (pooled effect:  b =
+
+0.120,  SE  = 0.037,  t[22680] = 3.26,  p = .001 ), irrespective of valence (see Table 5, model 4). 
+
+See Figure 2 (C) for illustration. A sensitivity analysis which additionally included the 
+
+interaction with  US  Presence  confirmed that prediction -error -related effects were indeed 
+
+additive to effects of reinforcement ( χ2[1] = 0.77,  p = .38; see Figure 2, C, lower panel). 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 31 
+
+Table  5. Comparison (goodness of fit) of models based on prediction -error -related learning signals 
+
+(δ+, δ-) for post -US components 
+
+Component  (incl. peak latency) 
+
+Post -US1 
+
+(~ + 1.6 s) 
+
+Post -US2 
+
+(~ + 3.6  s) 
+
+Model  Comp.  NP  df  ∆AIC  χ2 p ∆AIC  χ2 p
+
+(1a)  Null model  5 0 0 0
+
+(1b) Design  vs.  1a  9 4 -1501  1509  <. 001  -960  967.8  <. 001 
+
+(2)  Learning  vs. 1a  7 2 -1020  1024  <. 001  -393  610.6  <. 001 
+
+(3)  Learning  +
+
+Design  vs. 1b  11  2 -41  44.5  <. 001  -7 11.3  .004 
+
+vs. 2  11  4 -522  529.9  <. 001  -360  368.5  <. 001 
+
+(4)  Learning  ×
+
+Design  vs.  3 14  3 -21  27.5  <. 001  +5  0.84  .840 
+
+Note . Comp.:  comparison; NP: number of parameters; AIC: Akaike Information Criterion.  Design -based model included the 
+
+fixed effect of CS Type as well as US Presence.  p values significant at the  p < .05 level are shown in bold. 
+
+Importantly, these associations were robust to the  choice of fixed  RW -PH starting 
+
+values, i.e., stable across a broad grid of  combinations of  V0, α 0 and γ  (see Supplementary 
+
+Material,  Table S 4 and  Figure S 6). The valence -specific  modulation of prediction -error 
+
+responses in the  post -US window  was  particularly stable. 
+
+3.4  Associations with self -report learning indices 
+
+Overall, s elf -report  indices of conditioning , reflecting  both inter - and intraindividual 
+
+variation  in the perception of  cues following acquisition , were  significantly  related to  pupil 
+
+dilation across  all  CS -related  PCA  components , as evident from comparisons with  null 
+
+models (see Table  4, B). Moreover,  inclusion of self -report indices improved model fit over a 
+
+design -based model  for all components  peaking  before /around  US onset , indicating 
+
+incremental ly explained variance. 
+
+As  there is a high natural  overlap  between  CS Type  and  US Expectancy  (which 
+
+essentially reflects the  contrast  between reinforced CS+ and  non -reinforced CS -), it is 
+
+unsurprising that controlling for this  design factor  substantially  reduces  associations with    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 32
+
+expectancy ratings . Therefore, and since  no interaction with  CS Type  attained  significance, 
+
+our  interpretation focuses on model s retaining  fixed effects of  US Expectancy , Arousal  and 
+
+Valence  only . Model coefficients (see Figure 2 , B : triangle symbols ) suggest a  consistent , yet 
+
+differential pattern of  associations with  temporal  response phases : While early responses 
+
+pre dicted  US Expectancy  only  (when  controlling for intercorrelations in a single model) ,
+
+associations with  Arousal  bec ome  more robust  as the  temporal  position  shifts toward US 
+
+onset  (especially for the Peri -US component) . Similarly , for  valence  (ranging from unpleasant 
+
+to pleasant)  substantial  negative  correlations with  late  (yet not early)  components  emerged ,
+
+which again became largest and most reliable around US onset . Together, this  aligns with  the 
+
+pattern of design -based (valence -specific) contrasts  reported above. 
+
+3. 5 Generalized additive mixed modeling  of pupil dilation responses 
+
+To  corroborate  the  findings from PCA -based  LMM  analyses , generalized additive 
+
+mixed  models  (GAMM s) were additionally computed,  provid ing  largely co nverging evidence 
+
+for  (a) robust differential  conditioned responses  across  both  levels of  US  Valence , starting 
+
+from  about 2 .4 s after CS onset  (in  aversive conditioning) , as well as (b) a partial  valence -
+
+dependent  dissociation  of  response phases, with  significant  early  CS+ vs. CS - discrimination 
+
+(from ca.  +0. 5 s onward)  in appetitive  (but not aversive)  learning  (see Figure 3) . Accordingly, 
+
+the  CS+  vs. CS - contrast  differed significantly  between both valence categories  from 0. 4 to 
+
+1.9  s in the CS -locked window.  In line  with LMM results, the re was also evidence for a  short 
+
+early cluster  (ca. 0. 5-0.9  s)  characterized by  significant , inverse response differentiation for 
+
+the aversive CS contrast (i.e.,  CS+ avs  < CS -).  Furthermore,  (c)  GAMM -predicted responses  in 
+
+aversive  US + trials  were  larger  in  a broad  early  cluster  (ranging  from  around  1.2  s before  to 
+
+1.7 s after US onset ). As illustrated in Figure 3, this temporal  dynamic corresponds to the 
+
+transient overlap between the (partly anticipatory) Peri -US  and the  outcome -locked  Post -US1 
+
+components.  By contrast, l ater clusters  showed the opposite  pattern  (indexing increased 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 33 
+
+sustained dilation to appetitive outcomes) . Consistent with the prediction -error analysis, 
+
+responsivity  in  non -reinforced  (US -) trials (US  omission s) was  significantly  larg er after 
+
+aversive cues  (starting around 0. 7 s after US onset) , which was aligned with selective 
+
+modulation of the Post -US1 , but not Post -US2 , component.  Notably, intercorrelations 
+
+between marginal waveforms predicted by GAMM, waveforms reconstructed from PCA and 
+
+empirical grand averages in each condition were consistently high (all  rs ≥ .86 ; see 
+
+Supplementary  Figure S 7).  Correlations between  GAMM - and PCA -based  difference waves 
+
+(CS+ vs. CS -) were  likewise  high overall, but more consistent in aversive conditioning.  For 
+
+details on  final GAM Ms (model coefficients , etc.)  see Supplementary Material  (Table S 5). 
+
+Figure 3 . Overlay of (1) PCA -based and (2) GAMM -based reconstructed difference waves (CS+ vs. 
+
+CS -), split by CS -locked (left) and US -locked (right) windows as well as reinforced vs. non -reinforced 
+
+trials (upper panels: CS+ avs  [aversive]  vs. CS -; lower panels: CS+ app  [appetitive]  vs. CS -). (1) Colored 
+
+lines: component contributions; dashed lines: overall waveform based on PCA. (2) Solid lines with 
+
+shaded bands (95% CI): GAMM -derived conditional means.  r values indicate Pearson correlation s
+
+between PCA -based and GAMM -based waveforms in each condition. Colored bars at the bottom 
+
+indicate significant differences in conditional means, i.e., differential responses (CS+ vs. CS -), based 
+
+on simultaneous 95% confidence intervals; likewise, grey bars indicate significant differences for the 
+
+contrast CS+ avs  vs. CS+ app  (p < .05 ).    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 34
+
+Associations with computational learning signals.  As  a further test of convergence, we re -ran
+
+the respective full GAMM (including  all  design -based factors) with learning signals  entered as 
+
+additional predictors ( CS -locked:  V, α; US -locked:  δ+,  δ-; each s ignal  as  parametric  term  and 
+
+difference smooth  over  Time  by condition, i.e.,  CS Type ).  Largely c onsistent with the PCA -LMM -
+
+based results, this analysis revealed  the follo wing  significant  (via  simultaneous confidence bands ,
+
+ps < .05 ), incremental effect s (above  experimental  conditions) : For appetitive cues, p upil  dilation 
+
+covaried positively with  expected  value  (V) in  a short  early cluster (from  ca. 0.7  to  0. 9 s) after CS 
+
+onset  (descriptively  longer , and  also present  for aversive  CS+ ) and  again  in a late  phase (from  5.6  s
+
+onward) ; yet  negatively  with  associability ( α) towards the  end of the CS -locked window (from  4.8  s
+
+onward ). For aversive  cues, there was  a positive modulation by  α in a  broad  mid -latency cluster 
+
+(1.2 -3. 3 s) . Positive prediction errors were linked to increased pupil size across most of the post -US 
+
+window (starting from  0. 6 s after US onset)  across both valences , whereas  negative prediction 
+
+errors specifically predicted pupil dilation in an earlier cluster ( 0.7 -2.9  s after US onset) , wh ich  was 
+
+significant  for aversive cues  only . For a graphical illustration, see Supplementary Material (Figure 
+
+S9).  Showing a largely convergent pattern  of  significant associations and their temporal 
+
+localization , these results  thus  support  the findings  from LMM -based analyses. 
+
+4.  Discussion 
+
+Building on earlier meta -analytic evidenc e for pupil dilation as a reliable  and sensitive  marker 
+
+of Pav lovian conditioning across aversive and appetitive learning  (Finke et al., 2021) , the pr esent 
+
+multi -study individual -participant -data reanalysis  provides an  in -depth examination of  its  temporal 
+
+signature s. Based on a large, harmonized dataset from 385 participants (562 conditioning sessions) ,
+
+we demonstrate that the pupillary response  during conditioning is not a unitary  marker of  LC -NE 
+
+arousal  or related neurocognitive processes (Joshi et al., 2016) , b ut rather  consists  of  multiple 
+
+temporally dissociable components that  carry different information about  the processes involved in 
+
+associative learning . Our main conclusions are  summarized  below . For a n overview  and  tentative 
+
+integration of our findings see also Table  6.
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 35 
+
+Table  6. Tentative integration of findings 
+
+Response phase  Time window 
+
+(peak) 
+
+Observed empirical association  Strength of 
+
+evidence 
+
+Proposed f unctional  interpretation 
+
+Early  post -CS  + 1.6 s (after CS) 
+
+▪ appetitive > aversive 
+
+▪ learned value  (V)
+
+▪ associability (α) 
+
++++  (C, R, S) 
+
+++ (S , C,  [R] )
+
++ (S) 
+
+appetitive valuation,  incentive  salience, 
+
+orienting (?) 
+
+Middle  post -CS  + 3.3  s (after CS)  ▪ associability (α) 
+
+▪ subjective arousal 
+
++ (C,  [R])
+
++ (S)  uncertainty, s ustained attention 
+
+Late  post -CS /
+
+Pre -US 
+
++ 5.5 s (after CS )/
+
+- 1.6  s ( before  US) 
+
+▪ subjective arousal 
+
+▪ negative subjective valence 
+
++ ([R], S) 
+
+++  (R, S)  anticipatory  arousal  (?) 
+
+Peri -US  + 0.2  s (after US) 
+
+▪ aversive >  appetitive 
+
+▪ learned value ( V)
+
+▪ subjective arousal 
+
+▪ negative subjective valence 
+
+++  (C, S , [R] )
+
++ (R) 
+
+++  (R, S) 
+
+++  (R, S) 
+
+aversive a nticipation , peri -outcome 
+
+preparation 
+
+Early post -US  + 1.6  s (after US)  ▪ US presence 
+
+▪ |δ| ×  US  valence 
+
++++  (C, R, S) 
+
+++ + (C,  R, S) 
+
+unconditioned response, unsigned 
+
+prediction  error  (aversive > appetitive) 
+
+Late post -US  + 3.6  s (after US)  ▪ US presence 
+
+▪ δ+
+
++++  (C, R, S) 
+
+++ + (C,  R, S) 
+
+outcome  evaluation, positive prediction 
+
+error (outcome > expectation)                     
+
+> Note .Strength of evidence: Each effect is rated by how many of three independent criteria it meets: C: convergence ( reproduced by independent
+> analyses, i.e ,PCA -LMM /GAMM) ; R: robustness (stable across all sensitivity analyses) ;and S: specificity (design -based and /or incrementally valid
+> beyond design). +++: 3, ++: 2, +: 1 criterion . [R]: largely robust, but diminished effects .Associations not rated at least “+” are not listed.
+
+Pupil dilation respon ses during Pavlovian conditioning  are temporally multidimensional and 
+
+consist of  reliably  dissociable  components 
+
+We performed temporal PCA at the trial level to  isolate latent components  underlying  the 
+
+time course of  pupil dilation during  both  CS -locked and US -locked windows.  For each analysis 
+
+window,  PCA revealed a stable component structure that was  highly  consistent between 
+
+experimental halves  as well as across  various  contributing samples , indicating that  this  temporal 
+
+pattern represents a  largely  stationary  (time -invariant)  signal across acquisition  (irrespective  of 
+
+amplitude changes) , at least given the present timing and design characteristics.  The overall 
+
+structural fit of the  chosen  PCA solution was further validated by near -perfect correlations of PCA -
+
+reconstructed waveforms, empirical grand averages, and GAMM -predicted marginal waveforms ,
+
+and  was found to be largely robust to the  choice of rotation  (see Supplementary Material).    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 36
+
+Importantly, this  finding  suggests  (1)  that  conditioned pupil dilation  reflects a sequence of  distinct ,
+
+yet  overlapping  processes (or ‘manifolds’ ; Blini  et al., 202 4), rather than representing a unitary 
+
+readout , a pattern also  consistent with the established dissociation between  early  parasympathetic 
+
+inhibition and later sustained sympathetic activation (Steinhauer & Hakerem, 1992; Finke et al., 
+
+2017; Widman n et al., 2018).  In addition, our data indicate  (2) that  these components  can  be 
+
+reliably  dissociated  and (at least in part) mapped onto interpretable aspects of learning. 
+
+Beyond being an unspecific  index of arousal,  pupil dilation is  sensitive to  valence -specific 
+
+processing, depending on  timing 
+
+Both  PCA -based  LMM results  and GAMM -derived  difference waves  provided largely 
+
+converging evidence for  valence -specific  dissociations between early  and later  response 
+
+components : Specifically,  pupil dilation  in the initial  (post -CS)  component  was  found  to 
+
+preferentially  track  appetitive learning  (potentially also involving  a graded  value signal)  and, 
+
+accordingly,  distinguished  appetitive CS+  from  never reinforced  cues  (CS -) much earlier than 
+
+differential  responses  to  aversive CS+  emerged in GAMM  predictions . In our data, this effect was 
+
+particularly robust : it remained  (and actually  increased)  after exclusion of  the  (only ) contingency -
+
+instructed  sample  and  was present across remaining studies , including design s with  within -subjects 
+
+variation of valence and constant  CS  modality  (see Figure S5).  Moreover,  both the descriptive 
+
+pattern of  PCA  results and  GAMM predictions even  suggested a linear, valence -dependent gradient 
+
+in a  short  window  up to  1 s after CS onset  (with  aversive cues  linked to  inverse response 
+
+differentiation , i.e., pupillary constriction ). This  finding aligns with  evidence from instrumental 
+
+learning  tasks suggesting  sensitivity of the pupil to noncons cious  value judgments  (Bijleveld et al., 
+
+2011)  as well as  valence -graded responding in sign -trackers (Schad et al., 2020 ; for  similar 
+
+pupillary  effects of reward prediction in Pavlovian delay conditioning  in mice, see Yamada & Toda, 
+
+2022).  By  contrast,  response s immediately  before /around  US onset (in the US -locked analysis) 
+
+appeared to be  more sensitive to  aversive conditioning  and  incrementally  predicted  subsequent 
+
+perceptions  of unpleasantness as well as arousal beyond  the  (design -based)  value of the cue .   
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 37
+
+From  a meta -science  perspective , our  results hint at the possibility that larger average  effect 
+
+sizes  reported  in aversive conditioning  research  (Finke et al., 2021) , or  null effects in early  (post -
+
+CS)  as opposed to late  (pre -US)  windows  (Jentsch et al., 2020) , may  have  resulted  not only from 
+
+modality - and  intensity -related US effects  (given  widespread  use of electro -tactile stimulation ) but 
+
+also  from  the early window’s sensitivity to incentive -related  value (which might be missed in 
+
+studies targeting aversive /threat -related  learning).  Accordingly , our  findings may inform future 
+
+research on appetitive conditioning , which  would l ikely benefit from selecting  response intervals 
+
+based on  the  observed  early -window  sensitivit y (rather than  intervals commonly  used in  aversive 
+
+conditioning studies ). 
+
+Anticipatory pupil dilation before outcome onset  may  reflect the  shift from  uncertainty -related 
+
+attention ( associability ) to outcome  expectancy 
+
+As responses approached (expected) US onset,  their functional profile  appeared to shift  from 
+
+cue valence to ward  uncert ainty -driven attention  (indexed by  an association with PH associability , in 
+
+both  LMM - and GAMM -based analyses ) and then toward  anticipation and outcome expectancy . In 
+
+line with this, c omponent scores peaking in the late CS  window  and  around US onset  predicted  self -
+
+reported arousal and aligned with  expected value (associative strength) . Mirroring  the appetitive 
+
+specificity of the Post -CS1 component,  the Peri -US component  was largely specific to negative 
+
+valence, as shown both by  differential pupillary responses  to aversive  cues  and its strong link to 
+
+perceived CS unpleasantness. G iven both its  temporal loading pattern and  further analyses based on 
+
+non -reinforced trials only, o ur data suggest that both  aversive cues and outcomes  contributed to this 
+
+component , reflecting  the  emergence  of a  growing anticipatory, threat -related signal , which is 
+
+further augmented upon US  delivery . This  assumed dynamic is also consistent with the Peri -US 
+
+component’s peak around 0.2 s after US onset, as  evoked pupil dilation responses are assumed to 
+
+emerge not much earlier than 500 ms after an event . While this interpretation in terms of a shift  in 
+
+cognitive -affective processing that is differentially reflected in  latent pupil -dilation components 
+
+seems  plausible,  it  is  important to note  that it is  also speculative to some extent.  In particular,    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 38
+
+antecedent  learning signals derived from a hybrid RW -PH model did not  reliably  exp lain variance 
+
+beyond the design -based contrast in the CS -locked window  (at least not  after the in itial response 
+
+phase) . However, r ather than indicating an absence of learning, this convergence is expected under 
+
+RW dynamics, where associative strength asymptotically approaches the  manipulated  contingenc ies 
+
+(which points to a  limitation of our  study  design) . Given that the component -specific links did not 
+
+exceed  design -based predictors  (and  may  depend on  parameter  prior s, despite evidence for sign 
+
+stability ), it would be premature to  consider  these pupillary components a  selective  readout of 
+
+learning processes  until  this  hypothesis  has been directly  tested in future research .
+
+Responses during the window of (expected) US presentation  capture  independent effects of 
+
+outcome  evaluation  and prediction -error -related  processes 
+
+The clearest evidence for  specific computational signals  reflected in pupil  size  emerged in the 
+
+window after (expected) US onset , where  both  post -US component tracked the magnitude of 
+
+expectation violation  (i.e., prediction error s). More s pecifically,  in addition to pronounced effects of 
+
+unconditioned responding to affective outcomes (rewards and aversive stimuli),  the earlier 
+
+component (peaking  1.5 -2 s after US onset)  indexed  both  omissions of expected outcomes 
+
+(Dercksen  et al., 2023)  and unexpected  outcome presentation s, with  larger  effects observed for 
+
+aversive conditioning.  Interestingly, the second post -US component  (peaking around 3.5 -4 s after 
+
+US onset)  specifically reflected  the amplification of responses to  affective outcomes by surprise 
+
+(i.e., the positive prediction error, irrespective of US valence).  Prior research has  linked  pupil 
+
+dilation  to  prediction errors  mainly  in  decision -making tasks,  for instance,  during both decision 
+
+formation and feedback processing  (Colizoli et al., 2018; Colizoli et al., 202 6; Van Slooten et al., 
+
+2018) , with  early post -feedback  responses  sometimes linked to  unsigned prediction error  signals 
+
+and  later time windows to signed prediction error s. In Pavlovian conditioning,  by contrast, evidence 
+
+for outcome -evoked pupillary prediction -error responses is less consistent  (Kim et al., 2025; 
+
+Stemerding et al., 2022) . Our data  (i.e., both PCA -LMM and GAMM  results)  argue in favor of  the 
+
+idea that  responses  after expected US onset  are scaled  by  general expectation violation  (Preuschoff    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 39
+
+et al., 20 11 ) in a window around 2 s after onset , with later  phases  potentially indexing prolonged 
+
+attention  to unexpected affective outcomes . Blunted  post -US responding in trace (vs. delay) 
+
+conditioning further suggests that this signal is sensitive to CS -US contiguity, consistent with less 
+
+certain outcome prediction when cue and outcome are temporally separated.  By contrast, the results 
+
+were not consistent with an account in terms of symmetrical signed prediction -error signaling. 
+
+Notably , a  recent study applying temp or al PCA to single -trial pupil data in an associative -memory 
+
+task  isolated a  comparable  prediction -error -sensitive component  (Xue et al., 202 6, reviewed 
+
+preprint ).  While the emergence of dissociable  components  sensitive to prediction errors  across 
+
+mnemonic paradigms  supports  the  utility  of this approach , the  present results  do not  allow for 
+
+extrapolating  to  potential  later  response  phases  or  assessing  whether  signed prediction errors  (e.g., 
+
+signed reward prediction errors ) may play a role  during later  stages of outcome processing  as well. 
+
+Data -driven decomposition  (PCA)  and  assumption -free modeling of waveforms (GAMM) 
+
+converge 
+
+A central methodo logical contribution of the present work is the convergence of two 
+
+complementary analytic strategies,  both of  which have been applied  to pupillometry before  (Siegle 
+
+et al., 2001;  Van Rij  et al., 20 19 ), but  have  – to the best of our knowledge  – never  been 
+
+implemented , let alone combined , to study  pupil dilation in the context of  Pavlovian conditioning 
+
+(for  temporal  PCA  of  pupil lary  data in  memory paradigms  see Clewett et al., 2020; Xue et al., 202 6,
+
+reviewed preprint ).  While temporal PCA reduces the  complexity  of pupillary  waveforms , allowing 
+
+the derivation of  latent components based on  a low -dimensional structure , GAMM reconstructs the 
+
+full waveform  without a -priori assumptions about its shape  (Wood et al., 2016) . Both approaches 
+
+proved reliable and  yielded near -identical  marginal  waves in all major conditions as well  as a high 
+
+correspondence of  difference waves (CS+ vs. CS -), except for  the appetitive CS+ contrast  (which 
+
+showed a similar early  shape  but more sustained  dilation in  GAMM -based waveforms).  The  lesser 
+
+degree of convergence in appetitive conditioning may be related to  its  smaller signal -to -noise ratio 
+
+(i.e., s maller differentiation effects) , as suggested by a dditional sensitivity analyses  showing    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 40
+
+relatively  lower  odd -even reliability  for appetitive  CS -locked  difference waves  (r = . 81, aversive: 
+
+r = .95 [Spearman -Brown corrected ]; see Supplementary Material , Figure S8 ) and thus naturally 
+
+limit ed  convergent validity with other measures.  Overall,  dual  evidence from two  distinct 
+
+methodological approaches  strengthens confidence that the  component structure  and  its association 
+
+with  time -resolved  conditioning  effects  are  robust  and reflective of  genuine empirical relationships 
+
+(rather than  artifact s of the  decomposition method or  arbitrary  analytic  choices ).  In addition, our 
+
+findings underscore that both methods may be preferab le  to  averaging over  broad (and often 
+
+heterogeneously defined) response windows .
+
+Limitations  and further directions 
+
+Our above conclusions are qualified by several  noteworthy  limitations.  First, although all 
+
+datasets were  harmonized and  reprocesse d using an identical pipeline,  the present study relied on a 
+
+non -preregistered  reanalysis of  previous (or in part ongoing) studies from a single research group 
+
+using  similar paradigms , which  constrains its generalizability.  Extending this framework in future 
+
+research by including studies from other labs as well as further variation in stimulus modality and 
+
+timing would  thus  strengthen the external validity of our findings.  Second,  to avoid circularity, 
+
+learning  signals  were  generated from fixed, plausible starting values, rather than  fitted individually .
+
+While  the observed  patterns of  associations were  quite robust against  variation in these parameter 
+
+choices  (in particular regarding the  results in the  post -US  window,  which suggested  a strong link to 
+
+prediction -error  processing), this  might  nevertheless  have  led to reduced  overall model fit  and  a less 
+
+optimal  description of learning  trajectories . In a similar vein, collinearity between  modeled 
+
+expected value and experimentally manipulated contingencies  (as noted above) restricts inferences 
+
+about the incremental  information conveyed  by anticipatory  signals , particularly during the CS 
+
+window.  Third, self -report ratings were collected only after acquisition, which  constrains  their 
+
+interpreta bility  to  global  predictive validity  between  pupil lary  dynamics and learning outcomes ,
+
+precluding  an in -depth  analysis of trial -by -trial  convergence  with  self -reported cognitive -affective 
+
+processing.  Furthermore , all samples comprised healthy, predominantly young adults (with an    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 41
+
+overall high proportion of  women). Therefore, it is unclear whether and how the results generalize 
+
+to clinical or older populations.  Notably , all studies included used timing features (e.g., CS -US 
+
+onset delay) that  are common in conditioning research . However,  whether and how  divergent 
+
+designs using  very  short CS duration  (e.g., Roesmann et al., 202 2) or rapidly sequenced 
+
+presentation align  with our findings or  instead  show completely different temporal signature s, is an 
+
+open question and  an interesting avenue for further research .
+
+We performed  a series of thorough robustness checks to corroborate our main  findings and 
+
+conclusions.  Whereas the early appetitive dissociation and the outcome effects  in the  post -US 
+
+window  were confirmed as  highly stable  in  these  additional  analyses (see Supplementary Material) ,
+
+the  potential  specificity of the  Peri -US  component  to aversive learning  was  found to be  strongly 
+
+influenced  (although  not solely  driven ) by a single  study  (the only one using explicit contingency 
+
+instructions ). At the same time , the  association with self -reported negative cue valence remained 
+
+robust across samples . Given the fact that instructed fear  is likely to potentiate anticipatory 
+
+responses  to the  US  (presumably  peaking  shortly before  or around  its onset) , this result is  thus 
+
+consistent with our overall (tentative) interpretation of  potential  functional correlates underlying 
+
+this response phase  (i.e.,  expectancy -driven  aversive  anticipation /preparation) . While  the less clear -
+
+cut  pattern of CS vs. US d ifferentiation  in the varimax -based sensitivity analysis  can be explained 
+
+by the fact that  temporal PCA is blind to the boundary between CS and US intervals,  and 
+
+orthogonal rotation can  therefore  draw US -related variance into adjacent component s (whereas 
+
+promax permits correlated components and separates this variance more cleanly) , findings  in the 
+
+US -locked windo ws  sh ould  nonetheless be interpreted with  some  caution. 
+
+On a more general level, our data remain silent as to the specific underlying 
+
+neur ophysiological  mechani sms. For instance , rapid effects of  cognitive processing  on pupil size 
+
+have been  mainly associated with central inhibition of the parasympathetic pathway  (Steinhauer et 
+
+al., 2004) , causing relaxation of the sphincter,  whereas arousal -induced  effects presumably  involve 
+
+direct  sympathetic activation of the dilator  (Bradley et al., 2008) . Similarly, Strauch and colleagues    
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint TEMPORAL SIGNATURE SOF PUPIL DILATION IN PAVLOVIAN CONDITIONING 42
+
+(2022) have  more recently  proposed  a conceptual  framework  that  stipulates  distinct types of 
+
+pupillary responses, distinguished  both  by their  neural underpinnings  and (in part)  by their temporal 
+
+character istics:  (a) rapid,  transient  responses linked to  orienting (and presumably  subserved by 
+
+activity in the superior colliculus ; see also Wang & Munoz, 2015 ), (b)  relatively delayed , yet  more 
+
+sustained  responses indexing alertness  (corresponding to activity  in  the LC -NE  system ), and (c) 
+
+more  variable  effects linked to executive functioning (i.e., the fronto -parietal network).  In line with 
+
+these considerations, we found  evidence for similar temporal dynamics (i.e.,  comparable  latencies 
+
+of component peaks ) across  both  post -CS and post -US response phases.  However, further research 
+
+is needed to elucidate  if and how distinct sequential stages of pupil dilation during conditioning  are 
+
+linked  to specific neurocognitive processes  and corresponding  patterns  of  brain  activation .
+
+Conclusion 
+
+Taken together,  the results of this systematic , large -scale reanalysis of pupil lary  responses 
+
+during Pavlovian conditioning  are  consistent with the idea of a functional dissociation between 
+
+distinct,  early  vs.  late response components in conditioned pupil dilation. Specifically, early 
+
+responses seem to be more sensitive to reward -related  processing yet less  stro ngly  linked  to  overall 
+
+levels of  arousal . Therefore, our data imply that pupil dilation should not be treated as a unitary 
+
+marker of associative learning. Rather, selection of response windows should be tailored to the 
+
+process of interest in future research, rather than  assuming  identical  temporal dynamics  in aversive 
+
+and appetitive conditioning.  In line with this , we found initial evidence that  these  temporally 
+
+dissociable components may differentially index  specific  processes  such as  appetitive valu e,
+
+anticipation, and outcome -related prediction errors , suggesting that decomposing  the within -trial 
+
+temporal signature s of pupil dilation offers a promising , non -invasive  approach  for future 
+
+computational  modeling applications .
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 43 
+
+Author contributions 
+
+JBF: conceptualization, methodology, investigation, formal analysis,  funding acquisition ; writing 
+
+(original draft) ; AMS: investigation, writing ( review and editing );  HS:  investigation,  resources ,
+
+writing (review and editing) ; TK:  resources , writing (review and editing). 
+
+Author Notes 
+
+None of the authors has any potential conflicts of interest to declare.  The research was  supported  (in 
+
+part ) by a grant  from  the German Research Foundation (DFG) to JBF ( grant number  FI  2441 -4/1). 
+
+References 
+
+Aston -Jones, G., & Cohen, J. D. (2005). An integrative theory of locus coeruleus -norepinephrine 
+
+function: Adaptive gain and optimal performance.  Annual Review of Neuroscience , 28(1), 
+
+403 –450. 
+
+Bates, D., Maechler, M., Bolker, B., Walker, S., Christensen, R. H. B., Singmann, H., ...  & Bolker, 
+
+M. B. (2015).  Package ‘lme4’.  convergence , 12 (1), 2. 
+
+Bijleveld, E., Custers, R., & Aarts, H. (2011). Once the money is in sight: Distinctive effects of 
+
+conscious and unconscious rewards on task performance.  Journal  of  Experimental  Social 
+
+Psychology , 47(4), 865 –869. 
+
+Blini, E., Arrighi, R., & Anobile, G. (2024). Pupillary manifolds: uncovering the latent geometrical 
+
+structures behind phasic changes in pupil size.  Scientific Reports , 14 (1), 27306. 
+
+Bradley, M. M., Miccoli, L., Escrig, M. A., & Lang, P. J. (2008).  The pupil as a measure of 
+
+emotional arousal and autonomic activation.  Psychophysiology , 45(4), 602 –607. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 44 
+
+Brysbaert, M., & Stevens, M. (2018). Power analysis and effect size in mixed effects models: A 
+
+tutorial.  Journal of Cognition , 1(1), 9. 
+
+Castellotti, S., Petrizzo, I., Arrighi, R., & Blini, E. (2025). Dimensionality reduction techniques in 
+
+pupillometry research: A primer for behavioral scientists.  Behavior Research Methods ,
+
+57 (12), 337. 
+
+Clewett, D., Gasser, C., & Davachi, L. (2020).  Pupil -linked arousal signals track the temporal 
+
+organization of events in memory.  Nature  Communications , 11 (1), 4007. 
+
+Colizoli, O., Gee, J. W. de, Urai, A. E., & Donner, T. H. (2018).  Task -evoked pupil responses 
+
+reflect internal belief states.  Scientific Reports , 8(1), 13702. 
+
+Colizoli, O., van Leeuwen, T. M., Rutar, D., & Bekkering, H. (2026).  Pupil dilation offers a time -
+
+window on prediction error.  ELife , 14. 
+
+de Berker, A. O., Tirole, M., Rutledge, R. B., Cross, G. F., Dolan, R. J., & Bestmann, S. (2016). 
+
+Acute stress selectively impairs learning to act.  Scientific  Reports , 6(1), 29816. 
+
+Dercksen, T. T., Widmann, A., & Wetzel, N. (2023).  Salient omissions -pupil dilation in response to 
+
+unexpected omissions of sound and touch.  Frontiers in Psychiatry , 14, 1143931. 
+
+Dien, J. (2010). Evaluating two‐step PCA of ERP data with geomin, infomax, oblimin, promax, and 
+
+varimax rotations.  Psychophysiology , 47 (1), 170 -183. 
+
+Finke, J. B., Deuter, C. E., Hengesch, X., & Schächinger, H. (2017).  The time course of pupil 
+
+dilation evoked by visual sexual stimuli: Exploring the underlying ANS mechanisms. 
+
+Psychophysiology , 54(10), 1444 –1458. 
+
+Finke, J.B., Hahn, S., Schächinger, H., & Klucken, T. (2023a).  Increased pupil and heart‐rate 
+
+responses to sexual stimuli in men after physical exertion.  Psychophysiology , 60(7), e14254. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 45 
+
+Finke, J. B., & Klucken, T. (2025).  Trait sexual motivation shapes cue reactivity in visual, but not 
+
+auditory, sexual reward learning: Psychophysiological and computational evidence. 
+
+Biological Psychology , 198, 109046. 
+
+Finke, J. B., Roesmann, K., Stalder, T., & Klucken, T. (2021).  Pupil dilation as an index of 
+
+Pavlovian conditioning.  A systematic review and meta -analysis,  Neuroscience &
+
+Biobehavioral Reviews , 130, 351 -368. 
+
+Finke, J. B., Schippers, A. M., & Klucken, T. (2025).  Intra -individual comparison of appetitive 
+
+trace and delay conditioning in humans across acquisition and extinction.  Scientific  Reports ,
+
+15, 20156. 
+
+Finke, J. B., Stalder, T., & Klucken, T. (2023 b).  Pupil dilation tracks divergent learning processes 
+
+in aware versus unaware Pavlovian conditioning.  Psychophysiology , e14288. 
+
+Hoeks, B., & Levelt, W. J. (1993). Pupillary dilation as a measure of attention: A quantitative 
+
+system analysis.  Behavior Research Methods, Instruments, & Computers , 25 (1), 16 -26. 
+
+Jentsch, V. L., Wolf, O. T., & Merz, C. J. (2020).  Temporal dynamics of conditioned skin 
+
+conductance and pupillary responses during fear acquisition and extinction.  International 
+
+Journal of Psychophysiology , 147, 93 –99. 
+
+Joshi, S., Li, Y., Kalwani, R. M., & Gold, J. I. (2016). Relationships between pupil diameter and 
+
+neuronal activity in the locus coeruleus, colliculi, and cingulate cortex.  Neuron , 89(1), 221 –
+
+234. 
+
+Kim, J.‑C., Hellrung, L., Nebe, S., & Tobler, P. N. (2025).  The Anterior Insula Processes a Time -
+
+Resolved Subjective Risk Prediction Error.  The Journal of Neuroscience  45(23). 
+
+Kleiner, M., Brainard, D., & Pelli, D. (2007).  What's new in Psychtoolbox -3? 
+
+Koenig, S., Uengoer, M., & Lachnit, H. (2018).  Pupil dilation indicates the coding of past 
+
+prediction errors: Evidence for attentional learning theory.  Psychophysiology , 55(4), e13020. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 46 
+
+Korn, C. W., Staib, M., Tzovara, A., Castegnetti, G., & Bach, D. R. (2017).  A pupil size response 
+
+model to assess fear learning.  Psychophysiology , 54(3), 330 –343. 
+
+Leuchs, L., Schneider, M., & Spoormaker, V. I. (2019).  Measuring the conditioned response: A 
+
+comparison of pupillometry, skin conductance, and startle electromyography. 
+
+Psychophysiology , 56(1), e13283. 
+
+Liu, H., Linnell, J., & Bach, D. R. (2026).  Psychophysiological outcome responses in human 
+
+Pavlovian fear conditioning: a prediction error analysis.  Psychophysiology , 63 (4), e70300. 
+
+Loewenfeld, I. E., & Lowenstein, O. (1993).  The pupil: Anatomy, physiology, and clinical 
+
+applications  (Vol. 2). Wiley -Blackwell. 
+
+Lorenzo -Seva, U., & Ten Berge, J. M. (2006).  Tucker's congruence coefficient as a meaningful 
+
+index of factor similarity.  Methodology , 2(2), 57 -64. 
+
+Megemont, M., McBurney -Lin, J., & Yang, H. (2022). Pupil diameter is not an accurate real -time 
+
+readout of locus coeruleus activity.  Elife , 11 , e70510. 
+
+Pearce, J. M., & Hall, G. (1980). A model for Pavlovian learning: Variations in the effectiveness of 
+
+conditioned but not of unconditioned stimuli.  Psychological Review , 87(6), 532 –552. 
+
+Pietrock, C., Ebrahimi, C., Katthagen, T. M., Koch, S. P., Heinz, A., Rothkirch, M., &
+
+Schlagenhauf, F. (2019).  Pupil dilation as an implicit measure of appetitive Pavlovian 
+
+learning.  Psychophysiology , 56(12), e13463. 
+
+Preuschoff, K., ’t Hart, B. M., & Einhäuser, W. (2011).  Pupil dilation signals surprise: Evidence for 
+
+noradrenaline’s role in decision making.  Frontiers in Neuroscience , 5, 115. 
+
+Re scorla, R. A., & Wagner, A. R. (1972). A Theory of Pavlovian Conditioning: Variations in the 
+
+Effectiveness of Reinforcement and Nonreinforcement. In A. H. Black, & W. F. Prokasy 
+
+(Eds.),  Classical Conditioning II: Current Research and Theory  (pp. 64 -99). New York: 
+
+Appleton - Century -Crofts. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 47 
+
+Roesmann, K., Wessing, I., Kraß, S., Leehr, E. J., Klucken, T., Straube, T., & Junghöfer, M. (2022). 
+
+Developmental aspects of fear generalization –A MEG study on neurocognitive correlates in 
+
+adolescents versus adults.  Developmental Cognitive Neuroscience , 58 , 101169. 
+
+Schad, D. J., Rapp, M. A., Garbusow, M., Nebe, S., Sebold, M., Obst, E., Sommer, C., Deserno, L., 
+
+Rabovsky, M., & Friedel, E. (2020). Dissociating neural learning signals in human sign -and 
+
+goal -trackers.  Nature Human Behaviour , 4(2), 201 –214. 
+
+Schippers, A. M., Finke, J. B., & Klucken, T. (2026).  Olfactory Disgust Conditioning across 
+
+Multiple Response Systems: The Role of Temporal Contiguity  [preprint] . Retrieved from 
+
+osf.io/preprints/psyarxiv/tey6j_v1 
+
+Siegle, G. J., Granholm, E., Ingram, R. E., & Matt, G. E. (2001).  Pupillary and reaction time 
+
+measures of sustained processing of negative information in depression.  Biological 
+
+Psychiatry , 49 (7), 624 -636. 
+
+Steinhauer, S. R., Bradley, M. M., Siegle, G. J., Roecklein, K. A., & Dix, A. (2022).  Publication 
+
+guidelines and recommendations for pupillary measurement in psychophysiological studies. 
+
+Psychophysiology , 59(4), e14035. 
+
+Steinhauer, S. R., & Hakerem, G. (1992).  The pupillary response in cognitive psychophysiology 
+
+and schizophrenia.  Annals of the New York Academy of Sciences , 658(1), 182 –204. 
+
+Steinhauer, S. R., Siegle, G. J., Condray, R., & Pless, M. (2004). Sympathetic and parasympathetic 
+
+innervation of pupillary dilation during sustained processing.  International  Journal  of 
+
+Psychophysiology , 52(1), 77 –86. 
+
+Stemerding, L. E., van Ast, V. A., Gerlicher, A. M. V., & Kindt, M. (2022).  Pupil dilation and skin 
+
+conductance as measures of prediction error in aversive learning.  Behaviour Research and 
+
+Therapy , 157, 104164. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 48 
+
+Strauch, C., Wang, C. A., Einhäuser, W., Van der Stigchel, S., & Naber, M. (2022).  Pupillometry as 
+
+an integrated readout of distinct attentional networks.  Trends in Neurosciences , 45 (8), 635 -
+
+647. 
+
+Tzovara, A., Korn, C. W., & Bach, D. R. (2018).  Human Pavlovian fear conditioning conforms to 
+
+probabilistic learning.  PLoS Computational Biology , 14(8). 
+
+Va n Rij, J., Hendriks, P., van Rijn, H., Baayen, R. H., & Wood, S. N. (2019). Analyzing the time 
+
+course of pupillometric data.  Trends in  Hearing , 23 , 2331216519832483. 
+
+Van Rij, J., Wieling, M., Baayen, R. H., & van Rijn, D. (2015).  itsadug: Interpreting time series 
+
+and autocorrelated data using GAMMs .
+
+Van Slooten, J. C., Jahfari, S., Knapen, T., & Theeuwes, J. (2018).  How pupil responses track 
+
+value -based decision -making during and after reinforcement learning.  PLoS  Computational 
+
+Biology , 14(11), e1006632. 
+
+Wang, C. A., & Munoz, D. P. (2015).  A circuit for pupil orienting responses: implications for 
+
+cognitive modulation of pupil size.  Current Opinion in Neurobiology , 33 , 134 -140. 
+
+Wetzel, N., Buttelmann, D., Schieler, A., & Widmann, A. (2015).  Infant and adult pupil dilation in 
+
+response to unexpected sounds.  Developmental Psychobiology , 1 –11. 
+
+Widmann, A., Schröger, E., & Wetzel, N. (2018).  Emotion lies in the eye of the listener: Emotional 
+
+arousal to novel sounds is reflected in the sympathetic contribution to the pupil dilation 
+
+response and the P3.  Biological Psychology , 133 , 10 -17. 
+
+Wood, S. N. (2016). Just another Gibbs additive modeler: interfacing JAGS and mgcv.  Journal of 
+
+Statistical Software , 75 , 1 -15. 
+
+Wood, S. (2018). Mixed GAM computation vehicle with GCV/AIC/REML smoothness estimation 
+
+and GAMMs by REML/PQL.  R package version , 1, 8 -23. 
+
+> .CC-BY-NC-ND 4.0 International license made available under a (which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is The copyright holder for this preprint this version posted July 21, 2026. ;https://doi.org/10.64898/2026.07.16.737017 doi: bioRxiv preprint
+
+TEMPORAL SIGNATURE S OF PUPIL DILATION IN PAVLOVIAN CONDITIONING 49 
+
+Xue , A.M. , Jokhan i, J. , Norcia , A. M., Wagner , A.D.  (2026) Strong mnemonic prediction errors 
+
+increase cognitive control, attention, and arousal . eLife  15 , RP109678  [reviewed preprint]. 
+
+Yamada, K., & Toda, K. (2022). Pupillary dynamics of mice performing a Pavlovian delay 
+
+conditioning task reflect reward -predictive signals.  Frontiers in Systems Neuroscience , 16 ,
+
+1045764.

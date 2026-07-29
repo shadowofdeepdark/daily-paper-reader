@@ -1,0 +1,20 @@
+---
+title: Estimating trial-wise modulation of functional connectivity using event-related fMRI
+authors: "Hwang, K., Stokes, S. E., Leach, S. C., Jiang, J."
+date: 2026-07-21
+pdf: "https://www.biorxiv.org/content/10.64898/2026.07.15.738746v1.full.pdf"
+tags: ["query:q7"]
+score: 6.5
+evidence: 在认知fMRI研究中量化逐试次功能连接调节的方法
+tldr: 引入beta-PPI方法，用于在事件相关fMRI中测量认知需求如何调节大脑连接。
+source: biorxiv
+selection_source: fresh_fetch
+figures_json: "[{\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-001.webp\", \"caption\": \"\", \"page\": 8, \"index\": 1, \"width\": 729, \"height\": 554}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-002.webp\", \"caption\": \"\", \"page\": 16, \"index\": 2, \"width\": 611, \"height\": 832}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-003.webp\", \"caption\": \"\", \"page\": 19, \"index\": 3, \"width\": 1256, \"height\": 312}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-004.webp\", \"caption\": \"\", \"page\": 20, \"index\": 4, \"width\": 1256, \"height\": 344}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-005.webp\", \"caption\": \"\", \"page\": 21, \"index\": 5, \"width\": 1192, \"height\": 333}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-006.webp\", \"caption\": \"\", \"page\": 22, \"index\": 6, \"width\": 571, \"height\": 359}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-007.webp\", \"caption\": \"\", \"page\": 23, \"index\": 7, \"width\": 1254, \"height\": 630}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-008.webp\", \"caption\": \"\", \"page\": 24, \"index\": 8, \"width\": 836, \"height\": 362}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-009.webp\", \"caption\": \"\", \"page\": 26, \"index\": 9, \"width\": 757, \"height\": 568}, {\"url\": \"assets/figures/biorxiv/biorxiv-10-64898-2026-07-15-738746-v1/fig-010.webp\", \"caption\": \"\", \"page\": 28, \"index\": 10, \"width\": 918, \"height\": 609}]"
+motivation: 在认知fMRI研究中量化逐试次功能连接调节的方法。
+method: 方法与实现细节请参考摘要与正文。
+result: 结果与对比结论请参考摘要与正文。
+conclusion: 总体而言，该工作在所述任务上展示了有效性，并提供了可复用的思路或工具。
+---
+
+## Abstract
+Understanding the neural basis of human cognition requires measuring not only localized brain activity but also how functional interactions between brain regions change in response to different cognitive demands. Event-related fMRI is an efficient design for linking trial-wise behavioral and computational variables to brain activity, but comparable methods for examining their effects on functional connectivity remain limited. Here, we develop beta-PPI (beta-series psychophysiological interaction), a method that leverages single-trial response estimates from even-related fMRI to quantify how trial-wise variables modulate functional connectivity. This task-based functional connectivity method provides a flexible approach for studying functional connectivity for event-related fMRI designs. We evaluated beta-PPI using comprehensive simulations across several experimental conditions and signal qualities. Beta-PPI can sensitively detect ground-truth effects and exhibited good parameter recovery. Compared with generalized psychophysiological interaction, beta-PPI achieved comparable performance across most conditions while demonstrating improved statistical power under lower signal-to-noise conditions. We further validated beta-PPI using empirical event-related fMRI data. Distinct trial-wise cognitive variables selectively modulated functional connectivity during their corresponding trial epochs, demonstrating the temporal specificity and flexibility of the approach. By testing how trial-wise variables modulate functional connectivity, beta-PPI extends task-based connectivity analysis to model-based fMRI and provides a common single-trial framework that could facilitate the integration of connectivity, activation, and representational analyses in event38 related fMRI.
