@@ -1,0 +1,764 @@
+Title: A Cross-lingual Comparison of Human and Classification Model Entrainment Behavior in Code-switched Speech Settings
+
+URL Source: https://arxiv.org/pdf/2607.25202v1
+
+Published Time: Wed, 29 Jul 2026 00:24:47 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+## A Cross-lingual Comparison of Human and Classification Model Entrainment Behavior in Code-switched Speech Settings 
+
+Debasmita Bhattacharya 1* and Siying Ding 1 and Alayna Nguyen 2† and Julia Hirschberg 11Department of Computer Science, Columbia University 2Instagram 
+
+Abstract 
+
+Conversational entrainment is well-studied in monolingual and written contexts, but re-mains underexplored in spoken code-switching (CSW). We present a novel cross-lingual analy-sis of entrainment in Mandarin-English, Hindi-English, and Spanish-English dialogue and show that, while lexical entrainment general-izes across language pairs, entrainment over acoustic-prosodic and CSW style aspects ex-hibits context-specific variation. We build on these findings by asking whether classifica-tion models capture these human behavioral patterns. Applying feature importance and ablation analyses, we find that classical and Transformer-based classifiers detect entrain-ment reasonably well but consistently prioritize features other than those most salient to human entraining behavior. Our approach introduces a human-grounded framework for evaluating model decision-making in multilingual stylis-tic contexts, and suggests future challenges for developing conversational agents capable of producing naturalistic code-switched speech. 
+
+1 Introduction 
+
+When speakers entrain to one another, each sub-consciously adapts aspects of the interlocutor’s communication style into their own language pro-duction, coordinating features of diction, syntax, speaking rate, voice quality, pauses, and even facial expression and gesture, among others (Danescu-Niculescu-Mizil et al., 2011; Giles et al., 1991; Levitan and Hirschberg, 2011; Maurer and Tindall, 1983; Burgoon et al., 2006; Chartrand and Bargh, 1999). This interactive, multimodal phenomenon shapes conversational dynamics, enabling success-ful communication by ensuring mutual compre-hension, fostering rapport, and making a positive impression on the interlocutor (Reitter and Moore, 2007; Nenkova et al., 2008; Levitan et al., 2012). 
+
+> *Corresponding author: debasmita.b@cs.columbia.edu
+> †Work done as an undergraduate at Columbia University.
+
+While most existing work on entrainment has focused on monolingual, and especially English, communication, the last decade has increasingly seen entrainment studied in additional languages (Xia et al., 2014; Levitan et al., 2015; Kejriwal and Štefan Beˇ nuš, 2023; Weise et al., 2021) and in multilingual settings (Kootstra et al., 2010; Bawa et al., 2018; Parekh et al., 2020). Among studies of 
+
+code-switched entrainment , where speakers adapt while alternating between producing at least two different language varieties, most analyses have focused on only a few language pairs, most often studying entraining behavior in Spanish-English (Soto et al., 2018; Ahn et al., 2020; Bhattacharya et al., 2024a). Though some studies have incorpo-rated additional linguistic contexts and performed cross-lingual comparisons of lexical entrainment in written code-switching, few have done so in the spoken domain, giving rise to the present work. We explore the conversational dynamics of spo-ken code-switched dialogue in Mandarin-English, Hindi-English, and Spanish-English, performing cross-lingual comparisons that validate and extend prior work, e.g. Bhattacharya et al. (2024a), by grounding it in broader linguistic context. We first ask whether code-switched entrainment patterns in speech are consistent across language pairs involv-ing different language families, levels of typolog-ical distance, and cultural settings. We then build upon this by asking whether entrainment detection models attend to the same features of entrainment as people do during spontaneous code-switched communication. We find 1) generally consistent multimodal patterns of entrainment across diverse language pairs, with slight variation reflecting lin-guistic and cultural idiosyncrasies of the languages involved; and 2) while classifier models detect en-trainment reasonably well across levels of conver-sational granularity and language pairs, they seem not to use the most relevant entraining features to do so, relative to humans. Our approach and arXiv:2607.25202v1 [cs.CL] 28 Jul 2026 findings suggest that empirically grounded human behavioral patterns provide a valuable lens for inter-rogating how and why classification models detect stylistic phenomena, which has implications for understanding stylistic tasks beyond entrainment. Our work is the first to cross-lingually vali-date entrainment patterns of spoken code-switching (CSW), and to use those patterns as a human-grounded framework for evaluating classifier be-havior. In sum, our contributions are as follows: • We replicate the Spanish-English entrain-ment approach applied in Bhattacharya et al. (2024a) across new Mandarin-English and Hindi-English settings, and extend it in a cross-lingual comparison of statistical entrain-ment patterns across three corpora. • We analyze models’ feature importance attri-bution and ablation behavior to go beyond evaluating whether models can detect entrain-ment, and also highlight why they do so. • We release a manually annotated version of the MaSaC corpus with new CSW style labels to support further research on spoken CSW. 
+
+2 Related Work and Research Questions 
+
+Entrainment in code-switched contexts. Our work builds directly on Bhattacharya et al. (2024a), who studied lexical, acoustic-prosodic, and mul-tilingual stylistic entrainment in spontaneous Spanish-English conversations from the Bangor Miami (BM) corpus (Deuchar, 2011). The au-thors applied the analytical framework of Levitan and Hirschberg (2011), which distinguishes entrain-ment at the turn-level from that at the conversation-level, and defines proximity , convergence , and syn-chrony as unique manifestations of spoken en-training behavior (see Appendix A.3 for defini-tions). Bhattacharya et al. adapted this frame-work to study entrainment across CSW aspects and acoustic-prosodic features, while applying methods that draw on salient word classes and perplexity-based measures (Nenkova et al., 2008; Gravano et al., 2014) to examine lexical entrainment in BM speech. They found that entrainment trends from monolingual domains appear in code-switched lan-guage production, with new patterns specific to spoken CSW, but did not examine whether these findings generalize beyond Spanish-English. Other work, such as Bawa et al. (2018) and Parekh et al. (2020), examined entrainment in Hindi-English CSW settings, focusing on lexical representations of speech transcripts and human-machine gener-ated written exchanges, respectively. While both studies offered comparisons to entrainment patterns in Spanish-English CSW, these remained restricted to the written modality, giving rise to our first re-search question RQ1: To what extent do entrain-ment patterns of spoken CSW generalize across distinct language pairs? To answer RQ1 , we build on existing work on Spanish-English in BM, and additionally focus on Mandarin-English and Hindi-English; these four languages together represent the most spoken world languages (Ethnologue, 2026). 
+
+Comparing human and model multilingual be-havior. Recent work has proposed frameworks for explaining multilingual language models’ abil-ity to classify (and produce) human-like linguis-tic style and interaction dynamics (Namazifard and Galke Poech, 2025; Blevins et al., 2026; Lin et al., 2025). We highlight Havaldar et al. (2023), who created multilingual politeness lexica and compared feature importance values derived from model encodings to human productions. Such work informs our second research question RQ2: To what extent do classifier models attend to those entraining features used by humans who perform entrainment in code-switched speech? To an-swer RQ2 , we examine a suite of classical and Transformer-based machine learning classifiers, us-ing binary entrainment detection across language pairs to analyze feature importance in each setting. 
+
+3 Corpora 
+
+We examine three corpora of informal multilingual speech. Section 5.1 focuses on the SEAME cor-pus of spontaneous Mandarin-English dialogues (Lyu et al., 2010) and the MaSaC corpus of Hindi-English situational comedy television speech (Bedi et al., 2023), comparing both to the Bangor Miami 
+
+corpus of Spanish-English spontaneous conversa-tions (Deuchar, 2011). 1 Section 5.2 analyzes all three corpora, which comprise recorded and tran-scribed monolingual and code-switched utterances from conversations between two or more speakers. The corpora cover shared topics, e.g., daily routines, interpersonal relationships, and aca-demic/professional concerns. Unlike SEAME and BM, MaSaC does not consist of naturally-occurring speech. However, scripted television conversation                     
+
+> 1See Appendix A.1 for each corpus’ licensing details. Corpus Speech hours # of dialogues # of utterances # of unique speakers % code-switched
+> Bangor Miami 35 56 46,901 84 5SEAME 192 256 110,146 156 52 MaSaC 13 1,190 6,476 554
+> Table 1: Summary of relevant corpus statistics for each data set.
+
+is designed to sound natural and is therefore a suitable proxy for studying naturalistic phenom-ena like entrainment (Bawa et al., 2018; Danescu-Niculescu-Mizil and Lee, 2011), especially given the lack of other genre-matched, openly accessible speech data on the Hindi-English language pair. Both BM and SEAME contain utterance-level annotations (Bhattacharya et al., 2024a, 2025) that identify code-switched and monolingual utterances, and distinguish between simple insertional code-switches of single words or short phrases ( I), com-plex alternational code-switches at grammatical clause boundaries ( A), and “other” ( O) strategies of CSW resembling tag-switching (Muysken, 2000; Poplack, 1980). We add the same sets of labels to MaSaC. First, we use Microsoft’s open-source language identification (LID) tool 2 to obtain token-level LID tags for the Romanized Hindi and En-glish in MaSaC’s speech transcripts, and accord-ingly infer utterance-level language labels: code-switched vs. monolingual English or Hindi. We then add manual annotations of CSW strategies on the multilingual utterances. All strategy labels are created by the first author and verified by a volun-teer MS student, with no disagreements. Both have first-language proficiency in English; the former has intermediate competency in Hindi comprehen-sion, while the latter is a native speaker of Hindi. We find that 92% of code-switched MaSaC utter-ances use insertional CSW, 14% use alternational, and less than 1% use “other” CSW. This strategy distribution is comparable to those in BM (72% I,13% A, 18% O) and SEAME (89% I, 12% A, 7% O)(Bhattacharya et al., 2024a, 2025). We summarize additional corpus statistics in Table 1. To enable direct comparison to known dyadic 
+
+entrainment patterns in 39 of the BM conversations (Bhattacharya et al., 2024a), we filter SEAME and MaSaC for conversations between just two speak-ers where speech audio and corresponding tran-scripts are available for both speakers. We retain only those containing 4 or more turns to ensure sufficiently long dialogue for conversation-level entrainment calculations (Section 4.1). We accord-
+
+> 2https://github.com/microsoft/LID-tool
+
+ingly use 40% of SEAME (42,893 utterances over 34 dialogues) and 25% of MaSaC (1,623 utterances over 334 dialogues) in our subsequent analyses. 
+
+4 Methods 
+
+4.1 Computing code-switched entrainment. 
+
+For statistical analyses of entrainment in Mandarin-English and Hindi-English CSW, we replicate Bhat-tacharya et al. (2024a)’s method, which we sum-marize here and detail fully in Appendix A.3. The lexical feature set comprises four word classes known to be often used and entrained upon in spontaneous dialogue (Nenkova et al., 2008; Bhattacharya et al., 2024a): corpus-level most fre-quent words (top-100 and top-25), conversation-level most frequent words (top-25), affirmative cues ,and fillers (Appendix A.2 lists affirmative cues and fillers in each corpus). It also operationalizes broad similarity between speakers’ overall language use 
+
+via perplexity from Kneser-Essen-Ney smoothed trigram language models trained on each speaker’s transcripts with the KenLM toolkit. The acoustic-prosodic feature set covers utterance-level pitch ,
+
+intensity , jitter , shimmer , harmonics-to-noise ra-tio (HNR), and speaking rate in syllables per sec-ond. All acoustic-prosodic features are extracted via Parselmouth (Jadoul et al., 2018) with default parameter values and are z-score normalized by speaker. Utterance-level CSW style metrics in-clude a binary flag for CSW presence , a continuous 
+
+CSW ratio normalizing switching quantity by utter-ance length (Soto et al., 2018), and a categorical label of the CSW strategy in use ( I, A, or O), if any. We study entrainment over acoustic-prosodic 
+
+and CSW style features via turn- and conversation-level proximity, convergence, and synchrony, fol-lowing the operationalizations of Levitan and Hirschberg (2011) as adapted by Bhattacharya et al. (2024a). We measure entrainment over lexical 
+
+word classes using proximity and the stated per-plexity approach for overall language use. 
+
+4.2 Evaluating model entrainment behavior. 
+
+We next examine how a suite of binary classifiers attends to turn- and conversation-level entrainment in spoken CSW with the goal of verifying whether, during classification, models assign the most im-portance to the conversational features over which humans significantly entrain. We use both classical machine learning methods and larger Transformer-based architectures. The former group comprises eight classical models including SVC , Decision Tree , Random Forest , and MLP classifiers, all im-plemented in scikit-learn 1.6.1 (full list in Table 2). The latter group includes a base-line XGBoost model, and adapted TabTransformer 
+
+(Huang et al., 2020), FT-Transformer (Dai et al., 2025), XLM-R (Conneau et al., 2020), mBERT (De-vlin et al., 2019), RemBERT (Chung et al., 2020), 
+
+WavLM (Chen et al., 2021), and mHuBERT (Zanon Boito et al., 2024) pre-trained contextual embed-ding models; we fuse each with an MLP for classi-fication 3 and list their licenses in Appendix A.4. To evaluate these models, we create a 75/15/10 train/validation/test stratified data split per corpus. For each classifier, we first perform grid search with 5-fold cross-validation, selecting the best hy-perparameters by accuracy. 4 Applying those in training, we calculate the model’s test-time feature importance values using built-in attributes when available, and Shapley values (Lundberg and Lee, 2017) otherwise. We then perform feature-level ab-lations with the same (best) model and 5-fold cross-validation to indirectly evaluate the importance of each feature of entrainment from Section 4.1. At the conversation-level , the positive (entrain-ing) class comprises conversations exhibiting sig-nificant proximity on an empirically determined feature set of interest: 5 all CSW style metrics (BM, SEAME) or lexical word classes (MaSaC); the neg-ative class is its complement. Classes per corpus are roughly balanced. At the turn-level , the posi-tive class is similarly empirically determined (Sec-tion 5.1) and comprises consecutive turn pairs with significant proximity on a majority of CSW style metrics (BM, SEAME) or acoustic-prosodic fea-tures (MaSaC), with class imbalance handled via oversampling. At both levels of conversational granularity, a model input is a feature vector cov-ering all feature sets from Section 4.1 for each speaker, with continuous features averaged and 
+
+> 3We train only the MLP within each pre-trained fusion model, freezing the parameters of the pre-trained foundation.
+> 4We list all hyperparameter details in Appendix A.5.
+> 5Based on Section 5.1, only the feature set of interest should discriminate entraining from non-entraining speech: other feature sets show entrainment in either nearly all or nearly no instances, providing little discriminative signal.
+
+non-continuous features first converted to binary flags; full construction details are in Appendix A.6. This results in a tabular /numerical representation, which we concatenate with model-specific embed-dings of conversation transcripts (text embeddings) or audio recordings (speech embeddings). 
+
+5 Results 
+
+5.1 Cross-lingual human entraining behavior. 
+
+We first examine whether human entrainment pat-terns over lexical, acoustic-prosodic, and CSW style features in code-switched speech are consis-tent across language pairs differing in typological distance, language family, and cultural context. 
+
+Entrainment on lexical aspects of code-switched speech. Within SEAME, we find strong lexical entrainment on all word classes. Over the most frequent corpus-level words, 100% of SEAME con-versations exhibit entrainment ( p < 0.05 in each case). We find similar entrainment on affirmative cues (97% of conversations, p < 0.05 ) and fillers (91% of conversations, p < 0.05 ). In terms of over-all language use, when including out-of-vocabulary (OOV) words, 88% of conversations exhibit within-conversation entrainment ( p < 0.05 ); 77% involve both interlocutors entraining to their partner’s over-all language use, while in the remaining 11% only one speaker entrains to the other. Results excluding OOV words are nearly identical (Appendix A.7). Within MaSaC, we find significant lexical en-trainment on the word classes involving frequent words. Over the corpus-level most frequent words (top-100 and top-25), 84% and 92% of MaSaC con-versations respectively exhibit entrainment ( p < 
+
+0.05 for both). While entrainment over the top-25 conversation-level words is significant ( p < 0.05 ), it appears only in 10% of conversations. In terms of overall language use, 70% of conversations show evidence of within-conversation entrainment when including OOV words ( p < 0.05 ): 52% exhibit bidirectional entrainment while 18% involve only one speaker entraining to the other. OOV-excluded results are almost identical (Appendix A.7). 
+
+Entrainment on acoustic-prosodic aspects of code-switched speech. We find limited acoustic-prosodic entrainment within SEAME. Most conver-sations exhibit turn-level proximity and synchrony, but these achieve statistical significance on fewer than half of the acoustic-prosodic features (Fig-ures 5 and 7 in Appendix A.7). Similarly, sig-Figure 1: Turn-level acoustic-prosodic proximity in MaSaC. * and darker bars indicate significant features.   
+
+> Figure 2: Turn-level acoustic-prosodic convergence in MaSaC. Most conversations converge strongly ; non-converging ones diverge weakly . All features significant.
+
+nificant turn-level convergence occurs in half of SEAME conversations over only a few pitch and intensity features (Figure 6 in Appendix A.7), sug-gesting inconsistent acoustic-prosodic entrainment of this kind. In MaSaC, in contrast, we find much stronger evidence of acoustic-prosodic entrainment. In terms of turn-level proximity, more than 60% of conversations entrain significantly over two-thirds of acoustic-prosodic features (Figure 1). The ma-jority of conversations also consistently converges strongly across features at the turn-level (Figure 2). 
+
+Entrainment on CSW style aspects of code-switched speech. We find significant proxim-ity at both the turn-level (67% of conversations, 
+
+p < 0.05 ) and the conversation-level (97% of conversations, p < 0.05 ) for CSW presence in SEAME, as well as weak, but statistically insignifi-cant, turn-level synchrony in 67% of conversations. In terms of CSW ratio, we again find significant turn- and conversation-level proximity in 70% and 97% of conversations, respectively ( p < 0.05 in both). As with CSW presence, there is weak turn-level synchrony over CSW ratio in 91% of conver-sations, though this, too, fails to reach statistical significance. Finally, examining CSW strategies, we find significant turn-level synchrony over inser-tional CSW (67% of conversations, p < 0.05 ), and significant conversation-level proximity over alter-national CSW (88% of conversations, p < 0.05 ). Our findings on MaSaC are strikingly differ-ent from those on SEAME. We find only signifi-cant turn-level convergence across metrics of CSW style: 57% of conversations converge on CSW presence (54% strongly , 3% weakly or moder-ately), 91% converge on CSW ratio (82% strongly ,9% weakly or moderately), and 62% converge (strongly ) on insertional CSW. Across metrics, this convergence is consistently statistically significant. 
+
+Discussion. Compared to entrainment in BM (Bhattacharya et al., 2024a), we generally find consistent lexical patterns across language pairs. Both Mandarin-English and Spanish-English CSW exhibit lexical entrainment over all word classes. In Hindi-English, entrainment is absent over conversation-level frequent words, affirmative cues, and fillers; we attribute the former absence to shorter conversations in MaSaC (Bhattacharya et al., 2024b) limiting its scope, and the latter two to these lexical categories not appearing in scripted MaSaC dialogue, an entrainment effect noted in other scripted speech settings (Blevins et al., 2026). This underscores a general caveat: MaSaC findings may reflect corpus properties as much as linguistic ones, and replication on naturally occurring Hindi-English speech is necessary before strong conclu-sions can be drawn. Entrainment on overall lan-guage use, in contrast, is robust across Mandarin-English, Hindi-English, and Spanish-English. In terms of acoustic-prosodic entrainment, both Mandarin-English and Hindi-English mirror known patterns from Spanish-English on the absence of conversation-level proximity and convergence, and the absence of significant turn-level synchrony. Where entrainment is present , Hindi-English pat-terns align more closely with Spanish-English ones than do those from Mandarin-English, which lacks acoustic-prosodic entrainment. One explanation is Mandarin’s unique tonal character and distinct into-nation norms relative to Spanish and Hindi, though corpus-level differences in speaker population and interaction setting may also contribute slightly. With respect to CSW style , the Mandarin-English patterns we find align strongly with those known for Spanish-English (Bhattacharya et al., 2024a): speech in both language pairs exhibits entrainment over most multilingual features of CSW conversa-tion via proximity and synchrony. Hindi-English CSW differs markedly, exhibiting only turn-level convergence, and less prominent entrainment over CSW style metrics overall. We offer a prelimi-nary hypothesis for this difference. Hindi-English speakers exhibit strikingly higher M- and I-index (Barnett et al., 2000; Guzman et al., 2016) values (M = 0 .49 ; I = 0 .48 ) than Mandarin-English (M = 0 .14 ; I = 0 .13 ) or Spanish-English ( M =0.08 , I = 0 .01 ) speakers, indicating more abun-dant and frequently interleaved CSW. One interpre-tation is that when speakers already code-switch prevalently and independently, there is less room for one speaker’s style to influence the other’s, lead-ing to a ceiling on stylistic entrainment. We do not independently test this hypothesis and note that dis-entangling possible contributions of CSW linguis-tic norms and speech genre would require compar-ing naturally-occurring Hindi-English dyads across several CSW rates, which we leave for future work. In response to RQ1 , lexical entrainment in spo-ken CSW generalizes robustly across language pairs, while acoustic-prosodic and CSW style pat-terns exhibit variation that may reflect the unique linguistic character of the non-English language and its associated cultural norms, as well as poten-tial corpus-specific interactional factors. 
+
+5.2 Classifier models’ entrainment behavior. 
+
+We next investigate how classifiers behave when detecting entrainment, relative to human entraining behavior from multiple CSW contexts and levels of conversational granularity. We apply both model-internal and model-external evaluation methods, first inspecting alignment between the most impor-tant features to the best-performing models 6 and those known to be statistically salient for entrain-ment per corpus, and then examining the impact of feature-level ablations across all models. We visual-ize conversation-level results for BM; SEAME and MaSaC figures are in Appendices A.8 and A.11. Note that statistical salience in human entrain-ment analyses need not reflect causal importance in such conversations, and classifiers’ feature impor-tance estimates may be influenced by the task op-
+
+> 6
+
+For conversation-level feature importance, we examine only models whose performance exceeds a test-time accuracy of 75% on BM and SEAME, and 65% on MaSaC; for the turn-level we use a 65% threshold across corpora. These maintain the reliability of feature importance observations. Slightly lower thresholds for MaSaC and turn-level analyses account for substantially smaller or noisier datasets; higher thresholds would overly restrict qualitative feature interpretation. S2: Alternational code-switching S1: Alternational code-switching S2: Code-switching ratio S1: Other code-switching S1: Code-switching presence S2: Code-switching presence S2: Insertional code-switching S1: Insertional code-switching 
+
+> S1: Fillers S2: Affirmative cues S2: Jitter S2: Speaking rate S1: Speaking rate S2: Maximum pitch S2: Minimum pitch S1: Maximum pitch S1: Minimum pitch S1: Top 100 words S2: Fillers
+> Features
+> RandomForestClassifier XGBClassifier DecisionTreeClassifier
+> Model
+> Code-switching features
+> 0.0 0.5 1.0 Normalised importance
+
+Figure 3: Highest feature importance values across best-performing BM models at the conversation-level. We normalize values per model using row-wise min.-max. so that models with different importance scales are com-parable. For visualization across all features, including many near-zero values, see Figure 8 in Appendix A.8. 
+
+erationalization. Our comparisons examine align-ment between model predictive behavior and our statistical characterization of human entrainment, rather than underlying cognitive mechanisms. 
+
+Models’ feature importance values. At the con-versation level of BM, 3 models achieve near per-fect accuracy on distinguishing dialogue in which speakers entrain on CSW style features from that lacking such entrainment: Decision Tree ,7 Random Forest ,8 and XGBoost .9 Each assigns the greatest feature importance to at least one relevant CSW style metric (Figure 3), yet two unexpected pat-terns emerge across these models. First, both De-cisionTree and XGBoost concentrate importance on a single CSW feature rather than across the full set of human-relevant ones; this is surprising given that positive-class conversations exhibit significant entrainment on each CSW feature. We also note the assignment of relatively high importance to acoustic-prosodic features, particularly in the Ran-domForest ; these should provide little signal for distinguishing conversations with and without en-trainment over CSW aspects, given that nearly all BM conversations exhibit significant conversation-level acoustic-prosodic entrainment (Bhattacharya et al., 2024a), and these do not correlate with CSW features (see Table 3 in Appendix A.9 for details). These alternative predictive patterns replicate across corpora. All but one top-performing SEAME classifier assigns the greatest importance to features outside the relevant CSW style set (Fig-
+
+> 7
+
+criterion: gini, max. depth: 3, min. samples split: 2 
+
+> 8
+
+criterion: log loss, max. depth: 1, min. samples split: 5 
+
+> 9
+
+booster: gbtree, lr: 0.01, max. depth: 3, # estimators: 50 S1: Maximum pitch 
+
+> S1: Code-switching ratio S1: Insertional code-switching S1: Other code-switching S1: Alternational code-switching
+> S1: Jitter
+> S1: Code-switching presence
+> S1: Affirmative cues S2: Fillers S1: Std Dev Intensity S2: Affirmative cues S1: Mean intensity S1: Shimmer S1: Top 25 words S1: Maximum intensity
+> S2: Code-switching ratio
+> S1: Minimum intensity S1: Std Dev Pitch S1: Mean pitch S1: Top 100 words S1: HNR S1: Speaking rate S1: Fillers S1: Minimum pitch S2: Top 25 words
+> S2: Code-switching presence S2: Insertional code-switching
+> S2: Jitter S2: Std Dev Intensity S2: Maximum intensity S2: Top 100 words S2: Minimum intensity S2: Mean intensity
+> S2: Other code-switching
+> S2: HNR S2: Minimum pitch
+> S2: Alternational code-switching
+> S2: Shimmer S2: Speaking rate S2: Std Dev Pitch S2: Mean pitch S2: Maximum pitch
+> 0.3
+> 0.2
+> 0.1
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> Mean accuracy drop when feature removed (  acc)
+> Code-switching feature Other feature Individual model
+
+Figure 4: Aggregated feature ablation results for BM at the conversation-level. Features are ordered left to right by increasing impact; ∆acc. > 0 means accuracy drops when the feature is removed, i.e., the feature is useful. 
+
+ure 9); the best MaSaC models do the same for the relevant lexical set (Figure 10). Across corpora, we find little evidence that conversation-level classi-fication decisions are guided by the features most expected from human entrainment behavior. At the turn level , several models surpass the classification accuracy threshold with respect to CSW style features on SEAME and acoustic-prosodic features on MaSaC (model details in Ap-pendix A.8). 10 For SEAME, none assigns mean-ingful importance to any relevant CSW style fea-tures (Figure 11), instead concentrating on acoustic-prosodic cues, which are not among those that SEAME speakers use to significantly entrain at the turn level (Section 5.1), nor do these correlate with CSW features (Table 4 in Appendix A.9). This mir-rors the conversation-level for SEAME, where the best-performing models similarly bypass relevant CSW style features in favor of acoustic-prosodic signal. For MaSaC, we observe a divergence by model type. Text-embedding models show the same concentration effect noted for conversation-level BM, assigning greatest importance to a nar-row subset of pitch and intensity cues while mak-ing limited use of the broader acoustic-prosodic profile characterizing human entraining behavior (Figure 12). Speech-embedding models, in con-trast, distribute importance across the full acoustic-prosodic feature set, but also assign notably high importance to CSW style features, which do not define the positive class for this task; turn pairs are labeled by acoustic-prosodic proximity, not CSW style entrainment. We propose an explanation for this cross-feature-set pattern in Appendix A.8. These turn-level results largely reinforce those 
+
+> 10
+
+No BM model exceeds the 65% threshold, so we exclude BM from turn-level analysis; discussion in Appendix A.10. 
+
+from the conversation level in their lack of suffi-cient evidence for model classification decisions being systematically guided by the features most salient to human entrainment. While speech-grounded representations offer partial improvement in feature coverage, these exhibit diffuse rather than targeted reliance on human-grounded turn-level entrainment. We also note that overall model performance is lower at the turn level than at the conversation level across corpora, a pattern consis-tent with the finer-grained and more variable na-ture of turn-level conversational dynamics, which may reduce the separability of entraining and non-entraining instances. The relative advantage of con-textual embedding-based models at the turn level is consistent with this interpretation: contextual representations may provide useful inductive bias when local sequential context is more diagnostic than aggregate conversational statistics. 
+
+Feature-level ablations. Since feature impor-tance estimates are classifier-specific and derived from only a subset of models, we expand our analy-sis to all models via feature-level ablations. At the 
+
+conversation level of BM, ablating each feature produces a significant drop in accuracy relative to the baseline, per paired t-tests; all features thus pro-vide some useful signal (Figure 4). However, most effect sizes are small, and no relevant CSW style features rank among the top contributors to accu-racy drops. SEAME ablations are similar and gen-erally produce negligible change in performance (Figure 13). While CSW style features account for 3 of the top-5 contributors to performance, more are linked to accuracy increases upon ablation, sug-gesting that they introduce noise rather than useful signal. This effect is more pronounced in MaSaC: only one lexical feature ablation results in an accu-racy drop, and none rank among the top contribu-tors to performance across models (Figure 14). We find a larger divergence between model and human entraining behavior at the turn level . For SEAME and BM, ablations produce near-zero changes in accuracy (Figures 15 and 17), sug-gesting that models rely on diffuse (or redundant) cues rather than any identifiable set of uniquely important entrainment features to make decisions. MaSaC models are only slightly more informative: while some salient acoustic-prosodic features con-tribute to performance, effect sizes remain small and importance is narrowly concentrated, with only speaking rate as a partial exception (Figure 16). These results suggest that, as conversational gran-ularity increases, entrainment becomes harder for models to capture in a way that reflects statistically observed human entrainment patterns. 
+
+Discussion. Across language pairs and evalua-tion methods, we observe two recurring patterns in model behavior. At the conversation-level, models achieve reasonable performance while relying on features different from those identified as statisti-cally salient in human entrainment. At the turn-level, feature ablations produce near-zero changes, suggesting reliance on diffuse signals rather than a coherent, human-grounded feature set. In response to RQ2 , our entrainment detection models gener-ally prioritize features other than those most salient in naturalistic CSW, and, at finer-grained levels of interaction, either distribute importance too broadly across feature sets or place limited emphasis on any interpretable, human-relevant features. Similar to Blevins et al. (2026), we speculate that this may reflect both fundamental differences between under-lying human and model entrainment mechanisms and the inherent difficulty of explicitly modeling a 
+
+subconscious human process. Other explanations include a need for alternative representations of entraining code-switched speech, or the possibility of our data and models capturing aspects of en-trainment not covered by the formal theories used to operationalize our approach. Further investiga-tion of these factors, particularly on how models might be encouraged to attend to and robustly rep-resent human-grounded entrainment features, is an important direction for future work. As noted in prior work (Havaldar et al., 2023), multilingual models generally classify stylistic as-pects of language well, but struggle to generate them appropriately (Briakou et al., 2021; Srini-vasan and Choi, 2022). Our findings raise the possibility that generating code-switched speech with human-like entrainment patterns may pose a similar challenge, though results from classifier-based settings may not directly transfer to genera-tive models. One potential concern is that classi-fiers, which show promise for steering and control-ling generative models’ stylistic outputs (Dathathri et al., 2020; Scalena et al., 2026; Dinan et al., 2020; Liang et al., 2024), could propagate feature-level misalignment when used to guide generation. So, strong performance in detecting entrainment need not imply that models capture the underlying phe-nomenon in a way that would support naturalistic generation. Recent findings in monolingual set-tings reinforce this concern: Blevins et al. (2026) identified mismatches in the linguistic form and motivations of entrainment between humans and language models in spontaneous text production, while Hua et al. (2025) showed that post-training fails to close the gap between LLMs and humans in task-oriented stylistic adaptation. Taken together, these results suggest that it may be valuable to di-rectly investigate whether generative models face similar challenges in the more demanding context of code-switched speech, and whether interven-tions (e.g., prompting or training strategies) can encourage more human-like entrainment behavior. 
+
+6 Conclusion 
+
+We explore cross-lingual entrainment behavior in spoken CSW, studying both human speakers and classification models across language pairs span-ning diverse typological families and cultural con-texts. We find that many established patterns of code-switched entrainment extend to new lan-guage pairs, while observed cross-corpus variation may reflect relevant multilingual norms. We also find that the predictive cues used by our entrain-ment classifiers are not well aligned with statisti-cally salient features observed in human speech under our operationalization – a finding we surface through feature importance attribution methods that are directly tied to model behavior and enable human-interpretable explanations. We hope that these new insights, together with the stylistically annotated data we release, will inform the develop-ment of multilingual language models capable of generating naturalistic code-switched speech that embodies the human-like stylistic patterns needed for successful communication and social cohesion. 
+
+Limitations 
+
+Our work is the first to conduct a cross-lingual analysis of entrainment in code-switched speech. While we study multiple language pairs covering distinct language families and cultural contexts, all involve English as one of the languages. This design choice is partly motivated by data avail-ability constraints, but necessarily leaves much of the world’s rich and varied CSW landscape un-addressed. Our claims about cross-lingually con-sistent entrainment patterns are therefore limited to English-involved CSW, and may not extend to bilingual settings excluding English. We also acknowledge that our corpora each represent a specific community of CSW speakers (Miami-based Hispanic communities, Singaporean and Malaysian Mandarin-speakers, one particular Hindi-language television show), in addition to dif-fering in size and genre. Since models are highly context-sensitive and entrainment norms may vary within a language pair across regions, social con-texts, and speaker demographics, we eagerly antic-ipate future work that tests the robustness of our findings on new data. Given limited access to suit-able open-source CSW speech corpora, our work is a first step towards expanding our cross-lingual understanding of conversational dynamics in CSW. Separately, the analytical framework that we adapt from Bhattacharya et al. (2024a) and Levitan and Hirschberg (2011) focuses only on measurable surface features of speech, leaving out additional dimensions, such as syntactic or semantic coordina-tion, over which entrainment is known to manifest. Such measures of entrainment are challenging to capture in code-switched contexts, but would serve as a worthwhile direction for related future work. We also acknowledge a data pre-processing lim-itation specific to MaSaC. The Romanized repre-sentation of Hindi in its speech transcripts may have posed a challenge for the Microsoft LID tool we used to obtain token-level language tags, as language-ambiguous words can be difficult to label automatically without contextual or pronunciation information. Although we manually reviewed and corrected LID labels prior to inferring utterance-level language assignments, some residual errors may remain. Such errors would most likely result in underestimating the number of code-switched ut-terances, and their corresponding style annotations, by miscategorizing them as monolingual. This is a particularly acute concern for MaSaC given its limited size. This limitation also reflects a broader challenge of computational work on Hindi-English CSW more generally: the scarcity of openly acces-sible, genre-matched spoken corpora means that er-rors in automatic pre-processing carry greater con-sequence, as there are few alternative data sources to draw upon. The degree to which residual LID errors affect our Hindi-English findings specifically is difficult to quantify, and underscores the need for more robust multilingual LID tools capable of handling Romanized and code-switched text. Finally, we acknowledge three related limita-tions in our model evaluation methodology. First, our binary classification framing, which distin-guishes entraining from non-entraining speech, is necessarily a simplification of what is a continuous and multidimensional linguistic phenomenon. The thresholds used to construct positive and negative classes directly shape what models are able to learn, and different operationalizations of entrainment could yield different classification boundaries and, consequently, different feature importance profiles. Since our entrainment labels are derived from the same analytical framework used to characterize hu-man behavior, the resulting classification task nec-essarily reflects that operationalization of entrain-ment rather than the full underlying phenomenon. Second, we operationalize features salient to hu-man entraining behavior as those features exhibit-ing statistically significant entrainment patterns in Section 5.1. We acknowledge that statistical sig-nificance in corpus-level analysis is an imperfect proxy for behavioral or cognitive salience: a feature may show significant entrainment at the population level without being a primary driver of individual speakers’ adaptation, and vice versa. Our compar-ison between human and model feature reliance should therefore be understood as a first approxi-mation, i.e., a way of asking whether models are at least sensitive to the same dimensions of speech that correlate with entrainment, rather than a di-rect test of underlying mechanism. Future work using behavioral data, such as listener judgments or physiological measures of rapport, could pro-vide a more direct index of which features matter more to human interlocutors. Third, Shapley-based feature importance esti-mates, which we rely on for a subset of models in RQ2, are known to be sensitive to feature cor-relations; since our acoustic-prosodic features are weakly to moderately correlated with one another (Tables 3 and 4), some instability in their attributed importances is possible. Both of these factors in-troduce uncertainty into the comparison between human and model entrainment behavior, and future work would benefit from exploring alternative oper-ationalizations and importance attribution methods to assess the robustness of our conclusions. 
+
+Ethical Considerations 
+
+This study uses only secondary data and does not involve human experiments. All speakers in the Bangor Miami and SEAME corpora consented to data collection and sharing, and both datasets were released in de-identified form by their original au-thors. The MaSaC corpus consists of fictional di-alogue performed by professional actors and was used with permission from its creators. While our work is primarily exploratory, it has potential implications for multilingual conversa-tional systems. Modeling conversational entrain-ment in code-switched settings may support ap-plications such as adaptive dialogue systems or language learning tools, but could also be misused in contexts where stylistic adaptation is intended to increase trust or rapport, including persuasive or deceptive scenarios such as targeted scams or disinformation. Care should therefore be taken in the deployment of downstream applications. Our findings highlight that entrainment patterns vary across language pairs and contexts, and sys-tems trained on such data may reflect these under-lying norms. This may lead to uneven performance or misalignment when applied to speakers whose communication style differs from those represented in the datasets, and raises broader questions about whether entrainment should be treated as descrip-tive behavior or a normative benchmark. We also find that models detect entrainment with-out relying on the same features as humans, sug-gesting that decisions may be driven by indirect or spurious signals. This raises concerns about robustness and reliability, as systems that appear to capture human-like interaction patterns may be-have unpredictably in new settings. To mitigate these risks, we encourage future work that prioritizes evaluation across diverse mul-tilingual contexts. We also caution against treating entrainment as an isolated normative measure of communicative competence, and recommend safe-guards such as usage restrictions, monitoring for misuse, and human oversight in sensitive applica-tions. References 
+
+Emily Ahn, Cecilia Jimenez, Yulia Tsvetkov, and Alan W Black. 2020. What code-switching strate-gies are effective in dialog systems? In Proceedings of the Society for Computation in Linguistics 2020 ,pages 254–264, New York, New York. Association for Computational Linguistics. Ruthanna Barnett, Eva Codó, Eva Eppler, Montse For-cadell, Penelope Gardner-Chloros, Roeland van Hout, Melissa Moyer, Maria Carme Torras, Maria Teresa Turell, Mark Sebba, Marianne Starren, and Sietse Wensing. 2000. The LIDES Coding Manual: A doc-ument for preparing and analyzing language inter-action data version 1.1—July, 1999. International Journal of Bilingualism , 4(2):131–270. Anshul Bawa, Monojit Choudhury, and Kalika Bali. 2018. Accommodation of conversational code-choice. In Proceedings of the Third Workshop on Computational Approaches to Linguistic Code-Switching , pages 82–91, Melbourne, Australia. Asso-ciation for Computational Linguistics. M. Bedi, S. Kumar, M. Akhtar, and T. Chakraborty. 2023. Multi-modal sarcasm detection and humor classification in code-mixed conversations. IEEE Transactions on Affective Computing .Debasmita Bhattacharya, Siying Ding, Alayna Nguyen, and Julia Hirschberg. 2024a. Measuring entrainment in spontaneous code-switched speech. In Proceed-ings of the 2024 Conference of the North American Chapter of the Association for Computational Lin-guistics: Human Language Technologies (Volume 1: Long Papers) , pages 2865–2876, Mexico City, Mexico. Association for Computational Linguistics. Debasmita Bhattacharya, Eleanor Lin, Run Chen, and Julia Hirschberg. 2024b. Switching Tongues, Shar-ing Hearts: Identifying the Relationship between Em-pathy and Code-switching in Speech. In Interspeech 2024 , pages 492–496. Debasmita Bhattacharya, Anxin Yi, Siying Ding, and Julia Hirschberg. 2025. Code-switching in con-text: Investigating the role of discourse topic in bilingual speech production. In Proceedings of the 6th Workshop on Computational Approaches to Discourse, Context and Document-Level Inferences (CODI 2025) , pages 64–80, Suzhou, China. Associa-tion for Computational Linguistics. Terra Blevins, Susanne Schmalwieser, and Benjamin Roth. 2026. Do language models accommodate their users? a study of linguistic convergence. In Pro-ceedings of the 19th Conference of the European Chapter of the Association for Computational Lin-guistics (Volume 1: Long Papers) , pages 791–807, Rabat, Morocco. Association for Computational Lin-guistics. Eleftheria Briakou, Di Lu, Ke Zhang, and Joel Tetreault. 2021. Olá, bonjour, salve! XFORMAL: A bench-mark for multilingual formality style transfer. In 
+
+Proceedings of the 2021 Conference of the North American Chapter of the Association for Computa-tional Linguistics: Human Language Technologies ,pages 3199–3216, Online. Association for Computa-tional Linguistics. Judee K. Burgoon, David B. Buller, Jerold L. Hale, and Mark A. de Turck. 2006. Relational Messages Associated with Nonverbal Behaviors. Human Com-munication Research , 10(3):351–378. Tanya L. Chartrand and John A. Bargh. 1999. The chameleon effect: the perception-behavior link and social interaction. Journal of personality and social psychology , 76 6:893–910. Sanyuan Chen, Chengyi Wang, Zhengyang Chen, Yu Wu, Shujie Liu, Zhuo Chen, Jinyu Li, Naoyuki Kanda, Takuya Yoshioka, Xiong Xiao, Jian Wu, Long Zhou, Shuo Ren, Yanmin Qian, Yao Qian, Micheal Zeng, and Furu Wei. 2021. Wavlm: Large-scale self-supervised pre-training for full stack speech pro-cessing. IEEE Journal of Selected Topics in Signal Processing , 16:1505–1518. Hyung Won Chung, Thibault Févry, Henry Tsai, Melvin Johnson, and Sebastian Ruder. 2020. Rethinking embedding coupling in pre-trained language models. 
+
+Preprint , arXiv:2010.12821. Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco Guzmán, Edouard Grave, Myle Ott, Luke Zettle-moyer, and Veselin Stoyanov. 2020. Unsupervised cross-lingual representation learning at scale. In Pro-ceedings of the 58th Annual Meeting of the Asso-ciation for Computational Linguistics , pages 8440– 8451, Online. Association for Computational Lin-guistics. Huangliang Dai, Shixun Wu, Jiajun Huang, Zizhe Jian, Yue Zhu, Haiyang Hu, and Zizhong Chen. 2025. Ft-transformer: Resilient and reliable transformer with end-to-end fault tolerant attention. In Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis , SC ’25, page 1085–1098, New York, NY, USA. Associa-tion for Computing Machinery. Cristian Danescu-Niculescu-Mizil, Michael Gamon, and Susan Dumais. 2011. Mark my words! linguistic style accommodation in social media. In Proceed-ings of the 20th International Conference on World Wide Web . ACM. Cristian Danescu-Niculescu-Mizil and Lillian Lee. 2011. Chameleons in imagined conversations: A new ap-proach to understanding coordination of linguistic style in dialogs. In Proceedings of the 2nd Workshop on Cognitive Modeling and Computational Linguis-tics , pages 76–87, Portland, Oregon, USA. Associa-tion for Computational Linguistics. Sumanth Dathathri, Andrea Madotto, Janice Lan, Jane Hung, Eric Frank, Piero Molino, Jason Yosinski, and Rosanne Liu. 2020. Plug and play language models: A simple approach to controlled text generation. In 
+
+International Conference on Learning Representa-tions .Margaret Deuchar. 2011. Miami corpus: Preliminary documentation - bangortalk. Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. Bert: Pre-training of deep bidirectional transformers for language understand-ing. Preprint , arXiv:1810.04805. Emily Dinan, Angela Fan, Ledell Wu, Jason Weston, Douwe Kiela, and Adina Williams. 2020. Multi-dimensional gender bias classification. In Proceed-ings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pages 314–331, Online. Association for Computational Lin-guistics. Ethnologue. 2026. What is the most spoken language? 
+
+https://www.ethnologue.com/insights/most -spoken-language/ . Accessed: 2026-04-06. Howard Giles, Nikolas Coupland, and Justine Coup-land. 1991. Accommodation theory: Communication, context, and consequence , page 1–68. Studies in Emotion and Social Interaction. Cambridge Univer-sity Press. Agustín Gravano, Štefan Beˇ nuš, Rivka Levitan, and Julia Hirschberg. 2014. Three tobi-based measures of prosodic entrainment and their correlations with speaker engagement. In 2014 IEEE Spoken Lan-guage Technology Workshop (SLT) , pages 578–583. Gualberto A. Guzman, Jacqueline Serigos, Barbara E. Bullock, and Almeida Jacqueline Toribio. 2016. Sim-ple tools for exploring variation in code-switching for linguists. In Proceedings of the Second Workshop on Computational Approaches to Code Switching , pages 12–20, Austin, Texas. Association for Computational Linguistics. Shreya Havaldar, Matthew Pressimone, Eric Wong, and Lyle Ungar. 2023. Comparing styles across lan-guages. In Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing ,pages 6775–6791, Singapore. Association for Com-putational Linguistics. Yilun Hua, Evan Wang, and Yoav Artzi. 2025. Post-training for efficient communication via convention formation. In Proceedings of the Conference on Lan-guage Modeling .Xin Huang, Ashish Khetan, Milan Cvitkovic, and Zo-har Karnin. 2020. Tabtransformer: Tabular data modeling using contextual embeddings. Preprint ,arXiv:2012.06678. Yannick Jadoul, Bill Thompson, and Bart de Boer. 2018. Introducing Parselmouth: A Python interface to Praat. 
+
+Journal of Phonetics , 71:1–15. Jay Kejriwal and Štefan Beˇ nuš. 2023. Relationship between auditory and semantic entrainment using deep neural networks (dnn). In Interspeech 2023 ,pages 2623–2627. Gerrit Jan Kootstra, Janet G. van Hell, and Ton Dijkstra. 2010. Syntactic alignment and shared word order in code-switched sentence production: Evidence from bilingual monologue and dialogue. Journal of Mem-ory and Language , 63(2):210–231. Rivka Levitan, Štefan Beˇ nuš, Agustín Gravano, and Ju-lia Hirschberg. 2015. Acoustic-prosodic entrainment in Slovak, Spanish, English and Chinese: A cross-linguistic comparison. In Proceedings of the 16th Annual Meeting of the Special Interest Group on Dis-course and Dialogue , pages 325–334, Prague, Czech Republic. Association for Computational Linguistics. Rivka Levitan, Agustin Gravano, Laura Willson, Ste-fan Benus, Julia Hirschberg, and Ani Nenkova. 2012. Acoustic-prosodic entrainment and social behavior. In Proceedings of the 2012 Conference of the North American Chapter of the Association for Compu-tational Linguistics: Human Language Technolo-gies , pages 11–19, Montréal, Canada. Association for Computational Linguistics. Rivka Levitan and Julia Hirschberg. 2011. Measuring acoustic-prosodic entrainment with respect to multi-ple levels and dimensions. In Proc. Interspeech 2011 ,pages 3081–3084. Xun Liang, Hanyu Wang, Shichao Song, Mengting Hu, Xunzhi Wang, Zhiyu Li, Feiyu Xiong, and Bo Tang. 2024. Controlled text generation for large language model with dynamic attribute graphs. In Findings of the Association for Computational Linguistics: ACL 2024 , pages 5797–5814, Bangkok, Thailand. Associ-ation for Computational Linguistics. Qi Lin, Weikai Xu, Lisi Chen, and Bin Dai. 2025. V-VAE: A variational auto encoding framework towards fine-grained control over human-like chat. In Pro-ceedings of the 2025 Conference on Empirical Meth-ods in Natural Language Processing , pages 29693– 29706, Suzhou, China. Association for Computa-tional Linguistics. Scott M. Lundberg and Su-In Lee. 2017. A unified approach to interpreting model predictions. In Pro-ceedings of the 31st International Conference on Neu-ral Information Processing Systems , NIPS’17, page 4768–4777, Red Hook, NY, USA. Curran Associates Inc. Dau-Cheng Lyu, Tien-Ping Tan, Eng Chng, and Haizhou Li. 2010. Mandarin–English code-switching speech corpus in South-East Asia: SEAME. In Language Resources and Evaluation ,volume 49, pages 1986–1989. Richard E. Maurer and Jeffrey H. Tindall. 1983. Effect of postural congruence on client’s perception of coun-selor empathy. Journal of Counseling Psychology ,30(2):158–163. Pieter Muysken. 2000. Bilingual speech: a typology of code-mixing . Cambridge University Press. Danial Namazifard and Lukas Galke Poech. 2025. Iso-lating culture neurons in multilingual large language models. In Proceedings of the 14th International Joint Conference on Natural Language Processing and the 4th Conference of the Asia-Pacific Chapter of the Association for Computational Linguistics , pages 768–785, Mumbai, India. The Asian Federation of Natural Language Processing and The Association for Computational Linguistics. Ani Nenkova, Agustin Gravano, and Julia Hirschberg. 2008. High frequency word entrainment in spoken dialogue. In Proceedings of ACL-08: HLT, Short Pa-pers , pages 169–172, Columbus, Ohio. Association for Computational Linguistics. Tanmay Parekh, Emily Ahn, Yulia Tsvetkov, and Alan W Black. 2020. Understanding linguistic ac-commodation in code-switched human-machine di-alogues. In Proceedings of the 24th Conference on Computational Natural Language Learning , pages 565–577, Online. Association for Computational Lin-guistics. Shana Poplack. 1980. Sometimes I’ll start a sentence in Spanish Y TERMINO EN ESPAÑOL: toward a typology of code-switching. Linguistics , 18:581– 618. David Reitter and Johanna D. Moore. 2007. Predict-ing success in dialogue. In Proceedings of the 45th Annual Meeting of the Association of Computational Linguistics , pages 808–815, Prague, Czech Republic. Association for Computational Linguistics. Daniel Scalena, Gabriele Sarti, Arianna Bisazza, Elis-abetta Fersini, and Malvina Nissim. 2026. Steer-ing large language models for machine translation personalization. In Proceedings of the 19th Confer-ence of the European Chapter of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 4681–4701, Rabat, Morocco. Association for Computational Linguistics. Victor Soto, Nishmar Cestero, and Julia Hirschberg. 2018. The Role of Cognate Words, POS Tags and Entrainment in Code-Switching. In Interspeech 2018 ,pages 1938–1942. Anirudh Srinivasan and Eunsol Choi. 2022. TyDiP: A dataset for politeness classification in nine typolog-ically diverse languages. In Findings of the Associ-ation for Computational Linguistics: EMNLP 2022 ,pages 5723–5738, Abu Dhabi, United Arab Emirates. Association for Computational Linguistics. Andreas Weise, Vered Silber-Varod, Anat Lerner, Julia Hirschberg, and Rivka Levitan. 2021. “talk to me with left, right, and angles”: Lexical entrainment in spoken Hebrew dialogue. In Proceedings of the 16th Conference of the European Chapter of the Associ-ation for Computational Linguistics: Main Volume ,pages 292–299, Online. Association for Computa-tional Linguistics. Zhihua Xia, Rivka Levitan, and Julia Hirschberg. 2014. Prosodic Entrainment in Mandarin Chinese and En-glish: A Cross-Linguistic Comparison. In Speech Prosody 2014 , pages 65–69. Marcely Zanon Boito, Vivek Iyer, Nikolaos Lagos, Laurent Besacier, and Ioan Calapodescu. 2024. mHuBERT-147: A Compact Multilingual HuBERT Model. In Interspeech 2024 , pages 3939–3943. A Appendix 
+
+A.1 Datasets’ license information. 
+
+The SEAME corpus may be used for research per the LDC User Agreement for Non-Members. The MaSaC corpus is released by the authors in a public Github repository at https://github.com/LCS 2-IIITD/MSH-COMICS . The BM corpus is made available under the GNU General Public License version 3 or later. Our use of these corpora is con-sistent with their intended use cases in research. 
+
+A.2 Affirmative cues and fillers. 
+
+The members of the affirmative cues word class for SEAME are: ‘yeah’, ‘right’, ‘ok’, ‘mmhmm’, ‘ya’, ‘yes’, ‘huh’, ‘alright’, ‘yup’, ‘hah’, ‘yep’, ‘yah’, ‘对’, ‘ 嗯’, ‘ 啊哈’, ‘ 啊哈’, ‘ 哦’, ‘ 哈’, ‘ 是’, ‘ 当然’, ‘可以’, ‘ 行’. We derive this list through a combina-tion of SEAME data exploration and reference to the following articles: • https://direct.mit.edu/coli/article/ 38/1/1/2144/Affirmative-Cue-Words-i n-Task-Oriented-Dialogue 
+
+• https://lcchineseschool.com/say-yes -in-chinese-quick-guide-to-affirma tion/ 
+
+The members of the fillers word class for SEAME are: ‘um’, ‘ah’, ‘uh’, ‘eh’, ‘er’, ‘hmm’, ‘mm’, ‘mmm’, ‘umm’, ‘ar’, ‘hm’, ‘ 啊’, ‘ 呃’, ‘ 呃’, ‘啊’, ‘ 呃’, ‘ 嗯’, ‘ 嗯’, ‘ 哼’. This list is derived sim-ilarly to the one for affirmative cues in SEAME, with additional reference to the article at https: //www.chineseclass101.com/blog/2021/09/0 9/chinese-filler-words/ .The members of the affirmative cues word class for MaSaC are: ‘haan’, ‘arey’, ‘aray’, ‘arre’, ‘oh’, ‘ooh’, ‘ohh’, ‘achchha’, ‘achcha’, ‘ya’, ‘yah’, ‘vah’, ‘wah’, ‘waah’, ‘ok’, ‘okay’, ‘ha’, ‘bol’, ‘right’, ‘oho’, ‘oo’, ‘huh’, ‘yes’, ‘alright’, ‘hein’, ‘really’, ‘jee’, ‘waa’. The members of the fillers word class for MaSaC are: ‘voh’, ‘woh’, ‘wooh’, ‘aa’, ‘aah’, ‘ahh’ ‘aaah’, ‘na’, ‘umm’, ‘hmm’, ‘ae’, ‘achchha’, ‘achcha’, ‘pch’, ‘aaa’, ‘mmm’, ‘o’, ‘im’, ‘oye’, ‘haww’, ‘uhhh’, ‘uhh’, ‘m’, ‘ahem’, ‘mmmmm’, ‘uh’. Both word classes for MaSaC are derived through data exploration. 
+
+A.3 Computing code-switched entrainment: full methodological details. 
+
+We reproduce the method of Bhattacharya et al. (2024a) here for completeness. Note that proximity 
+
+refers to absolute similarity in speech, convergence 
+
+refers to how much interlocutors’ speech becomes more similar over time, and synchrony refers to rel-ative coordination between interlocutors’ speech. We compute lexical entrainment over word classes using Eq. 1 (Nenkova et al., 2008), which calculates entrainment between speakers SA and 
+
+SB on a given word class W as the negated sum of absolute differences in each word w ∈ W ’s usage rate between SA and SB .       
+
+> entr (SA, S B) = −X
+> w∈W
+> |count SA(w)
+> ALL SA
+> −count SB(w)
+> ALL SB
+> |
+> (1)
+
+We also compute lexical entrainment on overall language use in each corpus using Kneser-Essen-Ney smoothed trigram language models trained on each speaker’s transcripts via the KenLM toolkit. For each conversation, we evaluate the model trained on SA’s transcripts through its perplexity on SB ’s speech transcripts. We do the opposite to evaluate the SB -trained model. Resulting negated perplexity values are unidirectional entrainment scores; lower perplexity reflects greater entrain-ment to the interlocutor. We study entrainment over acoustic-prosodic 
+
+and CSW style features via turn- and conversation-level proximity, convergence, and synchrony. At the turn-level , we measure proximity by computing a partner difference (Eq. 2) and other difference (Eq. 3) for each target speaker turn, such that turn p is adjacent to the target turn and uttered by the target turn speaker’s conversation partner, and turn i is uttered by the target turn speaker’s conversation partner but is not adjacent to the target turn, over ten random turns. We compare partner differences and other differences for a given fea-ture with a paired t-test, and infer proximity when partner differences from the prior speaker turn are smaller than differences from other speaker turns.           
+
+> dif f erence partner =|turn t−turn p|(2)
+> dif f erence other =
+> P10
+> i=1 |turn t−turn i|
+> 10 (3)
+
+For turn-level convergence , we compute the Pearson correlation coefficient between the abso-lute feature difference between adjacent turns and the turn number. We infer strong, moderate, or weak convergence from r ≥ 0.7, 0.5 ≤ r < 0.7,and 0 < r < 0.5, respectively. We similarly in-fer strong, moderate, and weak divergence from 
+
+r ≤ − 0.7, −0.7 < r ≤ − 0.5, and −0.5 < r < 0.We similarly compute turn-level synchrony , us-ing Pearson correlation between feature values of adjacent turns from different speakers, testing for significance with a two-sided t-test. We infer the degree of synchrony or asynchrony using the same ranges for r-values as for turn-level convergence. At the conversation-level , we calculate prox-imity using paired t-tests to compare two sets of differences for each speaker: partner differences ,i.e., the difference between the speaker’s value for a given feature and that of their partner, versus other differences , i.e., the mean of differences between the speaker’s value and the values of each speaker who was not their interlocutor. We infer proxim-ity when partner differences are smaller than other differences. We compute convergence by halving each conversation and comparing the difference in the two speakers’ mean values for a given feature in the first half to that in the second half using a paired 
+
+t-test. We infer convergence when differences in the second half are significantly smaller. Given the exploratory and cross-lingual nature of our analysis, we report uncorrected significance values while emphasizing effect consistency across corpora; future work should evaluate the robustness of the resulting findings under stricter multiple-comparison controls. 
+
+A.4 Pre-trained models’ license information. 
+
+Our use of these models is consistent with their intended use cases in research. • TabTransformer : Creative Commons CC0 1.0 Universal. • FT-Transformer : Creative Commons Attribu-tion 4.0 International. • XLM-R : MIT license. • mBERT : Apache License 2.0 • RemBERT : Apache License 2.0. • WaVLM : Creative Commons Attribution-ShareAlike 3.0 Unported • mHuBERT : Creative Commons Attribution Non Commercial Share Alike 4.0 
+
+A.5 Hyperparameters for grid search for each model. 
+
+Within Table 2, all models from TabTransformer 
+
+onwards encode input data with the stated architec-ture, which is then fused with an MLP and soft-max function for predictions. We encode tran-script text alongside tabular data as input with the XLM-R , mBERT , and RemBERT models, split-ting transcripts into 512-token chunks using the corresponding tokenizer for each model. The pa-rameters of each of these pre-trained encoders are frozen so only the numerical MLP , pooling, fu-sion, and classifier train, and feature importance attribution is computed only over tabular features. We encode audio recordings alongside tabular data as input with the WavLM and mHuBERT models, chunking audio in 5-second segments and using averaged pooled acoustic-prosodic embeddings for each. We similarly freeze the parameters of these encoders during training. For each corpus, the final multimodal model combining text and speech em-beddings with tabular inputs is determined based on the best-performing text and speech embed-ding methods ( mBERT + mHuBERT for BM, Rem-BERT + WavLM for SEAME, mBERT + WavLM 
+
+for MaSaC). All models use an Adam optimizer and binary cross-entropy loss over 10 epochs and batch size of 32. Note that we adapt the TabTrans-former architecture since our data lacks categorical features after pre-processing for evaluation experi-ments. Conversation-level experiments collectively take about 130 hours to run on a Google Colab A100 GPU. Turn-level experiments collectively take about 460 hours to run on an A5500 GPU. 
+
+A.6 Evaluating model entrainment behavior: data construction details. 
+
+At the conversation-level , we identify conversa-tions that exhibit significant proximity on all CSW style metrics (for BM and SEAME) or lexical word classes (for MaSaC); positive (entraining) and negative (non-entraining) classes per corpus are roughly balanced and directly informed by the statistical results in Section 5.1. We structure model inputs as a feature vector for each conversa-tion covering speaker-separated lexical, acoustic-prosodic, and CSW style attributes, as defined in Section 4.1; these hand-selected features effec-tively approximate an entrainment lexicon. We use the conversation-level mean of continuous fea-tures and convert utterance-level non-continuous features to binary flags (similar to one-hot encod-ings) before computing their conversation-level mean within each feature vector. This results in a tabular /numerical representation, which we con-catenate with model-specific embeddings of con-versation transcripts (text embeddings) or audio recordings (speech embeddings). At the turn-level , we apply Section 5.1’s statisti-cal results to identify pairs of consecutive turns that exhibit significant proximity on a majority of CSW style metrics (for BM and SEAME) or acoustic-prosodic features (for MaSaC), handling class im-balance with oversampling. Turn-level feature vec-tors have the same speaker-separated structure and treatment of continuous vs. non-continuous fea-tures for associated turn pairs as do conversation-level ones; since a single speaker’s turn may com-prise multiple consecutive utterances, we use the mean of utterance-level values within that turn in the corresponding feature vector. We acknowledge one apparent tension in our de-sign: at both levels of conversational granularity, the positive class is defined by significant entrain-ment on a particular feature set (e.g., significant proximity on CSW style metrics for conversation-level BM), and we evaluate whether models assign high importance to that same feature set. In prin-ciple, a model that perfectly learns to perform the classification task as defined should rely on those features. Our findings in Section 5.2 on imperfect alignment, where classifiers perform reasonably while bypassing the defining feature set, is there-fore more striking than it may first appear; it sug-gests that classifiers may find alternative shortcuts rather than solving the problem as defined. How-ever, this design also means that we cannot use high feature-importance alignment as straightforward validation, as such alignment could reflect class-definition circularity rather than genuine behavioral correspondence. We therefore treat our findings primarily as evidence of imperfect alignment (the negative result) rather than a strong positive claim about what more obviously aligned model behavior would mean. 
+
+A.7 Cross-lingual entrainment behaviors: additional results. Entrainment over lexical aspects of code-switched speech. In the SEAME corpus, when excluding OOV words, 88% of conversations ex-hibit within-conversation entrainment ( p < 0.05 ); 82% involve both partners entraining to each other, while in the remaining 6% only one speaker en-trains to their partner. When excluding OOV words in the MaSaC cor-pus, 72% of conversations exhibit entrainment (p < 0.05 ); 58% involve both interlocutors en-training to each other, while the remaining 14% involve only unidirectional entrainment. See Figures 5 through 7 for visualizations of turn-level proximity, convergence, and synchrony in SEAME.    
+
+> Figure 5: Proximity at the turn-level in SEAME. * and darker bars indicate significant features.
+> Figure 6: Convergence at the turn-level in SEAME. All conversations converge weakly . All non-converging conversations diverge weakly .All acoustic-prosodic features are significant.
+
+Figure 7: Synchrony at the turn-level in SEAME. All conversations are weakly synchronous. All acoustic-prosodic features are significant. All non-synchronous conversations are weakly asynchronous. 
+
+A.8 Classifier models’ entrainment behavior: models’ feature importance values. 
+
+Figure 8 shows the full set of feature importance values across the best-performing BM models at the conversation-level, including many near-zero values. Figures 9 and 11 visualize conversation-level and turn-level features importance values, re-spectively, for the SEAME corpus. Figures 10 and 12 visualize the same in MaSaC. With respect to the degree of importance as-signed to CSW style features in the best-performing turn-level speech-embedding models for MaSaC (Figure 12), this could partly reflect very weak turn-level cross-feature-set correlations (Appendix A.9, Table 4). Although the mean correlation between CSW metrics and acoustic-prosodic features is near zero ( r = 0 .015 ), 35.4% of feature pairs reach sta-tistical significance; this is likely an artifact of the large number of turn pairs inflating test sensitivity rather than evidence of a meaningful relationship. However, even such weak statistical regularities can be sufficient for models to exploit CSW fea-tures as incidental predictors of acoustic-prosodic entrainment labels. We highlight that this is impor-tantly different from our interest in models learning a theoretically-motivated entrainment signal. 
+
+A.9 Within- and between-feature-set correlations for each corpus. 
+
+At the conversation-level , cross-feature-set cor-relations are near zero across all modality pairs and corpora, with mean Fisher-z-transformed cor-relations close to zero and very low proportions of significant relationships where p < 0.05 (Ta-ble 3). This suggests that CSW, lexical, and acoustic-prosodic feature spaces capture largely non-overlapping dimensions of variation, support-ing their complementarity rather than redundancy. In contrast, within-set correlations are substantially higher, particularly for CSW and acoustic features in BM and SEAME, indicating weak to moderate internal structure but cross-modally distinct feature spaces in those corpora. Conversation-level pat-terns of cross-feature-set correlations are consistent at the turn-level (Table 4), where even within-set correlations are weak.                                                                                                  
+
+> Corpus FS 1 FS 2 Mean rSD r% sig.
+> BM CSW CSW 0.547 0.259 53.3 BM LL-0.117 0.329 46.7 BM AP AP 0.369 0.310 51.8 BM CSW L0.003 0.138 1.67 BM CSW AP -0.083 0.155 10.4 BM LAP -0.023 0.202 9.72 SEAME CSW CSW 0.573 0.434 46.7 SEAME LL-0.063 0.310 20.0 SEAME AP AP 0.209 0.326 23.9 SEAME CSW L0.072 0.350 31.7 SEAME CSW AP -0.021 0.231 13.8 SEAME LAP -0.052 0.205 16.0 MaSaC CSW CSW 0.197 0.297 24.4 MaSaC LL-0.024 0.165 40.0 MaSaC AP AP 0.057 0.294 63.8 MaSaC CSW L0.050 0.133 22.0 MaSaC CSW AP 0.016 0.073 11.3 MaSaC LAP 0.002 0.086 15.8
+
+Table 3: Summary of conversation-level feature set cor-relations. FS = feature set; CSW = code-switching style aspects; L = lexical features; AP = acoustic-prosodic features.                                                                                                  
+
+> Corpus FS 1 FS 2 Mean rSD r% sig.
+> BM CSW CSW 0.191 0.251 42.2 BM LL0.185 0.251 57.1 BM AP AP 0.249 0.236 86.6 BM CSW L0.026 0.049 46.3 BM CSW AP 0.001 0.029 18.8 BM LAP 0.019 0.047 32.8 SEAME CSW CSW 0.159 0.269 44.4 SEAME LL-0.030 0.058 40.0 SEAME AP AP 0.153 0.231 84.8 SEAME CSW L0.024 0.105 53.3 SEAME CSW AP 0.017 0.072 68.3 SEAME LAP 0.012 0.084 49.3 MaSaC CSW CSW 0.182 0.295 46.7 MaSaC LL0.162 0.242 33.3 MaSaC AP AP 0.056 0.263 70.7 MaSaC CSW L-0.019 0.052 24.3 MaSaC CSW AP 0.015 0.083 35.4 MaSaC LAP 0.004 0.052 20.2
+
+Table 4: Summary of turn-level feature set correlations. FS = feature set; CSW = code-switching style aspects; L = lexical features; AP = acoustic-prosodic features. S1: Code-switching ratio S2: Other code-switching S1: Other code-switching S1: Insertional code-switching S1: Code-switching presence S2: Code-switching presence S2: Insertional code-switching S2: Alternational code-switching S1: Alternational code-switching S2: Code-switching ratio 
+
+> S2: Fillers S1: HNR S1: Std Dev Pitch S2: Top 100 words S2: Top 25 words S2: Mean intensity S2: Minimum intensity S1: Affirmative cues S1: Top 25 words S1: Std Dev Intensity S1: Jitter S2: HNR S2: Std Dev Intensity S2: Std Dev Pitch S2: Mean pitch S1: Shimmer S1: Maximum intensity S1: Mean intensity S1: Minimum intensity S1: Mean pitch S2: Maximum intensity S2: Shimmer S1: Speaking rate S2: Maximum pitch S2: Minimum pitch S1: Maximum pitch S1: Minimum pitch S1: Top 100 words S2: Jitter S2: Speaking rate S1: Fillers S2: Affirmative cues
+> Features
+
+RandomForestClassifier XGBClassifier DecisionTreeClassifier 
+
+> Model
+> Code-switching features
+> 0.00 0.25 0.50 0.75 1.00 Normalised importance
+
+Figure 8: Feature importance values across best-performing BM models at the conversation-level. We normalize values per model using row-wise min.-max. so that models with different importance scales are comparable. S1: Other code-switching S2: Other code-switching S1: Code-switching presence S1: Insertional code-switching S2: Code-switching presence S2: Code-switching ratio S2: Insertional code-switching S2: Alternational code-switching S1: Alternational code-switching S1: Code-switching ratio 
+
+> S1: Minimum pitch S1: Std Dev Pitch S2: Minimum pitch S2: Affirmative cues S1: Top 25 words S2: Top 25 words S1: Jitter S1: Minimum intensity S1: Mean pitch S2: HNR S2: Fillers S1: Maximum intensity S1: Speaking rate S2: Speaking rate S1: Shimmer S1: Affirmative cues S1: Mean intensity S1: Std Dev Intensity S2: Std Dev Pitch S1: HNR S2: Jitter S2: Mean intensity S2: Maximum intensity S2: Std Dev Intensity S2: Shimmer S1: Top 100 words S2: Top 100 words S1: Fillers S1: Maximum pitch S2: Minimum intensity S2: Mean pitch S2: Maximum pitch
+> Features
+
+RemBERT-WavLM-fusion-classifier MLPClassifier XLM-fusion-classifier mBERT-fusion-classifier RemBERT-fusion-classifier FT-Transformer GradientBoostingClassifier GaussianNB TabTransformer-adapted 
+
+> Model
+> Code-switching features
+> 0.00 0.25 0.50 0.75 1.00 Normalised importance
+
+Figure 9: Feature importances across best-performing SEAME models at the conversation-level. We normalize values per model using row-wise min.-max. so that models with different importance scales are comparable. All models except FT-Transformer achieve near-perfect test-time accuracy; FT-Transformer achieves 75% test-time accuracy. Individual model hyperparameter settings are as follows: MLPClassifier has activation: tanh, alpha: 1e-05, hidden layer sizes: 250, solver: lbfgs; GradientBoostingClassifier has criterion: friedman mse, lr: 0.01, loss: exponential, n estimators: 50; TabTransformer-adapted has lr: 0.001; XLM-fusion has lr: 0.001; mBERT-fusion has lr: 0.001; RemBERT-fusion has lr: 0.001; RemBERT + WavLM fusion has lr: 0.01; FT-Transformer has lr: 0.001. 
+
+A.10 Classifier models’ entrainment behavior: excluding BM from turn-level analysis. 
+
+None of the BM models exceed the 65% test-time accuracy threshold at the turn level, so we exclude the corpus from turn-level analysis. This poor per-formance may be due to class imbalance artifacts and/or the relative size of the corpus, especially given BM’s lower overall CSW rate (5%, Table 1), which could reduce the variance in CSW style fea-tures at the turn level and may make the classifi-cation boundary harder to learn. We acknowledge that the exclusion of the corpus is an unfortunate limitation, as the absence of turn-level BM results leaves the cross-lingual picture at finer conversa-tional granularity incomplete. 
+
+A.11 Classifier models’ entrainment behavior: feature-level ablations. 
+
+Figures 13 and 15 visualize feature ablations on the SEAME corpus at the conversation-level and the turn-level, respectively. Figures 14 and 16 visualize the same on the MaSaC corpus. S1: Top 100 words S1: Top 25 words S2: Fillers S2: Top 100 words S2: Top 25 words S1: Fillers S2: Affirmative cues S1: Affirmative cues 
+
+> S2: Insertional code-switching S1: Code-switching presence S1: Insertional code-switching S2: Alternational code-switching S2: Std Dev Intensity S2: Other code-switching S1: Minimum intensity S2: HNR S2: Mean intensity S2: Maximum intensity S1: Jitter S2: Shimmer S1: Shimmer S2: Code-switching presence S2: Minimum pitch S2: Maximum pitch S1: Maximum pitch S2: Minimum intensity S1: Speaking rate S1: Std Dev Pitch S1: Mean pitch S2: Mean pitch S1: Minimum pitch S1: Std Dev Intensity S2: Std Dev Pitch S1: Maximum intensity S2: Code-switching ratio S1: Other code-switching S1: Code-switching ratio S1: Alternational code-switching S1: Mean intensity S1: HNR S2: Speaking rate S2: Jitter
+
+Features 
+
+SVC LogisticRegression mBERT-fusion-classifier 
+
+> Model
+
+Lexical features 
+
+0.00 0.25 0.50 0.75 1.00 Normalised importance Figure 10: Feature importances across best-performing MaSaC models at the conversation-level. We normalize values per model using row-wise min.-max. so that models with different importance scales are comparable. 
+
+LogisticRegression with hyperparameter C: 1 achieves 71% test-time accuracy, mBERT-fusion with hyperparameter lr: 0.001 achieves 68%, and SVC with hyperparameter C: 1.75 achieves 65%. S2: Code-switching presence 
+
+> S2: Insertional code-switching
+> S1: Alternational code-switching
+> S1: Other code-switching
+> S2: Code-switching ratio
+> S2: Alternational code-switching
+> S1: Code-switching ratio
+> S2: Other code-switching
+> S1: Code-switching presence
+> S1: Insertional code-switching
+> S1: Std Dev Intensity
+> S2: HNR
+> S1: Speaking rate
+> S2: Minimum intensity
+> S1: Shimmer
+> S2: Fillers
+> S1: Fillers
+> S1: Top 25 words
+> S2: Top 25 words
+> S2: Shimmer
+> S2: Jitter
+> S1: Jitter
+> S1: Affirmative cues
+> S2: Affirmative cues
+> S2: Std Dev Intensity
+> S2: Top 100 words
+> S1: Top 100 words
+> S1: Minimum pitch
+> S1: Mean intensity
+> S2: Speaking rate
+> S2: Maximum intensity
+> S1: Maximum intensity
+> S2: Mean intensity
+> S1: Minimum intensity
+> S2: Maximum pitch
+> S1: Std Dev Pitch
+> S1: HNR
+> S2: Minimum pitch
+> S1: Maximum pitch
+> S1: Mean pitch
+> S2: Mean pitch
+> S2: Std Dev Pitch
+
+Features 
+
+TabTransformer-adapted 
+
+ReMBERT-fusion classifier 
+
+mBERT-fusion classifier 
+
+> Model
+
+Code-switching features 
+
+0.00 
+
+0.25 
+
+0.50 
+
+0.75 
+
+1.00 
+
+> Normalised importance
+
+Figure 11: Feature importances across best-performing SEAME models at the turn-level. We normalize values per model using row-wise min.-max. so that models with different importance scales are comparable. mBERT-fusion 
+
+with hyperparameter lr: 1e-4 achieves 70% test-time accuracy, RemBERT fusion with hyperparameter lr: 1e-4 achieves 67%, and TabTransformer-adapted with hyperparameter lr: 1e-3 achieves 65%. Model #Parameters Hyperparameters tried 
+
+LogisticRegression(class_-weight=’balanced’, max_iter=1000) 
+
+43 • C = [0.001, 0.001, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 10] SVC(class_weight=’balanced’, kernel=’linear’, max_iter=-1) 
+
+43 • C = [0.001, 0.001, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 10] DecisionTreeClassifier(class_-weight=’balanced’) 
+
+22 / 3K / 98K a • criterion = [’gini’, ’entropy’, ’log_loss’] 
+
+• max_depth = [1, 3, 5, 10, 12, 15, 20, 25, 30] 
+
+• min_samples_split = [2, 5, 10] RandomForestClassifier(class_-weight=’balanced’) 
+
+400 / 9.4K a • criterion = [’gini’, ’entropy’, ’log_loss’] 
+
+• max_depth = [1, 3, 5, 10, 12, 15, 20, 25, 30] 
+
+• min_samples_split = [2, 5, 10] GaussianNB() 170 NA 
+
+KNeighborsClassifier() 0 • n_neighbors = [1, 3, 5, . . . , 49] 
+
+• weights = [’distance’, ’uniform’] 
+
+• algorithm = [’ball_tree’, ’kd_tree’, ’brute’] 
+
+• leaf_size = [5, 10, . . . , 45] MLPClassifier(max_iter=1000) 4.5K • hidden_layer_sizes = [10, 50, 100, . . . , 500] 
+
+• activation = [’identity’, ’logistic’, ’tanh’, ’relu’] 
+
+• solver = [’lbfgs’, ’adam’] 
+
+• alpha = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1] GradientBoostingClassifier() 1.1K / 3.3K / 7.7K b • loss = [’log_loss’, ’exponential’] 
+
+• learning_rate = [1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] 
+
+• n_estimators = [50, 100, . . . , 500] 
+
+• criterion = [’friedman_mse’, ’squared_error’] XGBClassifier(scale_pos_-weight=pos_class_weight, max_delta_step=1) 
+
+1.1K / 1.2K / 11K c • learning_rate = [1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] 
+
+• n_estimators = [50, 100, . . . , 500] 
+
+• max_depth = [1, 3, 5, 10] 
+
+• booster = [’gbtree’] (adapted) TabTransformer(emb_dim=16, transformer_dim=32, depth=2, heads=4) 
+
+141K • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] FT-Transformer(emb_dim=32, depth=3, heads=4, dropout=0.1) 
+
+43K • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] XLM-R(hidden_dim=128) 133K (+278M frozen) • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] mBERT(hidden_dim=128) 133K (+178M frozen) • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] RemBERT(hidden_dim=128) 182K (+575M frozen) • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] WavLM-Base-Plus(sample_rate=16000, emb_dim=768, hidden_dim=256, dropout=0.2) 
+
+986K • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] mHuBERT-147(sample_rate=16000, emb_dim=768, hidden_dim=256, dropout=0.2) 
+
+986K • learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] mBERT/RembERT + WavLM/mHuBERT(hidden_dim=256, dropout=0.2) 
+
+724K (+178M frozen) / 822K (+575M frozen) d
+
+• learning_rate = [5e-5, 2e-5, 1e-5, 1e-4, 1e-3, 0.01, 0.05, 0.1, 0.25, 0.5, 1] 
+
+Table 2: Models with number of learned parameters and hyperparameters tried in grid search. Note: a depends on 
+
+max_depth ; b depends on n_estimators ; c depends on max_depth and n_estimators ; d depends on the model combination selected. S2: Minimum intensity 
+
+> S1: Minimum pitch
+> S1: HNR
+> S2: Shimmer
+> S1: Jitter
+> S1: Mean pitch
+> S1: Std Dev Pitch
+> S1: Shimmer
+> S2: Jitter
+> S2: Mean intensity
+> S2: Speaking rate
+> S2: HNR
+> S1: Maximum intensity
+> S1: Std Dev Intensity
+> S1: Speaking rate
+> S1: Mean intensity
+> S2: Maximum intensity
+> S2: Std Dev Intensity
+> S1: Minimum intensity
+> S2: Mean pitch
+> S2: Minimum pitch
+> S2: Std Dev Pitch
+> S1: Maximum pitch
+> S2: Maximum pitch
+> S1: Alternational code-switching
+> S2: Fillers
+> S1: Affirmative cues
+> S2: Affirmative cues
+> S1: Other code-switching
+> S1: Fillers
+> S2: Other code-switching
+> S2: Top 25 words
+> S1: Top 25 words
+> S2: Alternational code-switching
+> S1: Top 100 words
+> S2: Top 100 words
+> S1: Code-switching ratio
+> S2: Code-switching ratio
+> S2: Code-switching presence
+> S2: Insertional code-switching
+> S1: Code-switching presence
+> S1: Insertional code-switching
+
+Features 
+
+mBERT-WavLM-fusion classifier 
+
+WavLM-fusion classifier 
+
+mHuBERT-fusion classifier 
+
+mBERT-fusion classifier 
+
+XLM-fusion classifier 
+
+> Model
+
+Acoustic-prosodic features 
+
+0.00 
+
+0.25 
+
+0.50 
+
+0.75 
+
+1.00 
+
+> Normalised importance
+
+Figure 12: Feature importances across best-performing MaSaC models at the turn-level. We normalize values per model using row-wise min.-max. so that models with different importance scales are comparable. mBERT-fusion 
+
+with hyperparameter lr: 2e-5 achieves 70% test-time accuracy, XLM-fusion with hyperparameter lr: 5e-5 achieves 69%, WavLM-fusion with hyperparameter lr: 1e-3 achieves 74%, mHuBERT-fusion with hyperparameter lr: 1e-3 achieves 70%, and mBERT+WavLM-fusion with hyperparameter lr: 1e-3 achieves 77%. S2: Insertional code-switching S2: Alternational code-switching S2: Code-switching ratio 
+
+> S2: HNR S2: Std Dev Intensity S2: Minimum pitch S2: Mean intensity S2: Affirmative cues S2: Shimmer
+> S2: Other code-switching
+> S2: Std Dev Pitch S2: Jitter S2: Minimum intensity S2: Maximum pitch
+> S2: Code-switching presence
+> S1: Speaking rate S2: Mean pitch S1: Maximum intensity S1: Jitter S1: Affirmative cues S1: Top 100 words S2: Top 25 words S2: Top 100 words S2: Fillers S1: Fillers S1: Shimmer
+> S1: Code-switching ratio
+> S2: Speaking rate S1: Std Dev Intensity S1: Top 25 words S2: Maximum intensity S1: Maximum pitch S1: Mean pitch S1: HNR S1: Minimum pitch S1: Minimum intensity
+> S1: Alternational code-switching S1: Insertional code-switching S1: Code-switching presence
+> S1: Mean intensity S1: Std Dev Pitch
+> S1: Other code-switching
+> 0.3
+> 0.2
+> 0.1
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> Mean accuracy drop when feature removed (  acc)
+> Code-switching feature Other feature Individual model
+
+Figure 13: Aggregated feature ablation results for SEAME at the conversation-level. Features are ordered left to right by increasing impact; ∆acc. > 0 means accuracy drops when the feature is removed, i.e., the feature is useful. S1: Maximum pitch S1: Minimum intensity S1: Mean intensity 
+
+> S1: Affirmative cues S2: Fillers S1: Fillers S2: Top 25 words
+> S1: Std Dev Intensity
+> S2: Affirmative cues
+> S1: Insertional code-switching
+> S1: Top 100 words
+> S1: Code-switching ratio S1: Maximum intensity
+> S1: Top 25 words
+> S2: Minimum intensity S1: Alternational code-switching S1: Code-switching presence S2: Code-switching presence S1: Speaking rate S2: Code-switching ratio S1: Mean pitch S1: Shimmer S1: Jitter S1: Std Dev Pitch S2: Mean intensity S1: Minimum pitch S1: Other code-switching S2: Insertional code-switching S2: Std Dev Pitch S2: Maximum pitch S1: HNR S2: Shimmer S2: Speaking rate S2: Alternational code-switching
+> S2: Top 100 words
+> S2: Mean pitch S2: Minimum pitch S2: Std Dev Intensity S2: Other code-switching S2: HNR S2: Maximum intensity S2: Jitter
+> 0.10
+> 0.05
+> 0.00
+> 0.05
+> 0.10
+> Mean accuracy drop when feature removed (  acc)
+> Lexical feature Other feature Individual model
+
+Figure 14: Aggregated feature ablation results for MaSaC at the conversation-level. Features are ordered left to right by increasing impact; ∆acc. > 0 means accuracy drops when the feature is removed, i.e., the feature is useful. S2: Std Dev Intensity 
+
+> S2: Jitter
+> S2: Maximum intensity
+> S2: Shimmer
+> S2: Minimum intensity
+> S2: Mean intensity
+> S2: HNR
+> S2: Mean pitch
+> S2: Insertional code-switching
+> S2: Maximum pitch
+> S2: Alternational code-switching
+> S2: Fillers
+> S2: Std Dev Pitch
+> S1: Jitter
+> S2: Other code-switching
+> S2: Code-switching presence
+> S1: Fillers
+> S2: Minimum pitch
+> S2: Code-switching ratio
+> S1: Mean pitch
+> S1: Speaking rate
+> S1: Top 25 words
+> S1: Code-switching presence
+> S1: Top 100 words
+> S1: Other code-switching
+> S1: Alternational code-switching
+> S1: Affirmative cues
+> S1: Code-switching ratio
+> S1: Std Dev Intensity
+> S1: Shimmer
+> S1: Minimum intensity
+> S1: Std Dev Pitch
+> S1: Mean intensity
+> S1: HNR
+> S1: Maximum intensity
+> S1: Maximum pitch
+> S1: Minimum pitch
+> S2: Speaking rate
+> S1: Insertional code-switching
+> S2: Affirmative cues
+> S2: Top 100 words
+> S2: Top 25 words
+
+0.2 
+
+0.0 
+
+0.2 
+
+0.4 
+
+> Mean accuracy drop when feature removed (  acc)
+
+Code-switching feature 
+
+Other feature 
+
+Individual model Figure 15: Aggregated feature ablation results for SEAME at the turn-level. Features are ordered left to right by increasing impact; ∆acc. > 0 means accuracy drops when the feature is removed, i.e., the feature is useful. S2: Fillers 
+
+> S1: Code-switching presence
+> S1: Alternational code-switching
+> S1: Other code-switching
+> S1: Code-switching ratio
+> S1: Mean pitch
+> S1: Insertional code-switching
+> S1: Minimum pitch
+> S1: Maximum pitch
+> S1: Maximum intensity
+> S1: Std Dev Pitch
+> S2: Minimum pitch
+> S2: Other code-switching
+> S1: Affirmative cues
+> S1: Std Dev Intensity
+> S2: Code-switching ratio
+> S1: Top 25 words
+> S1: Mean intensity
+> S1: Fillers
+> S2: Code-switching presence
+> S1: HNR
+> S1: Shimmer
+> S1: Jitter
+> S2: Insertional code-switching
+> S2: Maximum pitch
+> S1: Top 100 words
+> S1: Minimum intensity
+> S2: Mean pitch
+> S2: Std Dev Pitch
+> S2: Alternational code-switching
+> S1: Speaking rate
+> S2: Maximum intensity
+> S2: Minimum intensity
+> S2: Mean intensity
+> S2: Jitter
+> S2: Std Dev Intensity
+> S2: Shimmer
+> S2: HNR
+> S2: Speaking rate
+> S2: Affirmative cues
+> S2: Top 25 words
+> S2: Top 100 words
+
+0.2 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+> Mean accuracy drop when feature removed (  acc)
+
+Acoustic-prosodic feature 
+
+Other feature 
+
+Individual model 
+
+Figure 16: Aggregated feature ablation results for MaSaC at the turn-level. Features are ordered left to right by increasing impact; ∆acc. > 0 means accuracy drops when the feature is removed, i.e., the feature is useful. S2: Jitter 
+
+> S2: Std Dev Intensity
+> S1: Mean intensity
+> S1: Minimum intensity
+> S1: Maximum intensity
+> S1: Jitter
+> S1: Std Dev Intensity
+> S1: Alternational code-switching
+> S1: Other code-switching
+> S1: Shimmer
+> S2: Code-switching ratio
+> S1: Code-switching ratio
+> S1: Maximum pitch
+> S1: Std Dev Pitch
+> S1: Top 25 words
+> S1: Insertional code-switching
+> S2: Maximum intensity
+> S2: Shimmer
+> S2: Fillers
+> S1: HNR
+> S1: Mean pitch
+> S1: Affirmative cues
+> S2: Code-switching presence
+> S1: Top 100 words
+> S2: Other code-switching
+> S1: Minimum pitch
+> S1: Speaking rate
+> S2: Minimum intensity
+> S2: Insertional code-switching
+> S2: Maximum pitch
+> S2: Mean intensity
+> S1: Fillers
+> S2: Minimum pitch
+> S2: Alternational code-switching
+> S2: Mean pitch
+> S2: Std Dev Pitch
+> S1: Code-switching presence
+> S2: HNR
+> S2: Speaking rate
+> S2: Top 25 words
+> S2: Top 100 words
+> S2: Affirmative cues
+
+0.4 
+
+0.2 
+
+0.0 
+
+0.2 
+
+0.4 
+
+> Mean accuracy drop when feature removed (  acc)
+
+Code-switching feature 
+
+Other feature 
+
+Individual model 
+
+Figure 17: Aggregated feature ablation results for BM at the turn-level. Features are ordered left to right by increasing impact; ∆acc. > 0 means accuracy drops when the feature is removed, i.e., the feature is useful.
