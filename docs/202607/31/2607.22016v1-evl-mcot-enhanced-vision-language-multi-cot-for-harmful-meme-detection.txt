@@ -1,0 +1,419 @@
+Title: EVL-MCoT: Enhanced Vision-Language Multi-CoT for Harmful Meme Detection
+
+URL Source: https://arxiv.org/pdf/2607.22016v1
+
+Published Time: Mon, 27 Jul 2026 00:26:15 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# EVL-MCoT: Enhanced Vision-Language Multi-CoT for Harmful Meme Detection 
+
+Hao Yang, Jin Wang †, and Xuejie Zhang 
+
+School of Information Science and Engineering, Yunnan University, Kunming, China 
+
+yanghao888@stu.ynu.edu.cn, wangjin@ynu.edu.cn, xjzhang@ynu.edu.cn 
+
+Abstract. MEMEs are widely used on the internet and often carry strong elements of sarcasm or irony. Understanding their hidden mean-ings typically requires a joint interpretation of text and vision. Existing methods focus on the dual-stream vision-language model to extract the visual and text simultaneously, which lacks background information and prior knowledge about the comprehensive explanation of MEME. One feasible option is to adopt chain-of-thought (CoT). However, the simple CoT approach lacks multi-perspective thinking, which may compromise the reliability of the resulting answers. Moreover, it often relies on shal-low feature fusion, lacking the fusion of local details and fine-grained visual-prompt text alignment. This limitation prevents a deeper under-standing of the intricate connections between the visual and the text. Herein, an enhanced vision-language multi-CoT (EVL-MCoT) approach is proposed to address these limitations. By promoting multi-CoT, EVL-MCoT enhances consistency and reduces bias in the decision-making process. Additionally, we design a prototype-guided and context-guided decoding framework, which incorporates visual prototypes to guide the fusion process and enables the model to align textual and visual informa-tion more precisely. We achieve promising results on the HatefulMemes and MultiOff datasets. The source code has been publicly released and is available at https://github.com/BGWH123/EVL-MCoT. 
+
+Keywords: multi-CoT · meme detection · vision-language models 
+
+1 Introduction 
+
+Online memes are a unique form of internet culture that combines visual and textual and spread quickly on social media. They shape discourse through humor, irony, and comment but can reinforce stereotypes or promote discrimination, highlighting the need to detect harmful content. Previous research on harmful meme detection has used primarily two-stream vision language models with task-specific classification layers, which integrate multimodal features learned from text and visual encoders [5, 17]. However, these 
+
+> †
+
+Corresponding author arXiv:2607.22016v1 [cs.CV] 24 Jul 2026 2 Hao Yang, Jin Wang †, and Xuejie Zhang This image uses the symbol of a humanoid plant to criticize the blurred ethical  
+
+> boundaries in scientific research, suggesting a violation of human dignity.
+> Referencing Nazi doctor Josef Mengele, it highlights the ethical risks in
+> science and warns of potential moral disasters from technology.
+> The image, with hello mengele and I think one of your experiments has escaped,
+> highlights the risks of unchecked technology. It critiques the lack of ethical
+> responsibility, urging respect for human rights while advancing science.
+> Different reasoning processes
+> Text
+> Encoder
+> Vision
+> Encoder
+> Out
+> Put
+> Text
+> Encoder
+> Vision
+> Encoder
+> Out
+> Put
+> Text
+> Encoder
+> Image
+> Encoder
+> CoT 1
+> CoT n
+> C. Multi -CoT
+> B. Single -CoT
+
+A. Non -CoT 
+
+> Not
+> Good
+> :
+> Good :
+> MLLM :
+> Out
+> Put
+
+Fig. 1: Non-CoT: Lacks additional information to support decision-making. 
+
+Single-CoT: Includes basic reasoning steps, but follows a single path and there-fore lacks alternative perspectives. Multi-CoT: Provides multiple reasoning chains, which introduces redundancy and helps the model make more robust and accurate decisions. models lack the necessary background knowledge and reliable evidence for meme prediction and understanding of deeper semantics and implicit meanings. Moreover, recent studies have explored using CoT reasoning [12, 8]. Although CoT-based approaches show advantages in enhancing the model’s reasoning ca-pabilities, several issues persist. First, their reasoning processes can be unreliable due to their reliance on a single reasoning chain, which makes them susceptible to inconsistencies and errors, as well as being heavily influenced by the prior knowledge from large language models (LLMs)[15]. In addition, many methods struggle to capture the fine-grained and detailed elements in visuals[25, 27] that are closely related to the prompt text. This limitation weakens the model’s abil-ity to achieve deep alignment and understanding between visual and textual information. The specific issue can be seen in Figure 1. To address these issues, a method called enhanced vision-language multi-CoT (EVL-MCoT) is proposed for harmful meme detection. This approach leverages CoT reasoning to provide the necessary background knowledge and logical foun-dation for understanding memes. To improve reasoning reliability, multi-CoT are generated, which enhances the consistency of the reasoning process. Simul-taneously, to tackle the challenge of fine-grained fusion, a decoder framework is introduced, consisting of a prototype-guided decoder and a context-guided de-coder. The prototype-guided decoder utilizes prototype vectors to progressively steer the integration of visual features. Moreover, the context-guided decoders treat visual prototypes as queries and textual features as key-value pairs, effec-tively guiding the text encoder to capture visual-contextual information more accurately. Enhanced features derived from hateful and benign texts are fused with optimized visual features. These enriched textual representations are then EVL-MCoT 3
+
+concatenated and aligned with visual features, enabling the model to better capture and contextually relevant visual elements. Through these mechanisms, EVL-MCoT significantly strengthens the alignment between visual and textual modalities, ultimately enhancing the model’s capability in harmful meme detec-tion. The main contributions of this study are summarized as follows: 
+
+• We propose the EVL-MCoT framework, which integrates multi-CoT and advanced multimodal fusion to address unreliable single-chain reasoning and shallow cross-modal alignment in harmful meme detection. 
+
+• EVL-MCoT generates diverse CoT to reduce bias and inconsistencies while enhancing visual-text alignment through prototype decoding and context-guided decoding. 
+
+• Experiments conducted on these Hatefulmemes [6] and MultiOFF [22] demon-strate the competitive performance of the proposed method. 
+
+2 Related Work 
+
+Hateful Meme Detection. Object detection (OD)-based models, such as Vi-sualBERT [10] and UNITER [4], utilize faster R-CNN detectors [21]; however, they suffer from high inference latency. Additionally, contrastive language-image pre-training CLIP-based models, like HateCLIPper [7], offer more efficient end-to-end architectures and have shown improved performance through retrieval-guided contrastive learning. Large LMMs such as Flamingo [1] have demon-strated significant success in meme detection. Flamingo, for instance, achieves superior experimental results, surpassing CLIP-based systems, though it requires expensive fine-tuning. Other models like IDEFICS [9] and LENS [2] have also shown impressive performance. Research has also explored using LLaVA’s zero-shot[14] prompting capability for hateful meme detection and correction tasks, demonstrating the effectiveness of the pre-trained LLaVA model, albeit with some limitations. 
+
+Multi-CoT. Recent studies have introduced multi-chain reasoning (MCR) meth-ods to enhance LLMs. Yoran et al. [23, 28] proposed meta-reasoning over multi-ple chains of thought (MCR), which improves accuracy and interpretability by merging multiple chains through meta-reasoning. Qiu et al. [18] introduced a dynamically fused graph network (DFGN) to optimize multi-hop reasoning by fusing entity graphs. Nguyen et al. [16] combined CoT reasoning with knowledge graphs to enhance reasoning accuracy. These approaches improve performance in complex tasks. 
+
+Visual-Language Models. Visual-language models (VLMs)[24] like CLIP [20] and FLIP [11] excel in visual recognition tasks. These models employ dual-tower architectures with separate visual and text encoders pre-trained on visual-text datasets. Techniques such as CoOp [29] and CLIP-Adapter [3] fine-tune CLIP for new tasks. Recent frameworks like TOP [19] incorporate linguistic knowledge for better fine-tuning. 4 Hao Yang, Jin Wang †, and Xuejie Zhang Text:                     
+
+> Go home ,snail your are drunk.
+> Prompt:
+> You are a professional benign
+> meme explainer .Harmless
+> MLLM
+> Offensive CoT 1
+> Offensive CoT 2
+> Offensive CoT N
+> …
+> Offensive CoT 1
+> Offensive CoT 2
+> Offensive CoT N
+> …
+> Text:
+> Go home ,snail your are drunk.
+> Prompt:
+> You are a professional offensive
+> meme explainer .Harmful
+> Text:
+> Go home ,snail your are drunk.
+> Prompt:
+> You are a professional offensive
+> meme explainer .Harmful
+> Benign CoT 1
+> Benign CoT 2
+> Benign CoT M
+> …
+> Benign CoT 1
+> Benign CoT 2
+> Benign CoT M
+> …
+> Text
+> Encoder
+> Vision
+> Encoder
+> Text
+> Encoder
+> Prototype -Guided
+> Decoder
+> Offensive -Guided
+> Decoder
+> Benign -Guided
+> Decoder
+> Normalize
+> Normalize
+> Logit
+> Pr
+> IEmb
+> TEmb
+> TEmb
+> S
+> Pr ~
+> Pr ~
+> TEmbE
+> TEmbE
+> .
+> A
+> P
+> A
+> P
+> : CoT Phase
+> : Fuse Phase
+> A
+> P: average pooling
+> .: concatention
+
+Fig. 2: The model architecture comprises a text encoder and a vision encoder, which extract textual and visual features respectively. These features are sub-sequently fed into multiple decoders, including a prototype-guided decoder, an offensive-guided decoder, and a benign-guided decoder. The model applies nor-malization and ultimately incorporates average pooling and feature concatena-tion to compute classification probabilities. 
+
+3 Methodology 
+
+The method framework in Figure 2, define harmful meme detection as identi-fying whether a meme contains harmful content. Each meme in the dataset is represented as a tuple M = {I, T }, where I is the visual and T is the associated text. 
+
+3.1 Multi-CoT Generation 
+
+In meme prediction with Multimodal Large Language Model (MLLM), the mod-els’ extensive knowledge and contextual understanding help identify the neces-sary background knowledge and reliable evidence to predict memes and under-stand deeper meanings and implicit implications. However, directly instructing MLLM to perform meme classification tasks may overlook implicit satire, dis-crimination, or cultural references, leading to misclassification. Moreover, their reasoning processes can be unreliable due to reliance on a single chain of thought and inherent biases from prior knowledge, resulting in inconsistency and errors. To address this, a multi-CoT is introduced. For each meme example M =
+
+{I, T }, a prompt q∗ is designed that incorporates a harmfulness indicator Z∗ ∈{h0, h 1} where ( h0 is benign and h1 is hateful), guiding MLLM (e.g., GPT, LLaVA) to generate reasoning processes S∗ based on the relationship between the image and its corresponding text. The prompt is formulated as follows: 
+
+You are a professional meme explainer. Please explain why this meme is hateful/benign, using relevant background and commonsense knowledge. EVL-MCoT 5
+
+To ensure robustness in reasoning, multiple textual interpretations of the meme are considered, covering both harmful and harmless perspectives: benign t =
+
+{1, 2, . . . , m } and hateful t = {1, 2, . . . , n } .By pairing each hateful t with each benign t for the same meme instance, a total of n × m combinations are formed, where each pair contains one harmful CoT and one benign CoT. This transforms the problem into a comparative reasoning task, selecting the CoT from each pair that better matches the image as the correct answer. The model is better equipped to capture nuanced cultural cues, implicit bias, and satirical elements by generating and evaluating these multiple reasoning paths, ultimately improving classification robustness. 
+
+3.2 Prototype-guided Decoder 
+
+We directly extract visual representations using the Long-CLIP[26] model using the frozen visual encoder EI (·) to process visual inputs effectively. Given an visual I ∈ RN ×C×H×W , where N is the batch size, C represents the number of channels, and H, W denotes the dimensions, the model encodes it into an output tensor: 
+
+H = EI (I) ∈ RN ×M ×D (1) where M is the number of tokens obtained after encoding, and D is the feature dimension. A prototype-guided token fusion mechanism is introduced to aggregate these visual tokens into a final representation suitable for similarity computation. Ini-tialize a set of learnable prototype features P r ∈ RP ×D, where D is the feature dimension, P is the number of prototype features. Specifically, we apply a cross-attention layer where the prototypes P r serve as queries Q, and the extracted visual tokens H serve as keys K and values V :
+
+P r ∼ = Norm(Softmax( P r H ⊤
+
+√D )H) + P r (2) where Norm( ·) denotes layer normalization, and Softmax( ·) ensures an adaptive weighting mechanism for feature aggregation. This process enables semantically similar tokens to be grouped under the same prototype, allowing each prototype to capture more global contextual information. Finally, to derive the visual features S, we employ an attention-based feature fusion approach: 
+
+P r tl,i = WaP r ∼l,i . (3) 
+
+Al,i = exp( W ⊤ 
+
+> b
+
+tanh( Wv P r tl,i )) 
+
+PNl 
+
+> j=1
+
+exp( W ⊤ 
+
+> b
+
+tanh( Wv P r tl,j )) . (4) 
+
+S = WcNX
+
+> i=1
+
+Al,i P r l,i . (5) 6 Hao Yang, Jin Wang †, and Xuejie Zhang K 
+
+> V
+> Prototype
+> -Guided
+> Attention
+> Layer
+> Norm
+> Pr
+> Pr ~
+> MLP Softmax
+> X
+> S
+> Q
+> K
+> V
+> Context -
+> Guided
+> Attention
+> Pr~
+> Temb
+> TembE
+> Q
+> IEmb
+> X
+
++
+
++
+
++
+
+Fig. 3: Left: prototype-guided decoder. Right: context-guided decoder. where Wa, W c, W v ∈ RD×D and Wb ∈ RD×1 are trainable weight matrices. The function tanh( ·) provides non-linearity, while A represents the learned attention weights for each prototype in the final visual features S.Framework in Figure 3. This fusion method enhances the ability of the model to capture long-range dependencies and contextual relationships within visual, ultimately improving its capability in multimodal understanding. 
+
+3.3 Context-guided Decoder 
+
+For the text part, we first encode both the hateful text and benign text using the frozen Long-CLIP [26] text encoder, obtaining the corresponding text fea-ture representations Temb . To further enhance these representations, we integrate visual context information, including local patch representations and global pro-totype representations. By incorporating visual priors into the textual encoding, the model effectively bridges the gap between vision and text, thereby improving cross-modal alignment. To achieve this, we employ a context-guided attention layer, where the visual prototype features P r ∼ serve as the queries Q, while the text features Temb serve as both the keys K and values V . The attention mechanism is defined as follows: 
+
+TembE = Softmax 
+
+ P r ∼ T ⊤
+
+> emb
+
+√D
+
+
+
+Temb + P r ∼ (6) Framework in Figure 3. By leveraging learnable visual prototypes as attention queries, our model enables fine-grained semantic refinement of textual represen-tations, enriching text embeddings with visual context. 
+
+3.4 Training Strategy 
+
+After obtaining the enhanced hateful and benign text features T hembE and T bembE ,along with the refined visual features S, we compute their alignment score as follows: 
+
+L = CE 
+
+
+
+τ · Concat(AvgPool( T hembE ), AvgPool( T bembE )) · S⊤
+
+|Concat(AvgPool( T hembE ), AvgPool( T bembE )) |2|S|2
+
+, GT 
+
+
+
+(7) where AvgPool( ·) extracts global contextual information, Concat( ·) concatenates hateful and benign text features, τ is a learnable temperature parameter, and GT represents the ground truth labels. EVL-MCoT 7
+
+Table 1: Comparison of results (%) on the HatefulMeme dataset. Bold indicates the best results. The proposed EVL-MCoT is evaluated with the setting n=3, m=3 using LLaVA as the MLLM. Note: OCR: Optical Character Recognition; 
+
+LLaVA: Language-Visual-Audio; MOMENTA: is a multimodal framework for detecting harmful memes and their targets.                                                                                                   
+
+> Type Model TestSeen TestUnseen Acc. AUROC Acc. AUROC Unimodal Image-Grid 52.00 52.63 --Image-Region 52.13 55.92 60.28 54.64 TextBERT 59.20 65.08 63.60 62.65 Multimodal LateFusion 59.66 64.75 64.06 64.44 ConcatBERT 59.13 65.79 65.90 66.28 MMBT-Grid 60.06 67.92 66.85 67.24 MMBT-Region 60.23 70.73 70.10 72.21 ViLBERT 62.30 70.45 70.86 73.39 VisualBERT 63.20 71.33 71.30 73.23 ViLBERTCC 61.10 70.03 70.03 72.78 VisualBERTCOCO 64.73 71.41 69.95 74.95 MultimodalLLM Flamingo-80B ---70.00 IDEFICS-80B ---60.60 LLaVA-Llama-2-13B 63.00 65.77 62.15 63.92 GPT-4o --65.00 -Mod-Hate --58.00 64.50 MQwen2VL-2B --59.70 64.10 MQwen2VL-7B --64.10 71.10 LLaVA-1.5-7B --66.90 69.90 Flamingo-9B+OCR -57.30 --MOMENTA --69.20 61.30 Other EVL-MCoT 75.88 79.25 75.57 79.40
+
+4 Experiments 
+
+4.1 Experimental Setup Datasets. Two publicly available meme datasets are used for evaluation: Hateful Memes [6] and MultiOFF [22]. The Hateful Memes dataset contains over 10,000 multimodal examples for detecting hate speech in memes, labeled as hateful or 
+
+non-hateful . Its test set is divided into test seen and test unseen , where test seen 
+
+includes samples that share similar distributions with the training data, and 
+
+test unseen consists of samples with novel image-text combinations. The Multi-OFF dataset consists of 743 memes, annotated as offensive or non-offensive .
+
+Baseline. In this study, we compare our model with several harmful meme detection baselines, including 1) Unimodal , 2) Multimodal , 3) Multimodal-LLM , and 4) Other . For evaluation, the Hateful Memes dataset is assessed using area under the curve (AUC) and accuracy (ACC) , while the MultiOFF dataset employs F1-score and ACC as its evaluation metrics. 
+
+Model Selection. The standard CLIP model struggles with inputs exceeding 20 tokens, while our CoT approach requires processing 150-word sequences. To address this, we use Long-CLIP [26], which extends the context length to 248 tokens, enabling more effective reasoning over longer texts. 8 Hao Yang, Jin Wang †, and Xuejie Zhang 
+
+Table 2: Comparison of results (%) on the MultiOFF dataset. Bold indicates the best results. The proposed EVL-MCoT is evaluated with the setting n=3, m=3 using GPT-4 as the MLLM. Note: FT: Fine-Tuning; RT: Random Training; 
+
+RGCL: Relational Graph Contrastive Learning; SFT: Supervised Fine-Tuning.                                                 
+
+> Type Model Acc. F1
+> Unimodal ResNet50 (FT) 63.7 62.3 ResNet50 (RT) 55.7 56.2 ViT 62.4 55.9 BiLSTM 60.4 60.6 BiLSTM + Attention 59.7 57.8 BERT 61.7 61.0 m-BERT 61.1 57.4 XLM-R 63.0 58.0 Multimodal Late Fusion 65.7 56.8 Attentive Fusion 62.4 53.8 VisualBERT COCO 68.9 50.3 CLIP 65.1 60.1 ALBEF 61.7 61.3 SFT LLaVA-1.5-7B (SFT + zero-shot) 62.8 32.5 LLaVA-1.5-7B (SFT + few-shot) 56.0 38.9 Qwen2VL-2B (SFT + zero-shot) 62.4 51.7 Qwen2VL-2B (SFT + few-shot) 62.3 29.3 Qwen2VL-7B (SFT + zero-shot) 63.1 29.7 Qwen2VL-7B (SFT + few-shot) 62.0 53.7 Other GPT-4o 63.1 15.4 RGCL 53.7 45.1 EVL-MCoT 70.0 63.8
+
+Implementation Details. For details, the batch size is set to 8 with gradient accumulation every 2 steps. The optimizer is set to AdamW [13], with a learning rate of 5e-5, a weight decay of 0.01, and a cosine learning rate scheduler. All experiments were conducted on NVIDIA GeForce RTX 3090 and 4090 GPUs. 
+
+4.2 Results Hatefulmeme. The experiment results in Table 1 show that EVL-MCoT achieves the best performance on both TestSeen and TestUnseen datasets. Specifically, it reaches an accuracy of 75.88 and AUROC of 79.25 on TestSeen and 75.57 accuracy with an AUROC of 79.40 on TestUnseen. This significant performance improvement demonstrates the superior capability of EVL-MCoT in cross-modal understanding and reasoning, particularly in generalization to unseen data. 
+
+MultiOFF. The experimental results in Table 2 show that EVL-MCoT achieves the best performance on the MultiOFF dataset, with an accuracy of 70.0 and an F1 score of 63.8. EVL-MCoT outperforms both unimodal and multimodal baselines. EVL-MCoT 9
+
+(a) Effect of the Number of CoTs on Test Seen Per-formance 
+
+(b) Effect of the Number of CoTs on Test UnSeen Performance 
+
+(c) Effect of the Num-ber of CoTs on MultiOFF Performance 0 2000 4000 6000 8000 10000 
+
+> Training Steps
+> 0.50
+> 0.52
+> 0.54
+> 0.56
+> 0.58
+> 0.60
+> 0.62
+> 0.64
+> F1
+> The Quality Of CoT Comparison
+> GPT-4
+> LLaVA-13B
+
+(d) Different MLLM-Generated CoT in MultiOFF Performance 0 2000 4000 6000 8000 10000 
+
+> Training Steps
+> 0.64
+> 0.66
+> 0.68
+> 0.70
+> 0.72
+> 0.74
+> AUOC
+> Lack of important modules chart
+> Context-Guided Decoder
+> Prototype-Guided Decoder
+
+(e) Lack of Importance in MultiOFF Performance 
+
+Fig. 4: Multi-CoT and Module Analysis. 
+
+4.3 Analysis Result Analysis. The multi-CoT approach enhances model robustness by gen-erating multiple reasoning chains, with an MLLM simulating both supportive and opposing arguments. This decomposition of meme semantics improves con-textual understanding and reduces randomness, leading to more accurate and consistent interpretations. From a multimodal perspective, the framework inte-grates prototype-guided decoding and context-aware attention for better visual-text alignment. The prototype-guided decoder provides structured references for multimodal content, while context-aware attention highlights key semantic com-ponents. 
+
+CoT Number and Quality Analysis. As shown in Figure 4(a), Figure 4(b), and Figure 4(c), the number and quality of CoTs significantly impact task per-formance. A small number of CoTs limits the model’s reasoning ability and ac-curacy, leading to unstable performance. However, more CoTs expose the model to diverse reasoning paths, enhancing reasoning and generalization. High-quality CoT improve performance by providing more meaningful reasoning paths, as seen in Figure 4(d). 
+
+Prototype and Context-Guided Decoder Analysis. Figure 4(e) shows that the context-guided decoder is critical in helping the model understand complex semantics and integrate multimodal information. While prototype-guided de-coder offers useful structural priors, its absence of contextual information limits the model’s adaptability. 10 Hao Yang, Jin Wang †, and Xuejie Zhang 
+
+Table 3: Model Performance Comparison on Multimodal Datasets 
+
+Dataset HatefulMeme MultiOFF TestSeen TestUnseen Test Model ACC AUROC ACC AUROC ACC F1
+
+EVL-MCoT 75.88 79.25 76.57 79.40 69.95 63.68 w/o Long-CLIP 68.68 71.77 68.23 72.63 62.60 59.19 w/o Prototype-Guided Decoder 67.85 75.61 68.23 75.60 62.60 59.19 w/o Context-Guided Decoder 63.82 64.22 63.90 59.06 64.83 58.39 w/o CoT ( n=1 , m =1) 69.20 69.70 67.40 67.46 61.08 55.70 w/o CoT ( n=1 , m =3) 73.77 77.80 74.20 78.50 63.08 58.38 w/o CoT ( n=3 , m =1) 73.10 77.80 72.30 76.01 62.01 57.40 offensive_1 :This image contains a passage with strongly discriminatory language, including insulting remarks 
+
+about Muslims. Such expressions are clearly inappropriate, reflecting racism and religious bias, which show 
+
+disrespect and denigration toward a specific group. 
+
+offensive_2 :In this image, the father, as the educator and guide of the child, should be conveying positive values 
+
+such as respect and inclusivity. However, instead of doing so, he instills discriminatory remarks under the 
+
+guise of "education." This stark contradiction between his role and actions satirizes how certain "authority 
+
+figures" in society, such as parents or elders, may become propagators of prejudice rather than its eliminators. 
+
+benign_1: The image creates humor through an exaggerated goat figure and absurd expressions like "eating dreams," 
+
+which is a typical form of internet humor with no specific targeted attack. This comedic approach relies on 
+
+absurdity and exaggeration to create a sense of contrast, aiming to evoke a lighthearted and entertaining interpretation 
+
+rather than conveying genuine derogation or discrimination. 
+
+benign_2: The text in the image (such as "eating dreams") is purely a fictional humorous expression with no real 
+
+malice or offensiveness. The content features an adorable goat figure and a simple, bright background design ,
+
+conveying a friendly and lighthearted visual impression. This further weakens any potential negative associations and 
+
+enhances the audience's acceptance. 
+
+offensive_1 :The exaggerated expression in the text "eating dreams" transforms real -world issues such as resource 
+
+exploitation and opportunity monopolization into a perceptible image . By revealing the conflict between ideals 
+
+and reality, it uses the metaphor of "dreams" being literally devoured to symbolize how people are often 
+
+forced to abandon their aspirations under real -life pressures. This materialization of an abstract concept not only 
+
+carries a sense of humor but also directly addresses societal struggles, prompting reflection on the realities of our 
+
+environment. 
+
+Fig. 5: Two examples for generating GPT’s Multi-CoT. 
+
+4.4 Ablation Studies 
+
+The ablation study results in Table 3 demonstrate the critical role of each com-ponent in EVL-MCoT for multimodal hate speech detection. Experiments on HatefulMemes and MultiOFF show that removing Long-CLIP significantly re-duces ACC and AUROC, underscoring the importance of long-context multi-modal representations. Similarly, removing the prototype-guided decoder leads to comparable performance degradation, highlighting its role in structured fea-ture learning. Excluding the context-guided decoder also lowers performance, confirming its effectiveness in enhancing contextual alignment. Removing CoT reasoning entirely ( n=1 , m =1) causes a substantial drop in accuracy, validating the impact of structured reasoning. Reducing either reason-ing paths or steps ( n=1 , m =3 or n=3 , m =1) leads to smaller declines, indicating that both multiple reasoning paths and multi-step reasoning are necessary for optimal performance. In summary, Long-CLIP and prototype-guided decoder EVL-MCoT 11 
+
+are key to effective multimodal feature extraction, while context-guided decoder enhances alignment, and CoT reasoning boosts overall reasoning ability and ro-bustness. 
+
+4.5 CoT-Explainability 
+
+The CoT explanations generated by MLLM demonstrate structured reasoning but often emphasize different aspects of the same text, leading to diverse in-terpretations. The variability in MLLM-generated CoT reasoning paths when processing hateful and benign content is illustrated in Figure 5. MLLM analysis often generates different CoTs depending on which aspect image, text, or implied meaning is emphasized. Even when the final judgment remains the same, the reasoning paths can vary significantly. This diversity high-lights the interpretability and context sensitivity of large language models. While such flexibility enables understanding, it also poses challenges for consistency in automated moderation. Embracing multi-perspective reasoning may therefore enhance the robustness and fairness of moderation systems. 
+
+5 Conclusion 
+
+The EVL-MCoT framework proposed in this study addresses the limitations of existing methods through multi-chain reasoning and a cross-modal enhanced decoder, significantly improving harmful meme detection. Experimental results show that EVL-MCoT performs excellently on the HatefulMemes and Multi-OFF datasets, and ablation studies confirm the necessity of each component. The generated CoT explanations enhance the model’s interpretability. Future work aims to explore strategies for shortening the reasoning chains in EVL-MCoT while maintaining performance, and to extend its application to other multimodal tasks. 
+
+Acknowledgements 
+
+This work was supported by the National Natural Science Foundation of China (NSFC) under Grant Nos. 61966038 and 62266051, and the Postgraduate Re-search and Innovation Foundation of Yunnan University, China under Grant No. KC-24248816. 
+
+References  
+
+> 1. Alayrac, J.B., Donahue, J., Luc, P., Miech, A., Barr, I., Hasson, Y., Lenc, K., Mensch, A., Millican, K., Reynolds, M., et al.: Flamingo: a visual language model for few-shot learning. Advances in Neural Information Processing Systems 35 ,23716–23736 (2022)
+
+12 Hao Yang, Jin Wang †, and Xuejie Zhang 2. Berrios, W., Mittal, G., Thrush, T., Kiela, D., Singh, A.: Towards language models that can see: Computer vision through the lens of natural language. arXiv preprint arXiv:2306.16410 (2023) 3. Gao, P., Geng, S., Zhang, R., Ma, T., Fang, R., Zhang, Y., Li, H., Qiao, Y.: Clip-adapter: Better vision-language models with feature adapters. International Journal of Computer Vision 132 (2), 581–595 (2024) 4. Henderson, M., Al-Rfou, R., Strope, B., Sung, Y.H., Luk´ acs, L., Guo, R., Kumar, S., Miklos, B., Kurzweil, R.: Efficient natural language response suggestion for smart reply. arXiv preprint arXiv:1705.00652 (2017) 5. Kiela, D., Bhooshan, S., Firooz, H., Perez, E., Testuggine, D.: Super-vised multimodal bitransformers for classifying images and text (2020), https://arxiv.org/abs/1909.02950 6. Kiela, D., Firooz, H., Mohan, A., Goswami, V., Singh, A., Ringshia, P., Testuggine, D.: The hateful memes challenge: Detecting hate speech in multimodal memes. Advances in Neural Information Processing Systems 33 , 2611–2624 (2020) 7. Kumar, G.K., Nandakumar, K.: Hate-CLIPper: Multimodal hateful meme classi-fication based on cross-modal interaction of CLIP features. In: Proceedings of the Second Workshop on NLP for Positive Impact (NLP4PI). pp. 171–183 (2022) 8. Kumari, G., Jain, K., Ekbal, A.: M3Hop-CoT: Misogynous meme identification with multimodal multi-hop chain-of-thought. In: Proceedings of the 2024 Confer-ence on Empirical Methods in Natural Language Processing. pp. 22105–22138 (Nov 2024) 9. Lauren¸ con, H., Tronchon, L., Cord, M., Sanh, V.: What matters when building vision-language models? Advances in Neural Information Processing Systems 37 ,87874–87907 (2024) 10. Li, L.H., Yatskar, M., Yin, D., Hsieh, C.J., Chang, K.W.: Visualbert: A simple and performant baseline for vision and language. arXiv preprint arXiv:1908.03557 (2019) 11. Li, Y., Fan, H., Hu, R., Feichtenhofer, C., He, K.: Scaling language-image pre-training via masking. In: Proceedings of the IEEE/CVF conference on computer vision and pattern recognition. pp. 23390–23400 (2023) 12. Lin, H., Luo, Z., Gao, W., Ma, J., Wang, B., Yang, R.: Towards explainable harmful meme detection through multimodal debate between large language models. In: Proceedings of the ACM Web Conference 2024. pp. 2359–2370 (2024) 13. Loshchilov, I., Hutter, F.: Decoupled weight decay regularization (2019), https://arxiv.org/abs/1711.05101 14. Luo, X., Tang, Z., Wang, J., Zhang, X.: Zero-shot cross-domain dialogue state tracking via dual low-rank adaptation. In: Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers). pp. 5746–5765 (Aug 2024) 15. Ma, X., Liu, J., Wang, J., Zhang, X.: FedID: Federated interactive distillation for large-scale pretraining language models. In: Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing. pp. 8566–8577 (Dec 2023) 16. Nguyen, M.V., Luo, L., Shiri, F., Phung, D., Li, Y.F., Vu, T.T., Haffari, G.: Direct evaluation of chain-of-thought in multi-hop reasoning with knowledge graphs. In: Findings of the Association for Computational Linguistics: ACL 2024. pp. 2862– 2883 (2024) 17. Pramanick, S., Dimitrov, D., Mukherjee, R., Sharma, S., Akhtar, M.S., Nakov, P., Chakraborty, T.: Detecting harmful memes and their targets. In: Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021. pp. 2783–2796 (2021) EVL-MCoT 13 18. Qiu, L., Xiao, Y., Qu, Y., Zhou, H., Li, L., Zhang, W., Yu, Y.: Dynamically fused graph network for multi-hop reasoning. In: Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. pp. 6140–6150 (2019) 19. Qu, L., Fu, K., Wang, M., Song, Z., et al.: The rise of ai language pathologists: Ex-ploring two-level prompt learning for few-shot weakly-supervised whole slide image classification. Advances in Neural Information Processing Systems 36 , 67551–67564 (2023) 20. Radford, A., Kim, J.W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry, G., Askell, A., Mishkin, P., Clark, J., Krueger, G., Sutskever, I.: Learning transfer-able visual models from natural language supervision. In: Proceedings of the 38th International Conference on Machine Learning. vol. 139, pp. 8748–8763 (2021) 21. Ren, S., He, K., Girshick, R., Sun, J.: Faster r-cnn: Towards real-time object de-tection with region proposal networks. Advances in Neural Information Processing Systems 28 (2015) 22. Suryawanshi, S., Chakravarthi, B.R., Arcan, M., Buitelaar, P.: Multimodal meme dataset (MultiOFF) for identifying offensive content in image and text. In: Pro-ceedings of the Second Workshop on Trolling, Aggression and Cyberbullying. pp. 32–41 (2020) 23. Yoran, O., Wolfson, T., Bogin, B., Katz, U., Deutch, D., Berant, J.: Answering questions by meta-reasoning over multiple chains of thought. In: Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing. pp. 5942–5966 (2023) 24. Yuan, L., Cai, Y., Xu, J., Li, Q., Wang, T.: A fine-grained network for joint mul-timodal entity-relation extraction. IEEE Transactions on Knowledge and Data Engineering 37 (1), 1–14 (2025). https://doi.org/10.1109/TKDE.2024.3485107 25. Yuan, L., Wang, J., Yu, L.C., Zhang, X.: Encoding syntactic infor-mation into transformers for aspect-based sentiment triplet extrac-tion. IEEE Transactions on Affective Computing 15 (2), 722–735 (2024). https://doi.org/10.1109/TAFFC.2023.3291730 26. Zhang, B., Zhang, P., Dong, X., Zang, Y., Wang, J.: Long-clip: Unlocking the long-text capability of clip. In: European Conference on Computer Vision. pp. 310–325 (2024) 27. Zheng, G., Wang, J., Yu, L.C., Zhang, X.: Instruction tuning with retrieval-based examples ranking for aspect-based sentiment analysis (2024), https://arxiv.org/abs/2405.18035 28. Zheng, G., Wang, J., Zhou, X., Zhang, X.: Enhancing semantics in multimodal chain of thought via soft negative sampling. In: Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024). pp. 6059–6076. Torino, Italia (May 2024) 29. Zhou, K., Yang, J., Loy, C.C., Liu, Z.: Learning to prompt for vision-language models. International Journal of Computer Vision 130 (9), 2337–2348 (2022)
